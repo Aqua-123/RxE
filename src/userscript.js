@@ -817,6 +817,8 @@ function decoratePage() {
   addLookupButton();
   decorateMessages();
 
+  // ad block
+  document.querySelectorAll('iframe:not([src*="captcha"])').forEach(iframe=>iframe.remove());
 }
 
 function refreshRooms() {
