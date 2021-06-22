@@ -1,9 +1,11 @@
 // ==UserScript==
-// @name        New script - emeraldchat.com
-// @namespace   Violentmonkey Scripts
-// @match       https://www.emeraldchat.com/app
-// @version     1.0
-// @author      -
+// @name        Ritsu x Emerald
+// @namespace   Emerald Bot - Ritsu Project
+// @match       http*://emeraldchat.com/app
+// @match       http*://www.emeraldchat.com/app
+// @version     0.2.3
+// @description Custom Emerald Chat themes and fixes.
+// @icon        https://static.emeraldchat.com/uploads/picture/image/9529291/Ritsu_Icon.png
 // @grant GM_setValue
 // @grant GM_getValue
 // @grant unsafeWindow
@@ -11,8 +13,9 @@
 // @description 6/18/2021, 12:48:48 AM
 // ==/UserScript==
 
-const window = unsafeWindow;
+const win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
 const crel = (elt, obj={}) => Object.assign(document.createElement(elt), obj);
+const rel = React.createElement;
 
 // #1. Overriding builtin behaviors
 
@@ -20,8 +23,6 @@ function overrideDumbSettings() {
   if (hacks.disableNags) {
     App.user.karma = 31337;
     App.user.temp = false;
-    App.user.gold = true;
-    App.user.verified = true;
     UpgradeClient.form = () => {};
     Cookies.set('goldad', '1');
   }
@@ -33,47 +34,45 @@ function overrideDumbSettings() {
   setTimeout(overrideDumbSettings, 1000);
 }
 
-// limited usefulness here so far.
+// network request middleware
 $.__ajax = $.ajax;
 $.ajax = options => {
   switch (options.url) {
-    case "/user_is_temp": return options.success({ status: true, temp: false });
+    case "/user_is_temp": return options.success({ status: false, temp: false });
     default:
       const modifiedOptions = {...options, success: e => {
-        switch (options.url) {
-          // case '/current_user_interests_json':
-          //   e.current_user.gold = true;
-          //   e.current_user.karma = 31337;
-          //   e.current_user.temp = false;
-          //   e.current_user.master = true;
-          //   e.current_user.mod = true;
-          //   e.current_user.verified = true;
-          //   break;
-          // case '/current_user_json':
-          //   e.gold = true;
-          //   e.karma = 31337;
-          //   e.temp = false;
-          //   e.master = true;
-          //   e.mod = true;
-          //   e.verified = true;
-          //   break;
-          default:
-            if (hacks.universalFriend && options.url.startsWith('/profile_json?')) {
-              e.friend = true;
-            }
+        if (hacks.universalFriend && options.url.startsWith('/profile_json?')) {
+          e.friend = true;
         }
-        
         options.success?.(e);
       }}
       $.__ajax(modifiedOptions);
   }
 };
 
+// websocket middleware -- inert
+function ws_middleware() {
+  // problems: breaks on reconnect and needs async mitm capability to be useful
+  // potential uses:
+  // - userlist in WFAF
+  App.cable.connection.webSocket.onmessage_old = App.cable.connection.webSocket.onmessage;
+  App.cable.connection.webSocket.onmessage = function (e) {
+    let data = JSON.parse(e.data);
+    wsMsg = new CustomEvent("wsMsg", {
+      detail: {
+        data: data
+      }
+    });
+    document.dispatchEvent(wsMsg);
+    return App.cable.connection.webSocket.onmessage_old(e);
+  }
+}
+
 // hide dumb console errors
-window.DashboardClient = {
+win.DashboardClient = {
   setState: () => {}
 };
-window.MenuReactMicroStatic = {
+win.MenuReactMicroStatic = {
   close: () => {}
 };
 
@@ -92,30 +91,21 @@ const commonCSS = `
   display: none;
 }
 
-/* theme dialog */
-.themes-menu-container li {
+/* settings dialog */
+.ritsu-menu-container li {
   padding: 0.5em;
   color: #aaa;
-  cursor: pointer;
-}
-.themes-menu-container li:hover {
-  background: #333;
-}
-.themes-menu-container li.selected {
-  color: white;
-}
-
-/* hacks dialog */
-.hacks-menu-container li {
-  padding: 0.5em;
   font-weight: normal;
   cursor: pointer;
 }
-.hacks-menu-container li:hover {
+.ritsu-menu-container li:hover {
   background: #333;
 }
+.ritsu-menu-container li.selected {
+  color: white;
+}
 .hacks-warning {
-  margin: 5em;
+  margin: 2em;
   text-align: center;
   color: #E33;
 }
@@ -137,9 +127,10 @@ const commonCSS = `
 }
 .picture-button {
   padding: .5em;
-  border: 1px solid black;
+  border: 1px solid var(--app-fg-color);
   border-radius: 2px;
-  background: #333;
+  background: var(--app-bg-color);
+  color: var(--app-fg-color);
 }
 .picture-button.block:hover {
   color: red;
@@ -159,10 +150,29 @@ const commonCSS = `
 }
 .lookup-button {
   float: right;
-  background: black;
   padding: 2px;
   margin-top: -4px;
 }
+.disable-after::after {
+  content: '';
+  display: none;
+}
+.picker-flair-select {
+  height: 3em !important;
+  vertical-align: bottom;
+}
+.navigation-dropdown-ritsu {
+  color: #f965fec4;
+}
+.main-logo-text {
+  display: inline-block;
+  line-height: 14px;
+  height: 32px;
+  vertical-align: middle;
+  font-size: 1.3em;
+  padding-left: .5em;
+}
+.user-extra { padding-left: 5em; }
 `;
 
 const noNagCSS = `
@@ -171,63 +181,154 @@ const noNagCSS = `
 }
 `;
 
+const themeScaffold = `
+body>div>nav { background: var(--header-bg-color); }
+.room-component-left.room-component-left { background: var(--roomlist-bg-color); }
+.room-component-center.room-component-center { background: var(--chat-bg-color); }
+.room-component-right.room-component-right { background: var(--userlist-bg-color); }
+.room-component-messages { background: var(--chat-bg-color); }
+.room-notification.room-notification { background: var(--chat-bg-color); }
+.room-component-input { background: var(--input-bg-color); }
+.room-component-input-textarea.room-component-input-textarea { color: var(--input-fg-color); }
+.ui-button-match { background: var(--input-bg-color); }
+#container { background: var(--app-bg-color); }
+.room-component-container.room-component-container { color: var(--app-fg-color); }
+.dashboard-button.animated.zoomIn { background: var(--dashboard-button-bg-color); }
+.navigation-notification-icons.navigation-notification-icons { background: transparent; }
+.ui-search-box { background: var(--search-bg-color); }
+.side-panel.side-panel { background: var(--panel-bg-color); }
+.actionicon-mega.actionicon-mega { color: var(--panel-fg-color); }
+.actionicon-mega.actionicon-mega:hover { background: var(--item-hover-bg-color); }
+.ui-bg.ui-bg { background: var(--dialog-overlay-bg-color); }
+.ui-menu.ui-menu, .notification-unit.notification-unit { background: var(--dialog-bg-color); color: var(--dialog-fg-color); }
+.ui-interests-bg.ui-interests-bg { background: var(--interests-bg-color) !important; }
+.navigation-notification-unit.navigation-notification-unit:hover { background: var(--header-hover-bg-color); color: var(--header-hover-fg-color); }
+.navigation-notification-unit { color: var(--header-fg-color); }
+.navigation-dropdown-content.navigation-dropdown-content { background: var(--menu-bg-color); color: var(--menu-fg-color); }
+.dashboard-icon.dashboard-icon { color: var(--dashboard-icon-fg-color); }
+.dashboard-button.dashboard-button:hover { color: var(--dashboard-hover-fg-color); background: var(--dashboard-hover-bg-color); }
+.actionicon-icon.actionicon-icon { color: var(--dashboard-icon-fg-color); }
+.main-hamburger.main-hamburger { color: var(--header-fg-color); }
+.main-hamburger.main-hamburger:hover, .main-logo.main-logo:hover { background: var(--header-hover-bg-color) !important; color: var(--header-hover-fg-color); }
+.user-profile-menu.user-profile-menu { background: var(--dialog-bg-color); }
+.user-micropost-input-background.user-micropost-input-background { background: var(--dialog-input-bg-color); }
+.ui-button-micro.ui-button-micro { background: var(--dialog-button-bg-color); }
+.user-profile-tab.user-profile-tab, .ui-tab.ui-tab { color: var(--tab-fg-color); }
+.user-profile-tab-active.user-profile-tab-active, .ui-tab-active.ui-tab-active { color: var(--tab-active-fg-color); }
+.ui-button-mega.ui-button-mega:hover { background: var(--dialog-button-hover-bg-color); color: var(--dialog-button-hover-fg-color); }
+.ui-button-mega.ui-button-mega { background: var(--dialog-button-bg-color); }
+.ui-input.ui-input { background: var(--dialog-input-bg-color) !important; }
+.dashboard-card-image.dashboard-card-image { border-color: var(--dashboard-icon-fg-color); }
+.user-comment-input-background.user-comment-input-background { background: var(--dialog-input-bg-color); }
+.room-component-left .room-user-label { color: var(--roomlist-title-fg-color); }
+.room-component-right .room-user-label { color: var(--userlist-title-fg-color); }
+.picture-upload-button.picture-upload-button+label { background: var(--upload-button-bg-color); color: var(--upload-button-fg-color); }
+
+
+.main-logo-text { color: var(--menu-fg-color); }
+.navigation-dropdown-ritsu { color: var(--ritsu-menu-fg-color); }
+.navigation-dropdown-ritsu:hover { color: var(--ritsu-menu-hover-fb-color); }
+`;
+
+// a set of all CSS variables we're using. Themes must update the ones they care about
+const baseVars=`
+:root {
+  --ritsu-hair-color: #f965fec4;
+  --ritsu-hair-dark-color: #b821bd;
+  
+
+  --header-bg-color: #100f10;
+  --header-hover-bg-color: #3d4046;
+  --app-bg-color: black;
+  --dialog-bg-color: #111;
+  --dialog-overlay-bg-color: rgba(0,0,0,.93);
+  --dialog-button-bg-color: #17191b;
+  --dialog-button-hover-bg-color: #151515;
+  --dialog-input-bg-color: #17191b;
+  --dashboard-button-bg-color: #100f10;
+  --dashboard-hover-bg-color: #33323270;
+  --roomlist-bg-color: black;
+  --chat-bg-color: black
+  --userlist-bg-color: black;
+  --input-bg-color: #211f21;
+  --search-bg-color: #0b0b0b;
+  --panel-bg-color: #0c0c0c;
+  --item-hover-bg-color: #35383e;
+  --interests-bg-color: #2c2f35;
+  --menu-bg-color: #0a0a0a;
+  --upload-button-bg-color: #41444a;
+  
+  
+  --header-fg-color: white;
+  --header-hover-fg-color: var(--ritsu-hair-color);
+  --app-fg-color: #bebfc5;
+  --dialog-fg-color: #f1f1f2;
+  --dialog-button-hover-fg-color: var(--ritsu-hair-color);
+  --dashboard-icon-fg-color: var(--ritsu-hair-color);
+  --dashboard-hover-fg-color: var(--ritsu-hair-color);
+  --roomlist-title-fg-color: #99a3b4;
+  --userlist-title-fg-color: #99a3b4;
+  --tab-fg-color: #c2c8d6;
+  --tab-active-fg-color: var(--ritsu-hair-color);
+  --input-fg-color: #caccd0;
+  --panel-fg-color: white;
+  --menu-fg-color: white;
+  --upload-button-fg-color: #b4bccc
+  
+  --ritsu-menu-fg-color: var(--ritsu-hair-color);
+  --ritsu-menu-hover-fb-color: var(--ritsu-hair-color);
+}
+`;
+
 // incomplete. "default" should probably stay empty. fix/flesh out themes here.
 const themes = {
   default: ``,
-  light: `
-.ui-bg.ui-bg { background: rgba(0,0,0,.5); }
-body { background: #ddd; }
-body>div>nav { background: #bbb; }
-.main-hamburger.main-hamburger { color: #333; }
-.navigation-notification-unit.navigation-notification-unit { color: #333; }
-.side-panel.side-panel { background: #ccc; color: #222; }
-.actionicon-mega.actionicon-mega { color: #333; }
+  ritsu: ``,
+  light: `  
+:root {
+/* TODO: we should set ALL the variables here since this is a dark->light switch */
+  --header-bg-color: #bbb;
+  --header-hover-bg-color: #aaa;
+  --app-bg-color: #ddd;
+  --dialog-bg-color: #ddd;
+  --dialog-overlay-bg-color: rgba(0,0,0,.5);
+  --roomlist-bg-color: #ccc;
+  --chat-bg-color: #ddd;
+  --userlist-bg-color: #ccc;
+  --input-bg-color: #fff;
+  --panel-bg-color: #ccc;
+  --menu-bg-color: #aaa;
+  --upload-button-bg-color: #ccc;
+  
+  
+  --header-fg-color: #333;
+  --header-hover-fg-color: var(--ritsu-hair-dark-color);
+  --app-fg-color: #333;
+  --dialog-fg-color: #333;
+  --menu-fg-color: #222;
+  --roomlist-title-fg-color: #555;
+  --userlist-title-fg-color: #555;
+  --tab-fg-color: #444;
+  --input-fg-color: #222;
+  --panel-fg-color: #333;
+  --menu-fg-color: #333;
+  --upload-button-fg-color: #444;
+  
+  
+  --ritsu-menu-fg-color: var(--ritsu-hair-dark-color);
+}
+.user-flair.user-flair,.user-extra-gender { text-shadow: 1px 1px 1px black; }
+
+/* TODO: Merge the rules below into the scaffold */
 .actionicon-mega.actionicon-mega:hover { background: #aaa; }
-.navigation-dropdown-content.navigation-dropdown-content { background: #aaa; color: #333; }
-.room-user-label.room-user-label { color: #555; }
-.room-component-left.room-component-left { background: #ccc; }
-.room-component-center.room-component-center { background: #ddd; }
-.room-component-right.room-component-right {  background: #ccc; }
-.room-component-container.room-component-container { color: #333; }
-.room-notification.room-notification { background: #ccc }
-.navigation-notification-icons.navigation-notification-icons { background: #bbb; }
-.user-flair.user-flair { text-shadow: 1px 1px 1px black; }
-.room-component-input.room-component-input { background: #fff; }
-.room-component-input-textarea.room-component-input-textarea { color: #222; }
-.ui-menu.ui-menu { background: #ddd; color: #333; }
-.picture-upload-button.picture-upload-button+label { background: #ccc; color: #444; }
 .ui-button-text.ui-button-text:hover { color: #666; }
 .user-profile-menu.user-profile-menu { background: #ddd; color: #333; }
-.user-profile-tab.user-profile-tab { color: #444; }
-.ui-tab..ui-tab { color: #444; }
 .user-micropost-unit.user-micropost-unit { color: #333; }
-.picture-button, .lookup-button { background: #eee; }
-.themes-menu-container li { color: #666; }
-.themes-menu-container li.selected { color: #222; }
-.themes-menu-container li:hover { background: #fff; }
+
+.ritsu-menu-container li { color: #666; }
+.ritsu-menu-container li.selected { color: #222; }
+.ritsu-menu-container li:hover { background: #fff; }
 `,
-  ritsu: `
-body>div>nav { background: black; }
-.room-component-left.room-component-left { background: black; }
-.room-component-center.room-component-center { background: black; }
-.room-component-right.room-component-right { background: black; }
-.background-container { background: red; }
-.room-component-messages { background: black; }
-.room-component-input { background: purple; }
-.ui-button-match { background: purple; }
-.ui-search body.navigation-notification-icons { background: black; }
-#container.container { background: black; }
-.dashboard-button.animated.zoomIn { background: purple; }
-.navigation-notification-icons.navigation-notification-icons {  background: transparent; }
-.ui-search-box { background: #0b0b0b }
-.side-panel.side-panel { background: black; }
-.actionicon-mega.actionicon-mega:hover { background: 0b0b0b; }
-.ui-menu.ui-menu { background: black }
-.ui-menu.ui-menu, .notification-unit.notification-unit { background: #111; }
-.ui-interests-bg { background: grey; }
-.navigation-notification-unit.navigation-notification-unit:hover { color: purple; }
-.navigation-notification-unit { color: red; }
-`
 };
 
 let currentTheme = GM_getValue('theme', 'default');
@@ -241,7 +342,11 @@ function applyTheme() {
     }));
     styleSheet = document.head.querySelector('.custom-theme');
   }
-  styleSheet.textContent = commonCSS + themes[currentTheme] + (hacks.disableNags?noNagCSS:'');
+  let css = commonCSS + (hacks.disableNags?noNagCSS:'');
+  if (currentTheme !== 'default') {
+    css += baseVars + themeScaffold + themes[currentTheme];
+  }
+  styleSheet.textContent = css;
 }
 
 function selectTheme(id) {
@@ -252,15 +357,15 @@ function selectTheme(id) {
 class Themes extends React.Component {
   r(f) { f?.(); this.setState({i: Math.random()}) }
   render() {  
-    return React.createElement("div", {
+    return rel("div", {
         style: {
-          marginTop: "5px"
+          margin: "1em 0"
         }
-    }, React.createElement("div", {
+    }, rel("div", {
       className: "m1",
       style: { marginBottom: "2em" }
     }, "Choose your theme"),
-    ...Object.keys(themes).map(theme=> React.createElement('li', {
+    ...Object.keys(themes).map(theme=> rel('li', {
       className: currentTheme === theme ? "selected" : '',
       onMouseDown: () => this.r(()=>selectTheme(theme))  
     }, theme[0].toUpperCase()+theme.slice(1)))
@@ -268,49 +373,11 @@ class Themes extends React.Component {
   }
 }
 
-function CustomDialog(props) {
-  const { title, className, content } = props;
-  return React.createElement("div", {
-      key: "custom_menu",
-      className: className
-  }, title, React.createElement(BR), React.createElement(BR), React.createElement(content), React.createElement("div", {
-      className: "ui-menu-buttons"
-  }, React.createElement("div", {
-      onMouseDown: () => MenuReact.close(),
-      className: "ui-button-text"
-  }, "Close")))
-
-}
-
-function openThemesDialog() {
-  const element = React.createElement(Menu, null, React.createElement(CustomDialog, { 
-    title: "THEMES", 
-    className: "themes-menu-container", 
-    content: Themes
-  }));
-  ReactDOM.render(element, document.getElementById("ui-hatch"))
-}
-
-function injectThemesMenu() {
-  let themesMenu = document.querySelector('.navigation-dropdown-themes');
-  if (!themesMenu) {
-    document.querySelector('.navigation-dropdown-content')?.prepend(crel('li', { 
-      className: 'navigation-dropdown-themes',
-      textContent: 'Themes',
-      onmousedown: openThemesDialog
-    }))
-  }
-}
-
 // #3. WTF HAX 
-// note: channel_json
 
 let needsReload = false;
 
-let hacks = GM_getValue('hacks', { disableNags: true });
-function loadHacks() {
-  hacks = GM_getValue('hacks', { disableNags: true });
-}
+let hacks = GM_getValue('hacks', { disableNags: true, fancyColors: true });
 
 function applyHacks(obj) {
   hacks = { ...hacks, ...obj };
@@ -320,69 +387,140 @@ function applyHacks(obj) {
 }
 
 class Hacks extends React.Component {
-  r(f) { f?.(); this.setState({i: Math.random()}) }
   render() {
     const { disableNags, enableModUI, universalFriend, fancyColors } = hacks;
-    return React.createElement("div", {
+    return rel("div", {
         style: {
           marginTop: "5px"
         }
-    }, React.createElement("div", {
+    }, rel("div", {
       className: "m1",
-      style: { marginBottom: "2em" }
+      style: { marginBottom: "1em" }
     }, "Enable and disable various hacks here"),
-    React.createElement('li', {
-      onMouseDown: () => this.r(()=>{ applyHacks({disableNags: !disableNags}) })
+    rel('li', {
+      onMouseDown: () => this.props.refresh(()=>{ applyHacks({disableNags: !disableNags}) })
     }, 
       "Nagging and limits on temp accounts is ",
-      React.createElement("em", {}, disableNags?'DISABLED':'ENABLED')
+      rel("em", {}, disableNags?'DISABLED':'ENABLED')
     ),
-    React.createElement('li', {
-      onMouseDown: () => this.r(()=>{ applyHacks({enableModUI: !enableModUI}) })
+    rel('li', {
+      onMouseDown: () => this.props.refresh(()=>{ applyHacks({enableModUI: !enableModUI}) })
     }, 
       "(Useless) access to moderator/master panel is ",
-      React.createElement("em", {}, enableModUI?'VISIBLE':'HIDDEN')
+      rel("em", {}, enableModUI?'VISIBLE':'HIDDEN')
     ),
-    React.createElement('li', {
-      onMouseDown: () => this.r(()=>{ applyHacks({universalFriend: !universalFriend}) })
+    rel('li', {
+      onMouseDown: () => this.props.refresh(()=>{ applyHacks({universalFriend: !universalFriend}) })
     }, 
       "Access to any profile is ",
-      React.createElement("em", {}, universalFriend?'ENABLED':'DISABLED')
+      rel("em", {}, universalFriend?'ENABLED':'DISABLED')
     ),
-    React.createElement('li', {
-      onMouseDown: () => this.r(()=>{ applyHacks({fancyColors: !fancyColors}) })
-    }, 
-      "Unusual flair colors are ",
-      React.createElement("em", {}, fancyColors?'ENABLED':'DISABLED')
-    ),                        
-    needsReload? React.createElement('div', {
+    // rel('li', {
+    //   onMouseDown: () => this.props.refresh(()=>{ applyHacks({fancyColors: !fancyColors}) })
+    // }, 
+    //   "Unusual flair colors are ",
+    //   rel("em", {}, fancyColors?'ENABLED':'DISABLED')
+    // ),                        
+    needsReload? rel('div', {
       className: 'hacks-warning'
     }, "You may need to reload the app for your changes to take effect."):null
     );
   }
 }
 
-function openHacksDialog() {
-  const element = React.createElement(Menu, null, React.createElement(CustomDialog, { 
-    title: "HACKS", 
-    className: "hacks-menu-container", 
-    content: Hacks
+// #3.5 GOTO 3
+
+let settings = GM_getValue('settings', { imgControl: true, imgProtect: true, showInfo: false });
+
+function applySettings(obj) {
+  settings = { ...settings, ...obj };
+  GM_setValue('settings', settings);
+  needsReload = true;  
+}
+
+class Settings extends React.Component {
+  render() {
+    const { imgControl, imgProtect, showInfo } = settings;
+    return rel("div", {
+      style: { margin: "1em 0"}
+    }, rel("div", {
+        className: "m1",
+        style: { marginBottom: "1em" }      
+      }, "Image Settings"),
+      rel('li', {
+        onMouseDown: () => this.props.refresh(()=>{ applySettings({imgControl: !imgControl}) })
+      },
+         "Overlay controls to block and favorite images: ",
+         rel("em", {}, imgControl?"ON":"OFF")
+      ),
+      rel('li', {
+        onMouseDown: () => this.props.refresh(()=>{ applySettings({imgProtect: !imgProtect}) })
+      },
+         "Hide images from low karma accounts: ",
+         rel("em", {}, imgProtect?"ON":"OFF")
+      ),
+      rel("div", {
+        className: "m1",
+        style: { marginBottom: "1em" }      
+      }, "Message Settings"),
+      rel('li', {
+        onMouseDown: () => this.props.refresh(()=>{ applySettings({showInfo: !showInfo}) })
+      },
+         "Show user info (karma,gender,since) on messages: ",
+         rel("em", {}, showInfo?"ON":"OFF")
+      ),
+    );
+  }
+}
+
+// #4. Unified settings dialog
+
+function CustomDialog(props) {
+  const { title, className, content } = props;
+  return rel("div", {
+      key: "custom_menu",
+      className: className
+  }, title, rel(BR), rel(BR), rel(content), rel("div", {
+      className: "ui-menu-buttons"
+  }, rel("div", {
+      onMouseDown: () => MenuReact.close(),
+      className: "ui-button-text"
+  }, "Close")))
+}
+
+class RitsuSettings extends React.Component {
+  r= f => { f?.(); this.setState({i: Math.random()}) }
+  render() {
+    return rel("div", {},
+      rel(Settings, {refresh:this.r}),
+      rel(Themes, {refresh:this.r}),
+      rel(Hacks, {refresh:this.r})
+    );
+  }
+}
+
+function openRitsuDialog() {
+  const element = rel(Menu, null, rel(CustomDialog, { 
+    title: "Ritsu Settings", 
+    className: "ritsu-menu-container", 
+    content: RitsuSettings
   }));
   ReactDOM.render(element, document.getElementById("ui-hatch"))
 }
 
-function injectHacksMenu() {
-  let themesMenu = document.querySelector('.navigation-dropdown-hacks');
-  if (!themesMenu) {
+
+function injectRitsuMenu() {
+  let ritsuMenu = document.querySelector('.navigation-dropdown-ritsu');
+  if (!ritsuMenu) {
     document.querySelector('.navigation-dropdown-content')?.prepend(crel('li', { 
-      className: 'navigation-dropdown-hacks',
-      textContent: 'Hacks',
-      onmousedown: openHacksDialog
+      className: 'navigation-dropdown-ritsu',
+      textContent: 'Ritsu Menu',
+      onmousedown: openRitsuDialog
     }))
-  }
+  }  
 }
 
-// #4. Image control
+// #5. Image control
 
 const knownHashes = {};
 const blockedHashes = {};
@@ -440,14 +578,13 @@ function insertPicture(url) {
   };
   console.log(picture);
   RoomClient.send_picture(picture);
-  // Still not quite right. picture doesn't show correctly to yourself until you rejoin the chat.
 }
 
 function decoratePictures() {
   // add block and save buttons on every image in chat.
   const pics = document.querySelectorAll('.room-component-message-picture-container');
   pics.forEach(async pic => {
-    if (!pic.querySelector('.picture-control')) {
+    if (settings.imgControl && !pic.querySelector('.picture-control')) {
       pic.append(crel('div', {
         className: 'picture-control'
       }));
@@ -498,31 +635,166 @@ function decoratePictures() {
   dialog.insertBefore(imageGrid, buttons);
 }
 
-// #5. Custom Profile fields
+// #6. Custom Profile fields
 
 function decorateProfileDialog() {
   if (!hacks.fancyColors) return;
   const flairLabel = document.querySelector('label.ui-select[for="flair-select"]');
   if (!flairLabel) return;
+  flairLabel.for='flair-select-old';
   if (flairLabel.firstChild.id ==='flair-select') {
     // not replaced yet.
     const newFlairLabel = flairLabel.cloneNode();
+    newFlairLabel.classList.add('disable-after');
     flairLabel.firstChild.id = 'flair-select-old';
-    flairLabel.for='flair-select-old';
     flairLabel.style.display='none';
     const input = crel('input', { 
       id: 'flair-select',
       className: 'alt-flair-select',
-      value: App.user.flair.color
-    })
-    newFlairLabel.append(input);
+      value: App.user.flair.color,
+      onchange: ()=> colorInput.value=input.value
+    });
+    const colorInput = crel('input', {
+      id: 'flair-select',
+      type: 'color',
+      className: 'picker-flair-select',
+      value: App.user.flair.color,
+      onchange: ()=>{
+        input.value=colorInput.value;
+        input.oninput();
+      }
+    });
+    newFlairLabel.append(input, colorInput);
     flairLabel.parentElement.insertBefore(newFlairLabel, flairLabel.nextSibling);
     const event = new Event('change', { bubbles: true });
     input.oninput = () => flairLabel.firstChild.dispatchEvent(event);
   }
 }
 
-// #6. Render Script
+// #7. Arbitrary account lookup (Ritsu claims this is buggy. He lies. Maybe.)
+
+function addLookupButton() {
+  const roomUserLabel = document.querySelector('.room-component-right .room-user-label');
+  if (roomUserLabel) {
+    const anyProfileLink = roomUserLabel.querySelector('.lookup-button');
+    if (!anyProfileLink) {
+      const button = crel('div', {
+        className: 'material-icons navigation-notification-unit lookup-button',
+        textContent: 'face',
+        onclick: () => {
+          if (!win.UserViewReact) {
+            alert('open a user profile once first');
+            return;
+          }
+          const id = prompt('Enter a user id', UserViewReact.state.user.id);
+          if (id) {
+            UserViewReact.state.user.id = id;
+            UserViewReact.view_profile();
+          }
+      }});
+      roomUserLabel.append(button);
+    }
+  }  
+}
+
+// #8. Messages
+
+function decorateMessages() {
+    const messages = document.querySelectorAll('.room-component-message-container');
+  const msgs = RoomClient?.state?.messages;
+  if (msgs?.length) {
+    if (msgs.length!==messages.length) {
+      console.error('message mismatch!', { messages, msgs });
+      return;
+    }
+    for (let i=0;i<msgs.length;i++) {
+      const msgElt = messages[i];
+      const msgFlair = msgElt.querySelector('.room-component-flair');
+      const { messages: lines, user, picture } = msgs[i];
+      if (settings.imgProtect && picture) {
+        const img = msgElt.querySelector('.room-component-message-text')?.firstChild?.firstChild;
+        if (img instanceof Image && (user.temp || user.karma < 10)) {
+          img.remove();
+        }
+      }
+      if (settings.showInfo) {
+        let msgExtra = msgFlair.querySelector('.user-extra');
+        if (!msgExtra) {
+          msgExtra = crel('span', { className: 'user-extra' });
+          msgExtra.append(crel('b', { textContent: '\xa0Karma:\xa0' }));
+          msgExtra.append(crel('span', { textContent: user.karma }));
+          msgExtra.append(crel('b', { textContent: '\xa0Gender:\xa0' }));
+          msgExtra.append(crel('span', {
+            className: 'user-extra-gender',
+            style: `color: ${user.gender=='f'?'pink':user.gender=='m'?'lightblue':'green'}`,
+            textContent: user.gender?.toUpperCase()
+          }));
+          msgExtra.append(crel('b', { textContent: '\xa0Since:\xa0' }));
+          msgExtra.append(crel('span', { textContent: (new Date(user.created_at)).toLocaleDateString() }));
+          if (user.gold) {
+            msgExtra.append(crel('b', { style: 'color: rgb(255,202,0)', textContent: '\xa0GOLD' }));
+          }
+          if (user.master) {
+            msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0CALLAN' }));
+          }
+          if (user.mod) {
+            msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0MOD' }));
+          }
+          msgFlair.append(msgExtra);
+        }
+      } else {
+        msgExtra.innerHTML='';
+      }
+      // clean up Facing Ditto's mess
+      const divs = msgElt.querySelector('.room-component-message-text').childNodes;
+      while (divs.length > lines.length) {
+        divs[0].remove();
+      }
+    }
+  }
+
+}
+
+// #9. Decorate Header
+
+function decorateHeader() {
+  // replace logo
+  const logo = document.querySelector('.main-logo');
+  if (logo && logo.src != GM_info.script.icon) {
+    logo.src = GM_info.script.icon;
+  }
+  // add text next to logo
+  const logoText = document.querySelector('.main-logo-text');
+  if (!logoText) {
+    const { name, version } = GM_info.script;
+    const text = crel('div', {
+      className: 'main-logo-text',
+      textContent: `${name} ${version}`
+    });
+    logo?.parentElement.insertBefore(text, logo?.nextSibling);
+  }
+  // add fullscreen button
+  const iconsHolder = document.querySelector('.navigation-notification-icons');
+  if (document.fullscreenEnabled && iconsHolder?.firstChild?.textContent?.indexOf('full')===-1) {
+    const fullscreenIcon = crel('span', {
+      className: 'material-icons navigation-notification-unit',
+      textContent: 'open_in_full',
+      onmousedown: async () => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+          fullscreenIcon.textContent = 'open_in_full';
+        } else {
+          await document.body.requestFullscreen();
+          fullscreenIcon.textContent = 'close_fullscreen';
+        }
+      }
+    });
+    iconsHolder.prepend(crel('span'));
+    iconsHolder.firstChild.append(fullscreenIcon);
+  }
+}
+
+// #A. Render Script
 
 function reorderMenu() {
   const gold = document.evaluate("//li[text()='Emerald Gold']", document).iterateNext();
@@ -538,58 +810,13 @@ function reorderMenu() {
 function decoratePage() {
   // inject custom interactive elements to access script features
   reorderMenu();
-  injectHacksMenu();
-  injectThemesMenu();
+  injectRitsuMenu();
+  decorateHeader();
   decoratePictures();
   decorateProfileDialog();
+  addLookupButton();
+  decorateMessages();
 
-  const roomUserLabel = document.querySelector('.room-component-right .room-user-label');
-  if (roomUserLabel) {
-    const anyProfileLink = roomUserLabel.querySelector('button');
-    if (!anyProfileLink) {
-      const button = crel('button', {
-        className: 'lookup-button',
-        textContent: 'Lookup',
-        onclick: () => {
-          if (!window.UserViewReact) {
-            alert('open a user profile once first');
-            return;
-          }
-          const id = prompt('Enter a user id', UserViewReact.state.user.id);
-          if (id) {
-            UserViewReact.state.user.id = id;
-            UserViewReact.view_profile();
-          }
-      }});
-      roomUserLabel.append(button);
-    }
-  }
-  
-  const messages = document.querySelectorAll('.room-component-message-container');
-  const msgs = RoomClient?.state?.messages;
-  if (msgs?.length) {
-    if (msgs.length!==messages.length) {
-      console.error('message mismatch!', { messages, msgs });
-      return;
-    }
-    for (let i=0;i<msgs.length;i++) {
-      const msgElt = messages[i];
-      const msgFlair = msgElt.querySelector('.room-component-flair');
-      let msgExtra = msgFlair.querySelector('.user-extra');
-      if (!msgExtra) {
-        msgExtra = crel('span', { className: 'user-extra' });
-        msgFlair.append(msgExtra);
-      }
-      const { messages: lines, user } = msgs[i];
-      const extras = [ user.karma+'', user.gender?.toUpperCase(), (new Date(user.created_at)).toLocaleDateString(), user.gold?'GOLD':null, user.master?'MASTER':null, user.mod?'MOD':null ].filter(v=>!!v).join(' - ');
-      msgExtra.textContent = '  ' + extras;
-      // clean up Facing Ditto's mess
-      const divs = msgElt.querySelector('.room-component-message-text').childNodes;
-      while (divs.length > lines.length) {
-        divs[0].remove();
-      }
-    }
-  }
 }
 
 function refreshRooms() {
@@ -628,7 +855,7 @@ function render() {
   refreshRooms();
 }
   
-// window.onbeforeunload=()=>"";
+// win.onbeforeunload=()=>"";
 
 // document.body.addEventListener('blur', e => {
 //   if (e.target.classList.contains('room-component-input-textarea')) {
