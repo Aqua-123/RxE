@@ -2,11 +2,11 @@
 // @name        New script - emeraldchat.com
 // @namespace   Violentmonkey Scripts
 // @match       https://www.emeraldchat.com/app
-// @grant       none
 // @version     1.0
 // @author      -
 // @grant GM_setValue
 // @grant GM_getValue
+// @grant unsafeWindow
 // @run-at document-end
 // @description 6/18/2021, 12:48:48 AM
 // ==/UserScript==
@@ -30,6 +30,7 @@ function overrideDumbSettings() {
     App.user.mod = true;
     ModPanel.prototype.componentDidMount = function() { this.setState({ tab: 'default' }) }
   }
+  setTimeout(overrideDumbSettings, 1000);
 }
 
 // limited usefulness here so far.
@@ -76,6 +77,13 @@ window.MenuReactMicroStatic = {
   close: () => {}
 };
 
+// fix Audio button so it's persistent as intended
+document.body.addEventListener('mouseup', ({target}) => {
+  if (target.classList.contains('mute-button')) {
+    Cookies.set('muted', MuteButtonClient.state.muted ? 't' : '')
+  }
+});
+
 // #2. Themes
 
 const commonCSS = `
@@ -120,128 +128,105 @@ const commonCSS = `
   display: none;
   position: absolute;
   top: 0;
-  padding: .5em;
-  border: 1px solid black;
-  border-radius: 2px;
-  background: #333;
-  color: red;
   font-size: 2em;
   font-weight: 900;
 }
 .room-component-message-picture:hover + .picture-control, .picture-control:hover {
   display: block;
+  cursor: pointer;
+}
+.picture-button {
+  padding: .5em;
+  border: 1px solid black;
+  border-radius: 2px;
+  background: #333;
+}
+.picture-button.block:hover {
+  color: red;
+}
+.picture-button.save:hover {
+  color: green;
+}
+.image-grid div {
+  display: inline-block;
+  width: 6em;
+  height: 6em;
+  margin: 5px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+.lookup-button {
+  float: right;
+  background: black;
+  padding: 2px;
+  margin-top: -4px;
+}
+`;
+
+const noNagCSS = `
+.emerald-jumbotron-message {
+  display: none;
 }
 `;
 
 // incomplete. "default" should probably stay empty. fix/flesh out themes here.
 const themes = {
   default: ``,
-  dark: `
-.ui-menu.ui-menu {
-  background: #111;
-}
-
-.notification-unit.notification-unit {
-  background: #111;
-}
-
-.navigation-notification-unit.navigation-notification-unit:hover {
-  color: purple;
-}
-
-.notification-unit.notification-unit:hover {
-  background: #333;
-}
-.navigation-dropdown-content.navigation-dropdown-content {
-  background: #111;
-  color: #fea;
-}
-/*
-.side-panel.side-panel { 
-  background: pink;
-}
-.actionicon-mega.actionicon-mega:hover {
-  background: red;
-}
-body>div>nav {
-  background: purple;
-}
-.room-component-left.room-component-left {
-  background: green;
-}
-.room-component-center.room-component-center {
-  background: red;
-}
-.room-component-right.room-component-right {
-  background: blue;
-}
-*/
-.navigation-notification-icons.navigation-notification-icons { 
-  background: transparent;
-} 
+  light: `
+.ui-bg.ui-bg { background: rgba(0,0,0,.5); }
+body { background: #ddd; }
+body>div>nav { background: #bbb; }
+.main-hamburger.main-hamburger { color: #333; }
+.navigation-notification-unit.navigation-notification-unit { color: #333; }
+.side-panel.side-panel { background: #ccc; color: #222; }
+.actionicon-mega.actionicon-mega { color: #333; }
+.actionicon-mega.actionicon-mega:hover { background: #aaa; }
+.navigation-dropdown-content.navigation-dropdown-content { background: #aaa; color: #333; }
+.room-user-label.room-user-label { color: #555; }
+.room-component-left.room-component-left { background: #ccc; }
+.room-component-center.room-component-center { background: #ddd; }
+.room-component-right.room-component-right {  background: #ccc; }
+.room-component-container.room-component-container { color: #333; }
+.room-notification.room-notification { background: #ccc }
+.navigation-notification-icons.navigation-notification-icons { background: #bbb; }
+.user-flair.user-flair { text-shadow: 1px 1px 1px black; }
+.room-component-input.room-component-input { background: #fff; }
+.room-component-input-textarea.room-component-input-textarea { color: #222; }
+.ui-menu.ui-menu { background: #ddd; color: #333; }
+.picture-upload-button.picture-upload-button+label { background: #ccc; color: #444; }
+.ui-button-text.ui-button-text:hover { color: #666; }
+.user-profile-menu.user-profile-menu { background: #ddd; color: #333; }
+.user-profile-tab.user-profile-tab { color: #444; }
+.ui-tab..ui-tab { color: #444; }
+.user-micropost-unit.user-micropost-unit { color: #333; }
+.picture-button, .lookup-button { background: #eee; }
+.themes-menu-container li { color: #666; }
+.themes-menu-container li.selected { color: #222; }
+.themes-menu-container li:hover { background: #fff; }
 `,
   ritsu: `
-body>div>nav {
-  background: black;
-}
-.room-component-left.room-component-left {
-  background: black;
-}
-.room-component-center.room-component-center {
-  background: black;
-}
-.room-component-right.room-component-right {
-  background: black;
-}
-.background-container {
-  background: red;
-}
-.room-component-messages {
-  background: black;
-}
-.room-component-input {
-  background: purple;
-}
-.ui-button-match {
-  background: purple;
-}
-.ui-search
-body.navigation-notification-icons {
-  background: black;
-}
-#container.container {
-  background: black;
-}
-.dashboard-button.animated.zoomIn {
-  background: purple;
-}
-.navigation-notification-icons.navigation-notification-icons {
-  background: transparent;
-}
-.ui-search-box {
-  background: #0b0b0b
-}
-.side-panel.side-panel {
-  background: black;
-}
-.actionicon-mega.actionicon-mega:hover {
-  background: 0b0b0b;
-}
-.ui-menu.ui-menu {
-  background: black
-}
-.ui-menu.ui-menu, .notification-unit.notification-unit {
-  background: #111;
-}
-.ui-interests-bg {
-  background: grey;
-}
-.navigation-notification-unit.navigation-notification-unit:hover {
-  color: purple;
-}
-.navigation-notification-unit {
-  color: red;
-}
+body>div>nav { background: black; }
+.room-component-left.room-component-left { background: black; }
+.room-component-center.room-component-center { background: black; }
+.room-component-right.room-component-right { background: black; }
+.background-container { background: red; }
+.room-component-messages { background: black; }
+.room-component-input { background: purple; }
+.ui-button-match { background: purple; }
+.ui-search body.navigation-notification-icons { background: black; }
+#container.container { background: black; }
+.dashboard-button.animated.zoomIn { background: purple; }
+.navigation-notification-icons.navigation-notification-icons {  background: transparent; }
+.ui-search-box { background: #0b0b0b }
+.side-panel.side-panel { background: black; }
+.actionicon-mega.actionicon-mega:hover { background: 0b0b0b; }
+.ui-menu.ui-menu { background: black }
+.ui-menu.ui-menu, .notification-unit.notification-unit { background: #111; }
+.ui-interests-bg { background: grey; }
+.navigation-notification-unit.navigation-notification-unit:hover { color: purple; }
+.navigation-notification-unit { color: red; }
 `
 };
 
@@ -256,7 +241,7 @@ function applyTheme() {
     }));
     styleSheet = document.head.querySelector('.custom-theme');
   }
-  styleSheet.textContent = commonCSS + themes[currentTheme];
+  styleSheet.textContent = commonCSS + themes[currentTheme] + (hacks.disableNags?noNagCSS:'');
 }
 
 function selectTheme(id) {
@@ -317,7 +302,8 @@ function injectThemesMenu() {
   }
 }
 
-// #3. WTF HAX
+// #3. WTF HAX 
+// note: channel_json
 
 let needsReload = false;
 
@@ -336,7 +322,7 @@ function applyHacks(obj) {
 class Hacks extends React.Component {
   r(f) { f?.(); this.setState({i: Math.random()}) }
   render() {
-    const { disableNags, enableModUI, universalFriend } = hacks;
+    const { disableNags, enableModUI, universalFriend, fancyColors } = hacks;
     return React.createElement("div", {
         style: {
           marginTop: "5px"
@@ -348,7 +334,7 @@ class Hacks extends React.Component {
     React.createElement('li', {
       onMouseDown: () => this.r(()=>{ applyHacks({disableNags: !disableNags}) })
     }, 
-      "Nagging and restrictions on temporary accounts is ",
+      "Nagging and limits on temp accounts is ",
       React.createElement("em", {}, disableNags?'DISABLED':'ENABLED')
     ),
     React.createElement('li', {
@@ -363,7 +349,12 @@ class Hacks extends React.Component {
       "Access to any profile is ",
       React.createElement("em", {}, universalFriend?'ENABLED':'DISABLED')
     ),
-                               
+    React.createElement('li', {
+      onMouseDown: () => this.r(()=>{ applyHacks({fancyColors: !fancyColors}) })
+    }, 
+      "Unusual flair colors are ",
+      React.createElement("em", {}, fancyColors?'ENABLED':'DISABLED')
+    ),                        
     needsReload? React.createElement('div', {
       className: 'hacks-warning'
     }, "You may need to reload the app for your changes to take effect."):null
@@ -395,10 +386,12 @@ function injectHacksMenu() {
 
 const knownHashes = {};
 const blockedHashes = {};
+const savedPictures = [];
 
 function initPictures() {
   const hashes = GM_getValue('blockedPictures', []);
   hashes.forEach(hash => blockedHashes[hash] = true);
+  savedPictures.push(...GM_getValue('savedPictures', []));
 }
 
 async function getHash(str) {
@@ -420,31 +413,157 @@ async function blockPicture(src) {
   decoratePictures();
 }
 
+function savePicture(src) {
+  savedPictures.push(src);
+  GM_setValue('savedPictures', savedPictures);
+}
+
+function insertPicture(url) {
+  const time = (new Date).toISOString()
+  const picture = {
+    author_id: App.user.id,
+    created_at: time,
+    description: null,
+    id: 9550000 + ~~(Math.random()*1e6),
+    image: {
+      thumb: { url },
+      url
+    },
+    image_processing: false,
+    image_tmp: null,
+    micropost_id: null,
+    picture_album_id: null,
+    temporary: false,
+    title: null,
+    updated_at: time,
+    url
+  };
+  console.log(picture);
+  RoomClient.send_picture(picture);
+  // Still not quite right. picture doesn't show correctly to yourself until you rejoin the chat.
+}
+
 function decoratePictures() {
+  // add block and save buttons on every image in chat.
   const pics = document.querySelectorAll('.room-component-message-picture-container');
   pics.forEach(async pic => {
     if (!pic.querySelector('.picture-control')) {
       pic.append(crel('div', {
-        className: 'picture-control',
-        textContent: 'X',
-        onmousedown: e=>blockPicture(e.target.parentElement.firstChild.src)
-      }))
+        className: 'picture-control'
+      }));
+      pic.lastChild.append(crel('div', {
+        className: 'picture-button block material-icons',
+        textContent: 'delete_forever',
+        onmousedown: e=>blockPicture(e.target.parentElement.parentElement.firstChild.src)
+      }));
+      pic.lastChild.append(crel('div', {
+        className: 'picture-button save material-icons',
+        textContent: 'bookmark_border',
+        onmousedown: e=>savePicture(e.target.parentElement.parentElement.firstChild.src)        
+      }));
     }
     const src = pic.firstChild.src;
     const hash = await getHash(src);
     if (blockedHashes[hash]) {
       pic.firstChild.src = '';
     }
-  })
+  });
+  // also look for an Upload Image dialog to populate with saved images
+  const uploadForm = document.querySelector('form#picture_upload');
+  if (!uploadForm) return;
+  const dialog = uploadForm.parentElement;
+  const nagText = dialog.querySelector('.ui-menu-text');
+  if (nagText?.firstChild?.tagName === 'B') {
+    nagText.style.display = 'none';
+  } else {
+    if (nagText) nagText.style.display = '';
+  }
+
+  let imageGrid = dialog.querySelector('.image-grid');
+  if (imageGrid) return;
+  const buttons = dialog.querySelector('.ui-menu-buttons');
+  const closeButton = buttons.firstChild;
+  imageGrid= crel('div', {
+    className: 'image-grid'
+  });
+  savedPictures.forEach(src=> {
+    imageGrid.append(crel('div', { 
+      style: `background-image: url(${encodeURI(src)})`,
+      onmousedown: () => {
+        insertPicture(src);
+        MenuReactMicro.close();
+      }
+    }));
+  });
+  dialog.insertBefore(imageGrid, buttons);
 }
 
-// #5. Render Script
+// #5. Custom Profile fields
+
+function decorateProfileDialog() {
+  if (!hacks.fancyColors) return;
+  const flairLabel = document.querySelector('label.ui-select[for="flair-select"]');
+  if (!flairLabel) return;
+  if (flairLabel.firstChild.id ==='flair-select') {
+    // not replaced yet.
+    const newFlairLabel = flairLabel.cloneNode();
+    flairLabel.firstChild.id = 'flair-select-old';
+    flairLabel.for='flair-select-old';
+    flairLabel.style.display='none';
+    const input = crel('input', { 
+      id: 'flair-select',
+      className: 'alt-flair-select',
+      value: App.user.flair.color
+    })
+    newFlairLabel.append(input);
+    flairLabel.parentElement.insertBefore(newFlairLabel, flairLabel.nextSibling);
+    const event = new Event('change', { bubbles: true });
+    input.oninput = () => flairLabel.firstChild.dispatchEvent(event);
+  }
+}
+
+// #6. Render Script
+
+function reorderMenu() {
+  const gold = document.evaluate("//li[text()='Emerald Gold']", document).iterateNext();
+  if (hacks.disableNags) {
+    gold?.remove();
+  } else {
+    if (gold && gold?.parentElement?.firstChild === gold) {
+      gold.parentElement.append(gold);
+    }
+  }
+}
 
 function decoratePage() {
   // inject custom interactive elements to access script features
+  reorderMenu();
   injectHacksMenu();
   injectThemesMenu();
   decoratePictures();
+  decorateProfileDialog();
+
+  const roomUserLabel = document.querySelector('.room-component-right .room-user-label');
+  if (roomUserLabel) {
+    const anyProfileLink = roomUserLabel.querySelector('button');
+    if (!anyProfileLink) {
+      const button = crel('button', {
+        className: 'lookup-button',
+        textContent: 'Lookup',
+        onclick: () => {
+          if (!window.UserViewReact) {
+            alert('open a user profile once first');
+            return;
+          }
+          const id = prompt('Enter a user id', UserViewReact.state.user.id);
+          if (id) {
+            UserViewReact.state.user.id = id;
+            UserViewReact.view_profile();
+          }
+      }});
+      roomUserLabel.append(button);
+    }
+  }
   
   const messages = document.querySelectorAll('.room-component-message-container');
   const msgs = RoomClient?.state?.messages;
@@ -461,11 +580,37 @@ function decoratePage() {
         msgExtra = crel('span', { className: 'user-extra' });
         msgFlair.append(msgExtra);
       }
-      const { user } = msgs[i];
+      const { messages: lines, user } = msgs[i];
       const extras = [ user.karma+'', user.gender?.toUpperCase(), (new Date(user.created_at)).toLocaleDateString(), user.gold?'GOLD':null, user.master?'MASTER':null, user.mod?'MOD':null ].filter(v=>!!v).join(' - ');
       msgExtra.textContent = '  ' + extras;
+      // clean up Facing Ditto's mess
+      const divs = msgElt.querySelector('.room-component-message-text').childNodes;
+      while (divs.length > lines.length) {
+        divs[0].remove();
+      }
     }
   }
+}
+
+function refreshRooms() {
+  // not working right. needs more work to make sort more stable, and keep current room selected
+  // setInterval(() => {
+  //   $.ajax({
+  //     type: "GET",
+  //     url: "channels_default",
+  //     dataType: "json",
+  //     success: e => {
+  //       RoomChannelSelectClient.setState({
+  //         text_channels: e.text_channels,
+  //         voice_channels: e.voice_channels
+  //       });
+  //       const tmp = RoomChannelSelectClient.join;
+  //       RoomChannelSelectClient.join = ()=>{};
+  //       RoomChannelSelectClient.joinStartingChannel(e.text_channels);
+  //       RoomChannelSelectClient.join = tmp;
+  //     }
+  //   })
+  // }, 60*1000);
 }
 
 function render() {
@@ -479,6 +624,8 @@ function render() {
     childList: true,
   });
   decoratePage();
+  //
+  refreshRooms();
 }
   
 // window.onbeforeunload=()=>"";
