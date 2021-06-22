@@ -10,7 +10,6 @@
 // @grant GM_getValue
 // @grant unsafeWindow
 // @run-at document-end
-// @description 6/18/2021, 12:48:48 AM
 // ==/UserScript==
 
 const win = typeof unsafeWindow !== 'undefined' ? unsafeWindow : window;
@@ -725,27 +724,29 @@ function decorateMessages() {
         let msgExtra = msgFlair.querySelector('.user-extra');
         if (!msgExtra) {
           msgExtra = crel('span', { className: 'user-extra' });
-          msgExtra.append(crel('b', { textContent: '\xa0Karma:\xa0' }));
-          msgExtra.append(crel('span', { textContent: user.karma }));
-          msgExtra.append(crel('b', { textContent: '\xa0Gender:\xa0' }));
-          msgExtra.append(crel('span', {
-            className: 'user-extra-gender',
-            style: `color: ${user.gender=='f'?'pink':user.gender=='m'?'lightblue':'green'}`,
-            textContent: user.gender?.toUpperCase()
-          }));
-          msgExtra.append(crel('b', { textContent: '\xa0Since:\xa0' }));
-          msgExtra.append(crel('span', { textContent: (new Date(user.created_at)).toLocaleDateString() }));
-          if (user.gold) {
-            msgExtra.append(crel('b', { style: 'color: rgb(255,202,0)', textContent: '\xa0GOLD' }));
-          }
-          if (user.master) {
-            msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0CALLAN' }));
-          }
-          if (user.mod) {
-            msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0MOD' }));
-          }
-          msgFlair.append(msgExtra);
+        } else {
+          msgExtra.innerHTML='';
         }
+        msgExtra.append(crel('b', { textContent: '\xa0Karma:\xa0' }));
+        msgExtra.append(crel('span', { textContent: user.karma }));
+        msgExtra.append(crel('b', { textContent: '\xa0Gender:\xa0' }));
+        msgExtra.append(crel('span', {
+          className: 'user-extra-gender',
+          style: `color: ${user.gender=='f'?'pink':user.gender=='m'?'lightblue':'green'}`,
+          textContent: user.gender?.toUpperCase()
+        }));
+        msgExtra.append(crel('b', { textContent: '\xa0Since:\xa0' }));
+        msgExtra.append(crel('span', { textContent: (new Date(user.created_at)).toLocaleDateString() }));
+        if (user.gold) {
+          msgExtra.append(crel('b', { style: 'color: rgb(255,202,0)', textContent: '\xa0GOLD' }));
+        }
+        if (user.master) {
+          msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0CALLAN' }));
+        }
+        if (user.mod) {
+          msgExtra.append(crel('b', { style: 'color: rgb(255,0,0)', textContent: '\xa0MOD' }));
+        }
+        msgFlair.append(msgExtra);
       } else {
         msgExtra.innerHTML='';
       }
@@ -822,7 +823,9 @@ function decoratePage() {
   decorateMessages();
 
   // ad block
-  document.querySelectorAll('iframe:not([src*="captcha"])').forEach(iframe=>iframe.remove());
+  if (hacks.disableNags) {
+    document.querySelectorAll('iframe:not([src*="captcha"])').forEach(iframe=>iframe.remove());
+  }
 }
 
 function refreshRooms() {
