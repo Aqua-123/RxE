@@ -92,6 +92,10 @@ const commonCSS = `
 }
 
 /* settings dialog */
+.ritsu-menu-container {
+  height: calc(100% - 46px);
+  overflow: auto;
+}
 .ritsu-menu-container li {
   padding: 0.5em;
   color: #aaa;
