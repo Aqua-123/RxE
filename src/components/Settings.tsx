@@ -1,0 +1,34 @@
+import React from "react";
+import { SettingsDialogSettings } from "./SettingsDialog";
+import CheckboxSetting from "./CheckboxSetting";
+import T from "~src/text";
+import styles from "./style.module.scss";
+
+type SettingsProps = SettingsDialogSettings & {
+  applySettings(obj: Partial<SettingsDialogSettings>): void;
+};
+
+export default function Settings(props: SettingsProps) {
+  const { imgControl, imgProtect, showInfo, applySettings } = props;
+  return (
+    <div>
+      <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
+      <CheckboxSetting
+        id="imgControl"
+        value={imgControl}
+        onChange={() => applySettings({ imgControl: !imgControl })}
+      />
+      <CheckboxSetting
+        id="imgProtect"
+        value={imgProtect}
+        onChange={() => applySettings({ imgProtect: !imgProtect })}
+      />
+      <div className={`m1 ${styles.settingsSection}`}>{T.messageTitle}</div>
+      <CheckboxSetting
+        id="showInfo"
+        value={showInfo}
+        onChange={() => applySettings({ showInfo: !showInfo })}
+      />
+    </div>
+  );
+}

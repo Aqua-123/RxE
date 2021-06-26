@@ -1,0 +1,77 @@
+/* mixed bag of CSS rules that should probably be moved closer to their respective modules */
+/* hide broken search */
+.actionicon-mega:last-child {
+  display: none;
+}
+
+/* hide quasi-ad */
+.emerald-jumbotron-message {
+  display: none;
+}
+
+/* picture overlay button */
+.room-component-message-picture-container {
+  position: relative;
+}
+.picture-control {
+  display: none;
+  position: absolute;
+  top: 0;
+  font-size: 2em;
+  font-weight: 900;
+}
+.room-component-message-picture:hover + .picture-control,
+.picture-control:hover {
+  display: block;
+  cursor: pointer;
+}
+.picture-button {
+  padding: 0.5em;
+  border: 1px solid var(--app-fg-color);
+  border-radius: 2px;
+  background: var(--app-bg-color);
+  color: var(--app-fg-color);
+}
+.picture-button.block:hover {
+  color: red;
+}
+.picture-button.save:hover {
+  color: green;
+}
+.image-grid div {
+  display: inline-block;
+  width: 6em;
+  height: 6em;
+  margin: 5px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+.lookup-button {
+  float: right;
+  padding: 2px;
+  margin-top: -4px;
+}
+.disable-after::after {
+  content: "";
+  display: none;
+}
+.picker-flair-select {
+  height: 3em !important;
+  vertical-align: bottom;
+}
+.navigation-dropdown-ritsu {
+  color: #f965fec4;
+}
+.main-logo-text {
+  display: inline-block;
+  line-height: 14px;
+  height: 32px;
+  vertical-align: middle;
+  font-size: 1.3em;
+  padding-left: 0.5em;
+}
+.user-extra {
+  padding-left: 5em;
+}

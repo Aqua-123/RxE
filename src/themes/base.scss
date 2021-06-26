@@ -1,0 +1,150 @@
+:root {
+  --ritsu-hair-color: #f965fec4;
+  --ritsu-hair-dark-color: #b821bd;
+}
+body > div > nav {
+  background: var(--header-bg-color);
+}
+.room-component-left.room-component-left {
+  background: var(--roomlist-bg-color);
+}
+.room-component-center.room-component-center {
+  background: var(--chat-bg-color);
+}
+.room-component-right.room-component-right {
+  background: var(--userlist-bg-color);
+}
+.room-component-messages {
+  background: var(--chat-bg-color);
+}
+.room-notification.room-notification {
+  background: var(--chat-bg-color);
+}
+.room-component-input {
+  background: var(--input-bg-color);
+}
+.room-component-input-textarea.room-component-input-textarea {
+  color: var(--input-fg-color);
+}
+.ui-button-match {
+  background: var(--input-bg-color);
+}
+#container {
+  background: var(--app-bg-color);
+}
+.room-component-container.room-component-container {
+  color: var(--app-fg-color);
+}
+.dashboard-button.animated.zoomIn {
+  background: var(--dashboard-button-bg-color);
+}
+.navigation-notification-icons.navigation-notification-icons {
+  background: transparent;
+}
+.ui-search-box {
+  background: var(--search-bg-color);
+}
+.side-panel.side-panel {
+  background: var(--panel-bg-color);
+}
+.actionicon-mega.actionicon-mega {
+  color: var(--panel-fg-color);
+}
+.actionicon-mega.actionicon-mega:hover {
+  background: var(--item-hover-bg-color);
+}
+.ui-bg.ui-bg {
+  background: var(--dialog-overlay-bg-color);
+}
+.ui-menu.ui-menu,
+.notification-unit.notification-unit {
+  background: var(--dialog-bg-color);
+  color: var(--dialog-fg-color);
+}
+.ui-interests-bg.ui-interests-bg {
+  background: var(--interests-bg-color) !important;
+}
+.navigation-notification-unit.navigation-notification-unit:hover {
+  background: var(--header-hover-bg-color);
+  color: var(--header-hover-fg-color);
+}
+.navigation-notification-unit {
+  color: var(--header-fg-color);
+}
+.navigation-dropdown-content.navigation-dropdown-content {
+  background: var(--menu-bg-color);
+  color: var(--menu-fg-color);
+}
+.dashboard-icon.dashboard-icon {
+  color: var(--dashboard-icon-fg-color);
+}
+.dashboard-button.dashboard-button:hover {
+  color: var(--dashboard-hover-fg-color);
+  background: var(--dashboard-hover-bg-color);
+}
+.actionicon-icon.actionicon-icon {
+  color: var(--dashboard-icon-fg-color);
+}
+.main-hamburger.main-hamburger {
+  color: var(--header-fg-color);
+}
+.main-hamburger.main-hamburger:hover,
+.main-logo.main-logo:hover {
+  background: var(--header-hover-bg-color) !important;
+  color: var(--header-hover-fg-color);
+}
+.user-profile-menu.user-profile-menu {
+  background: var(--dialog-bg-color);
+}
+.user-micropost-input-background.user-micropost-input-background {
+  background: var(--dialog-input-bg-color);
+}
+.ui-button-micro.ui-button-micro {
+  background: var(--dialog-button-bg-color);
+  color: var(--dialog-button-fg-color);
+}
+.user-profile-tab.user-profile-tab,
+.ui-tab.ui-tab {
+  color: var(--tab-fg-color);
+}
+.user-profile-tab-active.user-profile-tab-active,
+.ui-tab-active.ui-tab-active {
+  color: var(--tab-active-fg-color);
+}
+.ui-button-mega.ui-button-mega:hover {
+  background: var(--dialog-button-hover-bg-color);
+  color: var(--dialog-button-hover-fg-color);
+}
+.ui-button-mega.ui-button-mega {
+  background: var(--dialog-button-bg-color);
+  color: var(--dialog-button-fg-color);
+}
+.ui-input.ui-input {
+  background: var(--dialog-input-bg-color) !important;
+}
+.dashboard-card-image.dashboard-card-image {
+  border-color: var(--dashboard-icon-fg-color);
+}
+.user-comment-input-background.user-comment-input-background {
+  background: var(--dialog-input-bg-color);
+}
+.room-component-left .room-user-label {
+  color: var(--roomlist-title-fg-color);
+}
+.room-component-right .room-user-label {
+  color: var(--userlist-title-fg-color);
+}
+.picture-upload-button.picture-upload-button + label {
+  background: var(--upload-button-bg-color);
+  color: var(--upload-button-fg-color);
+}
+
+.main-logo-text {
+  color: var(--menu-fg-color);
+}
+.navigation-dropdown-ritsu {
+  color: var(--ritsu-menu-fg-color);
+}
+.navigation-dropdown-ritsu:hover {
+  color: var(--ritsu-menu-hover-fb-color);
+}

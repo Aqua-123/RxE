@@ -1,0 +1,43 @@
+:root {
+  --header-bg-color: #100f10;
+  --header-hover-bg-color: #3d4046;
+  --app-bg-color: black;
+  --dialog-bg-color: #111;
+  --dialog-overlay-bg-color: rgba(0, 0, 0, 0.93);
+  --dialog-button-bg-color: #17191b;
+  --dialog-button-hover-bg-color: #151515;
+  --dialog-input-bg-color: #17191b;
+  --dashboard-button-bg-color: #100f10;
+  --dashboard-hover-bg-color: #33323270;
+  --roomlist-bg-color: black;
+  --chat-bg-color: black;
+  --userlist-bg-color: black;
+  --input-bg-color: #211f21;
+  --search-bg-color: #0b0b0b;
+  --panel-bg-color: #0c0c0c;
+  --item-hover-bg-color: #35383e;
+  --interests-bg-color: #2c2f35;
+  --menu-bg-color: #0a0a0a;
+  --upload-button-bg-color: #41444a;
+  // --picture-upload-button + label: #100f10;
+
+  --header-fg-color: white;
+  --header-hover-fg-color: var(--ritsu-hair-color);
+  --app-fg-color: #bebfc5;
+  --dialog-fg-color: #f1f1f2;
+  --dialog-button-fg-color: #d5dcec;
+  --dialog-button-hover-fg-color: var(--ritsu-hair-color);
+  --dashboard-icon-fg-color: var(--ritsu-hair-color);
+  --dashboard-hover-fg-color: var(--ritsu-hair-color);
+  --roomlist-title-fg-color: #99a3b4;
+  --userlist-title-fg-color: #99a3b4;
+  --tab-fg-color: #c2c8d6;
+  --tab-active-fg-color: var(--ritsu-hair-color);
+  --input-fg-color: #caccd0;
+  --panel-fg-color: white;
+  --menu-fg-color: white;
+  --upload-button-fg-color: #b4bccc;
+
+  --ritsu-menu-fg-color: var(--ritsu-hair-color);
+  --ritsu-menu-hover-fb-color: var(--ritsu-hair-color);
+}
