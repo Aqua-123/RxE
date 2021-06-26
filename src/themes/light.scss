@@ -1,0 +1,71 @@
+:root {
+  --header-bg-color: #bbb;
+  --header-hover-bg-color: #aaa;
+  --app-bg-color: #ddd;
+  --dialog-bg-color: #ddd;
+  --dialog-overlay-bg-color: rgba(0, 0, 0, 0.5);
+  --dialog-button-bg-color: #cfdeec;
+  --dialog-button-hover-bg-color: #f0f0f0;
+  --dialog-input-bg-color: #cfdeec;
+  --dashboard-button-bg-color: #f0e4f0;
+  --dashboard-hover-bg-color: #cfcdcd70;
+  --roomlist-bg-color: #ccc;
+  --chat-bg-color: #ddd;
+  --userlist-bg-color: #ccc;
+  --input-bg-color: #fff;
+  --search-bg-color: #f7f7f7;
+  --panel-bg-color: #ccc;
+  --item-hover-bg-color: #a3adc0;
+  --interests-bg-color: #aab6ce;
+  --menu-bg-color: #aaa;
+  --upload-button-bg-color: #ccc;
+
+  --header-fg-color: #333;
+  --header-hover-fg-color: var(--ritsu-hair-dark-color);
+  --app-fg-color: #333;
+  --dialog-fg-color: #333;
+  --dialog-button-fg-color: #000;
+  --dialog-button-hover-fg-color: var(--ritsu-hair-dark-color);
+  --dashboard-icon-fg-color: var(--ritsu-hair-dark-color);
+  --dashboard-hover-fg-color: var(--ritsu-hair-dark-color);
+  --roomlist-title-fg-color: #555;
+  --userlist-title-fg-color: #555;
+  --tab-fg-color: #444;
+  --tab-active-fg-color: var(--ritsu-hair-dark-color);
+  --input-fg-color: #222;
+  --panel-fg-color: #333;
+  --menu-fg-color: #333;
+  --upload-button-fg-color: #444;
+
+  --ritsu-menu-fg-color: var(--ritsu-hair-dark-color);
+  --ritsu-menu-hover-fb-color: var(--ritsu-hair-color);
+}
+.user-flair.user-flair,
+.user-extra-gender {
+  text-shadow: 1px 1px 1px black;
+}
+
+/* TODO: Merge the rules below into the scaffold */
+.actionicon-mega.actionicon-mega:hover {
+  background: #aaa;
+}
+.ui-button-text.ui-button-text:hover {
+  color: #666;
+}
+.user-profile-menu.user-profile-menu {
+  background: #ddd;
+  color: #333;
+}
+.user-micropost-unit.user-micropost-unit {
+  color: #333;
+}
+
+.ritsu-menu-container li {
+  color: #666;
+}
+.ritsu-menu-container li.selected {
+  color: #222;
+}
+.ritsu-menu-container li:hover {
+  background: #fff;
+}
