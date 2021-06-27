@@ -40,7 +40,8 @@ const config = {
 };
 config.plugins!.unshift(
   new webpack.DefinePlugin({
-    "process.env.HACKS": JSON.stringify(process.env.HACKS ?? "OFF")
+    "FEATURES.HACKS": JSON.stringify(!!process.env.HACKS ?? false),
+    "FEATURES.P2P": JSON.stringify(!!process.env.P2P ?? false)
   })
 );
 

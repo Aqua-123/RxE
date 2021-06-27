@@ -35,7 +35,7 @@ export default class SettingsDialog extends React.Component<
     super({});
     this.state = {
       theme: Preferences.get(P.theme) as Theme,
-      ...(process.env.HACKS !== "OFF" && {
+      ...(FEATURES.HACKS && {
         hacks: {
           disableNags: Preferences.get(P.disableNags!),
           enableModUI: Preferences.get(P.enableModUI!),
@@ -51,7 +51,7 @@ export default class SettingsDialog extends React.Component<
       needsReload: false
     } as SettingsDialogState;
 
-    if (process.env.HACKS !== "OFF") {
+    if (FEATURES.HACKS) {
       this.applyHacks = (obj: SettingsDialogHacks) => {
         const hacks = { ...this.state.hacks, ...obj };
         const keys = Object.keys(obj);
@@ -82,7 +82,7 @@ export default class SettingsDialog extends React.Component<
         {/* <style type="text/css">{styles.toString()}</style> */}
         <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
-        {process.env.HACKS !== "OFF" && (
+        {FEATURES.HACKS && (
           <HacksView {...this.state.hacks} applyHacks={this.applyHacks} />
         )}
         {needsReload && (
