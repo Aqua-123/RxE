@@ -10,7 +10,10 @@ export default function(_: BuildConfig): Metadata {
     description: U.description,
     author: U.author,
     icon: U.icon,
-    match: [`*://${U.hostname}/*`, `*://www.${U.hostname}/*`],
+    match: [
+      `*://${U.hostname}/${U.path ?? "*"}`,
+      `*://www.${U.hostname}/${U.path ?? "*"}`
+    ],
     namespace: U.namespace,
     run_at: U.runAt
   };
