@@ -1,0 +1,10 @@
+import { ValidationError, Warning } from "userscript-metadata";
+import { BuildConfig, EnvVarError } from "./configuration";
+import { BuildConfigError } from "./validation";
+export declare const envVarError: (e: EnvVarError) => string;
+export declare const buildConfigError: (e: BuildConfigError<keyof BuildConfig>) => string;
+export declare const oneOf: (xs: readonly string[]) => string;
+export declare const metadataWarning: import("@typed/compose").Arity1<Warning, string>;
+export declare const metadataError: import("@typed/compose").Arity1<ValidationError, string>;
+export declare const quote: (s: string) => string;
+export declare const compilationAssetNotFound: (assetName: string) => string;
