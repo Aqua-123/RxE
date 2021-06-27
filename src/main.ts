@@ -4,7 +4,7 @@ import U from "~src/userscript";
 
 import { useTheme } from "./themes";
 import { accountOverrides } from "./modules/accountoverrides";
-import { initPictures } from "./modules/pictures";
+import { fixAppendPictures, initPictures } from "./modules/pictures";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
 import { injectRitsuMenu } from "./modules/ritsumenu";
@@ -17,7 +17,7 @@ import { removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
 
 function init() {
-  log.log(`Version ${U.version}`);
+  log.log(`${U.name} Version ${U.version}`);
   // override some builtin behavior
   accountOverrides();
   // inject network middleware
@@ -35,7 +35,8 @@ function init() {
     decorateProfileDialog,
     addLookupButton,
     decorateMessages,
-    removeAds
+    removeAds,
+    fixAppendPictures
   ]);
 }
 

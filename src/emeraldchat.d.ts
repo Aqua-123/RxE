@@ -54,7 +54,9 @@ declare type EmeraldPicture = {
   url: string;
 };
 
-declare const RoomClient: {
+declare const RoomClient: Room;
+
+declare class Room {
   state: {
     messages: {
       messages: string[];
@@ -71,7 +73,9 @@ declare const RoomClient: {
     }[];
   };
   send_picture(picture: EmeraldPicture): void;
-};
+  append(e: any): void;
+  _append?: (e: any) => void;
+}
 
 declare const MenuReactMicro: {
   close: Function;

@@ -8,7 +8,6 @@ export function removeAds() {
         'iframe:not([src*="captcha"]):not([src*="youtube"]):not([src*="about:blank"])'
       )
       .forEach(iframe => {
-        console.log("removing iframe:", iframe);
         iframe.remove();
       });
   }

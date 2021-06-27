@@ -145,3 +145,18 @@ export function decoratePictures() {
   });
   dialog.insertBefore(newImageGrid, buttons);
 }
+
+/**
+ * For some reason, pictures we send don't render for ourselves initially.
+ * Setting e.messages to [""] fixes that, although I don't know why yet.
+ */
+export function fixAppendPictures() {
+  if (!RoomClient) return;
+  if (RoomClient._append && RoomClient._append !== RoomClient.append) return;
+  RoomClient.append = function(e) {
+    if (e.messages.length == 0) e.messages.push("");
+    return this._append!(e);
+  };
+  if (Room && Room.prototype._append) return;
+  Room.prototype._append = Room.prototype.append;
+}
