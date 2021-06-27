@@ -6,6 +6,7 @@ import {
   DEFAULT_METADATA_SCHEMA
 } from "./lib/userscripter/src/build";
 
+import MANIFEST from "./manifest";
 import METADATA from "./metadata";
 import * as CONFIG from "./src/config";
 import * as SITE from "./src/site";
@@ -21,6 +22,7 @@ const config = {
       }),
       sassVariables: { CONFIG, SITE }
     },
+    manifest: MANIFEST,
     metadata: METADATA,
     metadataSchema: DEFAULT_METADATA_SCHEMA,
     env: process.env
@@ -32,6 +34,7 @@ const config = {
   devServer: {
     contentBase: require("path").join(AppRootPath.path, "dist"),
     compress: true,
+    liveReload: false,
     port: 9001
   }
 };

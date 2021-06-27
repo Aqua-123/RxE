@@ -5,7 +5,7 @@ export default {
   description: "Custom Emerald Chat themes and fixes.",
   icon:
     "https://static.emeraldchat.com/uploads/picture/image/9529291/Ritsu_Icon.png",
-  author: "The authors",
+  author: "Fxkleti, Atsos/Ritsu, Aqua, Strawberry.",
   hostname: "emeraldchat.com",
   path: "app",
   sitename: "Emerald Chat",
