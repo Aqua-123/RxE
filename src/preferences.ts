@@ -18,7 +18,7 @@ export const P = {
     default: "default",
     multiline: false
   }),
-  ...(process.env.HACKS !== "OFF" && {
+  ...(FEATURES.HACKS && {
     disableNags: new BooleanPreference({
       key: "disableNags",
       label: T.preferences.disableNags!.label,

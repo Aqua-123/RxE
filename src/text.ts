@@ -12,7 +12,7 @@ export default {
       label: "Theme",
       description: "Reskin the chat"
     },
-    ...(process.env.HACKS !== "OFF" && {
+    ...(FEATURES.HACKS && {
       disableNags: {
         label: "Remove ads, nagging and limits on temp accounts"
       },

@@ -5,7 +5,7 @@ function isFunction<T>(f: Function | T): f is Function {
 }
 
 export function initNetwork() {
-  if (process.env.HACKS === "OFF") return;
+  if (!FEATURES.HACKS) return;
   const $ajax = $.ajax;
   $.ajax = ((settings?: JQuery.AjaxSettings<any> | undefined) => {
     if (!settings) return $ajax(settings);
