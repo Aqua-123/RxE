@@ -75,3 +75,9 @@
 .user-extra {
   padding-left: 5em;
 }
+
+/* simple theme switching transition */
+/* kept outside of base.scsss so it can transition to/from default theme */
+body.themeChange * {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
