@@ -68,8 +68,10 @@ export default class SettingsDialog extends React.Component<
   };
   applyTheme = (theme: Theme) => {
     Preferences.set(P.theme, theme);
+    document.body.classList.add("themeChange");
     useTheme();
     this.setState({ theme });
+    setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
   applyHacks!: (obj: SettingsDialogHacks) => void;
   render() {
