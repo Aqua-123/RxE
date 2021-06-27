@@ -12,7 +12,7 @@ export default function CheckboxSetting(props: CheckboxSettingProps) {
   return (
     <div>
       <input type="checkbox" id={id} checked={value} onChange={onChange} />
-      <label htmlFor={id}>{P[id].label}</label>
+      <label htmlFor={id}>{P[id]!.label}</label>
     </div>
   );
 }

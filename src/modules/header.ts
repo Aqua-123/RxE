@@ -9,14 +9,18 @@ export function decorateHeader() {
     logo.src = U.icon;
   }
   // set favicon
-  const favicon = crel("link", {
-    rel: "icon",
-    href: U.icon
-  });
-  document.head.prepend(favicon);
+  if (!document.head.querySelector(`link[rel="icon"][href="${U.icon}"]`)) {
+    const favicon = crel("link", {
+      rel: "icon",
+      href: U.icon
+    });
+    document.head.prepend(favicon);
+  }
   // set title
   const title = `${U.name} ${U.version}`;
-  document.title = title;
+  if (document.title !== title) {
+    document.title = title;
+  }
   // add text next to logo
   const logoText = document.querySelector(".main-logo-text");
   if (!logoText) {

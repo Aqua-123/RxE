@@ -35,19 +35,30 @@ export default class SettingsDialog extends React.Component<
     super({});
     this.state = {
       theme: Preferences.get(P.theme) as Theme,
-      hacks: {
-        disableNags: Preferences.get(P.disableNags),
-        enableModUI: Preferences.get(P.enableModUI),
-        universalFriend: Preferences.get(P.universalFriend),
-        fancyColors: Preferences.get(P.fancyColors)
-      },
+      ...(process.env.HACKS !== "OFF" && {
+        hacks: {
+          disableNags: Preferences.get(P.disableNags!),
+          enableModUI: Preferences.get(P.enableModUI!),
+          universalFriend: Preferences.get(P.universalFriend!),
+          fancyColors: Preferences.get(P.fancyColors!)
+        }
+      }),
       settings: {
         imgControl: Preferences.get(P.imgControl),
         imgProtect: Preferences.get(P.imgProtect),
         showInfo: Preferences.get(P.showInfo)
       },
       needsReload: false
-    };
+    } as SettingsDialogState;
+
+    if (process.env.HACKS !== "OFF") {
+      this.applyHacks = (obj: SettingsDialogHacks) => {
+        const hacks = { ...this.state.hacks, ...obj };
+        const keys = Object.keys(obj);
+        keys.forEach(key => Preferences.set(P[key]!, obj[key]));
+        this.setState({ hacks, needsReload: true });
+      };
+    }
   }
   applySettings = (obj: SettingsDialogSettings) => {
     const settings = { ...this.state.settings, ...obj };
@@ -60,21 +71,18 @@ export default class SettingsDialog extends React.Component<
     useTheme();
     this.setState({ theme });
   };
-  applyHacks = (obj: SettingsDialogHacks) => {
-    const hacks = { ...this.state.hacks, ...obj };
-    const keys = Object.keys(obj);
-    keys.forEach(key => Preferences.set(P[key], obj[key]));
-    this.setState({ hacks, needsReload: true });
-  };
+  applyHacks!: (obj: SettingsDialogHacks) => void;
   render() {
-    const { theme, settings, hacks, needsReload } = this.state;
+    const { theme, settings, needsReload } = this.state;
     console.log("styles=", styles);
     return (
       <div>
         {/* <style type="text/css">{styles.toString()}</style> */}
         <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
-        <HacksView {...hacks} applyHacks={this.applyHacks} />
+        {process.env.HACKS !== "OFF" && (
+          <HacksView {...this.state.hacks} applyHacks={this.applyHacks} />
+        )}
         {needsReload && (
           <div className={styles.reloadWarning}>
             You may need to reload the app for your changes to take effect.

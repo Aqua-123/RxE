@@ -2,9 +2,12 @@ import { P, Preferences } from "~src/preferences";
 
 export function removeAds() {
   // ad block
-  if (Preferences.get(P.disableNags)) {
+  if (process.env.HACKS != "OFF" && Preferences.get(P.disableNags!)) {
     document
-      .querySelectorAll('iframe:not([src*="captcha"])')
-      .forEach(iframe => iframe.remove());
+      .querySelectorAll('iframe:not([src*="captcha"]):not([src*="youtube"])')
+      .forEach(iframe => {
+        console.log("removing iframe:", iframe);
+        iframe.remove();
+      });
   }
 }

@@ -12,18 +12,20 @@ export default {
       label: "Theme",
       description: "Reskin the chat"
     },
-    disableNags: {
-      label: "Remove ads, nagging and limits on temp accounts"
-    },
-    enableModUI: {
-      label: "Enable non-functional Moderator interface"
-    },
-    universalFriend: {
-      label: "Access any profile"
-    },
-    fancyColors: {
-      label: "Use any color for your flair"
-    },
+    ...(process.env.HACKS !== "OFF" && {
+      disableNags: {
+        label: "Remove ads, nagging and limits on temp accounts"
+      },
+      enableModUI: {
+        label: "Enable non-functional Moderator interface"
+      },
+      universalFriend: {
+        label: "Access any profile"
+      },
+      fancyColors: {
+        label: "Use any color for your flair"
+      }
+    }),
     imgControl: {
       label: "Overlay controls to block and favorite images"
     },

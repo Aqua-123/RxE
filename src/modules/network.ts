@@ -5,6 +5,7 @@ function isFunction<T>(f: Function | T): f is Function {
 }
 
 export function initNetwork() {
+  if (process.env.HACKS === "OFF") return;
   const $ajax = $.ajax;
   $.ajax = ((settings?: JQuery.AjaxSettings<any> | undefined) => {
     if (!settings) return $ajax(settings);
@@ -27,7 +28,7 @@ export function initNetwork() {
             xhr: JQuery.jqXHR
           ) => {
             if (
-              Preferences.get(P.universalFriend) &&
+              Preferences.get(P.universalFriend!) &&
               settings.url?.startsWith("/profile_json?")
             ) {
               e.friend = true;

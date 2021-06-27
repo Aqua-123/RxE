@@ -1,4 +1,5 @@
 import * as AppRootPath from "app-root-path";
+import webpack from "webpack";
 import {
   createWebpackConfig,
   DEFAULT_BUILD_CONFIG,
@@ -34,5 +35,10 @@ const config = {
     port: 9001
   }
 };
+config.plugins!.unshift(
+  new webpack.DefinePlugin({
+    "process.env.HACKS": JSON.stringify(process.env.HACKS ?? "OFF")
+  })
+);
 
 export default config;
