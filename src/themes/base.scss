@@ -99,6 +99,9 @@ body > div > nav {
 .user-micropost-input-background.user-micropost-input-background {
   background: var(--dialog-input-bg-color);
 }
+.user-micropost-input.user-micropost-input {
+  color: var(--dialog-input-fg-color);
+}
 .ui-button-micro.ui-button-micro {
   background: var(--dialog-button-bg-color);
   color: var(--dialog-button-fg-color);
@@ -127,6 +130,9 @@ body > div > nav {
 }
 .user-comment-input-background.user-comment-input-background {
   background: var(--dialog-input-bg-color);
+}
+.user-comment-input.user-comment-input {
+  color: var(--dialog-input-fg-color);
 }
 .room-component-left .room-user-label {
   color: var(--roomlist-title-fg-color);

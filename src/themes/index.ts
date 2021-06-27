@@ -21,7 +21,7 @@ export function useTheme() {
     );
     styleSheet = document.head.querySelector(".custom-theme")!;
   }
-  let css = otherCSS; // TODO: baseCSS + (Preferences.get(P.disableNags) ? noNagCSS : "");
+  let css = otherCSS;
   switch (theme) {
     case "default":
     default:

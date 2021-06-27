@@ -18,25 +18,27 @@ export const P = {
     default: "default",
     multiline: false
   }),
-  disableNags: new BooleanPreference({
-    key: "disableNags",
-    label: T.preferences.disableNags.label,
-    default: true
-  }),
-  enableModUI: new BooleanPreference({
-    key: "enableModUI",
-    label: T.preferences.enableModUI.label,
-    default: false
-  }),
-  universalFriend: new BooleanPreference({
-    key: "universalFriend",
-    label: T.preferences.universalFriend.label,
-    default: true
-  }),
-  fancyColors: new BooleanPreference({
-    key: "fancyColors",
-    label: T.preferences.fancyColors.label,
-    default: true
+  ...(process.env.HACKS !== "OFF" && {
+    disableNags: new BooleanPreference({
+      key: "disableNags",
+      label: T.preferences.disableNags!.label,
+      default: true
+    }),
+    enableModUI: new BooleanPreference({
+      key: "enableModUI",
+      label: T.preferences.enableModUI!.label,
+      default: false
+    }),
+    universalFriend: new BooleanPreference({
+      key: "universalFriend",
+      label: T.preferences.universalFriend!.label,
+      default: true
+    }),
+    fancyColors: new BooleanPreference({
+      key: "fancyColors",
+      label: T.preferences.fancyColors!.label,
+      default: true
+    })
   }),
   imgControl: new BooleanPreference({
     key: "imgControl",

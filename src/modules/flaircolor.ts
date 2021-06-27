@@ -2,7 +2,8 @@ import { P, Preferences } from "~src/preferences";
 import { crel } from "~src/utils";
 
 export function decorateProfileDialog() {
-  if (!Preferences.get(P.fancyColors)) return;
+  if (process.env.HACKS === "OFF") return;
+  if (!Preferences.get(P.fancyColors!)) return;
   const flairLabel = document.querySelector<HTMLLabelElement>(
     'label.ui-select[for="flair-select"]'
   );
