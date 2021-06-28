@@ -1,5 +1,6 @@
 import * as AppRootPath from "app-root-path";
 import webpack from "webpack";
+import WebpackDevServer from "webpack-dev-server";
 import {
   createWebpackConfig,
   DEFAULT_BUILD_CONFIG,
@@ -12,7 +13,7 @@ import * as CONFIG from "./src/config";
 import * as SITE from "./src/site";
 import U from "./src/userscript";
 
-const config = {
+const config: webpack.Configuration = {
   ...createWebpackConfig({
     buildConfig: {
       ...DEFAULT_BUILD_CONFIG({
@@ -32,10 +33,26 @@ const config = {
     "react-dom": "ReactDOM"
   },
   devServer: {
-    contentBase: require("path").join(AppRootPath.path, "dist"),
-    compress: true,
     liveReload: false,
-    port: 9001
+    port: 9001,
+    open: true,
+    before: app =>
+      app.get("/", (req, res) =>
+        res.send(`
+        <h1>${U.name} Dev Server</h1>
+        <h3>Feature flags enabled: 
+          ${!!process.env.HACKS ? "HACKS" : ""}
+          ${!!process.env.P2P ? "P2P" : ""}
+        </h3>
+        <a href='${U.id}.user.js'
+        style="display:inline-block;border:1px outset #aaa;background: #eee;border-radius: 5px;padding: .5em;font-weight: 600;color: #b821bd;text-decoration: none;">
+        <img width="48" referrerPolicy="no-referrer" 
+        src="${U.icon}" valign="middle">
+        Install UserScript</a>
+        <iframe src="/${U.id}.meta.js" 
+        style="border:0;width:100%;height:200px"/>
+      `)
+      )
   }
 };
 config.plugins!.unshift(
