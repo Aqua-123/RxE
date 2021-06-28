@@ -157,7 +157,9 @@ export function createWebpackConfig(
             {
               loader: require.resolve("css-loader"),
               options: {
-                modules: true
+                modules: {
+                  exportLocalsConvention: "camelCaseOnly"
+                }
               }
             },
             {
@@ -187,10 +189,7 @@ export function createWebpackConfig(
               loader: require.resolve("css-loader"),
               options: {
                 sourceMap: false,
-                esModule: false,
-                modules: {
-                  localIdentName: "[local]"
-                }
+                esModule: false
               }
             },
             {
