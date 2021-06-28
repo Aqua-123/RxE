@@ -32,6 +32,9 @@ export default {
     imgProtect: {
       label: "Hide images from low karma accounts"
     },
+    imgBlur: {
+      label: "Blur all user images until hovered"
+    },
     showInfo: {
       label: "Show user info (karma,gender,since) on messages"
     }

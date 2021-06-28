@@ -9,7 +9,7 @@ type SettingsProps = SettingsDialogSettings & {
 };
 
 export default function Settings(props: SettingsProps) {
-  const { imgControl, imgProtect, showInfo, applySettings } = props;
+  const { imgControl, imgProtect, imgBlur, showInfo, applySettings } = props;
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
@@ -22,6 +22,14 @@ export default function Settings(props: SettingsProps) {
         id="imgProtect"
         value={imgProtect}
         onChange={() => applySettings({ imgProtect: !imgProtect })}
+      />
+      <CheckboxSetting
+        id="imgBlur"
+        value={imgBlur}
+        onChange={() => {
+          document.documentElement.classList.toggle("ritsu-blur", !imgBlur);
+          applySettings({ imgBlur: !imgBlur });
+        }}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.messageTitle}</div>
       <CheckboxSetting

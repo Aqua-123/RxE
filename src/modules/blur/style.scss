@@ -1,0 +1,15 @@
+html.ritsu-blur {
+  div > img[src*="uploads"] {
+    filter: blur(7px);
+    transition: filter 1s ease;
+  }
+  div:hover > img[src*="uploads"] {
+    filter: blur(0px);
+  }
+}
+
+// don't clamp images, or the blur gets cut off
+.room-component-message-text.room-component-message-text,
+.notification-unit-body.notification-unit-body {
+  overflow: visible;
+}

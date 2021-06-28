@@ -9,7 +9,7 @@ export const THEMES = ["default", "ritsu", "light"] as const;
 
 export type Theme = typeof THEMES[number];
 
-export function useTheme() {
+export function initTheme() {
   const theme = Preferences.get(P.theme) as Theme;
   let styleSheet = document.head.querySelector(".custom-theme");
   if (!styleSheet) {
