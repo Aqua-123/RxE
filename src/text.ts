@@ -42,5 +42,5 @@ export default {
       label: "Auto-mute users flooding the chat"
     }
   },
-  WFAF: "WFAF"
+  WFAF: "WFAF ⌛"
 } as const;
