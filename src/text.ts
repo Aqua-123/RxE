@@ -4,7 +4,7 @@ import U from "./userscript";
 export default {
   title: `${U.name} ${U.version}`,
   themeTitle: "Choose your theme",
-  hacksTitle: "Enable various hacks here",
+  ...(FEATURES.HACKS && { hacksTitle: "Enable various hacks here" }),
   imagesTitle: "Image Settings",
   messageTitle: "Message Settings",
   preferences: {
