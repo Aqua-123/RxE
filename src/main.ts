@@ -17,6 +17,7 @@ import { removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
+import { renderBrokenImages } from "./modules/brokenimages";
 
 function init() {
   const featureSet = `(${[
@@ -45,7 +46,8 @@ function init() {
     addLookupButton,
     decorateMessages,
     removeAds,
-    fixAppendPictures
+    fixAppendPictures,
+    renderBrokenImages
   ]);
 }
 

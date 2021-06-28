@@ -68,7 +68,6 @@ function antiSpam() {
     );
     rating.d = now;
     rating.p = message;
-    console.log(`rating for ${e.user.display_name} is`, rating);
     if (rating.score >= 1 && !App.room.muted.includes(id)) {
       App.room.mute(id);
       printMessage("AutoMute", `Muted user ${e.user.display_name}.`);
