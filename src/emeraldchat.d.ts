@@ -109,6 +109,7 @@ declare class Room {
     id: null | number | string;
     mode: "private" | "channel";
   };
+  switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
   append(e: {
     user: EmeraldUser;

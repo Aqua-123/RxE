@@ -41,5 +41,6 @@ export default {
     antiSpam: {
       label: "Auto-mute users flooding the chat"
     }
-  }
+  },
+  WFAF: "WFAF"
 } as const;
