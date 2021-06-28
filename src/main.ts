@@ -2,7 +2,7 @@ import { log } from "../lib/userscripter";
 
 import U from "~src/userscript";
 
-import { useTheme } from "./themes";
+import { initTheme } from "./themes";
 import { accountOverrides } from "./modules/accountoverrides";
 import { fixAppendPictures, initPictures } from "./modules/pictures";
 import { render } from "./modules/render";
@@ -15,6 +15,7 @@ import { addLookupButton } from "./modules/lookupbutton";
 import { decorateMessages } from "./modules/messages";
 import { removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
+import { initPicturesBlur } from "./modules/blur";
 
 function init() {
   const flags = [];
@@ -27,9 +28,10 @@ function init() {
   // inject network middleware
   initNetwork();
   // apply theme
-  useTheme();
+  initTheme();
   // initialize picture control
   initPictures();
+  initPicturesBlur();
   // start our script's rendering loop
   render([
     reorderMenu,

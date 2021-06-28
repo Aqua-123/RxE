@@ -5,7 +5,7 @@ import SettingsView from "./Settings";
 import ThemesView from "./Themes";
 import HacksView from "./Hacks";
 
-import { Theme, useTheme } from "../themes";
+import { Theme, initTheme } from "../themes";
 import styles from "./style.module.scss";
 
 type SettingsDialogState = {
@@ -19,6 +19,7 @@ type SettingsDialogState = {
   settings: {
     imgControl: boolean;
     imgProtect: boolean;
+    imgBlur: boolean;
     showInfo: boolean;
   };
   needsReload: boolean;
@@ -46,6 +47,7 @@ export default class SettingsDialog extends React.Component<
       settings: {
         imgControl: Preferences.get(P.imgControl),
         imgProtect: Preferences.get(P.imgProtect),
+        imgBlur: Preferences.get(P.imgBlur),
         showInfo: Preferences.get(P.showInfo)
       },
       needsReload: false
@@ -69,7 +71,7 @@ export default class SettingsDialog extends React.Component<
   applyTheme = (theme: Theme) => {
     Preferences.set(P.theme, theme);
     document.body.classList.add("themeChange");
-    useTheme();
+    initTheme();
     this.setState({ theme });
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
