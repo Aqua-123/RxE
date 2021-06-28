@@ -1,7 +1,7 @@
 // Describes some of the global variables exposed by Emerald Chat
 // Flesh out as needed.
 
-// declare const $: JQuery;
+// Some fields are added by our modules, and are commented as such
 
 declare const Cookies: {
   get(key: string): string;
@@ -24,6 +24,25 @@ declare const App: {
     flair: {
       color: string;
     };
+    display_picture: string;
+  };
+  room: {
+    client: {
+      connected(): void;
+      disconnected(): void;
+      received(e: {
+        user: EmeraldUser;
+        user_connected?: true;
+        user_disconnected?: true;
+        typing?: true;
+        messages?: string[];
+        picture?: null | EmeraldPicture;
+      }): void;
+    };
+    join(id: string): void;
+    mute(id: number): void;
+    unmute(id: number): void;
+    muted: number[];
   };
 };
 
@@ -32,6 +51,30 @@ declare const UpgradeClient: {
 };
 
 declare class ModPanel extends React.Component {}
+
+declare type EmeraldUser = {
+  badge: null;
+  badges: string[];
+  bio: string;
+  created_at: string;
+  display_name: string;
+  display_picture: string;
+  email: string;
+  flair: {
+    color: string;
+  };
+  gender: "m" | "f" | "o";
+  gold: boolean;
+  id: number;
+  interests: string[];
+  karma: number;
+  master: boolean;
+  mod: boolean;
+  online: boolean;
+  username: string;
+  verified: boolean;
+  temp?: boolean;
+};
 
 declare type EmeraldPicture = {
   author_id: number;
@@ -60,20 +103,19 @@ declare class Room {
   state: {
     messages: {
       messages: string[];
-      user: {
-        temp: boolean;
-        karma: number;
-        gender: "f" | "m" | "o";
-        created_at: string;
-        gold: boolean;
-        master: boolean;
-        mod: boolean;
-      };
+      user: EmeraldUser;
       picture: EmeraldPicture;
     }[];
+    id: null | number | string;
+    mode: "private" | "channel";
   };
   send_picture(picture: EmeraldPicture): void;
-  append(e: any): void;
+  append(e: {
+    user: EmeraldUser;
+    messages: string[];
+    picture?: null | EmeraldPicture;
+  }): void;
+  // NOTE: This is our own field
   _append?: (e: any) => void;
 }
 

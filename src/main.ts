@@ -16,6 +16,7 @@ import { decorateMessages } from "./modules/messages";
 import { removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
+import { initAntiSpam } from "./modules/antispam";
 
 function init() {
   const featureSet = `(${[
@@ -32,6 +33,8 @@ function init() {
   // initialize picture control
   initPictures();
   initPicturesBlur();
+  // anti-spam
+  initAntiSpam();
   // start our script's rendering loop
   render([
     reorderMenu,

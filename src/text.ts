@@ -37,6 +37,9 @@ export default {
     },
     showInfo: {
       label: "Show user info (karma,gender,since) on messages"
+    },
+    antiSpam: {
+      label: "Auto-mute users flooding the chat"
     }
   }
 } as const;

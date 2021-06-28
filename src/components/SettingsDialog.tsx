@@ -21,6 +21,7 @@ type SettingsDialogState = {
     imgProtect: boolean;
     imgBlur: boolean;
     showInfo: boolean;
+    antiSpam: boolean;
   };
   needsReload: boolean;
 };
@@ -48,7 +49,8 @@ export default class SettingsDialog extends React.Component<
         imgControl: Preferences.get(P.imgControl),
         imgProtect: Preferences.get(P.imgProtect),
         imgBlur: Preferences.get(P.imgBlur),
-        showInfo: Preferences.get(P.showInfo)
+        showInfo: Preferences.get(P.showInfo),
+        antiSpam: Preferences.get(P.antiSpam)
       },
       needsReload: false
     } as SettingsDialogState;

@@ -60,6 +60,11 @@ export const P = {
     label: T.preferences.showInfo.label,
     default: true
   }),
+  antiSpam: new BooleanPreference({
+    key: "antiSpam",
+    label: T.preferences.antiSpam.label,
+    default: true
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

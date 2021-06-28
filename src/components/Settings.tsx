@@ -9,7 +9,14 @@ type SettingsProps = SettingsDialogSettings & {
 };
 
 export default function Settings(props: SettingsProps) {
-  const { imgControl, imgProtect, imgBlur, showInfo, applySettings } = props;
+  const {
+    imgControl,
+    imgProtect,
+    imgBlur,
+    showInfo,
+    antiSpam,
+    applySettings
+  } = props;
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
@@ -32,6 +39,11 @@ export default function Settings(props: SettingsProps) {
         }}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.messageTitle}</div>
+      <CheckboxSetting
+        id="antiSpam"
+        value={antiSpam}
+        onChange={() => applySettings({ antiSpam: !antiSpam })}
+      />
       <CheckboxSetting
         id="showInfo"
         value={showInfo}
