@@ -18,6 +18,7 @@ import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
 import { renderBrokenImages } from "./modules/brokenimages";
+import { renderWFAF } from "./modules/wfaf";
 
 function init() {
   const featureSet = `(${[
@@ -47,7 +48,8 @@ function init() {
     decorateMessages,
     removeAds,
     fixAppendPictures,
-    renderBrokenImages
+    renderBrokenImages,
+    renderWFAF
   ]);
 }
 
