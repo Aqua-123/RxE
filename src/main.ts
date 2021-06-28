@@ -18,10 +18,10 @@ import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 
 function init() {
-  const flags = [];
-  if (FEATURES.HACKS) flags.push("HACKS");
-  if (FEATURES.P2P) flags.push("P2P");
-  const featureSet = flags.length ? `(${flags})` : "";
+  const featureSet = `(${[
+    ...(FEATURES.HACKS ? ["HACKS"] : []),
+    ...(FEATURES.P2P ? ["P2P"] : [])
+  ]})`;
   log.log(`${U.name} Version ${U.version} ${featureSet}`);
   // override some builtin behavior
   accountOverrides();
