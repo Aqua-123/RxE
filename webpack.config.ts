@@ -34,6 +34,7 @@ const config: webpack.Configuration = {
   },
   devServer: {
     liveReload: false,
+    injectClient: false,
     port: 9001,
     open: true,
     before: app =>

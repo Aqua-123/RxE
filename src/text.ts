@@ -45,5 +45,10 @@ export default {
       label: "Gender-color the outline around avatars"
     }
   },
-  WFAF: "WFAF ⌛"
+  WFAF: "WFAF ⌛",
+  privateRooms: "Private Rooms 🔒",
+  privateRoomsPrompt:
+    "Enter a private room key:\nOnly people with the key can enter this room.",
+  privateRoomsWarning:
+    "Chat history and user list is not available in unlisted rooms."
 } as const;

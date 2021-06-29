@@ -1,27 +1,47 @@
 // open WFAF: RoomClient.switch({id:null, mode:'private'})
 import { crel } from "~src/utils";
 import T from "~src/text";
+import React from "react";
 
-export function renderWFAF() {
+export function renderWFAFAndPrivateRooms() {
   const channels = document.querySelectorAll(".channel-unit");
   if (!channels.length) return;
   const lastChannel = channels[channels.length - 1];
-  if (lastChannel.textContent === T.WFAF) return;
+  if (lastChannel.textContent === T.privateRooms) return;
   const div = crel("div", {
     className: "wfaf channel-unit",
     textContent: T.WFAF,
-    onclick: () => joinWFAF()
+    onclick: () => joinWFAF(),
   });
-  lastChannel.parentElement?.insertBefore(div, lastChannel.nextSibling);
+  const div2 = crel("div", {
+    className: "private-rooms channel-unit",
+    textContent: T.privateRooms,
+    onclick: () => joinPrivateRoom(),
+  });
+  lastChannel.parentElement?.insertBefore(div2, lastChannel.nextSibling);
+  lastChannel.parentElement?.insertBefore(div, div2);
+}
+
+function joinSpecialRoom(name: string | null, selector: string) {
+  RoomClient.setState({ messages: [], current_channel: name });
+  RoomChannelMembersClient.setState({ members: [] });
+  App.room.join(name);
+  document
+    .querySelectorAll(".channel-unit")
+    .forEach((channel) => channel.classList.remove("channel-unit-active"));
+  document.querySelector(selector)?.classList.add("channel-unit-active");
+  RoomClient.print(React.createElement("div", null, T.privateRoomsWarning));
 }
 
 function joinWFAF() {
+  // don't try to join wfaf if you're alredy in. it doesn't work well.
+  if (document.querySelector(".wfaf.channel-unit-active")) return;
   // base WFAF: RoomClient.switch({ id: null, mode: "private"})
-  RoomClient.setState({ messages: [], current_channel: null });
-  RoomChannelMembersClient.setState({ members: [] });
-  App.room.join(null);
-  document
-    .querySelectorAll(".channel-unit")
-    .forEach(channel => channel.classList.remove("channel-unit-active"));
-  document.querySelector(".wfaf")?.classList.add("channel-unit-active");
+  joinSpecialRoom("", ".wfaf");
+}
+
+function joinPrivateRoom() {
+  const name = prompt(T.privateRoomsPrompt);
+  if (name == null) return;
+  joinSpecialRoom(name, ".private-rooms");
 }
