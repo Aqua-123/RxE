@@ -22,10 +22,11 @@ export default function(_: BuildConfig): Manifest {
           `*://${U.hostname}/${U.path ?? "*"}`,
           `*://www.${U.hostname}/${U.path ?? "*"}`
         ],
-        js: [distFileName(U.id, "user")],
+        js: ["inject-web.js"],
         run_at: runMap[U.runAt] ?? "document_start"
       }
     ],
+    web_accessible_resources: [distFileName(U.id, "user")],
     icons: {
       "16": "assets/logo-16.png",
       "32": "assets/logo-32.png",

@@ -81,3 +81,8 @@
 body.themeChange * {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
+
+/* the web app shows unwanted scrollbars on firefox. hide them */
+body {
+  overflow: hidden;
+}
