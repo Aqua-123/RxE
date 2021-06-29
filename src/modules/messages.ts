@@ -60,8 +60,9 @@ export function decorateMessages() {
         }
       }
       // clean up Facing Ditto's mess
-      const divs = msgElt?.querySelector(".room-component-message-text")
-        ?.childNodes;
+      const divs = msgElt?.querySelector(
+        ".room-component-message-text"
+      )?.childNodes;
       while (divs && divs.length > lines.length) {
         divs[0].remove();
       }

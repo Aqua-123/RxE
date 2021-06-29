@@ -43,8 +43,8 @@ export default class SettingsDialog extends React.Component<
           disableNags: Preferences.get(P.disableNags!),
           enableModUI: Preferences.get(P.enableModUI!),
           universalFriend: Preferences.get(P.universalFriend!),
-          fancyColors: Preferences.get(P.fancyColors!)
-        }
+          fancyColors: Preferences.get(P.fancyColors!),
+        },
       }),
       settings: {
         imgControl: Preferences.get(P.imgControl),
@@ -52,16 +52,16 @@ export default class SettingsDialog extends React.Component<
         imgBlur: Preferences.get(P.imgBlur),
         showInfo: Preferences.get(P.showInfo),
         showGender: Preferences.get(P.showGender),
-        antiSpam: Preferences.get(P.antiSpam)
+        antiSpam: Preferences.get(P.antiSpam),
       },
-      needsReload: false
+      needsReload: false,
     } as SettingsDialogState;
 
     if (FEATURES.HACKS) {
       this.applyHacks = (obj: SettingsDialogHacks) => {
         const hacks = { ...this.state.hacks, ...obj };
         const keys = Object.keys(obj);
-        keys.forEach(key => Preferences.set(P[key]!, obj[key]));
+        keys.forEach((key) => Preferences.set(P[key]!, obj[key]));
         this.setState({ hacks, needsReload: true });
       };
     }
@@ -69,7 +69,7 @@ export default class SettingsDialog extends React.Component<
   applySettings = (obj: SettingsDialogSettings) => {
     const settings = { ...this.state.settings, ...obj };
     const keys = Object.keys(obj);
-    keys.forEach(key => Preferences.set(P[key], obj[key]));
+    keys.forEach((key) => Preferences.set(P[key], obj[key]));
     this.setState({ settings, needsReload: true });
     document.documentElement.classList.toggle(
       "showGender",

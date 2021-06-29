@@ -3,8 +3,7 @@ export default {
   name: "Ritsu x Emerald",
   version: "0.5.0",
   description: "Custom Emerald Chat themes and fixes.",
-  icon:
-    "https://static.emeraldchat.com/uploads/picture/image/9529291/Ritsu_Icon.png",
+  icon: "https://static.emeraldchat.com/uploads/picture/image/9529291/Ritsu_Icon.png",
   author: "Fxkleti, Atsos/Ritsu, Aqua, Strawberry.",
   hostname: "emeraldchat.com",
   path: "app",

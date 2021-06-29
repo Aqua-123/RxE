@@ -16,7 +16,7 @@ export function initNetwork() {
         success(
           { status: false, temp: false },
           "success",
-          (null as unknown) as JQuery.jqXHR
+          null as unknown as JQuery.jqXHR
         );
         return;
       default:

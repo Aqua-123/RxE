@@ -8,7 +8,7 @@ export function removeAds() {
       .querySelectorAll(
         'iframe:not([src*="captcha"]):not([src*="youtube"]):not([src*="about:blank"])'
       )
-      .forEach(iframe => {
+      .forEach((iframe) => {
         iframe.remove();
       });
   }

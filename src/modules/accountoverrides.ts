@@ -13,7 +13,7 @@ export function accountOverrides() {
   if (Preferences.get(P.enableModUI!)) {
     App.user.master = true;
     App.user.mod = true;
-    ModPanel.prototype.componentDidMount = function() {
+    ModPanel.prototype.componentDidMount = function () {
       this.setState({ tab: "default" });
     };
   }

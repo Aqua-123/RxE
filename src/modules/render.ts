@@ -1,6 +1,6 @@
 export function render(kernels: Array<() => void>) {
   function renderOnce() {
-    kernels.forEach(kernel => kernel());
+    kernels.forEach((kernel) => kernel());
   }
 
   let next: number;

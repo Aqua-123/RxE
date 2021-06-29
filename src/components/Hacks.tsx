@@ -9,13 +9,8 @@ type HacksProps = SettingsDialogHacks & {
 };
 
 export default function Hacks(props: HacksProps) {
-  const {
-    disableNags,
-    enableModUI,
-    universalFriend,
-    fancyColors,
-    applyHacks
-  } = props;
+  const { disableNags, enableModUI, universalFriend, fancyColors, applyHacks } =
+    props;
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.hacksTitle}</div>
