@@ -37,7 +37,7 @@ const config: webpack.Configuration = {
     injectClient: false,
     port: 9001,
     open: true,
-    before: app =>
+    before: (app) =>
       app.get("/", (req, res) =>
         res.send(`
 <style type="text/css">

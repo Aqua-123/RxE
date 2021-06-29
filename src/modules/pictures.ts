@@ -9,7 +9,7 @@ const savedPictures: string[] = [];
 
 export function initPictures() {
   const hashes = Preferences.get(P.blockedHashes);
-  hashes.forEach(hash => (blockedHashes[hash] = true));
+  hashes.forEach((hash) => (blockedHashes[hash] = true));
   savedPictures.push(...Preferences.get(P.savedPictures));
 }
 
@@ -19,7 +19,7 @@ async function getHash(str: string) {
     const hashBuffer = await crypto.subtle.digest("SHA-1", msg);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
-      .map(b => b.toString(16).padStart(2, "0"))
+      .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
     knownHashes[str] = hashHex;
   }
@@ -70,7 +70,7 @@ export function decoratePictures() {
   const pics = document.querySelectorAll(
     ".room-component-message-picture-container"
   );
-  pics.forEach(async pic => {
+  pics.forEach(async (pic) => {
     if (
       Preferences.get(P.imgControl) &&
       !pic.querySelector(".picture-control")
@@ -132,7 +132,7 @@ export function decoratePictures() {
   const newImageGrid = crel("div", {
     className: "image-grid"
   });
-  savedPictures.forEach(src => {
+  savedPictures.forEach((src) => {
     newImageGrid.append(
       crel("div", {
         style: `background-image: url(${encodeURI(src)})`,
@@ -153,7 +153,7 @@ export function decoratePictures() {
 export function fixAppendPictures() {
   if (!RoomClient) return;
   if (RoomClient._append && RoomClient._append !== RoomClient.append) return;
-  RoomClient.append = function(e) {
+  RoomClient.append = function (e) {
     if (e.messages.length == 0) e.messages.push("");
     return this._append!(e);
   };

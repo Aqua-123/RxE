@@ -13,7 +13,7 @@ export default function Themes(props: ThemesProps) {
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.themeTitle}</div>
-      {THEMES.map(eachTheme => (
+      {THEMES.map((eachTheme) => (
         <div>
           <input
             type="radio"

@@ -4,12 +4,16 @@ import U from "~src/userscript";
 
 import { initTheme } from "./themes";
 import { accountOverrides } from "./modules/accountoverrides";
-import { fixAppendPictures, initPictures } from "./modules/pictures";
+import {
+  fixAppendPictures,
+  initPictures,
+  decoratePictures
+} from "./modules/pictures";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
 import { injectRitsuMenu } from "./modules/ritsumenu";
 import { decorateHeader } from "./modules/header";
-import { decoratePictures } from "./modules/pictures";
+
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { addLookupButton } from "./modules/lookupbutton";
 import { decorateMessages } from "./modules/messages";

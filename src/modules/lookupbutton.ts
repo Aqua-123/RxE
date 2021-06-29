@@ -24,7 +24,7 @@ export function addLookupButton() {
           }
           const id = prompt(
             "Enter a user id",
-            "" + UserViewReact.state.user.id
+            `${UserViewReact.state.user.id}`
           );
           if (id) {
             UserViewReact.state.user.id = +id;
