@@ -25,6 +25,12 @@ export default function(_: BuildConfig): Manifest {
         js: [distFileName(U.id, "user")],
         run_at: runMap[U.runAt] ?? "document_start"
       }
-    ]
+    ],
+    icons: {
+      "16": "assets/logo-16.png",
+      "32": "assets/logo-32.png",
+      "48": "assets/logo-48.png",
+      "128": "assets/logo-128.png"
+    }
   };
 }
