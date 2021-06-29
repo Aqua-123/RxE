@@ -65,6 +65,11 @@ export const P = {
     label: T.preferences.antiSpam.label,
     default: true
   }),
+  showGender: new BooleanPreference({
+    key: "showGender",
+    label: T.preferences.showGender.label,
+    default: true
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

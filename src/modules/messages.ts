@@ -32,34 +32,12 @@ export function decorateMessages() {
           }
           msgExtra.append(crel("b", { textContent: "\xa0Karma:\xa0" }));
           msgExtra.append(crel("span", { textContent: user.karma }));
-          msgExtra.append(crel("b", { textContent: "\xa0Gender:\xa0" }));
-          msgExtra.append(
-            crel("span", {
-              className: "user-extra-gender",
-              style: `color: ${
-                user.gender == "f"
-                  ? "pink"
-                  : user.gender == "m"
-                  ? "lightblue"
-                  : "green"
-              }`,
-              textContent: user.gender?.toUpperCase()
-            })
-          );
           msgExtra.append(crel("b", { textContent: "\xa0Since:\xa0" }));
           msgExtra.append(
             crel("span", {
               textContent: new Date(user.created_at).toLocaleDateString()
             })
           );
-          if (user.gold) {
-            msgExtra.append(
-              crel("b", {
-                style: "color: rgb(255,202,0)",
-                textContent: "\xa0GOLD"
-              })
-            );
-          }
           if (user.master) {
             msgExtra.append(
               crel("b", {

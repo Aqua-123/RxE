@@ -12,8 +12,15 @@ export function addLookupButton() {
         textContent: "face",
         onclick: () => {
           if (typeof UserViewReact === "undefined") {
-            alert("open a user profile once first");
-            return;
+            // run a bogus user view to get the right setup
+            UserViewGenerator.generate({
+              event: { preventDefault: () => {}, clientX: 100, clientY: 100 },
+              user: {
+                karma: 100,
+                id: 2
+              }
+            });
+            if (typeof UserViewReact === "undefined") return;
           }
           const id = prompt(
             "Enter a user id",

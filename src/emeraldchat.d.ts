@@ -52,6 +52,102 @@ declare const UpgradeClient: {
 
 declare class ModPanel extends React.Component {}
 
+declare type MessageData = {
+  messages: string[];
+  picture?: null | EmeraldPicture;
+  user: EmeraldUser;
+};
+
+declare type MessageNotificationProps = {
+  created_at: string;
+  data: {
+    user: EmeraldUser;
+    sender: EmeraldUser;
+    message: {
+      messages: string[];
+      picture: null | EmeraldPicture;
+      user: number;
+    };
+  };
+  id: number;
+  seen: boolean;
+  sender_id: number;
+  updated_at: string;
+  user_id: number;
+};
+
+declare class MessageNotificationUnit extends React.Component<{
+  data: MessageNotificationProps;
+}> {
+  image(): JSX.Element;
+}
+
+declare type WallPost = {
+  author_id: number;
+  content: string;
+  created_at: string;
+  id: number;
+  muted: boolean;
+  picture_id: null | string;
+  pinned: boolean;
+  reference_id: null;
+  updated_at: string;
+  user_id: number;
+  wall_id: number;
+};
+
+declare type WallComment = {
+  author_id: number;
+  content: string;
+  created_at: string;
+  id: number;
+  micropost_id: number;
+  updated_at: string;
+  user_id: null | number;
+};
+
+declare type NotificationProps = {
+  created_at: string;
+  data: {
+    unit: {
+      post: WallPost;
+      author: EmeraldUser;
+      comment: WallComment;
+    };
+    user: EmeraldUser;
+    sender: EmeraldUser;
+    content: string;
+  };
+  id: number;
+  seen: boolean;
+  sender_id: number;
+  tier: "default";
+  updated_at: string;
+  user_id: number;
+};
+
+declare class NotificationUnit extends React.Component<{
+  data: NotificationProps;
+}> {
+  image(): JSX.Element;
+}
+
+declare type Friend = {
+  created_at: string;
+  data: EmeraldUser;
+};
+declare class FriendUnit extends React.Component<Friend> {
+  body(): JSX.Element;
+}
+
+declare class SearchUnit extends React.Component<{ data: EmeraldUser }> {
+  body(): JSX.Element;
+}
+
+declare class UserUnit extends React.Component<{ data: EmeraldUser }> {
+  body(): JSX.Element;
+}
+
 declare type EmeraldUser = {
   badge: null;
   badges: string[];
@@ -101,23 +197,23 @@ declare const RoomClient: Room;
 
 declare class Room {
   state: {
-    messages: {
-      messages: string[];
-      user: EmeraldUser;
-      picture: EmeraldPicture;
-    }[];
+    messages: MessageData[];
     id: null | number | string;
     mode: "private" | "channel";
   };
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
-  append(e: {
-    user: EmeraldUser;
-    messages: string[];
-    picture?: null | EmeraldPicture;
-  }): void;
+  append(e: MessageData): void;
   // NOTE: This is our own field
   _append?: (e: any) => void;
+}
+
+declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
+  body(): JSX.Element;
+}
+
+declare class Message extends React.Component<{ data: MessageData }> {
+  render(): JSX.Element;
 }
 
 declare const MenuReactMicro: {
@@ -129,6 +225,10 @@ declare const MenuReact: {
 };
 
 declare class Menu extends React.Component {}
+
+declare const UserViewGenerator: {
+  generate(e: { event: any; user: any }): void;
+};
 
 declare const UserViewReact:
   | undefined

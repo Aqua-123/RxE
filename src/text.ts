@@ -40,6 +40,9 @@ export default {
     },
     antiSpam: {
       label: "Auto-mute users flooding the chat"
+    },
+    showGender: {
+      label: "Gender-color the outline around avatars"
     }
   },
   WFAF: "WFAF ⌛"
