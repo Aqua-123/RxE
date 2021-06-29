@@ -12,7 +12,7 @@ function wrapMethod<T, K extends keyof T>(
 ) {
   const origFn = obj[method];
   if (typeof origFn !== "function" || typeof fn !== "function") return;
-  obj[method] = <T[K]>(<unknown>function(this: T, ...args: any[]) {
+  obj[method] = <T[K]>(<unknown>function (this: T, ...args: any[]) {
     const r = before && fn.apply(this, args);
     if (!before || r !== false) origFn.apply(this, args);
     if (!before) fn.apply(this, args);
@@ -30,6 +30,7 @@ function antiSpam() {
   const spam_rating: {
     [key: number]: {
       score: number;
+      score2: number;
       d: number;
       p: string;
     };
@@ -37,6 +38,9 @@ function antiSpam() {
 
   function onRoomJoin() {
     document.querySelector(".wfaf")?.classList.remove("channel-unit-active"); // WART.
+    document
+      .querySelector(".private-rooms")
+      ?.classList.remove("channel-unit-active"); // WART.
     wrapMethod(App.room.client, "received", onMessage, true);
   }
 
@@ -50,7 +54,9 @@ function antiSpam() {
         printMessage(`User ${e.user.display_name} left the chat.`);
       } else {
         if (
-          !RoomChannelMembersClient.state.members.some(m => m.id === e.user.id)
+          !RoomChannelMembersClient.state.members.some(
+            (m) => m.id === e.user.id
+          )
         ) {
           printMessage(`User ${e.user.display_name} joined the chat.`);
         }
@@ -63,21 +69,27 @@ function antiSpam() {
     if (App.user.id == id) return;
     const message = e.messages.join("");
     const now = Date.now();
-    const uppercase = message.split("").filter(x => x.toLowerCase() !== x);
+    const uppercase = message.split("").filter((x) => x.toLowerCase() !== x);
     if (!spam_rating[id]) {
       spam_rating[id] = {
         score: 1,
+        score2: 1,
         d: 0,
-        p: ""
+        p: "",
       };
     }
     const rating = spam_rating[id];
-
+    // original anti-spam logic - effective, but prone to false positives
     rating.score += Math.pow(1e3 / (now - rating.d || now), 0.2);
     rating.score /= Math.max(
       1 / Math.E,
       Math.E - Math.log(10 + message.length + uppercase.length) / 4
     );
+    // karma-biased anti-spam logic - gameable, but worth trying out
+    // score is a function of frequency: more frequent msg increase score
+    // score is a function of karma: karma above a threshold allows more frequent msg, up to a point
+    // TBD
+
     rating.d = now;
     rating.p = message;
     console.log(

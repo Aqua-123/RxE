@@ -18,7 +18,7 @@ import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
 import { renderBrokenImages } from "./modules/brokenimages";
-import { renderWFAF } from "./modules/wfaf";
+import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { initGender } from "./modules/gender";
 
 function init() {
@@ -53,7 +53,7 @@ function init() {
     removeAds,
     fixAppendPictures,
     renderBrokenImages,
-    renderWFAF
+    renderWFAFAndPrivateRooms
   ]);
 }
 
