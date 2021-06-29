@@ -1,0 +1,20 @@
+html.showGender {
+  .room-component-message-avatar,
+  .navigation-notification-unit-image {
+    border: 2px solid #0f0;
+    width: 36px;
+    height: 36px;
+    margin: -2px 10px -2px -2px;
+
+    &[data-gender="m"] {
+      border-color: #00f;
+    }
+    &[data-gender="f"] {
+      border-color: #f6f;
+    }
+  }
+  .room-component-message-avatar {
+    width: 42px;
+    height: 42px;
+  }
+}

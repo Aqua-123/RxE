@@ -21,6 +21,7 @@ type SettingsDialogState = {
     imgProtect: boolean;
     imgBlur: boolean;
     showInfo: boolean;
+    showGender: boolean;
     antiSpam: boolean;
   };
   needsReload: boolean;
@@ -50,6 +51,7 @@ export default class SettingsDialog extends React.Component<
         imgProtect: Preferences.get(P.imgProtect),
         imgBlur: Preferences.get(P.imgBlur),
         showInfo: Preferences.get(P.showInfo),
+        showGender: Preferences.get(P.showGender),
         antiSpam: Preferences.get(P.antiSpam)
       },
       needsReload: false
@@ -69,6 +71,10 @@ export default class SettingsDialog extends React.Component<
     const keys = Object.keys(obj);
     keys.forEach(key => Preferences.set(P[key], obj[key]));
     this.setState({ settings, needsReload: true });
+    document.documentElement.classList.toggle(
+      "showGender",
+      settings.showGender
+    );
   };
   applyTheme = (theme: Theme) => {
     Preferences.set(P.theme, theme);

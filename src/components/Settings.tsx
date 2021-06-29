@@ -14,6 +14,7 @@ export default function Settings(props: SettingsProps) {
     imgProtect,
     imgBlur,
     showInfo,
+    showGender,
     antiSpam,
     applySettings
   } = props;
@@ -43,6 +44,11 @@ export default function Settings(props: SettingsProps) {
         id="antiSpam"
         value={antiSpam}
         onChange={() => applySettings({ antiSpam: !antiSpam })}
+      />
+      <CheckboxSetting
+        id="showGender"
+        value={showGender}
+        onChange={() => applySettings({ showGender: !showGender })}
       />
       <CheckboxSetting
         id="showInfo"

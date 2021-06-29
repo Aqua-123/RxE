@@ -19,6 +19,7 @@ import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
 import { renderBrokenImages } from "./modules/brokenimages";
 import { renderWFAF } from "./modules/wfaf";
+import { initGender } from "./modules/gender";
 
 function init() {
   const featureSet = `(${[
@@ -37,6 +38,9 @@ function init() {
   initPicturesBlur();
   // anti-spam
   initAntiSpam();
+  // decorate user icons with gendered borders
+  initGender();
+
   // start our script's rendering loop
   render([
     reorderMenu,
