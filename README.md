@@ -32,6 +32,10 @@ It relies on a modified version of `userscripter`, committed in the repo under /
 
 3. `yarn prod` will build a minimized, production-ready userscript and exit.
 
+4. `yarn ext` will build a browser extension. You can then use the `dist/manifest.json` file to load a temporary add-on in Firefox (open `about:debugging` and select `This Firefox` to do it), or to load it as an unpacked extension in Chrome's extensions page in developed mode. The same directory can be used in Chrome to "Pack the extension" which will produce a private key and a signed extension file. For Firefox, a zip file is built under `./web-ext-artifacts` with a shape suitable for submissions to addons.mozilla.org.
+
+## feature flags
+
 What gets built exactly depends on flags you can set.
 The default is to build the "safe" subset of the userscript.
 
@@ -49,3 +53,8 @@ TBD
 ## details
 
 Also TBD
+
+Our approach to build the extension is rudimentary. The entire script is loaded in the page's space, breaking all concepts of code isolation (needed to mess with Emerald Chat's juicy globals),
+and preventing us from using any of the cool extension APIs.
+
+That can be refined later if needs be, but it will involve having well-defined plug points into the page and a message-based API for the extension to pilot those. Oh, and we'll need our own React copy.
