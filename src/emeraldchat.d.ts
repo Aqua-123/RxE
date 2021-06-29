@@ -15,17 +15,7 @@ declare const MuteButtonClient: {
 };
 
 declare const App: {
-  user: {
-    id: number;
-    karma: number;
-    temp: boolean;
-    master: boolean;
-    mod: boolean;
-    flair: {
-      color: string;
-    };
-    display_picture: string;
-  };
+  user: EmeraldUser;
   room: {
     client: {
       connected(): void;
@@ -39,7 +29,7 @@ declare const App: {
         picture?: null | EmeraldPicture;
       }): void;
     };
-    join(id: string): void;
+    join(id: string | null): void;
     mute(id: number): void;
     unmute(id: number): void;
     muted: number[];
@@ -195,7 +185,7 @@ declare type EmeraldPicture = {
 
 declare const RoomClient: Room;
 
-declare class Room {
+declare class Room extends React.Component {
   state: {
     messages: MessageData[];
     id: null | number | string;
@@ -203,10 +193,26 @@ declare class Room {
   };
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
+  print(elt?: JSX.Element): void;
+  print_append(elt?: JSX.Element): void;
   append(e: MessageData): void;
   // NOTE: This is our own field
   _append?: (e: any) => void;
 }
+
+declare const RoomChannelSelectClient: {
+  join(e: any): void;
+};
+
+declare class RoomChannelMembers extends React.Component<
+  any,
+  { members: EmeraldUser[] }
+> {
+  add_member(e: EmeraldUser): void;
+  remove_member(e: EmeraldUser): void;
+}
+
+declare const RoomChannelMembersClient: RoomChannelMembers;
 
 declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;

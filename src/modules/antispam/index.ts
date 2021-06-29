@@ -1,3 +1,4 @@
+import React from "react";
 import { P, Preferences } from "~src/preferences";
 
 /**
@@ -18,16 +19,11 @@ function wrapMethod<T, K extends keyof T>(
   });
 }
 
-function printMessage(from: string, status: string) {
-  RoomClient.append({
-    user: {
-      id: -App.user.id, // NOTE: Why minus?
-      display_name: from,
-      flair: App.user.flair,
-      display_picture: App.user.display_picture
-    } as EmeraldUser,
-    messages: [status + " [Only you can see this message.]"]
-  });
+let printTimer: number;
+function printMessage(msg: string) {
+  RoomClient.print_append(React.createElement("div", null, msg));
+  clearTimeout(printTimer);
+  printTimer = +setTimeout(() => RoomClient.print_append(), 5000);
 }
 
 function antiSpam() {
@@ -40,14 +36,30 @@ function antiSpam() {
   } = {};
 
   function onRoomJoin() {
+    document.querySelector(".wfaf")?.classList.remove("channel-unit-active"); // WART.
     wrapMethod(App.room.client, "received", onMessage, true);
   }
 
   function onMessage(e: Parameters<typeof App.room.client.received>[0]) {
     if (RoomClient.state.id == null || RoomClient.state.mode == "private")
       return;
+
+    // since we're here, update user list more accurately
+    if (e.user) {
+      if (e.user_disconnected) {
+        printMessage(`User ${e.user.display_name} left the chat.`);
+      } else {
+        if (
+          !RoomChannelMembersClient.state.members.some(m => m.id === e.user.id)
+        ) {
+          printMessage(`User ${e.user.display_name} joined the chat.`);
+        }
+        RoomChannelMembersClient.add_member(e.user);
+      }
+    }
+
     if (typeof e.messages === "undefined") return;
-    const { id } = e.user;
+    const { id, display_name } = e.user;
     if (App.user.id == id) return;
     const message = e.messages.join("");
     const now = Date.now();
@@ -68,12 +80,18 @@ function antiSpam() {
     );
     rating.d = now;
     rating.p = message;
+    console.log(
+      `anti-spam ${display_name} score=${rating.score} msg=${message}`
+    );
     if (rating.score >= 1 && !App.room.muted.includes(id)) {
-      App.room.mute(id);
-      printMessage("AutoMute", `Muted user ${e.user.display_name}.`);
+      if (Preferences.get(P.antiSpam)) {
+        App.room.mute(id);
+        printMessage(`AutoMute: Muted user ${display_name}.`);
+      }
     }
     if (rating.score < 0.75 && App.room.muted.includes(id)) {
       App.room.unmute(id);
+      printMessage(`AutoMute: Unmuted user ${display_name}.`);
     }
   }
 
@@ -82,7 +100,6 @@ function antiSpam() {
 }
 
 export function initAntiSpam() {
-  if (!Preferences.get(P.antiSpam)) return;
   const i = setInterval(() => {
     if ("App" in window && App.room) {
       clearInterval(i);
