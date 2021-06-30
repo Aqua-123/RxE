@@ -45,6 +45,9 @@ export function applyOverrides() {
     unmountComponent(this);
   };
 
+  // non-hack: "Sign up to continue" only shows once at start
+  App.temp.check = () => {};
+
   if (FEATURES.HACKS) hackOverrides();
 }
 
