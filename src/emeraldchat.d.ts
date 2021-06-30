@@ -14,6 +14,16 @@ declare const MuteButtonClient: {
   };
 };
 
+declare type EventData = {
+  notification_update: boolean;
+  message_notification: boolean;
+  ban: boolean;
+};
+
+declare type EventAction = {
+  action: "clear_notifications" | "clear_messages" | string;
+};
+
 declare const App: {
   user: EmeraldUser;
   room: {
@@ -33,6 +43,12 @@ declare const App: {
     mute(id: number): void;
     unmute(id: number): void;
     muted: number[];
+  };
+  events: {
+    connected: () => void;
+    disconnected: () => void;
+    received: (e: EventData) => void;
+    action: (e: EventAction) => void;
   };
 };
 
