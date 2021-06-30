@@ -24,6 +24,7 @@ import { initAntiSpam } from "./modules/antispam";
 import { renderBrokenImages } from "./modules/brokenimages";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { initGender } from "./modules/gender";
+import { initAntiBan } from "./modules/antiban";
 
 function init() {
   const featureSet = `(${[
@@ -35,6 +36,8 @@ function init() {
   accountOverrides();
   // inject network middleware
   initNetwork();
+  // antiban
+  initAntiBan();
   // apply theme
   initTheme();
   // initialize picture control

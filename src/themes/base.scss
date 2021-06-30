@@ -20,6 +20,9 @@ body > div > nav {
 .room-notification.room-notification {
   background: var(--chat-bg-color);
 }
+.room-component-print.room-component-print {
+  color: var(--message-fg-color);
+}
 .room-component-input {
   background: var(--input-bg-color);
 }

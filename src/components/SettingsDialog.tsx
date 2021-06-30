@@ -15,6 +15,7 @@ type SettingsDialogState = {
     enableModUI: boolean;
     universalFriend: boolean;
     fancyColors: boolean;
+    antiBan: boolean;
   };
   settings: {
     imgControl: boolean;
@@ -44,7 +45,8 @@ export default class SettingsDialog extends React.Component<
           enableModUI: Preferences.get(P.enableModUI!),
           universalFriend: Preferences.get(P.universalFriend!),
           fancyColors: Preferences.get(P.fancyColors!),
-        },
+          antiBan: Preferences.get(P.antiBan!)
+        }
       }),
       settings: {
         imgControl: Preferences.get(P.imgControl),
@@ -52,9 +54,9 @@ export default class SettingsDialog extends React.Component<
         imgBlur: Preferences.get(P.imgBlur),
         showInfo: Preferences.get(P.showInfo),
         showGender: Preferences.get(P.showGender),
-        antiSpam: Preferences.get(P.antiSpam),
+        antiSpam: Preferences.get(P.antiSpam)
       },
-      needsReload: false,
+      needsReload: false
     } as SettingsDialogState;
 
     if (FEATURES.HACKS) {

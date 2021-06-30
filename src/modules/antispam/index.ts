@@ -1,30 +1,5 @@
-import React from "react";
 import { P, Preferences } from "~src/preferences";
-
-/**
- * Inject code in an object method
- */
-function wrapMethod<T, K extends keyof T>(
-  obj: T,
-  method: K,
-  fn: T[K],
-  before = false
-) {
-  const origFn = obj[method];
-  if (typeof origFn !== "function" || typeof fn !== "function") return;
-  obj[method] = <T[K]>(<unknown>function (this: T, ...args: any[]) {
-    const r = before && fn.apply(this, args);
-    if (!before || r !== false) origFn.apply(this, args);
-    if (!before) fn.apply(this, args);
-  });
-}
-
-let printTimer: number;
-function printMessage(msg: string) {
-  RoomClient.print_append(React.createElement("div", null, msg));
-  clearTimeout(printTimer);
-  printTimer = +setTimeout(() => RoomClient.print_append(), 5000);
-}
+import { printMessage, wrapMethod } from "~src/utils";
 
 function antiSpam() {
   const spam_rating: {
@@ -75,7 +50,7 @@ function antiSpam() {
         score: 1,
         score2: 1,
         d: 0,
-        p: "",
+        p: ""
       };
     }
     const rating = spam_rating[id];

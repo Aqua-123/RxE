@@ -38,6 +38,11 @@ export const P = {
       key: "fancyColors",
       label: T.preferences.fancyColors!.label,
       default: true
+    }),
+    antiBan: new BooleanPreference({
+      key: "antiBan",
+      label: T.preferences.antiBan!.label,
+      default: true
     })
   }),
   imgControl: new BooleanPreference({

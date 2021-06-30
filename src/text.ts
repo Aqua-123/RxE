@@ -24,6 +24,9 @@ export default {
       },
       fancyColors: {
         label: "Use any color for your flair"
+      },
+      antiBan: {
+        label: "Prevent bans from closing the chat immediately"
       }
     }),
     imgControl: {
@@ -50,5 +53,9 @@ export default {
   privateRoomsPrompt:
     "Enter a private room key:\nOnly people with the key can enter this room.",
   privateRoomsWarning:
-    "Chat history and user list is not available in unlisted rooms."
+    "Chat history and user list is not available in unlisted rooms.",
+  ...(FEATURES.HACKS && {
+    banMessage:
+      "⚠️ You have been banned! You may not be able to rejoin the chat! ⚠️"
+  })
 } as const;
