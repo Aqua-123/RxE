@@ -9,13 +9,15 @@ import { loggingResponseHandler } from "../lib/userscripter/lib/preferences";
 import U from "~src/userscript";
 import T from "~src/text";
 
+const darkMode = matchMedia("(prefers-color-scheme: dark)").matches;
+
 export const P = {
   // settings
   theme: new StringPreference({
     key: "theme",
     label: T.preferences.theme.label,
     description: T.preferences.theme.description,
-    default: "default",
+    default: darkMode ? "ritsu" : "light",
     multiline: false
   }),
   ...(FEATURES.HACKS && {
