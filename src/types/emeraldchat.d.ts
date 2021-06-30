@@ -50,6 +50,9 @@ declare const App: {
     received: (e: EventData) => void;
     action: (e: EventAction) => void;
   };
+  temp: {
+    check: Function;
+  };
 };
 
 declare const UpgradeClient: {
