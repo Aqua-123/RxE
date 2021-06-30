@@ -10,6 +10,8 @@ type SettingsProps = SettingsDialogSettings & {
 
 export default function Settings(props: SettingsProps) {
   const {
+    adBlocker,
+    fancyColors,
     imgControl,
     imgProtect,
     imgBlur,
@@ -20,6 +22,17 @@ export default function Settings(props: SettingsProps) {
   } = props;
   return (
     <div>
+      <div className={`m1 ${styles.settingsSection}`}>{T.generalTitle}</div>
+      <CheckboxSetting
+        id="adBlocker"
+        value={adBlocker}
+        onChange={() => applySettings({ adBlocker: !adBlocker })}
+      />
+      <CheckboxSetting
+        id="fancyColors"
+        value={fancyColors}
+        onChange={() => applySettings({ fancyColors: !fancyColors })}
+      />
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
       <CheckboxSetting
         id="imgControl"
@@ -34,10 +47,7 @@ export default function Settings(props: SettingsProps) {
       <CheckboxSetting
         id="imgBlur"
         value={imgBlur}
-        onChange={() => {
-          document.documentElement.classList.toggle("ritsu-blur", !imgBlur);
-          applySettings({ imgBlur: !imgBlur });
-        }}
+        onChange={() => applySettings({ imgBlur: !imgBlur })}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.messageTitle}</div>
       <CheckboxSetting

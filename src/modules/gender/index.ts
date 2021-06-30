@@ -7,6 +7,7 @@ export function initGender() {
   document.documentElement.classList.toggle("showGender", showGender);
   document.head.append(
     crel("style", {
+      className: "show-gender",
       type: "text/css",
       textContent: css
     })

@@ -4,7 +4,7 @@ export function reorderMenu() {
   const gold = document
     .evaluate("//li[text()='Emerald Gold']", document)
     .iterateNext();
-  if (FEATURES.HACKS && Preferences.get(P.disableNags!)) {
+  if (Preferences.get(P.adBlocker)) {
     if (gold instanceof HTMLElement) {
       gold.remove();
     }

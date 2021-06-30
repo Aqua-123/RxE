@@ -4,11 +4,6 @@
   display: none;
 }
 
-/* hide quasi-ad */
-.emerald-jumbotron-message {
-  display: none;
-}
-
 /* picture overlay button */
 .room-component-message-picture-container {
   position: relative;
@@ -85,4 +80,12 @@ body.themeChange * {
 /* the web app shows unwanted scrollbars on firefox. hide them */
 body {
   overflow: hidden;
+}
+
+/* neutralize RTL characters in display names */
+span.user-flair:before {
+  content: "\2066";
+}
+span.user-flair:after {
+  content: "\2069";
 }

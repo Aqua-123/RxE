@@ -11,5 +11,4 @@ export function initPicturesBlur() {
       textContent: blurCSS
     })
   );
-  document.documentElement.classList.toggle("ritsu-blur", imgBlur);
 }

@@ -8,18 +8,24 @@ export function renderWFAFAndPrivateRooms() {
   if (!channels.length) return;
   const lastChannel = channels[channels.length - 1];
   if (lastChannel.textContent === T.privateRooms) return;
-  const div = crel("div", {
+  const hiddenChannels = crel("div", {
+    className: "room-user-label",
+    textContent: T.hiddenChannels
+  });
+  const wfafButton = crel("div", {
     className: "wfaf channel-unit",
     textContent: T.WFAF,
-    onclick: () => joinWFAF(),
+    onclick: () => joinWFAF()
   });
-  const div2 = crel("div", {
+  const privateButton = crel("div", {
     className: "private-rooms channel-unit",
     textContent: T.privateRooms,
-    onclick: () => joinPrivateRoom(),
+    onclick: () => joinPrivateRoom()
   });
-  lastChannel.parentElement?.insertBefore(div2, lastChannel.nextSibling);
-  lastChannel.parentElement?.insertBefore(div, div2);
+  const parent = lastChannel.parentElement!;
+  parent.insertBefore(privateButton, lastChannel.nextSibling);
+  parent.insertBefore(wfafButton, privateButton);
+  parent.insertBefore(hiddenChannels, wfafButton);
 }
 
 function joinSpecialRoom(name: string | null, selector: string) {

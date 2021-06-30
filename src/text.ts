@@ -5,6 +5,7 @@ export default {
   title: `${U.name} ${U.version}`,
   themeTitle: "Choose your theme",
   ...(FEATURES.HACKS && { hacksTitle: "Enable various hacks here" }),
+  generalTitle: "General Settings",
   imagesTitle: "Image Settings",
   messageTitle: "Message Settings",
   preferences: {
@@ -13,8 +14,8 @@ export default {
       description: "Reskin the chat"
     },
     ...(FEATURES.HACKS && {
-      disableNags: {
-        label: "Remove ads, nagging and limits on temp accounts"
+      superTemp: {
+        label: "Remove some temporary account restrictions"
       },
       enableModUI: {
         label: "Enable non-functional Moderator interface"
@@ -22,13 +23,16 @@ export default {
       universalFriend: {
         label: "Access any profile"
       },
-      fancyColors: {
-        label: "Use any color for your flair"
-      },
       antiBan: {
         label: "Prevent bans from closing the chat immediately"
       }
     }),
+    adBlocker: {
+      label: "Remove ads and nags"
+    },
+    fancyColors: {
+      label: "Use any color for your flair"
+    },
     imgControl: {
       label: "Overlay controls to block and favorite images"
     },
@@ -48,6 +52,7 @@ export default {
       label: "Gender-color the outline around avatars"
     }
   },
+  hiddenChannels: "hidden channels",
   WFAF: "WFAF ⌛",
   privateRooms: "Private Rooms 🔒",
   privateRoomsPrompt:

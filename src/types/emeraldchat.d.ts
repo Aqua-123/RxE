@@ -238,27 +238,43 @@ declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
 }
 
-declare const MenuReactMicro: {
-  close: Function;
-};
+declare class MenuMicro extends React.Component {
+  close(): void;
+}
 
-declare const MenuReact: {
-  close: Function;
-};
+declare const MenuReactMicro: MenuMicro;
 
-declare class Menu extends React.Component {}
+declare const MenuReactMicroStatic: null | MenuMicro;
+
+declare class Menu extends React.Component {
+  close: Function;
+}
+
+declare const MenuReact: Menu;
+
+declare const DashboardClient: null | {
+  setState: Function;
+};
 
 declare const UserViewGenerator: {
   generate(e: { event: any; user: any }): void;
 };
 
-declare const UserViewReact:
-  | undefined
-  | {
-      state: {
-        user: {
-          id: number;
-        };
-      };
-      view_profile: Function;
+declare class UserView extends React.Component<
+  any,
+  {
+    user: {
+      id: number;
     };
+  }
+> {
+  close: Function;
+  view_profile: Function;
+  exit_click: EventListenerObject;
+}
+
+declare const UserViewReact: undefined | UserView;
+
+declare class Popup extends React.Component {
+  close: Function;
+}
