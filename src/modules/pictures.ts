@@ -61,7 +61,6 @@ function insertPicture(url: string) {
     updated_at: time,
     url
   };
-  console.log(picture);
   RoomClient.send_picture(picture);
 }
 

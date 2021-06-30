@@ -19,9 +19,9 @@ export const P = {
     multiline: false
   }),
   ...(FEATURES.HACKS && {
-    disableNags: new BooleanPreference({
-      key: "disableNags",
-      label: T.preferences.disableNags!.label,
+    superTemp: new BooleanPreference({
+      key: "superTemp",
+      label: T.preferences.superTemp!.label,
       default: true
     }),
     enableModUI: new BooleanPreference({
@@ -34,16 +34,21 @@ export const P = {
       label: T.preferences.universalFriend!.label,
       default: true
     }),
-    fancyColors: new BooleanPreference({
-      key: "fancyColors",
-      label: T.preferences.fancyColors!.label,
-      default: true
-    }),
     antiBan: new BooleanPreference({
       key: "antiBan",
       label: T.preferences.antiBan!.label,
       default: true
     })
+  }),
+  adBlocker: new BooleanPreference({
+    key: "adBlocker",
+    label: T.preferences.adBlocker.label,
+    default: true
+  }),
+  fancyColors: new BooleanPreference({
+    key: "fancyColors",
+    label: T.preferences.fancyColors!.label,
+    default: true
   }),
   imgControl: new BooleanPreference({
     key: "imgControl",

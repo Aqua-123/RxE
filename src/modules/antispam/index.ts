@@ -23,6 +23,9 @@ function antiSpam() {
     if (RoomClient.state.id == null || RoomClient.state.mode == "private")
       return;
 
+    // neutralize silly RTL nonsense
+    e.user.display_name = "\u2066" + e.user.display_name + "\u2069";
+
     // since we're here, update user list more accurately
     if (e.user) {
       if (e.user_disconnected) {

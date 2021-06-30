@@ -1,4 +1,4 @@
-html.ritsu-blur {
+html.imgBlur {
   div > img[src*="uploads"] {
     filter: blur(7px);
     transition: filter 1s ease;

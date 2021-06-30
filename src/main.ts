@@ -2,8 +2,6 @@ import { log } from "../lib/userscripter";
 
 import U from "~src/userscript";
 
-import { initTheme } from "./themes";
-import { accountOverrides } from "./modules/accountoverrides";
 import {
   fixAppendPictures,
   initPictures,
@@ -11,7 +9,6 @@ import {
 } from "./modules/pictures";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
-import { injectRitsuMenu } from "./modules/ritsumenu";
 import { decorateHeader } from "./modules/header";
 
 import { decorateProfileDialog } from "./modules/flaircolor";
@@ -25,6 +22,8 @@ import { renderBrokenImages } from "./modules/brokenimages";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { initGender } from "./modules/gender";
 import { initAntiBan } from "./modules/antiban";
+import { applySettings, injectRitsuMenu } from "./modules/settings";
+import { applyOverrides } from "./modules/overrides";
 
 function init() {
   const featureSet = `(${[
@@ -33,13 +32,13 @@ function init() {
   ]})`;
   log.log(`${U.name} Version ${U.version} ${featureSet}`);
   // override some builtin behavior
-  accountOverrides();
+  applyOverrides();
   // inject network middleware
   initNetwork();
   // antiban
   initAntiBan();
-  // apply theme
-  initTheme();
+  // apply settings and theme
+  applySettings();
   // initialize picture control
   initPictures();
   initPicturesBlur();

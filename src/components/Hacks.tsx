@@ -9,21 +9,15 @@ type HacksProps = SettingsDialogHacks & {
 };
 
 export default function Hacks(props: HacksProps) {
-  const {
-    disableNags,
-    enableModUI,
-    universalFriend,
-    antiBan,
-    fancyColors,
-    applyHacks
-  } = props;
+  const { superTemp, enableModUI, universalFriend, antiBan, applyHacks } =
+    props;
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.hacksTitle}</div>
       <CheckboxSetting
-        id="disableNags"
-        value={disableNags}
-        onChange={() => applyHacks({ disableNags: !disableNags })}
+        id="superTemp"
+        value={superTemp}
+        onChange={() => applyHacks({ superTemp: !superTemp })}
       />
       <CheckboxSetting
         id="enableModUI"
@@ -40,11 +34,6 @@ export default function Hacks(props: HacksProps) {
         value={antiBan}
         onChange={() => applyHacks({ antiBan: !antiBan })}
       />
-      {/* <CheckboxSetting
-        id="fancyColors"
-        value={fancyColors}
-        onChange={() => applyHacks({ fancyColors: !fancyColors })}
-      /> */}
     </div>
   );
 }
