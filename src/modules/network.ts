@@ -31,6 +31,7 @@ export function initNetwork() {
               Preferences.get(P.universalFriend!) &&
               settings.url?.startsWith("/profile_json?")
             ) {
+              e.actualFriend = e.friend;
               e.friend = true;
             }
             success(e, txt, xhr);
