@@ -245,6 +245,10 @@ declare class MenuMicro extends React.Component {
   close(): void;
 }
 
+declare class MenuMicroStatic extends React.Component {
+  close(): void;
+}
+
 declare const MenuReactMicro: MenuMicro;
 
 declare const MenuReactMicroStatic: null | MenuMicro;
@@ -280,4 +284,20 @@ declare const UserViewReact: undefined | UserView;
 
 declare class Popup extends React.Component {
   close: Function;
+}
+declare class Picture extends React.Component {
+  close: Function;
+}
+
+declare class UserProfile extends React.Component<
+  any,
+  {
+    data: {
+      friend: boolean;
+      // NOTE: This is our own field
+      actualFriend: boolean;
+    };
+  }
+> {
+  profile_buttons: Function;
 }

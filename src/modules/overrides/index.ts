@@ -15,6 +15,11 @@ export function applyOverrides() {
     };
   }
 
+  /**
+   * To be clear, this is not how you use React.
+   * Mounting and unmounting root components should be rare operation,
+   * not something that happens on every click.
+   */
   function unmountComponent(c: React.Component) {
     if ((c as any).updater.isMounted(c)) {
       const node = ReactDOM.findDOMNode(c);
@@ -31,17 +36,18 @@ export function applyOverrides() {
       setTimeout(unmountComponent.bind(null, this), 250);
   };
 
-  MenuMicro.prototype.close = function () {
+  MenuMicro.prototype.close = MenuMicroStatic.prototype.close = function () {
     $("#menu-micro-bg").removeClass("animated fadeIn"),
       $("#menu-micro-bg").addClass("animated fadeOut"),
       $("#menu-micro").addClass("animated zoomOut"),
       setTimeout(unmountComponent.bind(null, this), 250);
   };
+
   UserView.prototype.close = function () {
     document.removeEventListener("mousedown", this.exit_click, false);
     unmountComponent(this);
   };
-  Popup.prototype.close = function () {
+  Popup.prototype.close = Picture.prototype.close = function () {
     unmountComponent(this);
   };
 
@@ -76,5 +82,13 @@ function hackOverrides() {
 
   ModPanel.prototype.componentDidMount = function () {
     this.setState({ tab: "default" });
+  };
+
+  const profile_buttons = UserProfile.prototype.profile_buttons;
+  UserProfile.prototype.profile_buttons = function () {
+    this.state.data.friend = this.state.data.actualFriend;
+    const value = profile_buttons.apply(this);
+    this.state.data.friend = true;
+    return value;
   };
 }
