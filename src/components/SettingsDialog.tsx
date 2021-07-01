@@ -60,7 +60,6 @@ export default class SettingsDialog extends React.Component<
     const { theme, settings, needsReload } = this.state;
     return (
       <div>
-        {/* <style type="text/css">{styles.toString()}</style> */}
         <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
         {FEATURES.HACKS && (

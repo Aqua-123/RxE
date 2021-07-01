@@ -21,17 +21,17 @@ export function initTheme() {
     );
     styleSheet = document.head.querySelector(".custom-theme")!;
   }
-  let css = otherCSS;
+  const css = [otherCSS];
   switch (theme) {
     case "default":
     default:
       break;
     case "ritsu":
-      css += baseCSS + ritsuCSS;
+      css.push(baseCSS, ritsuCSS);
       break;
     case "light":
-      css += baseCSS + lightCSS;
+      css.push(baseCSS, lightCSS);
       break;
   }
-  styleSheet.textContent = css;
+  styleSheet.textContent = css.join("\n");
 }

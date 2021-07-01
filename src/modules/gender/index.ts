@@ -1,17 +1,11 @@
 import { P, Preferences } from "~src/preferences";
-import { crel } from "~src/utils";
+import { loadCSS } from "~src/utils";
 import css from "./style.scss";
 
 export function initGender() {
   const showGender = Preferences.get(P.showGender);
   document.documentElement.classList.toggle("showGender", showGender);
-  document.head.append(
-    crel("style", {
-      className: "show-gender",
-      type: "text/css",
-      textContent: css
-    })
-  );
+  loadCSS(css);
 
   const mnuImage = MessageNotificationUnit.prototype.image;
   MessageNotificationUnit.prototype.image = function () {

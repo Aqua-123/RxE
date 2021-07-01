@@ -1,18 +1,12 @@
 import { P, Preferences } from "~src/preferences";
-import { crel } from "~src/utils";
+import { loadCSS } from "~src/utils";
 import css from "./style.scss";
 
-export function removeAds() {
-  if (!document.querySelector("style.ad-block")) {
-    document.head.append(
-      crel("style", {
-        className: "ad-block",
-        type: "text/css",
-        textContent: css
-      })
-    );
-  }
+export function initAdBlocker() {
+  loadCSS(css);
+}
 
+export function removeAds() {
   if (Preferences.get(P.adBlocker)) {
     document
       .querySelectorAll(
