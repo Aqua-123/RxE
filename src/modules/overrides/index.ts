@@ -54,6 +54,23 @@ export function applyOverrides() {
   // non-hack: "Sign up to continue" only shows once at start
   App.temp.check = () => {};
 
+  // For some reason, pictures we send don't render for ourselves initially.
+  // Setting e.messages to [""] fixes that, although I don't know why yet.
+  const rAppend = Room.prototype.append;
+  Room.prototype.append = function (e) {
+    if (e.messages.length === 0) e.messages.push("");
+    rAppend.call(this, e);
+  };
+
+  // Allow more messages in group chat. (make configurable?)
+  const rTrim = Room.prototype.trim_messages;
+  Room.prototype.trim_messages = function () {
+    const max = this.state.mode === "channel" ? 100 : 5000;
+    const messages = this.state.messages;
+    if (messages.length > max) messages.shift();
+    this.setState({ messages });
+  };
+
   if (FEATURES.HACKS) hackOverrides();
 }
 

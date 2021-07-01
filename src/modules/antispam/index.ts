@@ -51,7 +51,7 @@ function antiSpam() {
     if (!spam_rating[id]) {
       spam_rating[id] = {
         score: 1,
-        score2: 1,
+        score2: 0,
         d: 0,
         p: ""
       };
@@ -63,23 +63,33 @@ function antiSpam() {
       1 / Math.E,
       Math.E - Math.log(10 + message.length + uppercase.length) / 4
     );
-    // karma-biased anti-spam logic - gameable, but worth trying out
-    // score is a function of frequency: more frequent msg increase score
-    // score is a function of karma: karma above a threshold allows more frequent msg, up to a point
-    // TBD
+    // dumber anti-spam logic - 3 fast messages, you're out.
+    const delta = now - rating.d || 1500;
+    if (delta <= 1000) {
+      rating.score2++;
+    } else if (delta > 2000) {
+      rating.score2 = Math.max(0, rating.score2 - Math.log10(delta));
+    }
 
     rating.d = now;
     rating.p = message;
     console.log(
-      `anti-spam ${display_name} score=${rating.score} msg=${message}`
+      `%cspam s1=${rating.score.toFixed(2)} s2=${rating.score2.toFixed(
+        2
+      )} ${display_name}: ${message}`,
+      rating.score >= 1 || rating.score2 >= 3
+        ? "color:red"
+        : rating.score > 0.8 || rating.score2 >= 1
+        ? "color:orange"
+        : ""
     );
-    if (rating.score >= 1 && !App.room.muted.includes(id)) {
+    if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
       if (Preferences.get(P.antiSpam)) {
         App.room.mute(id);
         printMessage(`AutoMute: Muted user ${display_name}.`);
       }
     }
-    if (rating.score < 0.75 && App.room.muted.includes(id)) {
+    if (rating.score < 1 && App.room.muted.includes(id)) {
       App.room.unmute(id);
       printMessage(`AutoMute: Unmuted user ${display_name}.`);
     }
