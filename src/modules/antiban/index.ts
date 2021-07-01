@@ -1,5 +1,5 @@
 import { P, Preferences } from "~src/preferences";
-import { crel, wrapMethod } from "~src/utils";
+import { crel, loadCSS, wrapMethod } from "~src/utils";
 import css from "./style.scss";
 import T from "~src/text";
 
@@ -17,12 +17,7 @@ export function initAntiBan() {
     },
     true
   );
-  document.head.append(
-    crel("style", {
-      type: "text/css",
-      textContent: css
-    })
-  );
+  loadCSS(css);
 }
 
 function showBanBanner() {

@@ -13,8 +13,7 @@ import { decorateHeader } from "./modules/header";
 
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { addLookupButton } from "./modules/lookupbutton";
-import { decorateMessages } from "./modules/messages";
-import { removeAds } from "./modules/ads";
+import { initAdBlocker, removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
@@ -24,6 +23,7 @@ import { initGender } from "./modules/gender";
 import { initAntiBan } from "./modules/antiban";
 import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { applyOverrides } from "./modules/overrides";
+import { decorateMessages, initMessages } from "./modules/messages";
 
 function init() {
   const featureSet = `(${[
@@ -37,9 +37,12 @@ function init() {
   initNetwork();
   // antiban
   initAntiBan();
+  // ad blocker
+  initAdBlocker();
   // apply settings and theme
   applySettings();
-  // initialize picture control
+  // initialize message and picture control
+  initMessages();
   initPictures();
   initPicturesBlur();
   // anti-spam

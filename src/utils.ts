@@ -7,6 +7,25 @@ export const crel = <T extends string>(elt: T, obj = {}) => {
   return Object.assign(document.createElement(elt), obj);
 };
 
+const cssBucket: string[] = [];
+/**
+ * Group some styles into a common <style> node.
+ */
+export function loadCSS(css: string) {
+  cssBucket.push(css);
+  Promise.resolve().then(() => {
+    if (!cssBucket.length) return;
+    const str = cssBucket.join("\n");
+    cssBucket.length = 0;
+    document.head.append(
+      crel("style", {
+        type: "text/css",
+        textContent: str
+      })
+    );
+  });
+}
+
 /**
  * Inject code in an object method
  */
