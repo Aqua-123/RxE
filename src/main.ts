@@ -2,11 +2,7 @@ import { log } from "../lib/userscripter";
 
 import U from "~src/userscript";
 
-import {
-  fixAppendPictures,
-  initPictures,
-  decoratePictures
-} from "./modules/pictures";
+import { initPictures, decoratePictures } from "./modules/pictures";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
 import { decorateHeader } from "./modules/header";
@@ -60,7 +56,6 @@ function init() {
     addLookupButton,
     decorateMessages,
     removeAds,
-    fixAppendPictures,
     renderBrokenImages,
     renderWFAFAndPrivateRooms
   ]);

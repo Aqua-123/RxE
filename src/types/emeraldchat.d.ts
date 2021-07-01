@@ -215,8 +215,7 @@ declare class Room extends React.Component {
   print(elt?: JSX.Element): void;
   print_append(elt?: JSX.Element): void;
   append(e: MessageData): void;
-  // NOTE: This is our own field
-  _append?: (e: any) => void;
+  trim_messages(): void;
 }
 
 declare const RoomChannelSelectClient: {

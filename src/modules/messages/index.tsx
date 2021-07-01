@@ -7,17 +7,18 @@ export function initMessages() {
   loadCSS(css);
   const mRender = Message.prototype.render;
   Message.prototype.render = function () {
+    const { user } = this.props.data;
     const tree = mRender.apply(this);
+    tree.props["data-id"] = user.id;
     const messageRight = tree.props.children[1];
     if (Preferences.get(P.imgProtect)) {
-      const { user, picture } = this.props.data;
+      const { picture } = this.props.data;
       if (picture && (user.temp || user.karma < 10)) {
         const messageText = messageRight.props.children[1];
         delete messageText.props.children;
       }
     }
     if (Preferences.get(P.showInfo)) {
-      const { user } = this.props.data;
       const flair = messageRight.props.children[0];
       flair.props.children.push(
         <span className="user-extra">

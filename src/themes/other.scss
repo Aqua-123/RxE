@@ -86,3 +86,7 @@ span.user-flair:before {
 span.user-flair:after {
   content: "\2069";
 }
+
+body.tmp-message span.room-component-print:last-of-type {
+  margin: -1em 0;
+}
