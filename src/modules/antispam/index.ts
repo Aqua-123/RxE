@@ -1,5 +1,5 @@
 import { P, Preferences } from "~src/preferences";
-import { printMessage, wrapMethod } from "~src/utils";
+import { printTransientMessage, wrapMethod } from "~src/utils";
 
 function antiSpam() {
   const spam_rating: {
@@ -29,14 +29,14 @@ function antiSpam() {
     // since we're here, update user list more accurately
     if (e.user) {
       if (e.user_disconnected) {
-        printMessage(`User ${e.user.display_name} left the chat.`);
+        printTransientMessage(`User ${e.user.display_name} left the chat.`);
       } else {
         if (
           !RoomChannelMembersClient.state.members.some(
             (m) => m.id === e.user.id
           )
         ) {
-          printMessage(`User ${e.user.display_name} joined the chat.`);
+          printTransientMessage(`User ${e.user.display_name} joined the chat.`);
         }
         RoomChannelMembersClient.add_member(e.user);
       }
@@ -86,12 +86,12 @@ function antiSpam() {
     if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
       if (Preferences.get(P.antiSpam)) {
         App.room.mute(id);
-        printMessage(`AutoMute: Muted user ${display_name}.`);
+        printTransientMessage(`AutoMute: Muted user ${display_name}.`);
       }
     }
     if (rating.score < 1 && App.room.muted.includes(id)) {
       App.room.unmute(id);
-      printMessage(`AutoMute: Unmuted user ${display_name}.`);
+      printTransientMessage(`AutoMute: Unmuted user ${display_name}.`);
     }
   }
 
