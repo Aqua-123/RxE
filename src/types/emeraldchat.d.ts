@@ -294,7 +294,7 @@ declare class UserView extends React.Component<
   exit_click: EventListenerObject;
 }
 
-declare const UserViewReact: undefined | UserView;
+declare let UserViewReact: undefined | UserView;
 
 declare class Popup extends React.Component {
   close: Function;
@@ -314,4 +314,7 @@ declare class UserProfile extends React.Component<
   }
 > {
   profile_buttons: Function;
+  switch(id: number): void;
 }
+
+declare let UserProfileReact: null | UserProfile;

@@ -47,6 +47,22 @@ export function applyOverrides() {
     document.removeEventListener("mousedown", this.exit_click, false);
     unmountComponent(this);
   };
+  UserView.prototype.view_profile = function () {
+    const { id } = this.state.user;
+    if (UserProfileReact) {
+      UserProfileReact.switch(id);
+    } else {
+      ReactDOM.render(
+        React.createElement(UserProfile, {
+          key: id,
+          id: id
+        }),
+        document.getElementById("ui-hatch")
+      );
+    }
+    unmountComponent(this);
+  };
+
   Popup.prototype.close = Picture.prototype.close = function () {
     unmountComponent(this);
   };
