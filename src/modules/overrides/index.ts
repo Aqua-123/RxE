@@ -108,4 +108,6 @@ function hackOverrides() {
     this.state.data.friend = true;
     return value;
   };
+
+  UpgradeAccount.prototype.signup = () => {};
 }

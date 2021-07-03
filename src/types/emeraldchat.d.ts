@@ -69,6 +69,10 @@ declare const UpgradeClient: {
   form: Function;
 };
 
+declare class UpgradeAccount {
+  signup: Function;
+}
+
 declare class ModPanel extends React.Component {}
 
 declare type MessageData = {

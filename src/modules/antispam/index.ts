@@ -19,6 +19,13 @@ function antiSpam() {
     }
     rcsJoin.call(this, e);
   };
+  const rcmSetState = RoomChannelMembers.prototype.setState;
+  RoomChannelMembers.prototype.setState = function (e: any) {
+    if (e.members) {
+      e.members = e.members.filter((v: any) => !!v);
+    }
+    rcmSetState.call(this, e);
+  };
 
   function onRoomJoin() {
     document.querySelector(".wfaf")?.classList.remove("channel-unit-active"); // WART.
