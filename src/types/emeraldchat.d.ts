@@ -216,6 +216,11 @@ declare type EmeraldPicture = {
   url: string;
 };
 
+declare const PictureUploader: {
+  success: (e: EmeraldPicture) => void;
+  onUploaded: (e: EmeraldPicture) => void;
+};
+
 declare const RoomClient: Room;
 
 declare class Room extends React.Component {

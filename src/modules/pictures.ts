@@ -61,7 +61,7 @@ function insertPicture(url: string) {
     updated_at: time,
     url
   };
-  RoomClient.send_picture(picture);
+  PictureUploader.onUploaded(picture);
 }
 
 export function decoratePictures() {

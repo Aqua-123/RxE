@@ -52,7 +52,7 @@ export function decorateMessages() {
         ".room-component-message-text"
       )?.childNodes;
       while (divs && divs.length > lines.length) {
-        console.error("stuck DIV found in message", divs[0]);
+        // console.error("stuck DIV found in message", divs[0]);
         divs[0].remove();
       }
     }
