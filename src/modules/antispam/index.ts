@@ -45,7 +45,7 @@ function antiSpam() {
     e.user.display_name = "\u2066" + e.user.display_name + "\u2069";
 
     // since we're here, update user list more accurately
-    if (e.user) {
+    if ("state" in RoomChannelMembersClient && e.user) {
       if (e.user_disconnected) {
         printTransientMessage(`User ${e.user.display_name} left the chat.`);
       } else {
