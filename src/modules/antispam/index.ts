@@ -20,11 +20,13 @@ function antiSpam() {
     rcsJoin.call(this, e);
   };
   const rcmSetState = RoomChannelMembers.prototype.setState;
-  RoomChannelMembers.prototype.setState = function (e: any) {
-    if (e.members) {
-      e.members = e.members.filter((v: any) => !!v);
+  RoomChannelMembers.prototype.setState = function (e) {
+    if (e && "members" in e) {
+      e.members = e.members
+        .filter((v) => !!v)
+        .sort((a, b) => a.display_name.localeCompare(b.display_name));
     }
-    rcmSetState.call(this, e);
+    rcmSetState.call(this, e as any);
   };
 
   function onRoomJoin() {
