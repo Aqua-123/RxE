@@ -40,6 +40,7 @@ export function renderWFAFAndPrivateRooms() {
 }
 
 function joinSpecialRoom(name: string, selector: string) {
+  if (!("setState" in RoomChannelMembersClient)) return;
   RoomClient.setState({ messages: [], current_channel: name });
   RoomChannelMembersClient.setState({ members: [] });
   App.room.join(name);

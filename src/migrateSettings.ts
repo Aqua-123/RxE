@@ -9,6 +9,7 @@ export function migrateSettings() {
   const themeToMigrate = GM_getValue("theme", false);
   if (themeToMigrate) {
     Preferences.set(P.theme, themeToMigrate);
+    console.log("Migrated THEME");
     GM_deleteValue("theme");
   }
   const hacksToMigrate = GM_getValue<any>("hacks", false);
@@ -18,6 +19,7 @@ export function migrateSettings() {
       Preferences.set(P.superTemp!, !!hacksToMigrate.disableNags);
     }
     Preferences.set(P.fancyColors, !!hacksToMigrate.fancyColors);
+    console.log("Migrated HACKS");
     GM_deleteValue("hacks");
   }
   const settingsToMigrate = GM_getValue<any>("settings", false);
@@ -25,6 +27,7 @@ export function migrateSettings() {
     Preferences.set(P.imgControl, !!settingsToMigrate.imgControl);
     Preferences.set(P.imgProtect, !!settingsToMigrate.imgProtect);
     Preferences.set(P.showInfo, !!settingsToMigrate.showInfo);
+    console.log("Migrated SETTINGS");
     GM_deleteValue("settings");
   }
   const blockedPicsToMigrate = GM_getValue<any>("blockedPictures", false);
@@ -36,6 +39,7 @@ export function migrateSettings() {
       }
     }
     Preferences.set(P.blockedHashes, blockedHashes);
+    console.log("Migrated BLOCKED PICTURES");
     GM_deleteValue("blockedPictures");
   }
   const savedPicsToMigrate = GM_getValue<any>("savedPictures", false);
@@ -47,6 +51,7 @@ export function migrateSettings() {
       }
     }
     Preferences.set(P.savedPictures, savedPictures);
+    console.log("Migrated SAVED PICTURES");
     GM_deleteValue("savedPictures");
   }
 }

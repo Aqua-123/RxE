@@ -9,5 +9,6 @@ export default {
   path: "app",
   sitename: "Emerald Chat",
   namespace: "Emerald Bot - Ritsu Project",
-  runAt: "document-end"
+  runAt: "document-end",
+  grant: ["GM_getValue", "GM_deleteValue"]
 } as const;
