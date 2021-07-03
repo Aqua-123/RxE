@@ -228,9 +228,10 @@ declare class Room extends React.Component {
   trim_messages(): void;
 }
 
-declare const RoomChannelSelectClient: {
+declare class RoomChannelSelect {
   join(e: any): void;
-};
+}
+declare const RoomChannelSelectClient: RoomChannelSelect;
 
 declare class RoomChannelMembers extends React.Component<
   any,

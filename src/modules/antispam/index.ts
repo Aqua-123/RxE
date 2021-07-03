@@ -11,6 +11,15 @@ function antiSpam() {
     };
   } = {};
 
+  // anti suicide-bombing. TODO: test me
+  const rcsJoin = RoomChannelSelect.prototype.join;
+  RoomChannelSelect.prototype.join = function (e) {
+    if (e.members) {
+      e.members = e.members.filter((v: any) => !!v);
+    }
+    rcsJoin.call(this, e);
+  };
+
   function onRoomJoin() {
     document.querySelector(".wfaf")?.classList.remove("channel-unit-active"); // WART.
     document
