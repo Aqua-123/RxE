@@ -3,7 +3,7 @@ import { BuildConfig } from "./lib/userscripter/src/build";
 
 import U from "./src/userscript";
 
-export default function(_: BuildConfig): Metadata {
+export default function (_: BuildConfig): Metadata {
   return {
     name: U.name,
     version: U.version,
@@ -15,6 +15,7 @@ export default function(_: BuildConfig): Metadata {
       `*://www.${U.hostname}/${U.path ?? "*"}`
     ],
     namespace: U.namespace,
-    run_at: U.runAt
+    run_at: U.runAt,
+    grant: U.grant
   };
 }
