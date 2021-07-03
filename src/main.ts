@@ -20,6 +20,7 @@ import { initAntiBan } from "./modules/antiban";
 import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { applyOverrides } from "./modules/overrides";
 import { decorateMessages, initMessages } from "./modules/messages";
+import { migrateSettings } from "./migrateSettings";
 
 function init() {
   const featureSet = `(${[
@@ -27,6 +28,8 @@ function init() {
     ...(FEATURES.P2P ? ["P2P"] : [])
   ]})`;
   log.log(`${U.name} Version ${U.version} ${featureSet}`);
+  // migrate settings from older userscripts, if any
+  migrateSettings();
   // override some builtin behavior
   applyOverrides();
   // inject network middleware
