@@ -250,7 +250,7 @@ declare class RoomChannelMembers extends React.Component<
   remove_member(e: EmeraldUser): void;
 }
 
-declare const RoomChannelMembersClient: RoomChannelMembers;
+declare const RoomChannelMembersClient: {} | RoomChannelMembers;
 
 declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;
