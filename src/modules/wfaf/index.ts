@@ -1,7 +1,9 @@
 // open WFAF: RoomClient.switch({id:null, mode:'private'})
-import { crel } from "~src/utils";
+import { crel, printMessage } from "~src/utils";
 import T from "~src/text";
 import React from "react";
+
+let specialRoom: string;
 
 export function renderWFAFAndPrivateRooms() {
   const channels = document.querySelectorAll(".channel-unit");
@@ -26,9 +28,18 @@ export function renderWFAFAndPrivateRooms() {
   parent.insertBefore(privateButton, lastChannel.nextSibling);
   parent.insertBefore(wfafButton, privateButton);
   parent.insertBefore(hiddenChannels, wfafButton);
+
+  // setup hooks
+  const subReject = ActionCable.Subscriptions.prototype.reject;
+  ActionCable.Subscriptions.prototype.reject = function (id) {
+    if (id === App.room.client.identifier && App.room.id === specialRoom) {
+      printMessage(`ERROR: You could not join room ${specialRoom || "WFAF"}`);
+    }
+    subReject.call(this, id);
+  };
 }
 
-function joinSpecialRoom(name: string | null, selector: string) {
+function joinSpecialRoom(name: string, selector: string) {
   RoomClient.setState({ messages: [], current_channel: name });
   RoomChannelMembersClient.setState({ members: [] });
   App.room.join(name);
@@ -37,6 +48,7 @@ function joinSpecialRoom(name: string | null, selector: string) {
     .forEach((channel) => channel.classList.remove("channel-unit-active"));
   document.querySelector(selector)?.classList.add("channel-unit-active");
   RoomClient.print(React.createElement("div", null, T.privateRoomsWarning));
+  specialRoom = name;
 }
 
 function joinWFAF() {

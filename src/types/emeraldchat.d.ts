@@ -24,10 +24,12 @@ declare type EventAction = {
   action: "clear_notifications" | "clear_messages" | string;
 };
 
-declare const App: {
+declare interface AppInterface {
   user: EmeraldUser;
   room: {
+    id: string;
     client: {
+      identifier: string;
       connected(): void;
       disconnected(): void;
       received(e: {
@@ -53,7 +55,15 @@ declare const App: {
   temp: {
     check: Function;
   };
-};
+}
+
+declare const App: AppInterface;
+
+declare module ActionCable {
+  class Subscriptions {
+    reject(id: string): void;
+  }
+}
 
 declare const UpgradeClient: {
   form: Function;
