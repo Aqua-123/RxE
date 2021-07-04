@@ -8,7 +8,8 @@
     "lint": "eslint src/**/*.{ts,tsx}",
     "prod": "yarn lint && cross-env USERSCRIPTER_MODE=production yarn build",
     "ext": "npm run prod && cp -R static/* dist/ && web-ext build -s dist",
-    "clean": "rimraf .userscripter-temp dist web-ext-artifacts"
+    "clean": "rimraf .userscripter-temp dist web-ext-artifacts",
+    "postinstall": "cd lib/userscripter && yarn build"
   },
   "devDependencies": {
     "@typed/compose": "^1.0.0",
