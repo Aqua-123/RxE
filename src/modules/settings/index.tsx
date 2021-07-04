@@ -52,7 +52,7 @@ export function openSettings() {
 }
 
 export function injectRitsuMenu() {
-  let ritsuMenu = document.querySelector(".navigation-dropdown-ritsu");
+  const ritsuMenu = document.querySelector(".navigation-dropdown-ritsu");
   if (!ritsuMenu) {
     document.querySelector(".navigation-dropdown-content")?.prepend(
       crel("li", {

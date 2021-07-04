@@ -5,7 +5,7 @@ import { crel } from "~src/utils";
 export function decorateHeader() {
   // replace logo
   const logo = document.querySelector(".main-logo");
-  if (logo instanceof HTMLImageElement && logo.src != U.icon) {
+  if (logo instanceof HTMLImageElement && logo.src !== U.icon) {
     logo.src = U.icon;
   }
   // set favicon

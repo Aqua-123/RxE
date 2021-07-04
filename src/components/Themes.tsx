@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Theme, THEMES } from "../themes";
 import T from "~src/text";
 import styles from "./style.module.scss";

@@ -5,7 +5,8 @@
     "build-userscript": "webpack --config .userscripter-temp/webpack.config.js",
     "build": "npm run clean && npm run build-webpack-config && npm run build-userscript",
     "dev": "npm run clean && npm run build-webpack-config && webpack serve --config .userscripter-temp/webpack.config.js",
-    "prod": "cross-env USERSCRIPTER_MODE=production yarn build",
+    "lint": "eslint src/**/*.{ts,tsx}",
+    "prod": "yarn lint && cross-env USERSCRIPTER_MODE=production yarn build",
     "ext": "npm run prod && cp -R static/* dist/ && web-ext build -s dist",
     "clean": "rimraf .userscripter-temp dist web-ext-artifacts"
   },

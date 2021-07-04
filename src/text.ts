@@ -1,4 +1,3 @@
-import * as CONFIG from "./config";
 import U from "./userscript";
 
 export default {

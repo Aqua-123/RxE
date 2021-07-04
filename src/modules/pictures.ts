@@ -9,7 +9,9 @@ const savedPictures: string[] = [];
 
 export function initPictures() {
   const hashes = Preferences.get(P.blockedHashes);
-  hashes.forEach((hash) => (blockedHashes[hash] = true));
+  hashes.forEach((hash) => {
+    blockedHashes[hash] = true;
+  });
   savedPictures.push(...Preferences.get(P.savedPictures));
 }
 
@@ -32,6 +34,7 @@ async function blockPicture(src?: string) {
   blockedHashes[hash] = true;
   Preferences.set(P.blockedHashes, Object.keys(blockedHashes));
   // apply block
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
   decoratePictures();
 }
 
@@ -106,7 +109,7 @@ export function decoratePictures() {
       pic.append(controls);
     }
     if (pic.firstChild instanceof HTMLImageElement) {
-      const src = pic.firstChild.src;
+      const { src } = pic.firstChild;
       const hash = await getHash(src);
       if (blockedHashes[hash]) {
         pic.firstChild.src = "";
@@ -120,14 +123,11 @@ export function decoratePictures() {
   const nagText = dialog.querySelector<HTMLElement>(".ui-menu-text");
   if (nagText?.firstElementChild?.tagName === "B") {
     nagText.style.display = "none";
-  } else {
-    if (nagText) nagText.style.display = "";
-  }
+  } else if (nagText) nagText.style.display = "";
 
   const imageGrid = dialog.querySelector(".image-grid");
   if (imageGrid) return;
   const buttons = dialog.querySelector(".ui-menu-buttons");
-  const closeButton = buttons?.firstChild;
   const newImageGrid = crel("div", {
     className: "image-grid"
   });

@@ -8,9 +8,7 @@ export function reorderMenu() {
     if (gold instanceof HTMLElement) {
       gold.remove();
     }
-  } else {
-    if (gold && gold?.parentElement?.firstChild === gold) {
-      gold.parentElement.append(gold);
-    }
+  } else if (gold && gold?.parentElement?.firstChild === gold) {
+    gold.parentElement.append(gold);
   }
 }

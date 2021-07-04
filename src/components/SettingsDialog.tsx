@@ -30,24 +30,18 @@ export default class SettingsDialog extends React.Component<
       ...getSettings(),
       needsReload: false
     } as SettingsDialogState;
-    if (FEATURES.HACKS) {
-      this.applyHacks = (obj: SettingsDialogHacks) => {
-        const hacks = { ...this.state.hacks, ...obj };
-        const keys = Object.keys(obj);
-        keys.forEach((key) => Preferences.set(P[key]!, obj[key]));
-        applySettings();
-        this.setState({ hacks, needsReload: true });
-      };
-    }
   }
+
   applySettings = (obj: SettingsDialogSettings) => {
-    const settings = { ...this.state.settings, ...obj };
+    const { settings } = this.state;
+    const newSettings = { ...settings, ...obj };
     const keys = Object.keys(obj);
     keys.forEach((key) => Preferences.set(P[key], obj[key]));
     applySettings();
 
-    this.setState({ settings, needsReload: true });
+    this.setState({ settings: newSettings, needsReload: true });
   };
+
   applyTheme = (theme: Theme) => {
     Preferences.set(P.theme, theme);
     document.body.classList.add("themeChange");
@@ -55,15 +49,26 @@ export default class SettingsDialog extends React.Component<
     this.setState({ theme });
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
-  applyHacks!: (obj: SettingsDialogHacks) => void;
+
+  applyHacks = (obj: SettingsDialogHacks) => {
+    if (FEATURES.HACKS) {
+      const { hacks } = this.state;
+      const newHacks = { ...hacks, ...obj };
+      const keys = Object.keys(obj);
+      keys.forEach((key) => Preferences.set(P[key]!, obj[key]));
+      applySettings();
+      this.setState({ hacks: newHacks, needsReload: true });
+    }
+  };
+
   render() {
-    const { theme, settings, needsReload } = this.state;
+    const { theme, settings, hacks, needsReload } = this.state;
     return (
       <div>
         <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
         {FEATURES.HACKS && (
-          <HacksView {...this.state.hacks} applyHacks={this.applyHacks} />
+          <HacksView {...hacks} applyHacks={this.applyHacks} />
         )}
         {needsReload && (
           <div className={styles.reloadWarning}>

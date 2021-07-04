@@ -1,12 +1,14 @@
+import { log } from "../lib/userscripter";
 import { P, Preferences } from "./preferences";
 
 export function migrateSettings() {
+  // eslint-disable-next-line camelcase
   if (typeof GM_getValue === "undefined") return;
 
   const themeToMigrate = GM_getValue("theme", false);
   if (themeToMigrate) {
     Preferences.set(P.theme, themeToMigrate);
-    console.log("Migrated THEME");
+    log.log("Migrated THEME");
     GM_deleteValue("theme");
   }
   const hacksToMigrate = GM_getValue<any>("hacks", false);
@@ -16,7 +18,7 @@ export function migrateSettings() {
       Preferences.set(P.superTemp!, !!hacksToMigrate.disableNags);
     }
     Preferences.set(P.fancyColors, !!hacksToMigrate.fancyColors);
-    console.log("Migrated HACKS");
+    log.log("Migrated HACKS");
     GM_deleteValue("hacks");
   }
   const settingsToMigrate = GM_getValue<any>("settings", false);
@@ -24,31 +26,31 @@ export function migrateSettings() {
     Preferences.set(P.imgControl, !!settingsToMigrate.imgControl);
     Preferences.set(P.imgProtect, !!settingsToMigrate.imgProtect);
     Preferences.set(P.showInfo, !!settingsToMigrate.showInfo);
-    console.log("Migrated SETTINGS");
+    log.log("Migrated SETTINGS");
     GM_deleteValue("settings");
   }
   const blockedPicsToMigrate = GM_getValue<any>("blockedPictures", false);
   if (blockedPicsToMigrate instanceof Array) {
     const blockedHashes = [...Preferences.get(P.blockedHashes)];
-    for (const hash of blockedPicsToMigrate) {
+    blockedPicsToMigrate.forEach((hash) => {
       if (!blockedHashes.includes(hash)) {
         blockedHashes.push(hash);
       }
-    }
+    });
     Preferences.set(P.blockedHashes, blockedHashes);
-    console.log("Migrated BLOCKED PICTURES");
+    log.log("Migrated BLOCKED PICTURES");
     GM_deleteValue("blockedPictures");
   }
   const savedPicsToMigrate = GM_getValue<any>("savedPictures", false);
   if (savedPicsToMigrate instanceof Array) {
     const savedPictures = [...Preferences.get(P.savedPictures)];
-    for (const url of savedPicsToMigrate) {
+    savedPicsToMigrate.forEach((url) => {
       if (!savedPictures.includes(url)) {
         savedPictures.push(url);
       }
-    }
+    });
     Preferences.set(P.savedPictures, savedPictures);
-    console.log("Migrated SAVED PICTURES");
+    log.log("Migrated SAVED PICTURES");
     GM_deleteValue("savedPictures");
   }
 }
