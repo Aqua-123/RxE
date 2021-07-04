@@ -1,7 +1,7 @@
 import { P, Preferences } from "~src/preferences";
 import { printTransientMessage, wrapMethod } from "~src/utils";
 
-function antiSpam() {
+export function initAntiSpam() {
   const spam_rating: {
     [key: number]: {
       score: number;
@@ -115,13 +115,4 @@ function antiSpam() {
 
   wrapMethod(App.room, "join", onRoomJoin);
   if (App.room.client) onRoomJoin();
-}
-
-export function initAntiSpam() {
-  const i = setInterval(() => {
-    if ("App" in window && App.room) {
-      clearInterval(i);
-      antiSpam();
-    }
-  }, 100);
 }

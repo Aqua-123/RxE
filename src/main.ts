@@ -21,13 +21,17 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { applyOverrides } from "./modules/overrides";
 import { decorateMessages, initMessages } from "./modules/messages";
 import { migrateSettings } from "./migrateSettings";
+import { until } from "./utils";
+import browserWindow from "./browserWindow";
 
-function init() {
+async function init() {
   const featureSet = `(${[
     ...(FEATURES.HACKS ? ["HACKS"] : []),
     ...(FEATURES.P2P ? ["P2P"] : [])
   ]})`;
   log.log(`${U.name} Version ${U.version} ${featureSet}`);
+  // Wait for App to be loaded.
+  await until(() => !!browserWindow.App);
   // migrate settings from older userscripts, if any
   migrateSettings();
   // override some builtin behavior
