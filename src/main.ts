@@ -23,6 +23,7 @@ import { decorateMessages, initMessages } from "./modules/messages";
 import { migrateSettings } from "./migrateSettings";
 import { until } from "./utils";
 import browserWindow from "./browserWindow";
+import { initAudio } from "./modules/audio";
 
 async function init() {
   const featureSet = `(${[
@@ -42,6 +43,8 @@ async function init() {
   initAntiBan();
   // ad blocker
   initAdBlocker();
+  // audio tweaks
+  initAudio();
   // apply settings and theme
   applySettings();
   // initialize message and picture control

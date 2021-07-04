@@ -8,11 +8,11 @@ declare const Cookies: {
   set(key: string, value: string): void;
 };
 
-declare const MuteButtonClient: {
-  state: {
-    muted: boolean;
-  };
-};
+declare class MuteButton extends React.Component<any, { muted: boolean }> {
+  //
+}
+
+declare const MuteButtonClient: MuteButton;
 
 declare type EventData = {
   notification_update: boolean;
@@ -224,6 +224,25 @@ declare const PictureUploader: {
   success: (e: EmeraldPicture) => void;
   onUploaded: (e: EmeraldPicture) => void;
 };
+
+declare class PictureAlbum extends React.Component<
+  { data: { current_user: EmeraldUser; id: number } },
+  {
+    album: {
+      created_at: string;
+      id: number;
+      party_id: null | number;
+      updated_at: string;
+      user_id: number;
+    };
+    edit: boolean;
+    loaded: boolean;
+    pictures: EmeraldPicture[];
+    pictures_count: number;
+  }
+> {
+  load_pictures(): void;
+}
 
 declare const RoomClient: Room;
 
