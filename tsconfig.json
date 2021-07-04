@@ -3,7 +3,7 @@
     "baseUrl": ".",
     "paths": {
       "~src/*": ["./src/*"],
-      "~userscripter/*": ["./lib/userscripts/*"]
+      "~userscripter": ["./lib/userscripter"]
     },
     "target": "es6",
     "strict": true,

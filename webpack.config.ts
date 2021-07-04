@@ -1,6 +1,5 @@
 import * as AppRootPath from "app-root-path";
 import webpack from "webpack";
-import WebpackDevServer from "webpack-dev-server";
 import {
   createWebpackConfig,
   DEFAULT_BUILD_CONFIG,
@@ -49,8 +48,8 @@ svg { width:48px;height:48px;vertical-align:middle }
 </style>
 <h1>${U.name} Dev Server</h1>
 <h3>Feature flags enabled: 
-  ${!!process.env.HACKS ? "HACKS" : ""}
-  ${!!process.env.P2P ? "P2P" : ""}
+  ${process.env.HACKS ? "HACKS" : ""}
+  ${process.env.P2P ? "P2P" : ""}
 </h3>
 <a href='${U.id}.user.js' class="btn">
 <img width="48" referrerPolicy="no-referrer" 

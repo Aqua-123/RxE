@@ -3,7 +3,7 @@ import { BuildConfig } from "./lib/userscripter/src/build";
 
 import U from "./src/userscript";
 
-export default function (_: BuildConfig): Metadata {
+export default function metadata(_: BuildConfig): Metadata {
   return {
     name: U.name,
     version: U.version,

@@ -1,4 +1,4 @@
-import { log } from "../lib/userscripter";
+import { log } from "~userscripter";
 
 import U from "~src/userscript";
 
