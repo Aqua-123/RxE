@@ -9,7 +9,7 @@ export function getSettings() {
   return {
     theme: Preferences.get(P.theme) as Theme,
     ...(FEATURES.HACKS && {
-      hacks: {
+      hacks_: {
         superTemp: Preferences.get(P.superTemp!),
         enableModUI: Preferences.get(P.enableModUI!),
         universalFriend: Preferences.get(P.universalFriend!),
@@ -35,7 +35,7 @@ export function applySettings() {
   const settings = getSettings();
   let obj: Record<string, boolean>;
   if (FEATURES.HACKS) {
-    obj = { ...settings.settings, ...settings.hacks };
+    obj = { ...settings.settings, ...settings.hacks_ };
   } else {
     obj = settings.settings;
   }

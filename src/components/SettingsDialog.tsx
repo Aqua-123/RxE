@@ -18,7 +18,7 @@ type SettingsDialogState = SettingsType & {
 };
 
 export type SettingsDialogSettings = SettingsDialogState["settings"];
-export type SettingsDialogHacks = SettingsDialogState["hacks"];
+export type SettingsDialogHacks = SettingsDialogState["hacks_"];
 
 export default class SettingsDialog extends React.Component<
   {},
@@ -50,25 +50,25 @@ export default class SettingsDialog extends React.Component<
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
 
-  applyHacks = (obj: SettingsDialogHacks) => {
+  applyHacks_ = (obj: SettingsDialogHacks) => {
     if (FEATURES.HACKS) {
-      const { hacks } = this.state;
-      const newHacks = { ...hacks, ...obj };
+      const { hacks_ } = this.state;
+      const newHacks = { ...hacks_, ...obj };
       const keys = Object.keys(obj);
       keys.forEach((key) => Preferences.set(P[key]!, obj[key]));
       applySettings();
-      this.setState({ hacks: newHacks, needsReload: true });
+      this.setState({ hacks_: newHacks, needsReload: true });
     }
   };
 
   render() {
-    const { theme, settings, hacks, needsReload } = this.state;
+    const { theme, settings, hacks_, needsReload } = this.state;
     return (
       <div>
         <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
         {FEATURES.HACKS && (
-          <HacksView {...hacks} applyHacks={this.applyHacks} />
+          <HacksView {...hacks_} applyHacks={this.applyHacks_} />
         )}
         {needsReload && (
           <div className={styles.reloadWarning}>
