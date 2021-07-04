@@ -13,11 +13,13 @@ function hackOverrides() {
       if (Preferences.get(P.superTemp!)) {
         if (prop === "temp") return false;
         if (prop === "karma") return 31337;
+        if (prop === "_karma") return user.karma;
       }
       if (Preferences.get(P.enableModUI!)) {
         if (prop === "master") return true;
         if (prop === "mod") return true;
       }
+      if (prop === "proxy") return true;
       return user[prop];
     }
   };

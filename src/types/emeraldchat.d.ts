@@ -187,12 +187,16 @@ declare type EmeraldUser = {
   id: number;
   interests: string[];
   karma: number;
+  // NOTE: This is our own field
+  _karma: number;
   master: boolean;
   mod: boolean;
   online: boolean;
   username: string;
   verified: boolean;
   temp?: boolean;
+  // NOTE: This is our own field
+  proxy?: boolean;
 };
 
 declare type EmeraldPicture = {
