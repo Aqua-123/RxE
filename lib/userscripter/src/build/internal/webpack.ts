@@ -270,7 +270,14 @@ export function createWebpackConfig(
       minimize: mode === Mode.production,
       minimizer: [
         new TerserPlugin({
-          parallel: true
+          parallel: true,
+          terserOptions: {
+            mangle: {
+              properties: {
+                regex: /_$/
+              }
+            }
+          }
         })
       ]
     }

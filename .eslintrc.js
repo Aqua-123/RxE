@@ -13,7 +13,7 @@ module.exports = {
     sourceType: "module"
   },
   plugins: ["react", "@typescript-eslint", "prettier"],
-  ignorePatterns: "**/*.d.ts",
+  ignorePatterns: ["**/*.d.ts", "dist/*.js"],
   rules: {
     "prettier/prettier": "error",
     "react/jsx-filename-extension": [1, { extensions: [".tsx", ".ts"] }],
@@ -21,6 +21,7 @@ module.exports = {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
     "no-unused-vars": "off",
+    "no-underscore-dangle": "off",
     "@typescript-eslint/no-unused-vars": ["error"],
     "comma-dangle": ["error", "never"],
     "no-restricted-globals": [
