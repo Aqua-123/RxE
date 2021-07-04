@@ -11,7 +11,12 @@ export default function RitsuDialog() {
         <br />
         <SettingsDialog />
         <div className="ui-menu-buttons">
-          <div className="ui-button-text" onMouseDown={() => MenuReact.close()}>
+          <div
+            role="button"
+            tabIndex={0}
+            className="ui-button-text"
+            onMouseDown={() => MenuReact.close()}
+          >
             Close
           </div>
         </div>

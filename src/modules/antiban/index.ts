@@ -3,6 +3,15 @@ import { crel, loadCSS, wrapMethod } from "~src/utils";
 import css from "./style.scss";
 import T from "~src/text";
 
+function showBanBanner() {
+  const banner = crel("div", {
+    className: "top-message",
+    textContent: T.banMessage,
+    onclick: () => banner.remove()
+  });
+  document.body.append(banner);
+}
+
 export function initAntiBan() {
   if (!FEATURES.HACKS) return;
   wrapMethod(
@@ -18,13 +27,4 @@ export function initAntiBan() {
     true
   );
   loadCSS(css);
-}
-
-function showBanBanner() {
-  const banner = crel("div", {
-    className: "top-message",
-    textContent: T.banMessage,
-    onclick: () => banner.remove()
-  });
-  document.body.append(banner);
 }

@@ -14,6 +14,7 @@ type AppWindow = Window & {
 };
 
 const browserWindow: AppWindow = <any>(
+  /* eslint-disable-next-line no-restricted-globals */
   (typeof unsafeWindow !== "undefined" ? unsafeWindow : window)
 );
 

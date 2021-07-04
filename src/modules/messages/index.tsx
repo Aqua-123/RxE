@@ -6,7 +6,7 @@ import css from "./style.scss";
 export function initMessages() {
   loadCSS(css);
   const mRender = Message.prototype.render;
-  Message.prototype.render = function () {
+  Message.prototype.render = function render() {
     const { user } = this.props.data;
     const tree = mRender.apply(this);
     tree.props["data-id"] = user.id;
@@ -45,7 +45,7 @@ export function decorateMessages() {
   );
   const msgs = RoomClient?.state?.messages;
   if (msgs?.length) {
-    for (let i = 0; i < msgs.length; i++) {
+    for (let i = 0; i < msgs.length; i += 1) {
       const msgElt = messages[i];
       const { messages: lines } = msgs[i];
       const divs = msgElt?.querySelector(

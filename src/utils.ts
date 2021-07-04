@@ -3,9 +3,8 @@ import React from "react";
 /**
  * Slightly less verbose way to create a DOM element.
  */
-export const crel = <T extends string>(elt: T, obj = {}) => {
-  return Object.assign(document.createElement(elt), obj);
-};
+export const crel = <T extends string>(elt: T, obj = {}) =>
+  Object.assign(document.createElement(elt), obj);
 
 const cssBucket: string[] = [];
 /**
@@ -37,7 +36,7 @@ export function wrapMethod<T, K extends keyof T>(
 ) {
   const origFn = obj[method];
   if (typeof origFn !== "function" || typeof fn !== "function") return;
-  obj[method] = <T[K]>(<unknown>function (this: T, ...args: any[]) {
+  obj[method] = <T[K]>(<unknown>function wrapper(this: T, ...args: any[]) {
     const r = before && fn.apply(this, args);
     if (!before || r !== false) origFn.apply(this, args);
     if (!before) fn.apply(this, args);
@@ -45,8 +44,12 @@ export function wrapMethod<T, K extends keyof T>(
 }
 
 let printTimer: number;
-export function printTransientMessage(msg: string) {
+export function printMessage(msg: string) {
   clearTimeout(printTimer);
+  RoomClient.print_append(React.createElement("div", null, msg));
+}
+
+export function printTransientMessage(msg: string) {
   printMessage(msg);
   document.body.classList.add("tmp-message");
   printTimer = +setTimeout(() => {
@@ -55,14 +58,10 @@ export function printTransientMessage(msg: string) {
   }, 5000);
 }
 
-export function printMessage(msg: string) {
-  clearTimeout(printTimer);
-  RoomClient.print_append(React.createElement("div", null, msg));
-}
-
 export const sleep = (ms = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 export const until = async (check: () => boolean) => {
+  // eslint-disable-next-line no-await-in-loop
   while (!check()) await sleep();
 };

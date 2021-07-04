@@ -9,7 +9,7 @@ export function initNetwork() {
   const $ajax = $.ajax;
   $.ajax = ((settings?: JQuery.AjaxSettings<any> | undefined) => {
     if (!settings) return $ajax(settings);
-    const success = settings.success;
+    const { success } = settings;
     if (!isFunction(success)) return $ajax(settings);
     switch (settings.url) {
       case "/user_is_temp":
@@ -18,8 +18,8 @@ export function initNetwork() {
           "success",
           null as unknown as JQuery.jqXHR
         );
-        return;
-      default:
+        return undefined;
+      default: {
         const modifiedOptions = {
           ...settings,
           success: (
@@ -38,6 +38,7 @@ export function initNetwork() {
           }
         };
         return $ajax(modifiedOptions);
+      }
     }
   }) as any;
 }

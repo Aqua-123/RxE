@@ -8,28 +8,28 @@ export function initGender() {
   loadCSS(css);
 
   const mnuImage = MessageNotificationUnit.prototype.image;
-  MessageNotificationUnit.prototype.image = function () {
+  MessageNotificationUnit.prototype.image = function image() {
     const img = mnuImage.apply(this);
     img.props["data-gender"] = this.props.data.data.sender.gender;
     return img;
   };
 
   const nuImage = NotificationUnit.prototype.image;
-  NotificationUnit.prototype.image = function () {
+  NotificationUnit.prototype.image = function image() {
     const img = nuImage.apply(this);
     img.props["data-gender"] = this.props.data.data.sender.gender;
     return img;
   };
 
   const fuBody = FriendUnit.prototype.body;
-  FriendUnit.prototype.body = function () {
+  FriendUnit.prototype.body = function body() {
     const div = fuBody.apply(this);
     div.props.children[0].props["data-gender"] = this.props.data.gender;
     return div;
   };
 
   const ruuBody = RoomUserUnit.prototype.body;
-  RoomUserUnit.prototype.body = function () {
+  RoomUserUnit.prototype.body = function body() {
     const div = ruuBody.apply(this);
     if (div.props.children[0].type === "img") {
       div.props.children[0].props["data-gender"] = this.props.data.gender;
@@ -38,21 +38,21 @@ export function initGender() {
   };
 
   const suBody = SearchUnit.prototype.body;
-  SearchUnit.prototype.body = function () {
+  SearchUnit.prototype.body = function body() {
     const div = suBody.apply(this);
     div.props.children[0].props["data-gender"] = this.props.data.gender;
     return div;
   };
 
   const uuBody = UserUnit.prototype.body;
-  UserUnit.prototype.body = function () {
+  UserUnit.prototype.body = function body() {
     const div = uuBody.apply(this);
     div.props.children[0].props["data-gender"] = this.props.data.gender;
     return div;
   };
 
   const mRender = Message.prototype.render;
-  Message.prototype.render = function () {
+  Message.prototype.render = function render() {
     const div = mRender.apply(this);
     div.props.children[0].props.children.props["data-gender"] =
       this.props.data.user.gender;

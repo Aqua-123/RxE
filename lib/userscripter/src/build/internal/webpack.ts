@@ -32,7 +32,7 @@ export const DEFAULT_BUILD_CONFIG: (x: {
   rootDir: string;
   id: string;
   now: Date;
-}) => BuildConfig = x => ({
+}) => BuildConfig = (x) => ({
   allowJs: false,
   appendDateToVersion: {
     development: true,
@@ -63,12 +63,29 @@ export const DEFAULT_METADATA_SCHEMA: Metadata.ValidateOptions = {
   underscoresAsHyphens: true
 } as const;
 
+const resolveIn = (root: string) => (subdir: string) =>
+  path.resolve(root, subdir);
+
+function filenameExtensionRegex(extensions: ReadonlyArray<string>): RegExp {
+  return new RegExp(`\\.(${extensions.join("|")})$`);
+}
+
+function dateAsSemver(d: Date): string {
+  return [
+    d.getFullYear(),
+    d.getMonth() + 1, // 0-indexed
+    d.getDate(),
+    d.getHours(),
+    d.getMinutes()
+  ].join(".");
+}
+
 export function createWebpackConfig(
   x: WebpackConfigParameters
 ): webpack.Configuration {
   const overridden = overrideBuildConfig(x.buildConfig, x.env);
   const {
-    allowJs,
+    // allowJs,
     appendDateToVersion,
     id,
     mainFile,
@@ -91,7 +108,7 @@ export function createWebpackConfig(
       case nightly && appendDateToVersion.nightly:
       case mode === Mode.development && appendDateToVersion.development:
       case mode === Mode.production && appendDateToVersion.production:
-        return version + "." + dateAsSemver(now);
+        return `${version}.${dateAsSemver(now)}`;
       default:
         return version;
     }
@@ -117,7 +134,7 @@ export function createWebpackConfig(
         })();
   const finalMetadataStringified = Metadata.stringify(finalMetadata);
   return {
-    mode: mode,
+    mode,
     entry: {
       userscript: resolveIn(sourceDir)(mainFile)
     },
@@ -125,10 +142,7 @@ export function createWebpackConfig(
       path: resolveIn(rootDir)(outDir),
       filename: distFileName(id, "user")
     },
-    devtool:
-      mode === Mode.production
-        ? "hidden-source-map"
-        : "inline-cheap-source-map",
+    devtool: mode === Mode.production ? "hidden-source-map" : "eval-source-map",
     stats: {
       depth: false,
       hash: false,
@@ -235,7 +249,7 @@ export function createWebpackConfig(
     },
     resolve: {
       plugins: [new TsconfigPathsPlugin()],
-      extensions: concat(Object.values(EXTENSIONS)).map(e => "." + e)
+      extensions: concat(Object.values(EXTENSIONS)).map((e) => `.${e}`)
     },
     plugins: [
       new UserscripterWebpackPlugin({
@@ -248,7 +262,7 @@ export function createWebpackConfig(
         ),
         manifest: finalManifest,
         overriddenBuildConfig: overridden.buildConfig,
-        verbose: verbose
+        verbose
       })
       // If we insert metadata with BannerPlugin, it is removed when building in production mode.
     ],
@@ -261,21 +275,4 @@ export function createWebpackConfig(
       ]
     }
   };
-}
-
-const resolveIn = (root: string) => (subdir: string) =>
-  path.resolve(root, subdir);
-
-function filenameExtensionRegex(extensions: ReadonlyArray<string>): RegExp {
-  return new RegExp("\\.(" + extensions.join("|") + ")$");
-}
-
-function dateAsSemver(d: Date): string {
-  return [
-    d.getFullYear(),
-    d.getMonth() + 1, // 0-indexed
-    d.getDate(),
-    d.getHours(),
-    d.getMinutes()
-  ].join(".");
 }

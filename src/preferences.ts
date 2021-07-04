@@ -97,6 +97,6 @@ export const P = {
 
 export const Preferences = new PreferenceManager(
   P,
-  U.id + "-preference-",
+  `${U.id}-preference-`,
   loggingResponseHandler
 );

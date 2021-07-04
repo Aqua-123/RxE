@@ -22,6 +22,7 @@ export function addLookupButton() {
             });
             if (typeof UserViewReact === "undefined") return;
           }
+          /* eslint-disable-next-line no-alert */
           const id = prompt(
             "Enter a user id",
             `${UserViewReact.state.user.id}`

@@ -10,6 +10,7 @@ export function decorateProfileDialog() {
   flairLabel.htmlFor = "flair-select-old";
   if (flairLabel.firstElementChild?.id === "flair-select") {
     // not replaced yet.
+    const event = new Event("change", { bubbles: true });
     const newFlairLabel = flairLabel.cloneNode() as HTMLLabelElement;
     newFlairLabel.classList.add("disable-after");
     flairLabel.firstElementChild.id = "flair-select-old";
@@ -17,17 +18,16 @@ export function decorateProfileDialog() {
     const input = crel("input", {
       id: "flair-select",
       className: "alt-flair-select",
-      value: App.user.flair.color,
-      onchange: () => (colorInput.value = input.value)
+      value: App.user.flair.color
     }) as HTMLInputElement;
     const colorInput = crel("input", {
       id: "flair-select",
       type: "color",
       className: "picker-flair-select",
       value: App.user.flair.color,
-      onchange: () => {
+      oninput: () => {
         input.value = colorInput.value;
-        input.dispatchEvent(new Event("input"));
+        flairLabel.firstChild?.dispatchEvent(event);
       }
     }) as HTMLInputElement;
     newFlairLabel.append(input, colorInput);
@@ -35,7 +35,9 @@ export function decorateProfileDialog() {
       newFlairLabel,
       flairLabel.nextSibling
     );
-    const event = new Event("change", { bubbles: true });
-    input.oninput = () => flairLabel.firstChild?.dispatchEvent(event);
+    input.oninput = () => {
+      colorInput.value = input.value;
+      flairLabel.firstChild?.dispatchEvent(event);
+    };
   }
 }
