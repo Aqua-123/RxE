@@ -137,5 +137,31 @@ export function applyOverrides() {
     this.setState({ messages });
   };
 
+  // bring image upload button back (even though the server is preventing sending them now.)
+  // const rInput = Room.prototype.room_input;
+  Room.prototype.room_input = function roomInput() {
+    return React.createElement(
+      "div",
+      {
+        className: "room-component-input"
+      },
+      React.createElement("textarea", {
+        className: "room-component-input-textarea",
+        onMouseDown: this.scroll,
+        onKeyDown: this.input.bind(this),
+        id: "room-input",
+        placeholder: "Say Something..."
+      }),
+      React.createElement(
+        "span",
+        {
+          onMouseDown: this.upload_picture.bind(this),
+          className: "room-component-input-icon material-icons"
+        },
+        "photo_camera"
+      )
+    );
+  };
+
   if (FEATURES.HACKS) hackOverrides();
 }
