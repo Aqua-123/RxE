@@ -1,5 +1,7 @@
 # Ritsu x Emerald -- Enterprise Edition
 
+[![CI](https://github.com/Ritsu-Projects/emerald/actions/workflows/main.yml/badge.svg)](https://github.com/Ritsu-Projects/emerald/actions/workflows/main.yml)
+
 ## some intro
 
 This may look scary, but it mostly isn't. There are a bunch of little configuration files,
