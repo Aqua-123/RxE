@@ -10,6 +10,9 @@ export function decorateHeader() {
   }
   // set favicon
   if (!document.head.querySelector(`link[rel="icon"][href="${U.icon}"]`)) {
+    document.head
+      .querySelectorAll(`link[rel="icon"]`)
+      .forEach((node) => node.remove());
     const favicon = crel("link", {
       rel: "icon",
       href: U.icon
