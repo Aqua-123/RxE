@@ -64,7 +64,7 @@ export function applyOverrides() {
 
   /**
    * To be clear, this is not how you use React.
-   * Mounting and unmounting root components should be rare operation,
+   * Mounting and unmounting root components should be a rare operation,
    * not something that happens on every click.
    */
   function unmountComponent(c: React.Component) {
@@ -163,6 +163,25 @@ export function applyOverrides() {
         "photo_camera"
       )
     );
+  };
+
+  // Fix "load more" link in profile pictures
+  PictureAlbum.prototype.load_pictures = function loadPictures() {
+    const load = 7;
+    $.ajax({
+      type: "GET",
+      url: `/pictures_load_more?id=${this.state.album.id}&loaded=${this.state.pictures.length}&load_count=${load}`,
+      dataType: "json",
+      success: function success(
+        this: PictureAlbum,
+        e: { pictures: EmeraldPicture[] }
+      ) {
+        const pictures = this.state.pictures.concat(e.pictures);
+        this.setState({
+          pictures
+        });
+      }.bind(this)
+    });
   };
 
   if (FEATURES.HACKS) hackOverrides();
