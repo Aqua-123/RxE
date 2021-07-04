@@ -63,7 +63,7 @@ target="_blank" class="btn">
 </svg>
 Open ${U.sitename}</a>
 <iframe src="/${U.id}.meta.js" 
-style="border:0;width:100%;height:200px"></iframe>
+style="border:0;width:100%;height:250px"></iframe>
       `)
       )
   }
