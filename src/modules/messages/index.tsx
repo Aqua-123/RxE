@@ -23,11 +23,13 @@ export function initMessages() {
       flair.props.children.push(
         <span className="user-extra">
           <b>Karma: </b>
-          {user.karma}
+          {user._karma ?? user.karma}
           <b> Since </b>
           {new Date(user.created_at).toLocaleDateString()}
-          {user.master && <b style={{ color: "#f00" }}> CALLAN </b>}
-          {user.mod && <b style={{ color: "#f00" }}> MOD </b>}
+          {user.master && !user.proxy && (
+            <b style={{ color: "#f00" }}> CALLAN </b>
+          )}
+          {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
         </span>
       );
     }
