@@ -235,6 +235,10 @@ declare class Room extends React.Component {
   print_append(elt?: JSX.Element): void;
   append(e: MessageData): void;
   trim_messages(): void;
+  room_input(): JSX.Element;
+  scroll(e?: { lock: boolean }): void;
+  input(e: KeyboardEvent): void;
+  upload_picture(): void;
 }
 
 declare class RoomChannelSelect {
