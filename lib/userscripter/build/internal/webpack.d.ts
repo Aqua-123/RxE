@@ -1,3 +1,4 @@
+/// <reference types="webpack-dev-server" />
 import * as Metadata from "userscript-metadata";
 import * as webpack from "webpack";
 import { BuildConfig, WebpackConfigParameters } from "./configuration";

@@ -22,7 +22,7 @@ module.exports = {
     "@typescript-eslint/no-use-before-define": ["error"],
     "no-unused-vars": "off",
     "no-underscore-dangle": "off",
-    "@typescript-eslint/no-unused-vars": ["error"],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "comma-dangle": ["error", "never"],
     "no-restricted-globals": [
       "error",
@@ -37,7 +37,11 @@ module.exports = {
     "no-param-reassign": ["error", { props: false }],
     "import/extensions": "off",
     "import/no-unresolved": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      { devDependencies: ["*.ts"] }
+    ]
   },
   settings: {
     react: {

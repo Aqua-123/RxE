@@ -248,7 +248,15 @@ export function createWebpackConfig(
       ]
     },
     resolve: {
-      plugins: [new TsconfigPathsPlugin()],
+      alias: {
+        "~userscripter": resolveIn(rootDir)("lib/userscripter")
+      },
+      plugins: [
+        new TsconfigPathsPlugin({
+          logInfoToStdOut: true,
+          logLevel: "INFO"
+        })
+      ],
       extensions: concat(Object.values(EXTENSIONS)).map((e) => `.${e}`)
     },
     plugins: [

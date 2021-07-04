@@ -4,7 +4,7 @@ import {
   PreferenceManager,
   ListPreference
 } from "ts-preferences";
-import { loggingResponseHandler } from "../lib/userscripter/lib/preferences";
+import { preferences } from "~userscripter";
 
 import U from "~src/userscript";
 import T from "~src/text";
@@ -98,5 +98,5 @@ export const P = {
 export const Preferences = new PreferenceManager(
   P,
   `${U.id}-preference-`,
-  loggingResponseHandler
+  preferences.loggingResponseHandler
 );

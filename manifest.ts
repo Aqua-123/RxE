@@ -1,5 +1,5 @@
-import { BuildConfig, distFileName } from "./lib/userscripter/src/build";
 import Manifest from "webextension-manifest";
+import { BuildConfig, distFileName } from "./lib/userscripter/src/build";
 
 import U from "./src/userscript";
 
@@ -9,7 +9,7 @@ const runMap = {
   "document-idle": "document_idle"
 } as const;
 
-export default function(_: BuildConfig): Manifest {
+export default function manifest(_: BuildConfig): Manifest {
   return {
     manifest_version: 2,
     name: U.name,
