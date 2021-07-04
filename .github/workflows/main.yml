@@ -29,12 +29,12 @@ jobs:
       - name: Install dependencies
         run: yarn
 
-      - name: Lint and build publishable userscript
-        run: yarn prod
+      - name: Lint and build publishable userscript and extension
+        run: yarn ext
 
-      - name: Archive userscript
+      - name: Archive userscript and browser extension
         uses: actions/upload-artifact@v2
         with:
-          name: userscript
-          path: dist/ritsu-emerald.user.js
-# TODO later: build browser extension and archive as artifact
+          name: extension-with-userscript
+          path: dist
+          retention-days: 15
