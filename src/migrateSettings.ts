@@ -1,8 +1,5 @@
 import { P, Preferences } from "./preferences";
 
-declare function GM_getValue<T extends any>(key: string, defaultValue: T): T;
-declare function GM_deleteValue(key: string): void;
-
 export function migrateSettings() {
   if (typeof GM_getValue === "undefined") return;
 

@@ -1,16 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
+import window from "~src/browserWindow";
 
 export function applyOverrides() {
   // avoid filling up the console with sad errors
-  if (!MenuReactMicroStatic) {
-    (window as any).MenuReactMicroStatic = {
+  if (!window.MenuReactMicroStatic) {
+    window.MenuReactMicroStatic = {
       close: () => MenuReactMicro?.close()
-    };
+    } as MenuMicro;
   }
-  if (!DashboardClient) {
-    (window as any).DashboardClient = {
+  if (!window.DashboardClient) {
+    window.DashboardClient = {
       setState: () => {}
     };
   }

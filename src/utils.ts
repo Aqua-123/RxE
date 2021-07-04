@@ -59,3 +59,10 @@ export function printMessage(msg: string) {
   clearTimeout(printTimer);
   RoomClient.print_append(React.createElement("div", null, msg));
 }
+
+export const sleep = (ms = 0) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+export const until = async (check: () => boolean) => {
+  while (!check()) await sleep();
+};
