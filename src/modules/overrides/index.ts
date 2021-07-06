@@ -184,5 +184,36 @@ export function applyOverrides() {
     });
   };
 
+  // tweaking send_picture
+  Room.prototype.send_picture = function sendPicture(e) {
+    this.append({
+      messages: [],
+      user: App.user,
+      picture: e
+    });
+    App.room.client.speak({
+      message: `Image: [${btoa(e.url)}]`,
+      picture: e
+    });
+    this.scroll();
+  };
+
+  // tweaking received picture handling
+  const rReceived = Room.prototype.received;
+  Room.prototype.received = function received(e) {
+    if (e.messages?.[0]) {
+      const matches = e.messages[0].match(/^Image: \[([a-zA-Z0-9/=-]+)\]$/);
+      if (matches) {
+        rReceived.call(this, {
+          messages: [],
+          user: e.user,
+          picture: { url: atob(matches[1]) } as EmeraldPicture
+        });
+        return;
+      }
+    }
+    rReceived.call(this, e);
+  };
+
   if (FEATURES.HACKS) hackOverrides();
 }
