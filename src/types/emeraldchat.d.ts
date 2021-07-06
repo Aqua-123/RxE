@@ -243,6 +243,7 @@ declare class PictureAlbum extends React.Component<
   }
 > {
   load_pictures(): void;
+  load_more_button(): JSX.Element | null;
 }
 
 declare const RoomClient: Room;
