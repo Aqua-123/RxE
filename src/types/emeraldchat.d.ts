@@ -40,6 +40,7 @@ declare interface AppInterface {
         messages?: string[];
         picture?: null | EmeraldPicture;
       }): void;
+      speak(e: { message?: string; picture?: EmeraldPicture }): void;
     };
     join(id: string | null): void;
     mute(id: number): void;
@@ -262,6 +263,7 @@ declare class Room extends React.Component {
   scroll(e?: { lock: boolean }): void;
   input(e: KeyboardEvent): void;
   upload_picture(): void;
+  received(e: MessageData): void;
 }
 
 declare class RoomChannelSelect {
