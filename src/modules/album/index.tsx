@@ -1,10 +1,11 @@
 import React from "react";
+import { Spinner } from "~src/components/Spinner";
 
 export function initPictureAlbum() {
   const paRender = PictureAlbum.prototype.render;
   PictureAlbum.prototype.render = function render() {
     if (!this.state.loaded) {
-      return <div>loading...</div>;
+      return <Spinner />;
     }
     return paRender.call(this);
   };
@@ -32,7 +33,7 @@ export function initPictureAlbum() {
 
   PictureAlbum.prototype.load_more_button = function loadMoreButton() {
     if (this.state.pictures_count > this.state.pictures.length) {
-      return <div>loading...</div>;
+      return <Spinner />;
     }
     return null;
   };
