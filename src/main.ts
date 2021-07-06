@@ -25,6 +25,7 @@ import { until } from "./utils";
 import browserWindow from "./browserWindow";
 import { initAudio } from "./modules/audio";
 import { initPictureAlbum } from "./modules/album";
+import { initSendPictures } from "./modules/sendpictures";
 
 async function init() {
   const featureSet = `(${[
@@ -53,6 +54,7 @@ async function init() {
   initPictures();
   initPicturesBlur();
   initPictureAlbum();
+  initSendPictures();
   // anti-spam
   initAntiSpam();
   // decorate user icons with gendered borders
