@@ -165,25 +165,6 @@ export function applyOverrides() {
     );
   };
 
-  // Fix "load more" link in profile pictures
-  PictureAlbum.prototype.load_pictures = function loadPictures() {
-    const load = 7;
-    $.ajax({
-      type: "GET",
-      url: `/pictures_load_more?id=${this.state.album.id}&loaded=${this.state.pictures.length}&load_count=${load}`,
-      dataType: "json",
-      success: function success(
-        this: PictureAlbum,
-        e: { pictures: EmeraldPicture[] }
-      ) {
-        const pictures = this.state.pictures.concat(e.pictures);
-        this.setState({
-          pictures
-        });
-      }.bind(this)
-    });
-  };
-
   // tweaking send_picture
   Room.prototype.send_picture = function sendPicture(e) {
     this.append({
