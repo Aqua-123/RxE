@@ -2,6 +2,9 @@
   --ritsu-hair-color: #f965fec4;
   --ritsu-hair-dark-color: #b821bd;
 }
+html > body {
+  background: var(--header-alt-bg-color);
+}
 body > div > nav {
   background: var(--header-bg-color);
 }

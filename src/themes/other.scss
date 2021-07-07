@@ -68,6 +68,12 @@
   padding-left: 0.5em;
 }
 
+@media screen and (max-width: 640px) {
+  .main-logo-text {
+    display: none;
+  }
+}
+
 /* simple theme switching transition */
 /* kept outside of base.scsss so it can transition to/from default theme */
 body.themeChange * {
