@@ -49,6 +49,23 @@ function hackOverrides() {
   UpgradeAccount.prototype.signup = () => {};
 }
 
+export function domOverrides() {
+  // things you should never do go here.
+
+  // try to survive the app's poor usage of React
+  const rChild = Node.prototype.removeChild;
+  Node.prototype.removeChild = function removeChild<T extends Node>(
+    node: T
+  ): T {
+    if (node.parentElement === this) {
+      return (rChild as any).call(this, node);
+    }
+    return node;
+  };
+
+  // potentially add more DOM methods liable to crap out in the web app
+}
+
 export function applyOverrides() {
   // avoid filling up the console with sad errors
   if (!window.MenuReactMicroStatic) {
@@ -76,21 +93,32 @@ export function applyOverrides() {
     }
   }
 
-  Menu.prototype.close = function close() {
+  function menuClose(this: React.Component) {
     $(".ui-bg").removeClass("animated fadeIn");
     $(".ui-bg").addClass("animated fadeOut");
     $(".ui-menu").addClass("animated zoomOut");
     setTimeout(unmountComponent.bind(null, this), 250);
+  }
+
+  Menu.prototype.close = menuClose;
+  UserProfile.prototype.close = function upClose() {
+    $(".ui-bg").removeClass("animated fadeIn");
+    $(".ui-bg").addClass("animated fadeOut");
+    $(".user-profile-menu").addClass("animated zoomOut");
+    setTimeout(unmountComponent.bind(null, this), 250);
+    setTimeout(() => {
+      UserProfileReact = null;
+    });
   };
 
-  function menuClose(this: React.Component) {
+  function menuMicroClose(this: React.Component) {
     $("#menu-micro-bg").removeClass("animated fadeIn");
     $("#menu-micro-bg").addClass("animated fadeOut");
     $("#menu-micro").addClass("animated zoomOut");
     setTimeout(unmountComponent.bind(null, this), 250);
   }
-  MenuMicro.prototype.close = menuClose;
-  MenuMicroStatic.prototype.close = menuClose;
+  MenuMicro.prototype.close = menuMicroClose;
+  MenuMicroStatic.prototype.close = menuMicroClose;
 
   UserView.prototype.close = function close() {
     document.removeEventListener("mousedown", this.exit_click, false);
