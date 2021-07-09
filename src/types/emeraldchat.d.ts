@@ -246,7 +246,7 @@ declare class PictureAlbum extends React.Component<
   load_more_button(): JSX.Element | null;
 }
 
-declare const RoomClient: Room;
+declare const RoomClient: null | Room;
 
 declare class Room extends React.Component {
   state: {
@@ -350,6 +350,7 @@ declare class UserProfile extends React.Component<
 > {
   profile_buttons: Function;
   switch(id: number): void;
+  close(): void;
 }
 
 declare let UserProfileReact: null | UserProfile;

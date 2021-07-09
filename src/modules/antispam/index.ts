@@ -38,7 +38,7 @@ export function initAntiSpam() {
   };
 
   function onMessage(e: Parameters<typeof App.room.client.received>[0]) {
-    if (RoomClient.state.id == null || RoomClient.state.mode === "private")
+    if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")
       return;
 
     // neutralize silly RTL nonsense

@@ -7,14 +7,14 @@ let specialRoom: string;
 
 function joinSpecialRoom(name: string, selector: string) {
   if (!("setState" in RoomChannelMembersClient)) return;
-  RoomClient.setState({ messages: [], current_channel: name });
+  RoomClient?.setState({ messages: [], current_channel: name });
   RoomChannelMembersClient.setState({ members: [] });
   App.room.join(name);
   document
     .querySelectorAll(".channel-unit")
     .forEach((channel) => channel.classList.remove("channel-unit-active"));
   document.querySelector(selector)?.classList.add("channel-unit-active");
-  RoomClient.print(React.createElement("div", null, T.privateRoomsWarning));
+  RoomClient?.print(React.createElement("div", null, T.privateRoomsWarning));
   specialRoom = name;
 }
 
