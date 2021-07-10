@@ -57,6 +57,13 @@ export function decorateMessages() {
         // console.error("stuck DIV found in message", divs[0]);
         divs[0].remove();
       }
+      if (divs) {
+        if (lines.length === 1 && /^\p{Emoji}{1,5}$/u.test(lines[0])) {
+          (divs[0] as HTMLElement).setAttribute("style", "font-size: 5em");
+        } else {
+          (divs[0] as HTMLElement).removeAttribute("style");
+        }
+      }
     }
   }
 }
