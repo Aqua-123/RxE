@@ -60,12 +60,12 @@ export const P = {
   imgProtect: new BooleanPreference({
     key: "imgProtect",
     label: T.preferences.imgProtect.label,
-    default: true
+    default: false
   }),
   imgBlur: new BooleanPreference({
     key: "imgBlur",
     label: T.preferences.imgBlur.label,
-    default: true
+    default: false
   }),
   showInfo: new BooleanPreference({
     key: "showInfo",
