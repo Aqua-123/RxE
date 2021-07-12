@@ -46,7 +46,9 @@ export function wrapMethod<T, K extends keyof T>(
 let printTimer: number;
 export function printMessage(msg: string) {
   clearTimeout(printTimer);
-  RoomClient?.print_append(React.createElement("div", null, msg));
+  Promise.resolve().then(() =>
+    RoomClient?.print_append(React.createElement("div", null, msg))
+  );
 }
 
 export function printTransientMessage(msg: string) {

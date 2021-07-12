@@ -32,20 +32,15 @@ declare interface AppInterface {
       identifier: string;
       connected(): void;
       disconnected(): void;
-      received(e: {
-        user: EmeraldUser;
-        user_connected?: true;
-        user_disconnected?: true;
-        typing?: true;
-        messages?: string[];
-        picture?: null | EmeraldPicture;
-      }): void;
+      received(e: MessageData): void;
       speak(e: { message?: string; picture?: EmeraldPicture }): void;
     };
     join(id: string | null): void;
     mute(id: number): void;
     unmute(id: number): void;
     muted: number[];
+    play_sound(url: string): void;
+    typing: number | null;
   };
   events: {
     connected: () => void;
@@ -80,6 +75,11 @@ declare type MessageData = {
   messages: string[];
   picture?: null | EmeraldPicture;
   user: EmeraldUser;
+  user_connected?: true;
+  user_disconnected?: true;
+  typing?: true;
+  // NOTE: this is our own field
+  key?: string;
 };
 
 declare type MessageNotificationProps = {
@@ -250,24 +250,32 @@ declare const RoomClient: null | Room;
 
 declare class Room extends React.Component {
   state: {
+    messages_count: number;
     messages: MessageData[];
     id: null | number | string;
     mode: "private" | "channel";
+    print: JSX.Element | null;
+    print_append: JSX.Element | null;
+    typing: string | null;
   };
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
   print(elt?: JSX.Element): void;
   print_append(elt?: JSX.Element): void;
-  append(e: MessageData): void;
+  append(e: MessageData, doTyping?: boolean): void; // NOTE: doTyping is our own field
   trim_messages(): void;
   room_input(): JSX.Element;
   scroll(e?: { lock: boolean }): void;
   input(e: KeyboardEvent): void;
   upload_picture(): void;
   received(e: MessageData): void;
+  room_messages(className: string): JSX.Element;
+  load_messages(r: number): void;
+  start_typing(e: EmeraldUser): void;
+  stop_typing(): void;
 }
 
-declare class RoomChannelSelect {
+declare class RoomChannelSelect extends React.Component {
   join(e: any): void;
 }
 declare const RoomChannelSelectClient: RoomChannelSelect;
@@ -354,3 +362,8 @@ declare class UserProfile extends React.Component<
 }
 
 declare let UserProfileReact: null | UserProfile;
+
+declare module PushNotifications {
+  const idle: Function;
+  const send: (name: string, data: { icon: string; body: string }) => void;
+}

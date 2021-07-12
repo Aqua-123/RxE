@@ -19,7 +19,11 @@ import { initGender } from "./modules/gender";
 import { initAntiBan } from "./modules/antiban";
 import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { applyOverrides } from "./modules/overrides";
-import { decorateMessages, initMessages } from "./modules/messages";
+import {
+  betterMessageRendering,
+  decorateMessages,
+  initMessages
+} from "./modules/messages";
 import { migrateSettings } from "./migrateSettings";
 import { until } from "./utils";
 import browserWindow from "./browserWindow";
@@ -59,6 +63,8 @@ async function init() {
   initAntiSpam();
   // decorate user icons with gendered borders
   initGender();
+  // improve message rendering performance/behavior
+  betterMessageRendering();
 
   // start our script's rendering loop
   render([
