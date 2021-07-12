@@ -147,6 +147,22 @@ export function applyOverrides() {
   Popup.prototype.close = popupClose;
   Picture.prototype.close = popupClose;
 
+  UserProfile.prototype.componentDidMount = function profileMount() {
+    $.ajax({
+      type: "GET",
+      url: `/profile_json?id=${this.props.id}`,
+      dataType: "json",
+      success: (e) => {
+        this.setState({
+          data: e
+        });
+      },
+      error: () => {
+        this.close();
+      }
+    });
+  };
+
   // non-hack: "Sign up to continue" only shows once at start
   App.temp.check = () => {};
 
