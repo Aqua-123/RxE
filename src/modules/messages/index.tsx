@@ -38,8 +38,8 @@ export function initMessages() {
 }
 
 /**
- * I guess this just makes smileys bigger now.
- * TODO: move this somewhere else.
+ * Keeping this to clean up a bug where the react tree ends up with
+ * leftover <div> that don't go away.
  */
 export function decorateMessages() {
   const messages = document.querySelectorAll(
@@ -53,6 +53,9 @@ export function decorateMessages() {
       const divs = msgElt?.querySelector(
         ".room-component-message-text"
       )?.childNodes;
+      while (divs && divs.length > lines.length) {
+        divs[0].remove();
+      }
       if (divs) {
         if (
           lines.length === 1 &&
