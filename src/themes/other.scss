@@ -96,3 +96,8 @@ span.user-flair:after {
 body.tmp-message span.room-component-print:last-of-type {
   margin: -1em 0;
 }
+
+/* the bottom of quick user action tooltip can be unclickable. fix it. */
+.user-profile-micro.user-profile-micro {
+  width: auto;
+}
