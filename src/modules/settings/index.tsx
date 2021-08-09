@@ -22,6 +22,7 @@ export function getSettings() {
       imgControl: Preferences.get(P.imgControl),
       imgProtect: Preferences.get(P.imgProtect),
       imgBlur: Preferences.get(P.imgBlur),
+      hidePfp: Preferences.get(P.hidePfp),
       showInfo: Preferences.get(P.showInfo),
       showGender: Preferences.get(P.showGender),
       antiSpam: Preferences.get(P.antiSpam)

@@ -13,6 +13,7 @@ import { initAdBlocker, removeAds } from "./modules/ads";
 import { initNetwork } from "./modules/network";
 import { initPicturesBlur } from "./modules/blur";
 import { initAntiSpam } from "./modules/antispam";
+import { initHideProfilePictures } from "./modules/hidePfp";
 import { renderBrokenImages } from "./modules/brokenimages";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { initGender } from "./modules/gender";
@@ -57,6 +58,7 @@ async function init() {
   initMessages();
   initPictures();
   initPicturesBlur();
+  initHideProfilePictures();
   initPictureAlbum();
   initSendPictures();
   // anti-spam

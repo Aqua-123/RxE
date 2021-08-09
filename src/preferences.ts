@@ -67,6 +67,11 @@ export const P = {
     label: T.preferences.imgBlur.label,
     default: false
   }),
+  hidePfp: new BooleanPreference({
+    key: "hidePfP",
+    label: T.preferences.hidePfp.label,
+    default: false
+  }),
   showInfo: new BooleanPreference({
     key: "showInfo",
     label: T.preferences.showInfo.label,
