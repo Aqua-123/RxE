@@ -1,7 +1,7 @@
 import { crel, loadCSS } from "~src/utils";
 import trackKarma from "./style.scss";
 
-const KARMA_TRACKING_INTERVAL = 10 * 1000;
+const KARMA_TRACKING_INTERVAL = 60 * 1000;
 
 let currentKarma: number | null = null;
 
