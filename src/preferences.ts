@@ -87,6 +87,11 @@ export const P = {
     label: T.preferences.showGender.label,
     default: true
   }),
+  trackKarma: new BooleanPreference({
+    key: "trackKarma",
+    label: T.preferences.trackKarma.label,
+    default: true
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

@@ -24,6 +24,14 @@ export function decorateHeader() {
   if (document.title !== title) {
     document.title = title;
   }
+  // add karma placeholder
+  const karmaTracker = document.querySelector(".karma-tracker");
+  if (!karmaTracker) {
+    const tracker = crel("div", {
+      className: "karma-tracker"
+    });
+    logo?.parentElement?.insertBefore(tracker, logo?.nextSibling);
+  }
   // add text next to logo
   const logoText = document.querySelector(".main-logo-text");
   if (!logoText) {

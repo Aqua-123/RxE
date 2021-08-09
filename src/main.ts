@@ -1,36 +1,34 @@
-import { log } from "~userscripter";
-
 import U from "~src/userscript";
-
-import { initPictures, decoratePictures } from "./modules/pictures";
-import { render } from "./modules/render";
-import { reorderMenu } from "./modules/reordermenu";
-import { decorateHeader } from "./modules/header";
-
-import { decorateProfileDialog } from "./modules/flaircolor";
-import { addLookupButton } from "./modules/lookupbutton";
+import { log } from "~userscripter";
+import browserWindow from "./browserWindow";
+import { migrateSettings } from "./migrateSettings";
 import { initAdBlocker, removeAds } from "./modules/ads";
-import { initNetwork } from "./modules/network";
-import { initPicturesBlur } from "./modules/blur";
-import { initAntiSpam } from "./modules/antispam";
-import { initHideProfilePictures } from "./modules/hidePfp";
-import { renderBrokenImages } from "./modules/brokenimages";
-import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
-import { initGender } from "./modules/gender";
+import { initPictureAlbum } from "./modules/album";
 import { initAntiBan } from "./modules/antiban";
-import { applySettings, injectRitsuMenu } from "./modules/settings";
-import { applyOverrides } from "./modules/overrides";
+import { initAntiSpam } from "./modules/antispam";
+import { initAudio } from "./modules/audio";
+import { initPicturesBlur } from "./modules/blur";
+import { renderBrokenImages } from "./modules/brokenimages";
+import { decorateProfileDialog } from "./modules/flaircolor";
+import { initGender } from "./modules/gender";
+import { decorateHeader } from "./modules/header";
+import { initHideProfilePictures } from "./modules/hidePfp";
+import { initKarmaTracker } from "./modules/karma";
+import { addLookupButton } from "./modules/lookupbutton";
 import {
   betterMessageRendering,
   decorateMessages,
   initMessages
 } from "./modules/messages";
-import { migrateSettings } from "./migrateSettings";
-import { until } from "./utils";
-import browserWindow from "./browserWindow";
-import { initAudio } from "./modules/audio";
-import { initPictureAlbum } from "./modules/album";
+import { initNetwork } from "./modules/network";
+import { applyOverrides } from "./modules/overrides";
+import { decoratePictures, initPictures } from "./modules/pictures";
+import { render } from "./modules/render";
+import { reorderMenu } from "./modules/reordermenu";
 import { initSendPictures } from "./modules/sendpictures";
+import { applySettings, injectRitsuMenu } from "./modules/settings";
+import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
+import { until } from "./utils";
 
 async function init() {
   const featureSet = `(${[
@@ -61,6 +59,8 @@ async function init() {
   initHideProfilePictures();
   initPictureAlbum();
   initSendPictures();
+  // karma tracker
+  initKarmaTracker();
   // anti-spam
   initAntiSpam();
   // decorate user icons with gendered borders
