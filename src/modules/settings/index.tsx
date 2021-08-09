@@ -18,6 +18,7 @@ export function getSettings() {
     }),
     settings: {
       adBlocker: Preferences.get(P.adBlocker),
+      trackKarma: Preferences.get(P.trackKarma),
       fancyColors: Preferences.get(P.fancyColors!),
       imgControl: Preferences.get(P.imgControl),
       imgProtect: Preferences.get(P.imgProtect),

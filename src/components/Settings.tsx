@@ -11,6 +11,7 @@ type SettingsProps = SettingsDialogSettings & {
 export default function Settings(props: SettingsProps) {
   const {
     adBlocker,
+    trackKarma,
     fancyColors,
     imgControl,
     imgProtect,
@@ -28,6 +29,11 @@ export default function Settings(props: SettingsProps) {
         id="adBlocker"
         value={adBlocker}
         onChange={() => applySettings({ adBlocker: !adBlocker })}
+      />
+      <CheckboxSetting
+        id="trackKarma"
+        value={trackKarma}
+        onChange={() => applySettings({ trackKarma: !trackKarma })}
       />
       <CheckboxSetting
         id="fancyColors"

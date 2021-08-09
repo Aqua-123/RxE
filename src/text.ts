@@ -52,6 +52,9 @@ export default {
     },
     showGender: {
       label: "Gender-color the outline around avatars"
+    },
+    trackKarma: {
+      label: "Display Karma in header and track changes"
     }
   },
   hiddenChannels: "hidden channels",
