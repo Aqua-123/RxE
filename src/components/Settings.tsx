@@ -15,6 +15,7 @@ export default function Settings(props: SettingsProps) {
     imgControl,
     imgProtect,
     imgBlur,
+    hidePfp,
     showInfo,
     showGender,
     antiSpam,
@@ -34,6 +35,11 @@ export default function Settings(props: SettingsProps) {
         onChange={() => applySettings({ fancyColors: !fancyColors })}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
+      <CheckboxSetting
+        id="hidePfp"
+        value={hidePfp}
+        onChange={() => applySettings({ hidePfp: !hidePfp })}
+      />
       <CheckboxSetting
         id="imgControl"
         value={imgControl}

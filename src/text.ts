@@ -41,6 +41,9 @@ export default {
     imgBlur: {
       label: "Blur all user images until hovered"
     },
+    hidePfp: {
+      label: "Hide profile pictures in chat"
+    },
     showInfo: {
       label: "Show user info (karma,gender,since) on messages"
     },
