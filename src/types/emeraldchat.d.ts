@@ -36,7 +36,7 @@ declare interface AppInterface {
       speak(e: { message?: string; picture?: EmeraldPicture }): void;
     };
     join(id: string | null): void;
-    mute(id: number): void;
+    mute(id: number, name?: string, reason?: string): void;
     unmute(id: number): void;
     muted: number[];
     play_sound(url: string): void;

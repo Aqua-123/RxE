@@ -161,3 +161,10 @@ body > div > nav {
 .navigation-dropdown-ritsu:hover {
   color: var(--ritsu-menu-hover-fb-color);
 }
+.notification-menu-container-text {
+  color: var(--dialog-fg-color);
+
+  span {
+    text-shadow: black 0 0 3px;
+  }
+}

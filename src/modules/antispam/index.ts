@@ -18,8 +18,9 @@ function colorRating(rating: SpamRating[number]) {
 
 export function initAntiSpam() {
   const spamRating: SpamRating = {};
+  const autoMuted: Record<string, true> = {};
 
-  // anti suicide-bombing. TODO: test me
+  // anti suicide-bombing.
   const rcsJoin = RoomChannelSelect.prototype.join;
   RoomChannelSelect.prototype.join = function join(e) {
     if (e.members) {
@@ -100,11 +101,13 @@ export function initAntiSpam() {
     );
     if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
       if (Preferences.get(P.antiSpam)) {
-        App.room.mute(id);
+        autoMuted[id] = true;
+        App.room.mute(id, display_name, "spam");
         printTransientMessage(`AutoMute: Muted user ${display_name}.`);
       }
     }
-    if (rating.score < 1 && App.room.muted.includes(id)) {
+    if (rating.score2 < 1 && App.room.muted.includes(id) && autoMuted[id]) {
+      delete autoMuted[id];
       App.room.unmute(id);
       printTransientMessage(`AutoMute: Unmuted user ${display_name}.`);
     }
