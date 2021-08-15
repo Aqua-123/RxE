@@ -5,8 +5,11 @@ import { crel } from "~src/utils";
 export function decorateHeader() {
   // replace logo
   const logo = document.querySelector(".main-logo");
-  if (logo instanceof HTMLImageElement && logo.src !== U.icon) {
-    logo.src = U.icon;
+  if (
+    logo instanceof HTMLImageElement &&
+    logo.src !== App.user.display_picture
+  ) {
+    logo.src = App.user.display_picture;
   }
   // set favicon
   if (!document.head.querySelector(`link[rel="icon"][href="${U.icon}"]`)) {
@@ -20,7 +23,7 @@ export function decorateHeader() {
     document.head.prepend(favicon);
   }
   // set title
-  const title = `${U.name} ${U.version}`;
+  const title = `${App.user.display_name} - ${U.shortName} ${U.version}`;
   if (document.title !== title) {
     document.title = title;
   }
@@ -40,6 +43,8 @@ export function decorateHeader() {
       textContent: title
     });
     logo?.parentElement?.insertBefore(text, logo?.nextSibling);
+  } else if (logoText.textContent !== title) {
+    logoText.textContent = title;
   }
   // add fullscreen button
   const iconsHolder = document.querySelector(".navigation-notification-icons");

@@ -12,6 +12,9 @@ export function initPictureAlbum() {
 
   // Fix "load more" link in profile pictures
   PictureAlbum.prototype.load_pictures = function loadPictures() {
+    if (!this.state.album) {
+      this.setState({ pictures_count: this.state.pictures.length });
+    }
     const load = 7;
     $.ajax({
       type: "GET",
