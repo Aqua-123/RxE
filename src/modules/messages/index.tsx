@@ -7,7 +7,11 @@ export function initMessages() {
   loadCSS(css);
   const mRender = Message.prototype.render;
   Message.prototype.render = function render() {
-    const { user } = this.props.data;
+    const userId = this.props.data.user.id;
+    const user =
+      (RoomChannelMembersClient as RoomChannelMembers)?.state?.members.find(
+        (member) => member.id === userId
+      ) || this.props.data.user;
     const tree = mRender.apply(this);
     tree.props["data-id"] = user.id;
     const messageRight = tree.props.children[1];

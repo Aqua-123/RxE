@@ -198,6 +198,8 @@ declare type EmeraldUser = {
   temp?: boolean;
   // NOTE: This is our own field
   proxy?: boolean;
+  // NOTE: This is our own field
+  delta: number;
 };
 
 declare type EmeraldPicture = {
@@ -274,6 +276,25 @@ declare class Room extends React.Component {
   start_typing(e: EmeraldUser): void;
   stop_typing(): void;
 }
+
+declare type ChannelJsonResponse = {
+  channel: {
+    capacity: number;
+    channel_type: "text" | "voice";
+    created_at: string;
+    description: string;
+    id: number;
+    messages: MessageData[];
+    min_karma: null | number;
+    name: string;
+    owner_id: null | number;
+    private: null | boolean;
+    rules: string;
+    updated_at: string;
+  };
+  members: EmeraldUser[];
+  messages: MessageData[];
+};
 
 declare class RoomChannelSelect extends React.Component {
   join(e: any): void;
