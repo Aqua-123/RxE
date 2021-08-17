@@ -1,6 +1,6 @@
 // open WFAF: RoomClient.switch({id:null, mode:'private'})
 import React from "react";
-import { crel, printMessage } from "~src/utils";
+import { printMessage } from "~src/utils";
 import T from "~src/text";
 
 let specialRoom: string;
@@ -32,29 +32,41 @@ function joinPrivateRoom() {
   joinSpecialRoom(name, ".private-rooms");
 }
 
+function wfafOverrides() {
+  RoomChannelSelect.prototype.body = function rssBody() {
+    // eslint-disable-next-line camelcase,react/no-this-in-sfc
+    const { text_channels } = this.state;
+    return (
+      <div className="room-component-module">
+        <div className="room-user-label">text channels</div>
+        {/* eslint-disable-next-line react/no-this-in-sfc */}
+        {text_channels.map((t) => this.channel_button(t))}
+        <div className="room-user-label">{T.hiddenChannels}</div>
+        <div
+          className="wfaf channel-unit"
+          onClick={() => joinWFAF()}
+          onKeyPress={() => joinWFAF()}
+          role="button"
+          tabIndex={0}
+        >
+          {T.WFAF}
+        </div>
+        <div
+          className="private-rooms channel-unit"
+          onClick={() => joinPrivateRoom()}
+          onKeyPress={() => joinPrivateRoom()}
+          role="button"
+          tabIndex={0}
+        >
+          {T.privateRooms}
+        </div>
+      </div>
+    );
+  };
+}
+
 export function renderWFAFAndPrivateRooms() {
-  const channels = document.querySelectorAll(".channel-unit");
-  if (!channels.length) return;
-  const lastChannel = channels[channels.length - 1];
-  if (lastChannel.textContent === T.privateRooms) return;
-  const hiddenChannels = crel("div", {
-    className: "room-user-label",
-    textContent: T.hiddenChannels
-  });
-  const wfafButton = crel("div", {
-    className: "wfaf channel-unit",
-    textContent: T.WFAF,
-    onclick: () => joinWFAF()
-  });
-  const privateButton = crel("div", {
-    className: "private-rooms channel-unit",
-    textContent: T.privateRooms,
-    onclick: () => joinPrivateRoom()
-  });
-  const parent = lastChannel.parentElement!;
-  parent.insertBefore(privateButton, lastChannel.nextSibling);
-  parent.insertBefore(wfafButton, privateButton);
-  parent.insertBefore(hiddenChannels, wfafButton);
+  wfafOverrides();
 
   // setup hooks
   const subReject = ActionCable.Subscriptions.prototype.reject;

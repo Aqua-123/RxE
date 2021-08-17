@@ -277,27 +277,40 @@ declare class Room extends React.Component {
   stop_typing(): void;
 }
 
+declare type EmeraldChannel = {
+  capacity: number;
+  channel_type: "text" | "voice";
+  created_at: string;
+  description: string;
+  id: number;
+  messages: MessageData[];
+  min_karma: null | number;
+  name: string;
+  owner_id: null | number;
+  private: null | boolean;
+  rules: string;
+  updated_at: string;
+};
+
 declare type ChannelJsonResponse = {
-  channel: {
-    capacity: number;
-    channel_type: "text" | "voice";
-    created_at: string;
-    description: string;
-    id: number;
-    messages: MessageData[];
-    min_karma: null | number;
-    name: string;
-    owner_id: null | number;
-    private: null | boolean;
-    rules: string;
-    updated_at: string;
-  };
+  channel: EmeraldChannel;
   members: EmeraldUser[];
   messages: MessageData[];
 };
 
-declare class RoomChannelSelect extends React.Component {
+declare class RoomChannelSelect extends React.Component<
+  any,
+  {
+    cached_messages: Record<any, any>;
+    current_channel: EmeraldChannel;
+    expanded: boolean;
+    text_channels: Array<ChannelJsonResponse>;
+    voice_channels: Array<ChannelJsonResponse>;
+  }
+> {
   join(e: any): void;
+  body(): JSX.Element;
+  channel_button(e: ChannelJsonResponse): JSX.Element;
 }
 declare const RoomChannelSelectClient: RoomChannelSelect;
 

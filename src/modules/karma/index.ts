@@ -44,40 +44,6 @@ function fetchMyKarma() {
   });
 }
 
-function fetchRoomKarma() {
-  const { id } = App.user;
-  if (!id) {
-    setTimeout(fetchRoomKarma, 500);
-    return;
-  }
-  if (App.room?.id?.startsWith?.("channel")) {
-    const channelId = App.room.id.slice(7);
-    $.ajax({
-      type: "GET",
-      url: `channel_json?id=${channelId}`,
-      dataType: "json",
-      success: (e: ChannelJsonResponse) => {
-        const { members } = e;
-        if (RoomChannelMembersClient instanceof React.Component) {
-          // TODO: compare previous with current karma, animate something.
-          RoomChannelMembersClient.setState({ members });
-        }
-        // if self is missing, do an extra profile fetch
-        const self = members.find((member) => member.id === id);
-        if (!self) {
-          fetchMyKarma();
-        } else {
-          updateKarma(self.karma);
-        }
-      }
-    });
-  } else {
-    // we're not in a public room
-    fetchMyKarma();
-  }
-  setTimeout(fetchRoomKarma, KARMA_TRACKING_INTERVAL);
-}
-
 function karmaOverrides() {
   const rcmSetState = RoomChannelMembers.prototype.setState;
   RoomChannelMembers.prototype.setState = function setState(e) {
@@ -105,8 +71,71 @@ function karmaOverrides() {
   };
 }
 
+function updateUserRoomCount() {
+  const { id } = App.user;
+  if (!id) {
+    setTimeout(updateUserRoomCount, 500);
+    return;
+  }
+  if (RoomChannelMembersClient instanceof React.Component) {
+    $.ajax({
+      type: "GET",
+      url: "channels_default",
+      dataType: "json",
+      success: (e) => {
+        let selfUpdated = false;
+        // 1. update the user count in the channel list (without reordering)
+        const newTextChannels = RoomChannelSelectClient.state.text_channels.map(
+          (c) => {
+            const newChan = (e.text_channels as ChannelJsonResponse[]).find(
+              (nc) => nc.channel.id === c.channel.id
+            );
+            if (newChan) {
+              return {
+                ...c,
+                members: newChan.members
+              };
+            }
+            return c;
+          }
+        );
+        RoomChannelSelectClient.setState({ text_channels: newTextChannels });
+        // 2. update the user list in the current channel, if any
+        if (
+          App.room?.id?.startsWith?.("channel") &&
+          RoomChannelMembersClient instanceof React.Component
+        ) {
+          const channelId = +App.room.id.slice(7);
+          const currentChannel = newTextChannels.find(
+            (c) => c.channel.id === channelId
+          );
+          if (currentChannel) {
+            // NOTE: This is too violent and removes hidden chat users that were exposed. FIXME
+            RoomChannelMembersClient.setState({
+              members: currentChannel.members
+            });
+            // check if our karma is in there already
+            const self = currentChannel.members.find(
+              (member) => member.id === id
+            );
+            if (self) {
+              updateKarma(self.karma);
+              selfUpdated = true;
+            }
+          }
+        }
+        // 3. fetch and update our own karma if needed
+        if (!selfUpdated) {
+          fetchMyKarma();
+        }
+      }
+    });
+  }
+  setTimeout(updateUserRoomCount, KARMA_TRACKING_INTERVAL);
+}
+
 export function initKarmaTracker() {
   karmaOverrides();
-  fetchRoomKarma();
+  updateUserRoomCount();
   loadCSS(trackKarma);
 }
