@@ -1,0 +1,432 @@
+:root {
+  --ritsu-hair-color: #f965fec4;
+  --ritsu-hair-dark-color: #b821bd;
+}
+html > body {
+  background: var(--header-alt-bg-color);
+}
+
+html > body > #text {
+    color: var(--body-text-color);
+    background: var(--body-text-background);
+    margin: var(--body-text-margin);
+    font-size: var(--body-text-font-size);
+    font-weight: var(--body-text-font-weight);
+}
+
+/* The top portion of the page */
+
+
+body > div > nav {
+  background: var(--header-bg-color);
+}
+
+.main-hamburger {
+    color: var(--main-hamburger)
+}
+
+.main-hamburger:hover{
+    color: var(--main-hamburger-hover)
+}
+
+.notification-menu-container {
+    color: var(--notification-container-color);
+    background: var(--notification-container-background);
+}
+
+.navigation-notification-unit:hover {
+    color: var(--notifications-hover-color);
+    background: var(--notifications-hover-background);
+}
+
+.navigation-notification-unit {
+    color: var(--notifications-color);
+    background: var(--notifications-background);
+}
+
+html.trackKarma + .karma-tracker {
+    color: var(--karma-tracker-color);
+    background: var(--karma-tracker-background);
+}
+
+.main-logo-text {
+    color: var(--main-logo-text-color);
+    background: var(--main-logo-text-background);
+}
+
+
+/* Main menu / Dashboard adjustments. */
+
+
+.dashboard-button:hover {
+    color: var(--dashboard-button-hover-color);
+    background: var(--dashboard-button-hover-background);
+}
+
+.dashboard-button {
+    color: var(--dashboard-button-color);
+    background: var(--dashboard-button-background);
+}
+
+.container {
+    background: var(--container-background);
+}
+
+
+/* -- Room adjustments. */
+
+
+.room-component-match-messages {
+    color: var(--match-messages-color);
+    background: var(--match-messages-background);
+}
+
+.room-component-input {
+    color: var(--room-input-color);
+    background: var(--room-input-background);
+}
+
+.ui-button-match {
+    color: var(--match-button-color);
+    background: var(--match-button-background);
+}
+
+.ui-interests-bg {
+    color: var(--interests-color);
+    background: var(--interests-background);
+}
+
+.user-profile-interest {
+    color: var(--interest-tag-color);
+    background: var(--interest-tag-background);
+}
+
+.ui-button-match-mega:hover {
+    color: var(--start-button-hover-color);
+    background: var(--start-button-hover-background);
+}
+
+.ui-button-match-mega {
+    color: var(--start-button-color);
+    background: var(--start-button-background);
+}
+
+.room-component-right-container {
+    color: var(--right-match-container-color);
+    background: var(--right-match-container-background);
+}
+
+.room-component-typing-container {
+    color: var(--typing-container-color);
+    background: var(--typing-container-background);
+}
+
+.room-component-input-icon {
+    color: var(--image-input-color);
+    background: var(--image-input-background);
+}
+
+.room-component-input-icon:hover {
+    color: var(--image-input-hover-color);
+    background: var(--image-input-hover-background);
+}
+
+.room-component-module {
+    color: var(--channel-list-color);
+    background: var(--channel-list-background);
+}
+
+.channel-unit:hover {
+    color: var(--channel-hover-color);
+    background: var(--channel-hover-background);
+}
+
+.channel-unit {
+    color: var(--channel-color);
+    background: var(--channel-background);
+}
+
+.channel-unit:hover {
+    color: var(--private-channel-hover-color);
+    background: var(--private-channel-hover-background);
+}
+
+.channel-unit {
+    color: var(--private-channels-color);
+    background: var(--private-channels-background);
+}
+
+.room-user-label {
+    color: var(--room-lables-color);
+    background: var(--room-lables-background);
+}
+
+
+.room-component-flair {
+    color: var(--room-flair-color);
+    background: var(--room-flair-background);
+    margin: var(--room-flair-margin);
+    font-size: var(--room-flair-font-size);
+    font-weight: var(--room-flair-font-weight);
+}
+
+.room-component-message-avatar {
+    height: var(--room-avatar-height);
+    width: var(--room-avatar-width);
+}
+
+.room-component-message-container {
+    color: var(--room-message-color);
+    background: var(--room-message-background);
+    margin: var(--room-message-margin);
+    font-size: var(--room-message-font-size);
+    font-weight: var(--room-message-font-weight);
+}
+
+
+
+
+/* -- Pop-up / General UI adjustments. */
+
+
+.ui-menu {
+    color: var(--friends-menu-color);
+    background: var(--friends-menu-background);
+}
+
+.user-flair {
+    color: var(--user-flair-color);
+    background: var(--user-flair-background);
+    font-size: var(--user-flair-font-size);
+    font-weight: var(--user-flair-font-weight);
+}
+
+.user-profile-menu {
+    color: var(--profile-menu-color);
+    background: var(--profile-menu-background);
+}
+
+.ui-button-micro:hover {
+    color: var(--edit-profile-hover-color);
+    background: var(--edit-profile-hover-background);
+}
+
+.ui-button-micro {
+    color: var(--edit-profile-color);
+    background: var(--edit-profile-background);
+}
+
+.ui-button-mega:hover {
+    color: var(--account-settings-hover-color);
+    background: var(--account-settings-hover-background);
+}
+
+.ui-button-mega {
+    color: var(--account-settings-color);
+    background: var(--account-settings-background);
+}
+
+.user-profile-tab-active {
+    color: var(--profile-tab-active-color);
+    background: var(--profile-tab-active-background);
+    border-bottom-color: var(--profile-tab-active-underline);
+}
+
+.user-profile-tab {
+    color: var(--profile-tab-color);
+    background: var(--profile-tab-background);
+    border-bottom-color: var(--profile-tab-underline);
+}
+
+.ui-tab {
+    color: var(--ui-tab-color);
+    background: var(--ui-tab-background);
+    border-bottom-color: var(--ui-tab-underline);
+}
+
+.ui-tab-active {
+    color: var(--ui-tab-active-color);
+    background: var(--ui-tab-active-background);
+    border-bottom-color: var(--ui-tab-active-underline);
+}
+
+.ui-tab:hover {
+    color: var(--ui-tab-hover-color);
+    background: var(--ui-tab-hover-background);
+    border-bottom-color: var(--ui-tab-hover-underline);
+}
+
+.user-micropost-unit {
+    background: var(--micropost-unit-background);
+    color: var(--micropost-unit-color);
+    margin: var(--micropost-unit-margin);
+    font-size: var(--micropost-unit-font-size);
+    font-weight: var(--micropost-unit-font-weight);
+}
+
+.user-comment-unit {
+    background: var(--comment-unit-background);
+    color: var(--comment-unit-color);
+    margin: var(--comment-unit-margin);
+    font-size: var(--comment-unit-font-size);
+    font-weight: var(--comment-unit-font-weight);
+}
+
+.user-micropost-left {
+    width: var(--post-icon-width);
+}
+
+.user-microposts {
+    color: var(--profile-posts-color);
+    background: var(--profile-posts-background);
+}
+
+.user-micropost-input-background {
+    color: var(--post-input-color);
+    background: var(--post-input-background);
+    margin: var(--post-input-margin);
+    font-size: var(--post-input-font-size);
+    font-weight: var(--post-input-font-weight);
+}
+
+.user-micropost-icon-button:hover {
+    color: var(--post-interaction-hover-color);
+    background: var(--post-interaction-hover-background);
+}
+
+.user-comment-input-background {
+    background: var(--profile-comment-background);
+    margin: var(--profile-comment-margin);
+    font-size: var(--profile-comment-font-size);
+    font-weight: var(--profile-comment-font-weight);
+}
+
+.notification-menu-container {
+    color: var(--notification-menu-container-color);
+    background: var(--notification-menu-container-background);
+    margin: var(--notification-container-menu-margin);
+    font-size: var(--notification-container-menu-font-size);
+    font-weight: var(--notification-container-menu-font-weight);
+}
+
+.notification-container {
+    color: var(--notification-container-color);
+    background: var(--notification-container-background);
+    margin: var(--notification-container-margin);
+    font-size: var(--notification-container-font-size);
+    font-weight: var(--notification-container-font-weight);
+}
+
+.room-component-message-text.room-component-message-text, .notification-unit-body.notification-unit-body {
+    color: var(--notification-body-color);
+    background: var(--notification-body-background);
+    margin: var(--notification-body-margin);
+    font-size: var(--notification-body-font-size);
+    font-weight: var(--notification-body-font-weight);
+}
+
+.ui-button-text:hover {
+    color: var(--text-button-color);
+    background: var(--text-button-background);
+    margin: var(--text-button-margin);
+    font-size: var(--text-button-font-size);
+    font-weight: var(--text-button-font-weight);
+}
+
+.user-profile-close:hover {
+    color: var(--close-button-hover-color);
+    background: var(--close-button-hover-background);
+    font-size: var(--close-button-hover-background);
+    font-weight: var(--close-button-hover-background);
+}
+
+.user-profile-close {
+    color: var(--close-button-color);
+    background: var(--close-button-background);
+}
+
+.ui-button:hover {
+    color: var(--ui-button-color);
+    background: var(--ui-button-color);
+}
+
+.ui-bg {
+    color: var(--ui-blur-color);
+    background: var(--ui-blur-background);
+}
+
+.user-profile-micro {
+    color: var(--micro-profile-color);
+    background: var(--micro-profile-background);
+    font-size: var(--micro-profile-font-size);
+    font-weight: var(--micro-profile-font-weight);
+}
+
+.user-profile-micro-middle {
+    color: var(--mini-profile-middle-color);
+    background: var(--mini-profile-middle-background);
+}
+
+.user-profile-micro-module-label {
+    color: var(--mini-profile-level-color);
+    background: var(--mini-profile-level-background);
+}
+
+.user-profile-micro-bottom {
+    color: var(--mini-profile-bottom-colour);
+    background: var(--mini-profile-buttom-background);
+}
+
+div.karma-rank {
+    color: var(--karma-rank-color);
+    background: var(--karma-rank-background);
+    font-size: var(--karma-rank-font-size);
+    font-weight: var(--karma-rank-font-weight);
+}
+
+.user-profile-micro-button:hover {
+    color: var(--microprofile-button-hover-color);
+    background: var(--microprofile-button-hover-background);
+}
+
+.user-profile-micro-button {
+    color: var(--micro-profile-button-color);
+    background: var(--micro-profile-button-background);
+    margin: var(--micro-profile-button-margin);
+}
+
+.side-panel {
+    color: var(--left-side-panel-color);
+    background: var(--left-side-panel-background);
+    margin: var(--left-side-panel-margin);
+}
+
+.actionicon-mega:hover {
+    color: var(--left-side-panel-button-hover-color);
+    background: var(--left-side-panel-button-hover-background);
+    margin: var(--left-side-panel-button-hover-margin);
+    font-size: var(--left-side-panel-button-hover-font-size);
+    font-weight: var(--left-side-panel-button-hover-font-weight);
+}
+
+.actionicon-mega {
+    color: var(--left-side-panel-button-color);
+    background: var(--left-side-panel-button-color);
+    margin: var(--left-side-panel-button-margin);
+    font-size: var(--left-side-panel-button-font-size);
+    font-weight: var(--left-side-panel-button-font-weight);
+}
+
+
+
+
+/* -- Base text adjustments */
+
+
+m1 {
+    color: var(--m1-color);
+    background: var(--m1-color);
+    margin: var(--m1-margin);
+    font-size: var(--m1-font-size);
+    font-weight: var(--m1-font-weight);
+}
