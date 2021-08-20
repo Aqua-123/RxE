@@ -5,7 +5,7 @@
       "~src/*": ["./src/*"],
       "~userscripter": ["./lib/userscripter"]
     },
-    "target": "es6",
+    "target": "es2017",
     "strict": true,
     "module": "es2015",
     "moduleResolution": "node",
