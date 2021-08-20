@@ -28,15 +28,6 @@ export function initAntiSpam() {
     }
     rcsJoin.call(this, e);
   };
-  const rcmSetState = RoomChannelMembers.prototype.setState;
-  RoomChannelMembers.prototype.setState = function setState(e) {
-    if (e && "members" in e) {
-      e.members = e.members
-        .filter((v) => !!v)
-        .sort((a, b) => a.display_name.localeCompare(b.display_name));
-    }
-    rcmSetState.call(this, e as any);
-  };
 
   function onMessage(e: Parameters<typeof App.room.client.received>[0]) {
     if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")

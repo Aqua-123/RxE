@@ -38,6 +38,7 @@ declare interface AppInterface {
     join(id: string | null): void;
     mute(id: number, name?: string, reason?: string): void;
     unmute(id: number): void;
+    leave(Id: string | null): void;
     muted: number[];
     play_sound(url: string): void;
     typing: number | null;
@@ -320,6 +321,7 @@ declare class RoomChannelMembers extends React.Component<
 > {
   add_member(e: EmeraldUser): void;
   remove_member(e: EmeraldUser): void;
+  body(): JSX.Element | null;
 }
 
 declare const RoomChannelMembersClient: {} | RoomChannelMembers;

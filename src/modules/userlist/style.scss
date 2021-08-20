@@ -1,0 +1,33 @@
+.lookup-button {
+  border: 0;
+  padding: 0;
+  background: none;
+  margin-right: 0.5em;
+  margin-top: -4px;
+}
+.sort-button {
+  width: 20px;
+  height: 20px;
+  font-weight: normal;
+  text-transform: none;
+  > span {
+    padding: 0;
+    margin-top: -4px;
+  }
+  > div.navigation-dropdown-content {
+    text-align: left;
+    width: 180px;
+    top: 92px;
+    > div {
+      padding: 7px;
+      font-weight: 500;
+    }
+    > li {
+      display: list-item;
+      list-style: "\00a0\00a0\00a0";
+      &.selected {
+        list-style: "✓";
+      }
+    }
+  }
+}

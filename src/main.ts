@@ -14,7 +14,6 @@ import { initGender } from "./modules/gender";
 import { decorateHeader } from "./modules/header";
 import { initHideProfilePictures } from "./modules/hidePfp";
 import { initKarmaTracker } from "./modules/karma";
-import { addLookupButton } from "./modules/lookupbutton";
 import {
   betterMessageRendering,
   decorateMessages,
@@ -23,10 +22,12 @@ import {
 import { initNetwork } from "./modules/network";
 import { applyOverrides } from "./modules/overrides";
 import { decoratePictures, initPictures } from "./modules/pictures";
+import { initPluginAPI } from "./modules/plugin";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
 import { initSendPictures } from "./modules/sendpictures";
 import { applySettings, injectRitsuMenu } from "./modules/settings";
+import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 
@@ -40,6 +41,10 @@ async function init() {
   await until(() => !!browserWindow.App);
   // migrate settings from older userscripts, if any
   migrateSettings();
+
+  // extensible plugin framework thingy
+  initPluginAPI();
+
   // override some builtin behavior
   applyOverrides();
   // inject network middleware
@@ -68,6 +73,8 @@ async function init() {
   // improve message rendering performance/behavior
   betterMessageRendering();
 
+  initUserList();
+
   // start our script's rendering loop
   render([
     reorderMenu,
@@ -75,7 +82,6 @@ async function init() {
     decorateHeader,
     decoratePictures,
     decorateProfileDialog,
-    addLookupButton,
     decorateMessages,
     removeAds,
     renderBrokenImages,

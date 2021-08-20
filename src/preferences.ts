@@ -102,6 +102,13 @@ export const P = {
     key: "savedPictures",
     label: "savedPictures",
     default: []
+  }),
+  // sort
+  userSort: new StringPreference({
+    key: "userSort",
+    label: T.preferences.userSort.label,
+    default: "name.asc",
+    multiline: false
   })
 } as const;
 

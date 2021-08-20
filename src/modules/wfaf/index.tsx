@@ -14,7 +14,7 @@ function joinSpecialRoom(name: string, selector: string) {
     .querySelectorAll(".channel-unit")
     .forEach((channel) => channel.classList.remove("channel-unit-active"));
   document.querySelector(selector)?.classList.add("channel-unit-active");
-  RoomClient?.print(React.createElement("div", null, T.privateRoomsWarning));
+  RoomClient?.print(<div>{T.privateRoomsWarning}</div>);
   specialRoom = name;
 }
 

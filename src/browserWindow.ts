@@ -11,6 +11,7 @@ type AppWindow = Window & {
   MenuReactMicroStatic: typeof MenuReactMicroStatic;
   DashboardClient: typeof DashboardClient;
   App: typeof App;
+  RxE: any; // FIXME
 };
 
 const browserWindow: AppWindow = <any>(
