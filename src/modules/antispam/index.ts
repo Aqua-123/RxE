@@ -2,6 +2,8 @@
 import { P, Preferences } from "~src/preferences";
 import { printTransientMessage, wrapMethod } from "~src/utils";
 
+const GREETERS = [21550262, 19422865];
+
 type SpamRating = {
   [key: number]: {
     score: number;
@@ -14,6 +16,23 @@ function colorRating(rating: SpamRating[number]) {
   if (rating.score >= 1 || rating.score2 >= 3) return "color:red";
   if (rating.score > 0.8 || rating.score2 >= 1) return "color:orange";
   return "";
+}
+
+// from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
+function computeEntropy(msg: string, sep: RegExp | string = "") {
+  const sorted = msg.split(sep).sort();
+  const len = sorted.length;
+  const unique = sorted.filter((c, i, a) => c !== a[i - 1]);
+  const f = unique.map((c) =>
+    sorted.reduce((a, cc) => (cc === c ? a + 1 : a), 0)
+  );
+  const p = f.map((v) => v / len);
+  return p.reduce((H, v) => H + -v * Math.log2(v), 0);
+}
+
+function isRepeating(msg: string) {
+  const i = (msg + msg).indexOf(msg, 1);
+  return i > -1 && i !== msg.length ? msg.length / i : 0;
 }
 
 export function initAntiSpam() {
@@ -53,7 +72,7 @@ export function initAntiSpam() {
     }
 
     if (typeof e.messages === "undefined") return;
-    const { id, display_name } = e.user;
+    const { id, display_name, created_at } = e.user;
     if (App.user.id === id) return;
     const message = e.messages.join("");
     const now = Date.now();
@@ -80,6 +99,23 @@ export function initAntiSpam() {
     } else if (delta > 2000) {
       rating.score2 = Math.max(0, rating.score2 - Math.log10(delta));
     }
+    // mean anti-new account additional penalty
+    const accountAge = Date.now() - +new Date(created_at);
+    if (accountAge < 10 * 60 * 1000) {
+      const longMessage = message.length > 200;
+      const lowEntropy = computeEntropy(message, /\s+/) < 2;
+      const repeating = isRepeating(message) > 3;
+      if ((lowEntropy || repeating) && longMessage) {
+        rating.score2 += 1;
+      }
+      const caps = message.toUpperCase() === message;
+      rating.score2 *= caps ? 3 : 2;
+    }
+
+    // whitelist greeters
+    if (GREETERS.includes(id)) {
+      rating.score2 = 0;
+    }
 
     rating.d = now;
     rating.p = message;
@@ -87,7 +123,7 @@ export function initAntiSpam() {
     console.log(
       `%cspam s1=${rating.score.toFixed(2)} s2=${rating.score2.toFixed(
         2
-      )} ${display_name}: ${message}`,
+      )} e=${computeEntropy(message).toFixed(2)} ${display_name}: ${message}`,
       colorRating(rating)
     );
     if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
