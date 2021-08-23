@@ -34,6 +34,7 @@ declare interface AppInterface {
       disconnected(): void;
       received(e: MessageData): void;
       speak(e: { message?: string; picture?: EmeraldPicture }): void;
+      typing(): void;
     };
     join(id: string | null): void;
     mute(id: number, name?: string, reason?: string): void;

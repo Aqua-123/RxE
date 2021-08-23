@@ -110,9 +110,17 @@ function updateUserRoomCount() {
             (c) => c.channel.id === channelId
           );
           if (currentChannel) {
-            // NOTE: This is too violent and removes hidden chat users that were exposed. FIXME
+            const newMembers = [...RoomChannelMembersClient.state.members];
+            currentChannel.members.forEach((member) => {
+              const idx = newMembers.findIndex((m) => m.id === member.id);
+              if (idx > -1) {
+                newMembers[idx] = member;
+              } else {
+                newMembers.push(member);
+              }
+            });
             RoomChannelMembersClient.setState({
-              members: currentChannel.members
+              members: newMembers
             });
             // check if our karma is in there already
             const self = currentChannel.members.find(
