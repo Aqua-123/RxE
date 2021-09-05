@@ -1,16 +1,14 @@
+/* eslint-disable max-classes-per-file */
 import {
   BooleanPreference,
   StringPreference,
   PreferenceManager,
-  ListPreference,
+  ListPreference
 } from "ts-preferences";
 import { preferences } from "~userscripter";
 
 import U from "~src/userscript";
 import T from "~src/text";
-
-type KeyStringifiable = string;
-/* type KeyStringifiable = string | number; */
 
 const darkMode = matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -121,55 +119,99 @@ export const Preferences = new PreferenceManager(
   preferences.loggingResponseHandler
 );
 
-abstract class ListPreferenceCache<S>{
+abstract class ListPreferenceCache<S> {
   protected readonly preference: ListPreference<string>;
+
   protected abstract store: S;
 
-  constructor (preference: ListPreference<string>) {
+  constructor(preference: ListPreference<string>) {
     this.preference = preference;
   }
 
   public abstract has(item: string): boolean;
+
   public abstract get(): S;
+
   public abstract toArray(): string[];
+
   public abstract add(item: string): void;
+
   public abstract remove(item: string): boolean;
+
   protected abstract set(items: readonly string[]): void;
-  load() { this.set(Preferences.get(this.preference)); }
-  protected save() { Preferences.set(this.preference, this.toArray()); }
+
+  load() {
+    this.set(Preferences.get(this.preference));
+  }
+
+  protected save() {
+    Preferences.set(this.preference, this.toArray());
+  }
 }
 
 export class ListPreferenceArray extends ListPreferenceCache<string[]> {
   protected store: string[] = [];
-  has(item: string) { return this.store.includes(item); }
-  get() { return [...this.store]; }
-  toArray() { return this.store; } 
-  add(item: string) { this.store.push(item); this.save(); }
-  remove(item: string) { 
+
+  has(item: string) {
+    return this.store.includes(item);
+  }
+
+  get() {
+    return [...this.store];
+  }
+
+  toArray() {
+    return this.store;
+  }
+
+  add(item: string) {
+    this.store.push(item);
+    this.save();
+  }
+
+  remove(item: string) {
     const index = this.store.indexOf(item);
     if (index === -1) return false;
     this.store.splice(index, 1);
     this.save();
     return true;
   }
-  protected set(items: readonly string[]) { 
-    this.store = [...items]; 
+
+  protected set(items: readonly string[]) {
+    this.store = [...items];
   }
 }
 
-export class ListPreferenceObject extends ListPreferenceCache<Partial<Record<string, boolean>>> {
+export class ListPreferenceObject extends ListPreferenceCache<
+  Partial<Record<string, boolean>>
+> {
   protected store: Partial<Record<string, boolean>> = {};
-  has(item: string) { return this.store.hasOwnProperty(item); }
-  get() { return this.store; }
-  toArray() { return Object.keys(this.store); }
-  add(item: string) { this.store[item] = true; this.save(); }
-  remove(item: string) { 
+
+  has(item: string) {
+    return Object.prototype.hasOwnProperty.call(this.store, item);
+  }
+
+  get() {
+    return this.store;
+  }
+
+  toArray() {
+    return Object.keys(this.store);
+  }
+
+  add(item: string) {
+    this.store[item] = true;
+    this.save();
+  }
+
+  remove(item: string) {
     const existed = this.has(item);
     delete this.store[item];
     this.save();
     return existed;
   }
+
   protected set(items: readonly string[]) {
-    this.store = Object.fromEntries(items.map(item => [item, true])); 
+    this.store = Object.fromEntries(items.map((item) => [item, true]));
   }
 }

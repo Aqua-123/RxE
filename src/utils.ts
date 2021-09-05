@@ -71,8 +71,9 @@ export const until = async (check: () => boolean) => {
 export function memoizeAsync<R>(compute: (arg0: string) => Promise<R>) {
   const cache: Record<string, R> = {};
   return async (arg0: string | number) => {
-    if ("number" === typeof arg0) arg0 = arg0.toString();
-    if (!cache.hasOwnProperty(arg0)) cache[arg0] = await compute(arg0);
-    return cache[arg0];
-  }
+    const val = typeof arg0 === "number" ? arg0.toString() : arg0;
+    if (!Object.prototype.hasOwnProperty.call(cache, val))
+      cache[val] = await compute(val);
+    return cache[val];
+  };
 }

@@ -1,6 +1,11 @@
 // #5. Image control
 
-import { P as PREFS, Preferences, ListPreferenceObject, ListPreferenceArray } from "~src/preferences";
+import {
+  P as PREFS,
+  Preferences,
+  ListPreferenceObject,
+  ListPreferenceArray
+} from "~src/preferences";
 import { crel, memoizeAsync } from "~src/utils";
 
 const blockedHashes = new ListPreferenceObject(PREFS.blockedHashes);
@@ -121,6 +126,7 @@ export function decoratePictures() {
   const newImageGrid = crel("div", {
     className: "image-grid"
   });
+  // eslint-disable-next-line no-console
   console.log(savedPictures);
   savedPictures.toArray().forEach((src) => {
     const image = crel("div", {
@@ -130,16 +136,20 @@ export function decoratePictures() {
         MenuReactMicro.close();
       }
     });
-    image.append(crel("div", {
-      class: 'picture-button material-icons',
-      textContent: 'bookmark_remove',
-      onmousedown: (event: Event) => {
-        event.stopPropagation();
-        if (!confirm('Are you sure you want to unbookmark this image?')) return;
-        savedPictures.remove(src);
-        image.remove();
-      }
-    }))
+    image.append(
+      crel("div", {
+        class: "picture-button material-icons",
+        textContent: "bookmark_remove",
+        onmousedown: (event: Event) => {
+          event.stopPropagation();
+          // eslint-disable-next-line no-alert
+          if (!confirm("Are you sure you want to unbookmark this image?"))
+            return;
+          savedPictures.remove(src);
+          image.remove();
+        }
+      })
+    );
     newImageGrid.append(image);
   });
   dialog.insertBefore(newImageGrid, buttons);
