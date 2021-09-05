@@ -1,47 +1,37 @@
 // #5. Image control
 
-import { P, Preferences } from "~src/preferences";
-import { crel } from "~src/utils";
+import { P as PREFS, Preferences, ListPreferenceObject, ListPreferenceArray } from "~src/preferences";
+import { crel, memoizeAsync } from "~src/utils";
 
-const knownHashes: Record<string, string> = {};
-const blockedHashes: Record<string, boolean> = {};
-const savedPictures: string[] = [];
+const blockedHashes = new ListPreferenceObject(PREFS.blockedHashes);
+const savedPictures = new ListPreferenceArray(PREFS.savedPictures);
 
 export function initPictures() {
-  const hashes = Preferences.get(P.blockedHashes);
-  hashes.forEach((hash) => {
-    blockedHashes[hash] = true;
-  });
-  savedPictures.push(...Preferences.get(P.savedPictures));
+  blockedHashes.load();
+  savedPictures.load();
 }
 
-async function getHash(str: string) {
-  if (!knownHashes[str]) {
-    const msg = new TextEncoder().encode(str);
-    const hashBuffer = await crypto.subtle.digest("SHA-1", msg);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    knownHashes[str] = hashHex;
-  }
-  return knownHashes[str];
-}
+const getHash = memoizeAsync(async (str: string) => {
+  const msg = new TextEncoder().encode(str);
+  const hashBuffer = await crypto.subtle.digest("SHA-1", msg);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+  return hashHex;
+});
 
 async function blockPicture(src?: string) {
   if (!src) return;
   const hash = await getHash(src);
-  blockedHashes[hash] = true;
-  Preferences.set(P.blockedHashes, Object.keys(blockedHashes));
+  blockedHashes.add(hash);
   // apply block
   // eslint-disable-next-line @typescript-eslint/no-use-before-define
   decoratePictures();
 }
 
 function savePicture(src?: string) {
-  if (!src) return;
-  savedPictures.push(src);
-  Preferences.set(P.savedPictures, savedPictures);
+  if (src) savedPictures.add(src);
 }
 
 function insertPicture(url: string) {
@@ -74,7 +64,7 @@ export function decoratePictures() {
   );
   pics.forEach(async (pic) => {
     if (
-      Preferences.get(P.imgControl) &&
+      Preferences.get(PREFS.imgControl) &&
       !pic.querySelector(".picture-control")
     ) {
       const controls = crel("div", {
@@ -111,7 +101,7 @@ export function decoratePictures() {
     if (pic.firstChild instanceof HTMLImageElement) {
       const { src } = pic.firstChild;
       const hash = await getHash(src);
-      if (blockedHashes[hash]) {
+      if (blockedHashes.has(hash)) {
         pic.firstChild.src = "";
       }
     }
@@ -131,16 +121,26 @@ export function decoratePictures() {
   const newImageGrid = crel("div", {
     className: "image-grid"
   });
-  savedPictures.forEach((src) => {
-    newImageGrid.append(
-      crel("div", {
-        style: `background-image: url(${encodeURI(src)})`,
-        onmousedown: () => {
-          insertPicture(src);
-          MenuReactMicro.close();
-        }
-      })
-    );
+  console.log(savedPictures);
+  savedPictures.toArray().forEach((src) => {
+    const image = crel("div", {
+      style: `background-image: url(${encodeURI(src)})`,
+      onmousedown: () => {
+        insertPicture(src);
+        MenuReactMicro.close();
+      }
+    });
+    image.append(crel("div", {
+      class: 'picture-button material-icons',
+      textContent: 'bookmark_remove',
+      onmousedown: (event: Event) => {
+        event.stopPropagation();
+        if (!confirm('Are you sure you want to unbookmark this image?')) return;
+        savedPictures.remove(src);
+        image.remove();
+      }
+    }))
+    newImageGrid.append(image);
   });
   dialog.insertBefore(newImageGrid, buttons);
 }

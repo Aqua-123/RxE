@@ -67,3 +67,12 @@ export const until = async (check: () => boolean) => {
   // eslint-disable-next-line no-await-in-loop
   while (!check()) await sleep();
 };
+
+export function memoizeAsync<R>(compute: (arg0: string) => Promise<R>) {
+  const cache: Record<string, R> = {};
+  return async (arg0: string | number) => {
+    if ("number" === typeof arg0) arg0 = arg0.toString();
+    if (!cache.hasOwnProperty(arg0)) cache[arg0] = await compute(arg0);
+    return cache[arg0];
+  }
+}
