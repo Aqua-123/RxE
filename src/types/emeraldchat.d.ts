@@ -331,6 +331,15 @@ declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;
 }
 
+declare class RoomPrivate extends React.Component<
+  unknown,
+  {
+    online: EmeraldUser[];
+    offline: EmeraldUser[];
+    search: any[];
+  }
+> {}
+
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
 }

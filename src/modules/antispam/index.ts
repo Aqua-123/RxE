@@ -47,6 +47,17 @@ export function initAntiSpam() {
     }
     rcsJoin.call(this, e);
   };
+  // same idea, for RoomPrivate
+  const rpSetState = RoomPrivate.prototype.setState;
+  RoomPrivate.prototype.setState = function setState(state) {
+    if (state && "online" in state) {
+      state.online = state.online.filter((v: any) => !!v);
+    }
+    if (state && "offline" in state) {
+      state.offline = state.offline.filter((v: any) => !!v);
+    }
+    return rpSetState.call(this, state as any);
+  };
 
   function onMessage(e: Parameters<typeof App.room.client.received>[0]) {
     if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")

@@ -16,7 +16,7 @@ export function initPictures() {
   savedPictures.load();
 }
 
-const getHash = memoizeAsync(async (str: string) => {
+export const getHash = memoizeAsync(async (str: string) => {
   const msg = new TextEncoder().encode(str);
   const hashBuffer = await crypto.subtle.digest("SHA-1", msg);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
