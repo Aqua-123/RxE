@@ -46,6 +46,11 @@
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
+  & > div {
+    width: unset;
+    height: unset;
+    zoom: 0.6;
+  }
 }
 .disable-after::after {
   content: "";

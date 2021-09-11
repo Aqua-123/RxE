@@ -62,7 +62,7 @@ function insertPicture(url: string) {
   PictureUploader.onUploaded(picture);
 }
 
-export function decoratePictures() {
+export async function decoratePictures() {
   // add block and save buttons on every image in chat.
   const pics = document.querySelectorAll(
     ".room-component-message-picture-container"
@@ -127,10 +127,13 @@ export function decoratePictures() {
     className: "image-grid"
   });
   // eslint-disable-next-line no-console
-  console.log(savedPictures);
-  savedPictures.toArray().forEach((src) => {
+  // console.log(savedPictures);
+  savedPictures.toArray().map(async (src) => {
+    const hash = await getHash(src);
     const image = crel("div", {
-      style: `background-image: url(${encodeURI(src)})`,
+      style: `background-image: url(${encodeURI(src)}), url(${encodeURI(
+        `https://robohash.org/${hash}.png?set=set4`
+      )})`,
       onmousedown: () => {
         insertPicture(src);
         MenuReactMicro.close();
@@ -138,7 +141,7 @@ export function decoratePictures() {
     });
     image.append(
       crel("div", {
-        class: "picture-button material-icons",
+        className: "picture-button material-icons",
         textContent: "bookmark_remove",
         onmousedown: (event: Event) => {
           event.stopPropagation();
