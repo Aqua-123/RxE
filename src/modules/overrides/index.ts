@@ -1,4 +1,5 @@
 /* eslint-disable react/no-find-dom-node */
+/* eslint-disable */
 import React from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
