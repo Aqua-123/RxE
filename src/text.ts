@@ -56,6 +56,12 @@ export default {
     trackKarma: {
       label: "Display Karma in header and track changes"
     },
+    mutetoggle: {
+      label: "Toggle perma mute"
+    },
+    mutelist: {
+      label: "Perma mute list"
+    },
     userSort: {
       label: "Sort users by..",
       "name.asc": "Name Asc.",

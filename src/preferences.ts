@@ -83,6 +83,12 @@ export const P = {
     label: T.preferences.antiSpam.label,
     default: true
   }),
+  mutelist: new StringPreference({
+    key: "mutelist",
+    label: T.preferences.mutelist.label,
+    default: "List goes here",
+    multiline: false
+  }),
   showGender: new BooleanPreference({
     key: "showGender",
     label: T.preferences.showGender.label,
@@ -91,6 +97,11 @@ export const P = {
   trackKarma: new BooleanPreference({
     key: "trackKarma",
     label: T.preferences.trackKarma.label,
+    default: true
+  }),
+  mutetoggle: new BooleanPreference({
+    key: "mutetoggle",
+    label: T.preferences.mutetoggle.label,
     default: true
   }),
   // known images

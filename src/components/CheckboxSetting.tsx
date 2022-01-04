@@ -16,3 +16,4 @@ export default function CheckboxSetting(props: CheckboxSettingProps) {
     </div>
   );
 }
+

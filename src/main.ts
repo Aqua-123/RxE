@@ -30,7 +30,8 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
-
+import { permamute } from "./modules/permamute"
+import { initLoadMore } from "./modules/fixloadmore"
 async function init() {
   const featureSet = `(${[
     ...(FEATURES.HACKS ? ["HACKS"] : []),
@@ -72,9 +73,11 @@ async function init() {
   initGender();
   // improve message rendering performance/behavior
   betterMessageRendering();
+  initLoadMore();
 
   initUserList();
-
+  permamute(GM_getValue("mutelist", []))
+  console.log()
   // start our script's rendering loop
   render([
     reorderMenu,

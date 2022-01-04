@@ -71,7 +71,7 @@ declare class UpgradeAccount {
   signup: Function;
 }
 
-declare class ModPanel extends React.Component {}
+declare class ModPanel extends React.Component { }
 
 declare type MessageData = {
   messages: string[];
@@ -252,6 +252,7 @@ declare class PictureAlbum extends React.Component<
 
 declare const RoomClient: null | Room;
 
+
 declare class Room extends React.Component {
   state: {
     messages_count: number;
@@ -338,7 +339,7 @@ declare class RoomPrivate extends React.Component<
     offline: EmeraldUser[];
     search: any[];
   }
-> {}
+> { }
 
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;

@@ -46,7 +46,7 @@ function hackOverrides() {
     return value;
   };
 
-  UpgradeAccount.prototype.signup = () => {};
+  UpgradeAccount.prototype.signup = () => { };
 }
 
 export function domOverrides() {
@@ -75,7 +75,7 @@ export function applyOverrides() {
   }
   if (!window.DashboardClient) {
     window.DashboardClient = {
-      setState: () => {}
+      setState: () => { }
     };
   }
 
@@ -164,7 +164,7 @@ export function applyOverrides() {
   };
 
   // non-hack: "Sign up to continue" only shows once at start
-  App.temp.check = () => {};
+  App.temp.check = () => { };
 
   // Allow more messages in group chat. (make configurable?)
   // const rTrim = Room.prototype.trim_messages;

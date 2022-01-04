@@ -26,7 +26,11 @@ export function getSettings() {
       hidePfp: Preferences.get(P.hidePfp),
       showInfo: Preferences.get(P.showInfo),
       showGender: Preferences.get(P.showGender),
-      antiSpam: Preferences.get(P.antiSpam)
+      antiSpam: Preferences.get(P.antiSpam),
+      mutetoggle: Preferences.get(P.mutetoggle)
+    },
+    stringfields: {
+      mutelist: Preferences.get(P.mutelist)
     }
   };
 }

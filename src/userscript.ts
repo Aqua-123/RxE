@@ -11,5 +11,5 @@ export default {
   sitename: "Emerald Chat",
   namespace: "Emerald Bot - Ritsu Project",
   runAt: "document-end",
-  grant: ["GM_getValue", "GM_deleteValue", "unsafeWindow"]
+  grant: ["GM_getValue", "GM_deleteValue", "unsafeWindow", "GM_setValue"]
 } as const;
