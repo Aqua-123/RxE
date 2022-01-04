@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import ReactDOM from "react-dom";
 import RitsuDialog from "~src/components/RitsuDialog";
@@ -27,7 +28,7 @@ export function getSettings() {
       showInfo: Preferences.get(P.showInfo),
       showGender: Preferences.get(P.showGender),
       antiSpam: Preferences.get(P.antiSpam),
-      mutetoggle: Preferences.get(P.mutetoggle)
+      mutetoggle: Preferences.get(P.mutetoggle),
     },
     stringfields: {
       mutelist: Preferences.get(P.mutelist)
