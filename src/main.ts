@@ -76,8 +76,7 @@ async function init() {
   initLoadMore();
 
   initUserList();
-  permamute(GM_getValue("mutelist", []))
-  console.log()
+  permamute(GM_getValue("mutelist", []));
   // start our script's rendering loop
   render([
     reorderMenu,

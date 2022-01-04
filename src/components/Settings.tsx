@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import { SettingsDialogSettings } from "./SettingsDialog";
 import CheckboxSetting from "./CheckboxSetting";
@@ -6,13 +7,11 @@ import T from "~src/text";
 import styles from "./style.module.scss";
 import { permamute } from "~src/modules/permamute/index";
 
-
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
 };
-export var mutenew = GM_getValue("mutelist", null)
-export default function Settings(this: any, props: any, mutenew: any[]) {
 
+export default function Settings(this: any, props: SettingsProps, mutenew: any[]) {
   const {
     adBlocker,
     trackKarma,
@@ -25,9 +24,9 @@ export default function Settings(this: any, props: any, mutenew: any[]) {
     showGender,
     antiSpam,
     mutetoggle,
-    mutelist,
     applySettings
   } = props;
+
   return (
     <div>
       <div className={`m1 ${styles.settingsSection}`}>{T.generalTitle}</div>
@@ -90,25 +89,16 @@ export default function Settings(this: any, props: any, mutenew: any[]) {
       />
       <TextSetting
         id="mutelist"
-        value={mutelist}
+        value={[]}
         defaultValue={GM_getValue("mutelist", "")}
-        onclick={event => {
-          if (event.key === 'Enter') {
-            console.log(mutenew)
-            if (mutenew == null) {
-              mutenew = [((event.target as HTMLInputElement).value).split(",")]
-              GM_setValue("mutelist", mutenew)
-              permamute(mutenew)
-            }
-            else {
-              mutenew = [((event.target as HTMLInputElement).value).split(",")]
-              GM_setValue("mutelist", mutenew)
-              permamute(mutenew)
-            }
+        onclick={(event) => {
+          if (event.key === "Enter") {
+            mutenew = [(event.target as HTMLInputElement).value.split(",")];
+            GM_setValue("mutelist", mutenew);
+            permamute(mutenew);
           }
         }}
       />
     </div>
-
   );
 }

@@ -50,7 +50,6 @@ export default class SettingsDialog extends React.Component<
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
 
-
   applyHacks_ = (obj: SettingsDialogHacks) => {
     if (FEATURES.HACKS) {
       const { hacks_ } = this.state;
