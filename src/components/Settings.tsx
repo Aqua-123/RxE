@@ -11,7 +11,7 @@ type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
 };
 
-export default function Settings(this: any, props: SettingsProps, mutenew: any[]) {
+export default function Settings(this: any, props: any, mutenew: any[]) {
   const {
     adBlocker,
     trackKarma,
@@ -24,7 +24,8 @@ export default function Settings(this: any, props: SettingsProps, mutenew: any[]
     showGender,
     antiSpam,
     mutetoggle,
-    applySettings
+    applySettings,
+    mutelist
   } = props;
 
   return (
@@ -89,7 +90,7 @@ export default function Settings(this: any, props: SettingsProps, mutenew: any[]
       />
       <TextSetting
         id="mutelist"
-        value={[]}
+        value={mutelist}
         defaultValue={GM_getValue("mutelist", "")}
         onclick={(event) => {
           if (event.key === "Enter") {
