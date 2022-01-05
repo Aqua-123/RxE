@@ -31,7 +31,8 @@ import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { permamute } from "./modules/permamute";
-import { initLoadMore } from "./modules/fixloadmore"
+import { initLoadMore } from "./modules/fixloadmore";
+
 async function init() {
   const featureSet = `(${[
     ...(FEATURES.HACKS ? ["HACKS"] : []),

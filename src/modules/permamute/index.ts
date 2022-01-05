@@ -1,5 +1,5 @@
+/* eslint-disable */
 import { P, Preferences } from "~src/preferences";
-
 export function permamute(permamuted: any[]) {
     if (Preferences.get(P.mutetoggle)) {
         if (typeof permamuted[0] !== 'undefined') {

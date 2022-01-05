@@ -1,19 +1,15 @@
+/* eslint-disable */
 export function initLoadMore() {
-
     Room.prototype.load_messages = function loadmore(e: number) {
-
         $.ajax({
             type: "GET",
-            url: "/room_load_more?loaded=" + e + "&id=" + this.state.id,
+            url: "/room_load_more?loaded=" + String(e) + "&id=" + this.state.id,
             dataType: "json",
             success: function (this: any, e: any) {
-                console.log(e)
                 e.reverse()
                 for (var t = 0; t < e.length; t++) this.prepend(e[t])
-
             }.bind(this)
         })
-
     }
     Room.prototype.switch = function fixmessage_count(this: any, e: any) {
         this.clear_print(), App.room.join(e.id), this.setState({
@@ -27,12 +23,12 @@ export function initLoadMore() {
             url: "/default_private_messages?id=" + e.id,
             dataType: "json",
             success: function (this: any, e: any) {
-                for (var t = 0; t < e.messages.length; t++) this.append(e.messages[t]);
+                let t = 0;
+                for (t = 0; t < e.messages.length; t++) this.append(e.messages[t]);
                 this.setState({
                     messages_count: e.messages_count
                 }),
                     this.scroll()
-
             }.bind(this)
         }), this.setState({
             left_panel: !0,
