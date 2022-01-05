@@ -1,5 +1,3 @@
-import { permamute } from "src/modules/permamute/index";
-import { initLoadMore } from "src/modules/fixloadmore/index";
 import U from "~src/userscript";
 import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
@@ -32,7 +30,8 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
-
+import { permamute } from "./modules/permamute";
+import { initLoadMore } from "./modules/fixloadmore"
 async function init() {
   const featureSet = `(${[
     ...(FEATURES.HACKS ? ["HACKS"] : []),
