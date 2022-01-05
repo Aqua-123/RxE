@@ -1,4 +1,3 @@
-/* eslint-disable */
 import U from "~src/userscript";
 import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
@@ -75,6 +74,7 @@ async function init() {
   // improve message rendering performance/behavior
   betterMessageRendering();
   initLoadMore();
+
   initUserList();
   permamute(GM_getValue("mutelist", []));
   // start our script's rendering loop
