@@ -30,8 +30,8 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
-import { permamute } from "./modules/permamute"
-import { initLoadMore } from "./modules/fixloadmore"
+import { permamute } from "src/modules/permamute/index"
+import { initLoadMore } from "src/modules/fixloadmore/index"
 async function init() {
   const featureSet = `(${[
     ...(FEATURES.HACKS ? ["HACKS"] : []),

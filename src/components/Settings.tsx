@@ -5,7 +5,7 @@ import CheckboxSetting from "./CheckboxSetting";
 import TextSetting from "./TextfieldSetting";
 import T from "~src/text";
 import styles from "./style.module.scss";
-import { permamute } from "~src/modules/permamute/index";
+import { permamute } from "~src/modules/permamute";
 
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
