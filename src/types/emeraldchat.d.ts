@@ -10,6 +10,8 @@ declare const Cookies: {
 
 declare class MuteButton extends React.Component<any, { muted: boolean }> {
   //
+
+
 }
 
 declare const MuteButtonClient: MuteButton;
@@ -70,6 +72,7 @@ declare const UpgradeClient: {
 declare class UpgradeAccount {
   signup: Function;
 }
+
 
 declare class ModPanel extends React.Component { }
 
@@ -379,9 +382,17 @@ declare class UserView extends React.Component<
     };
   }
 > {
+  componentDidMount: () => void;
   close: Function;
   view_profile: Function;
   exit_click: EventListenerObject;
+  bottom: Function;
+  unmute: Function;
+  mute: Function;
+  message: Function;
+  mod_button: Function;
+  PermaMute: Function;
+  PermaUnMute: Function;
 }
 
 declare let UserViewReact: undefined | UserView;

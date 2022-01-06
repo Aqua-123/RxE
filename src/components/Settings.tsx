@@ -94,9 +94,12 @@ export default function Settings(this: any, props: any, mutenew: any[]) {
         defaultValue={GM_getValue("mutelist", "")}
         onclick={(event) => {
           if (event.key === "Enter") {
-            mutenew = [(event.target as HTMLInputElement).value.split(",")];
-            GM_setValue("mutelist", mutenew);
-            permamute(mutenew);
+            mutenew = (event.target as HTMLInputElement).value.split(",");
+            var result = mutenew.map(function (x) {
+              return parseInt(x, 10);
+            });
+            GM_setValue("mutelist", result);
+            permamute(result);
           }
         }}
       />
