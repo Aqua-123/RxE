@@ -30,8 +30,10 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
-import { permamute } from "./modules/permamute";
-import { initpermamute } from "./modules/permamute";
+import {
+  initpermamute,
+  permamute
+} from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 
 async function init() {
