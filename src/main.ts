@@ -30,7 +30,7 @@ import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
-import { initpermamute, permamute } from "./modules/permamute";
+import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 
 async function init() {
@@ -77,8 +77,7 @@ async function init() {
   initLoadMore();
 
   initUserList();
-  initpermamute();
-  permamute(GM_getValue("mutelist", []));
+  initPermaMute();
   // start our script's rendering loop
   render([
     reorderMenu,

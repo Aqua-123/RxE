@@ -5,13 +5,15 @@ import CheckboxSetting from "./CheckboxSetting";
 import TextSetting from "./TextfieldSetting";
 import T from "~src/text";
 import styles from "./style.module.scss";
-import { permamute } from "~src/modules/permamute";
+import { updateMutes } from "~src/modules/permamute";
+
+const mutes_format = /^\{(\s*\d+\s*:\s*"[^"]*"\s*,\s*)*(\s*\d+\s*:\s*"[^"]*"\s*)?\}$/;
 
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
 };
 
-export default function Settings(this: any, props: any, mutenew: any[]) {
+export default function Settings(this: any, props: SettingsProps) {
   const {
     adBlocker,
     trackKarma,
@@ -23,10 +25,10 @@ export default function Settings(this: any, props: any, mutenew: any[]) {
     showInfo,
     showGender,
     antiSpam,
-    mutetoggle,
-    applySettings,
-    mutelist
+    permaMuteList,
+    applySettings
   } = props;
+
 
   return (
     <div>
@@ -83,24 +85,19 @@ export default function Settings(this: any, props: any, mutenew: any[]) {
         value={showInfo}
         onChange={() => applySettings({ showInfo: !showInfo })}
       />
-      <CheckboxSetting
-        id="mutetoggle"
-        value={mutetoggle}
-        onChange={() => applySettings({ mutetoggle: !mutetoggle })}
-      />
       <TextSetting
-        id="mutelist"
-        value={mutelist}
-        defaultValue={GM_getValue("mutelist", "")}
-        onclick={(event) => {
-          if (event.key === "Enter") {
-            mutenew = (event.target as HTMLInputElement).value.split(",");
-            var result = mutenew.map(function (x) {
-              return parseInt(x, 10);
-            });
-            GM_setValue("mutelist", result);
-            permamute(result);
-          }
+        id="permaMuteList"
+        value={JSON.stringify(Object.fromEntries(permaMuteList))}
+        onchange={event => {
+          if (!(mutes_format.test(event.target.value))) return true;
+          const mutes: Record<number, string> = JSON.parse(event.target.value);
+          const mute_list: Array<[number, string]> = [];
+          for (const uid in mutes)
+            if ("number" === typeof uid && "string" === typeof mutes[uid])
+              mute_list.push([uid, mutes[uid]]);
+          updateMutes(mute_list);
+          applySettings({ permaMuteList: mute_list });
+          return true;
         }}
       />
     </div>

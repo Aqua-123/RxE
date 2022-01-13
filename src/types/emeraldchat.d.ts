@@ -377,7 +377,10 @@ declare const UserViewGenerator: {
 declare class UserView extends React.Component<
   any,
   {
+    muted: boolean,
+    permamuted: boolean | undefined,
     user: {
+      display_name: string;
       id: number;
     };
   }
@@ -391,8 +394,8 @@ declare class UserView extends React.Component<
   mute: Function;
   message: Function;
   mod_button: Function;
-  PermaMute: Function;
-  PermaUnMute: Function;
+  permamute: Function;
+  permaunmute: Function;
 }
 
 declare let UserViewReact: undefined | UserView;

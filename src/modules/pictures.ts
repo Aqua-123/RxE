@@ -3,13 +3,13 @@
 import {
   P as PREFS,
   Preferences,
-  ListPreferenceObject,
+  ListPreferenceSet,
   ListPreferenceArray
 } from "~src/preferences";
 import { crel, memoizeAsync } from "~src/utils";
 
-const blockedHashes = new ListPreferenceObject(PREFS.blockedHashes);
-const savedPictures = new ListPreferenceArray(PREFS.savedPictures);
+const blockedHashes = new ListPreferenceSet(PREFS.blockedHashes);
+const savedPictures = new ListPreferenceSet(PREFS.savedPictures);
 
 export function initPictures() {
   blockedHashes.load();
@@ -106,7 +106,7 @@ export async function decoratePictures() {
     if (pic.firstChild instanceof HTMLImageElement) {
       const { src } = pic.firstChild;
       const hash = await getHash(src);
-      if (blockedHashes.has(hash)) {
+      if (blockedHashes.hasItem(hash)) {
         pic.firstChild.src = "";
       }
     }
@@ -128,7 +128,7 @@ export async function decoratePictures() {
   });
   // eslint-disable-next-line no-console
   // console.log(savedPictures);
-  savedPictures.toArray().map(async (src) => {
+  savedPictures.values().map(async (src) => {
     const hash = await getHash(src);
     const image = crel("div", {
       style: `background-image: url(${encodeURI(src)}), url(${encodeURI(

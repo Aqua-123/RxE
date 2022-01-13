@@ -77,3 +77,15 @@ export function memoizeAsync<R>(compute: (arg0: string) => Promise<R>) {
     return cache[val];
   };
 }
+
+export function setDiff<T>(set1: Set<T>, set2: Set<T>) {
+  const added = new Set<T>();
+  const removed = new Set<T>();
+  for (const value of set1.values()) {
+    if (!set2.has(value)) added.add(value);
+  }
+  for (const value of set2.values()) {
+    if (!set1.has(value)) removed.add(value);
+  }
+  return { added, removed };
+}

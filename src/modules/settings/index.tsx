@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import RitsuDialog from "~src/components/RitsuDialog";
 import { crel } from "~src/utils";
-import { P, Preferences } from "~src/preferences";
+import { ListPreferenceMap, P, Preferences } from "~src/preferences";
 import { initTheme, Theme } from "~src/themes";
 
 export function getSettings() {
@@ -28,10 +28,7 @@ export function getSettings() {
       showInfo: Preferences.get(P.showInfo),
       showGender: Preferences.get(P.showGender),
       antiSpam: Preferences.get(P.antiSpam),
-      mutetoggle: Preferences.get(P.mutetoggle),
-    },
-    stringfields: {
-      mutelist: Preferences.get(P.mutelist)
+      permaMuteList: Preferences.get(P.permaMuteList)
     }
   };
 }
@@ -40,7 +37,7 @@ export type SettingsType = Required<ReturnType<typeof getSettings>>;
 
 export function applySettings() {
   const settings = getSettings();
-  let obj: Record<string, boolean>;
+  let obj: Record<string, any>;
   if (FEATURES.HACKS) {
     obj = { ...settings.settings, ...settings.hacks_ };
   } else {
