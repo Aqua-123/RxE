@@ -4,7 +4,7 @@ import {
   StringPreference,
   PreferenceManager,
   ListPreference,
-  AllowedTypes,
+  AllowedTypes
 } from "ts-preferences";
 import { preferences } from "~userscripter";
 
@@ -184,6 +184,7 @@ abstract class ListPreferenceCacheKeyed<
   Pref extends AllowedTypes,
   Key extends AllowedTypes,
   Item extends AllowedTypes
+  // eslint-disable-next-line prettier/prettier
   > extends ListPreferenceCache<Store, Pref, Item> {
   public abstract hasKey(key: Key): boolean;
 
@@ -215,8 +216,8 @@ abstract class ListPreferenceCacheUnkeyed<
   Store,
   Pref extends AllowedTypes,
   Item extends AllowedTypes
+  // eslint-disable-next-line prettier/prettier
   > extends ListPreferenceCache<Store, Pref, Item> {
-
   public add(item: Item): void {
     this._add(item);
     this.save();
@@ -233,22 +234,39 @@ abstract class ListPreferenceCacheUnkeyed<
   protected abstract _remove(item: Item): boolean;
 }
 
-export class ListPreferenceArray<Item extends AllowedTypes> extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
+export class ListPreferenceArray<
+  Item extends AllowedTypes
+  // eslint-disable-next-line prettier/prettier
+  > extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
   protected realStore: Item[] = [];
 
-  hasKey(key: number) { return key in this.store; }
+  hasKey(key: number) {
+    return key in this.store;
+  }
 
-  hasItem(item: Item) { return this.store.includes(item); }
+  hasItem(item: Item) {
+    return this.store.includes(item);
+  }
 
-  getItem(key: number): Item | undefined { return this.store[key]; }
+  getItem(key: number): Item | undefined {
+    return this.store[key];
+  }
 
-  protected _setItem(key: number, item: Item) { this.store[key] = item; }
+  protected _setItem(key: number, item: Item) {
+    this.store[key] = item;
+  }
 
-  protected _removeItem(key: number) { return delete this.store[key]; }
+  protected _removeItem(key: number) {
+    return delete this.store[key];
+  }
 
-  values() { return [...this.store]; }
+  values() {
+    return [...this.store];
+  }
 
-  entries() { return [...this.store.entries()] }
+  entries() {
+    return [...this.store.entries()];
+  }
 
   /*
   protected _add(item: Item) { this.store.push(item); }
@@ -261,58 +279,96 @@ export class ListPreferenceArray<Item extends AllowedTypes> extends ListPreferen
   }
   */
 
-  protected asSaved() { return this.values(); }
+  protected asSaved() {
+    return this.values();
+  }
 
-  protected loadFrom(items: readonly Item[]) { this.store = [...items]; }
+  protected loadFrom(items: readonly Item[]) {
+    this.store = [...items];
+  }
 }
 
-export class ListPreferenceSet<Item extends AllowedTypes>
-  extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
+export class ListPreferenceSet<
+  Item extends AllowedTypes
+  // eslint-disable-next-line prettier/prettier
+  > extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
   protected realStore: Set<Item> = new Set();
 
-  hasItem(item: Item) { return this.store.has(item); }
-
-  hasKey(_key: null) { return false; }
-
-  values() { return [...this.store.values()]; }
-
-  entries() { return this.values(); }
-
-  protected _add(item: Item) { this.store.add(item); }
-
-  protected _remove(item: Item) { return this.store.delete(item); }
-
-  protected asSaved() { return this.values(); }
-
-  protected loadFrom(items: readonly Item[]) { this.store = new Set(items); }
-}
-
-
-// Gotta love it when DictionaryPreference<string, string> doesn't compile so you do this
-export class ListPreferenceMap<Key extends AllowedTypes, Item extends AllowedTypes>
-  extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
-  protected realStore: Map<Key, Item> = new Map();
-
-  hasKey(key: Key) { return this.store.has(key); }
-
   hasItem(item: Item) {
-    for (const value of this.store.values())
-      if (value === item)
-        return true;
+    return this.store.has(item);
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  hasKey(_key: null) {
     return false;
   }
 
-  getItem(key: Key) { return this.store.get(key); }
+  values() {
+    return [...this.store.values()];
+  }
 
-  protected _removeItem(key: Key) { return this.store.delete(key); }
+  entries() {
+    return this.values();
+  }
 
-  protected _setItem(key: Key, item: Item) { return this.store.set(key, item); }
+  protected _add(item: Item) {
+    this.store.add(item);
+  }
 
-  values() { return [...this.store.values()]; }
+  protected _remove(item: Item) {
+    return this.store.delete(item);
+  }
 
-  entries() { return [...this.store.entries()]; }
+  protected asSaved() {
+    return this.values();
+  }
 
-  protected asSaved() { return [...this.store.entries()]; }
+  protected loadFrom(items: readonly Item[]) {
+    this.store = new Set(items);
+  }
+}
 
-  protected loadFrom(data: Array<[Key, Item]>) { this.store = new Map(data); }
+// Gotta love it when DictionaryPreference<string, string> doesn't compile so you do this
+export class ListPreferenceMap<
+  Key extends AllowedTypes,
+  Item extends AllowedTypes
+  // eslint-disable-next-line prettier/prettier
+  > extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
+  protected realStore: Map<Key, Item> = new Map();
+
+  hasKey(key: Key) {
+    return this.store.has(key);
+  }
+
+  hasItem(item: Item) {
+    return this.values().some((value) => value === item);
+  }
+
+  getItem(key: Key) {
+    return this.store.get(key);
+  }
+
+  protected _removeItem(key: Key) {
+    return this.store.delete(key);
+  }
+
+  protected _setItem(key: Key, item: Item) {
+    return this.store.set(key, item);
+  }
+
+  values() {
+    return [...this.store.values()];
+  }
+
+  entries() {
+    return [...this.store.entries()];
+  }
+
+  protected asSaved() {
+    return [...this.store.entries()];
+  }
+
+  protected loadFrom(data: Array<[Key, Item]>) {
+    this.store = new Map(data);
+  }
 }

@@ -11,12 +11,7 @@ export default function TextSetting(props: TextFieldSettingsProps) {
   const { id, value, onchange } = props;
   return (
     <div>
-      <input
-        type="text"
-        id={id}
-        value={value}
-        onChange={onchange}
-      />
+      <input type="text" id={id} value={value} onChange={onchange} />
       <label htmlFor={id}>{P[id]!.label}</label>
     </div>
   );

@@ -81,11 +81,12 @@ export function memoizeAsync<R>(compute: (arg0: string) => Promise<R>) {
 export function setDiff<T>(set1: Set<T>, set2: Set<T>) {
   const added = new Set<T>();
   const removed = new Set<T>();
-  for (const value of set1.values()) {
+  // help eslint is yelling at me when i use iterators and for-of loops :')
+  Array.from(set1.values()).forEach((value) => {
     if (!set2.has(value)) added.add(value);
-  }
-  for (const value of set2.values()) {
+  });
+  Array.from(set2.values()).forEach((value) => {
     if (!set1.has(value)) removed.add(value);
-  }
+  });
   return { added, removed };
 }

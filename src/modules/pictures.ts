@@ -1,10 +1,6 @@
 // #5. Image control
 
-import {
-  P as PREFS,
-  Preferences,
-  ListPreferenceSet
-} from "~src/preferences";
+import { P as PREFS, Preferences, ListPreferenceSet } from "~src/preferences";
 import { crel, memoizeAsync } from "~src/utils";
 
 const blockedHashes = new ListPreferenceSet(PREFS.blockedHashes);
