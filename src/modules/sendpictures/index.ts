@@ -1,37 +1,13 @@
 import React from "react";
+import {
+  decodeInvisible as decode,
+  encodeInvisible as encode
+} from "~src/utils";
 import { log } from "~userscripter";
 
 const PLACEHOLDER =
   "Use Ritsu x Emerald 0.9.0 or newer to see an image instead of this placeholder.";
 const IMG_REGEXP = new RegExp(`^${PLACEHOLDER}(.*)$`);
-
-const b64Set =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-// abuse of https://en.wikipedia.org/wiki/Tags_(Unicode_block)
-const tagSet = Array.from({ length: 65 }, (_, i) =>
-  String.fromCodePoint(i + 0xe0020)
-).join("");
-
-function encode(urlPath: string) {
-  const str = btoa(urlPath);
-  let out = "";
-  for (let pos = 0; pos < str.length; pos += 1) {
-    const i = b64Set.indexOf(str[pos]);
-    if (i === -1) return null;
-    out += tagSet[i * 2] + tagSet[i * 2 + 1];
-  }
-  return out;
-}
-
-function decode(str: string) {
-  let b64 = "";
-  for (let pos = 1; pos < str.length; pos += 2) {
-    const i = tagSet.indexOf(str[pos]);
-    if (i === -1) throw new Error("bad image path");
-    b64 += b64Set[(i - 1) / 2];
-  }
-  return atob(b64);
-}
 
 /**
  * This brings back image sending and receiving capability, but
@@ -107,7 +83,7 @@ export function initSendPictures() {
           emitImage(decode(matches[1]));
           return;
         } catch (err) {
-          log.error(err.message);
+          if (err instanceof Error) log.error(err.message);
         }
       }
       const legacyMatches = e.messages[0].match(
@@ -118,7 +94,7 @@ export function initSendPictures() {
           emitImage(atob(legacyMatches[1]));
           return;
         } catch (err) {
-          log.error(err.message);
+          if (err instanceof Error) log.error(err.message);
         }
       }
     }

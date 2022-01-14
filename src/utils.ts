@@ -68,6 +68,15 @@ export const until = async (check: () => boolean) => {
   while (!check()) await sleep();
 };
 
+export function memoize<R>(compute: (arg0: string) => R) {
+  const cache: Record<string, R> = {};
+  return (val: string) => {
+    if (!Object.prototype.hasOwnProperty.call(cache, val))
+      cache[val] = compute(val);
+    return cache[val];
+  };
+}
+
 export function memoizeAsync<R>(compute: (arg0: string) => Promise<R>) {
   const cache: Record<string, R> = {};
   return async (arg0: string | number) => {
@@ -89,4 +98,59 @@ export function setDiff<T>(set1: Set<T>, set2: Set<T>) {
     if (!set1.has(value)) removed.add(value);
   });
   return { added, removed };
+}
+
+const b64Set =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+// abuse of https://en.wikipedia.org/wiki/Tags_(Unicode_block)
+const tagSet = Array.from({ length: 65 }, (_, i) =>
+  String.fromCodePoint(i + 0xe0020)
+).join("");
+
+export function encodeInvisible(urlPath: string) {
+  const str = btoa(urlPath);
+  let out = "";
+  for (let pos = 0; pos < str.length; pos += 1) {
+    const i = b64Set.indexOf(str[pos]);
+    if (i === -1) return null;
+    out += tagSet[i * 2] + tagSet[i * 2 + 1];
+  }
+  return out;
+}
+
+export function decodeInvisible(str: string) {
+  let b64 = "";
+  for (let pos = 1; pos < str.length; pos += 2) {
+    const i = tagSet.indexOf(str[pos]);
+    if (i === -1) throw new Error("bad image path");
+    b64 += b64Set[(i - 1) / 2];
+  }
+  return atob(b64);
+}
+
+export function b64toU8(b64char: string) {
+  const index = b64Set.indexOf(b64char);
+  if (index === -1) return null;
+  return index;
+}
+
+export function b64toU8Array(b64: string) {
+  const array = Array.from(b64).map(b64toU8);
+  if (array.includes(null)) return null;
+  return new Uint8Array(array as number[]);
+}
+
+export function bitsplit(u8: number, splits: number, relevantBits = 8) {
+  const splitSize = ~~(relevantBits / splits);
+  const baseMask = 2 ** splitSize - 1;
+  if (relevantBits % splits !== 0)
+    // eslint-disable-next-line no-console
+    console.warn(
+      `bitsplit: splits (${splits}) does not divide evenly into relevantBits (${relevantBits}).`
+    );
+  return Array.from({ length: splits }, (_, splitNo) => {
+    const shift = splitNo * splitSize;
+    const mask = baseMask << shift;
+    return (u8 & mask) >> shift;
+  }).reverse();
 }

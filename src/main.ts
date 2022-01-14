@@ -32,6 +32,7 @@ import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
+import * as altpfp from "./modules/altpfp";
 
 async function init() {
   const featureSet = `(${[
@@ -78,6 +79,8 @@ async function init() {
 
   initUserList();
   initPermaMute();
+
+  altpfp.init();
   // start our script's rendering loop
   render([
     reorderMenu,

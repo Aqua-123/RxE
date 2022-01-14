@@ -1,6 +1,6 @@
 /* eslint-disable react/no-find-dom-node */
 /* eslint-disable */
-import React from "react";
+import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
 import window from "~src/browserWindow";
@@ -143,8 +143,8 @@ export function applyOverrides() {
 
   function popupClose(this: React.Component, e: MouseEvent) {
     unmountComponent(this);
-    // TODO: this doesn't work to stop the profile from closing
-    e.stopImmediatePropagation();
+    // todo: this doesn't work oof
+    e.nativeEvent.stopImmediatePropagation();
   }
 
   Popup.prototype.close = popupClose;
