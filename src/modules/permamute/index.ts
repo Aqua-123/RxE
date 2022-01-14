@@ -11,7 +11,6 @@ export function updateMutes(mute_list: Array<[number, string]>) {
         Preferences.get(P.permaMuteList).map(x => x[0])
     );
     const { added, removed } = setDiff(mutes_old, mutes);
-    console.log(added, removed);
     for (const id of added) App.room.mute(id);
     for (const id of removed) App.room.unmute(id);
 }
@@ -75,6 +74,12 @@ export function initPermaMute() {
         permaMuteRemove(id);
         App.room.unmute(id);
         this.forceUpdate();
+    }
+    // TODO: belongs in a more general file
+    UserView.prototype.exit_click = function (e) {
+        if (!(e.target instanceof HTMLElement)) return;
+        if (!e.target.matches('.user-profile-micro, .user-profile-micro *'))
+            this.close();
     }
 
 }

@@ -12,11 +12,13 @@ type SpamRating = {
     p: string;
   };
 };
+/*
 function colorRating(rating: SpamRating[number]) {
   if (rating.score >= 1 || rating.score2 >= 3) return "color:red";
   if (rating.score > 0.8 || rating.score2 >= 1) return "color:orange";
   return "";
 }
+*/
 
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
 function computeEntropy(msg: string, sep: RegExp | string = "") {
@@ -130,13 +132,14 @@ export function initAntiSpam() {
 
     rating.d = now;
     rating.p = message;
-    // eslint-disable-next-line no-console
+    /*
     console.log(
       `%cspam s1=${rating.score.toFixed(2)} s2=${rating.score2.toFixed(
         2
       )} e=${computeEntropy(message).toFixed(2)} ${display_name}: ${message}`,
       colorRating(rating)
     );
+    */
     if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
       if (Preferences.get(P.antiSpam)) {
         autoMuted[id] = true;

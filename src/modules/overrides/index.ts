@@ -141,8 +141,10 @@ export function applyOverrides() {
     unmountComponent(this);
   };
 
-  function popupClose(this: React.Component) {
+  function popupClose(this: React.Component, e: MouseEvent) {
     unmountComponent(this);
+    // TODO: this doesn't work to stop the profile from closing
+    e.stopImmediatePropagation();
   }
 
   Popup.prototype.close = popupClose;
