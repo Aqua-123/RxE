@@ -3,8 +3,7 @@
 import {
   P as PREFS,
   Preferences,
-  ListPreferenceSet,
-  ListPreferenceArray
+  ListPreferenceSet
 } from "~src/preferences";
 import { crel, memoizeAsync } from "~src/utils";
 

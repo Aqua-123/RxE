@@ -5,13 +5,11 @@ import {
   PreferenceManager,
   ListPreference,
   AllowedTypes,
-  DictionaryPreference
 } from "ts-preferences";
 import { preferences } from "~userscripter";
 
 import U from "~src/userscript";
 import T from "~src/text";
-import { extend } from "jquery";
 
 const darkMode = matchMedia("(prefers-color-scheme: dark)").matches;
 
@@ -127,13 +125,13 @@ export const Preferences = new PreferenceManager(
   preferences.loggingResponseHandler
 );
 
-const preferences_in_use: Set<string> = new Set();
+const preferencesInUse: Set<string> = new Set();
 abstract class ListPreferenceCache<Store, Pref extends AllowedTypes, Item> {
   protected readonly preference: ListPreference<Pref>;
 
   protected alive: boolean = true;
 
-  protected abstract real_store: Store;
+  protected abstract realStore: Store;
 
   protected assertAlive() {
     if (!this.alive)
@@ -142,25 +140,25 @@ abstract class ListPreferenceCache<Store, Pref extends AllowedTypes, Item> {
 
   protected get store(): Store {
     this.assertAlive();
-    return this.real_store;
+    return this.realStore;
   }
 
   protected set store(store: Store) {
     this.assertAlive();
-    this.real_store = store;
+    this.realStore = store;
   }
 
   public destroy() {
     this.alive = false;
-    preferences_in_use.delete(this.preference.key);
+    preferencesInUse.delete(this.preference.key);
   }
 
   constructor(preference: ListPreference<Pref>, load: boolean = false) {
-    if (preferences_in_use.has(preference.key))
+    if (preferencesInUse.has(preference.key))
       throw new Error(`Cannot create multiple ListPreferenceCache instances linked to the same preference.
 Hint: Clean up the previous instance using .destroy()`);
     this.preference = preference;
-    preferences_in_use.add(preference.key);
+    preferencesInUse.add(preference.key);
     if (load) this.load();
   }
 
@@ -181,7 +179,12 @@ Hint: Clean up the previous instance using .destroy()`);
   }
 }
 
-abstract class ListPreferenceCacheKeyed<Store, Pref extends AllowedTypes, Key extends AllowedTypes, Item extends AllowedTypes> extends ListPreferenceCache<Store, Pref, Item> {
+abstract class ListPreferenceCacheKeyed<
+  Store,
+  Pref extends AllowedTypes,
+  Key extends AllowedTypes,
+  Item extends AllowedTypes
+  > extends ListPreferenceCache<Store, Pref, Item> {
   public abstract hasKey(key: Key): boolean;
 
   public abstract getItem(key: Key): Item | undefined;
@@ -206,10 +209,13 @@ abstract class ListPreferenceCacheKeyed<Store, Pref extends AllowedTypes, Key ex
   }
 
   protected abstract _removeItem(key: Key): boolean;
-
 }
 
-abstract class ListPreferenceCacheUnkeyed<Store, Pref extends AllowedTypes, Item extends AllowedTypes> extends ListPreferenceCache<Store, Pref, Item> {
+abstract class ListPreferenceCacheUnkeyed<
+  Store,
+  Pref extends AllowedTypes,
+  Item extends AllowedTypes
+  > extends ListPreferenceCache<Store, Pref, Item> {
 
   public add(item: Item): void {
     this._add(item);
@@ -228,46 +234,45 @@ abstract class ListPreferenceCacheUnkeyed<Store, Pref extends AllowedTypes, Item
 }
 
 export class ListPreferenceArray<Item extends AllowedTypes> extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
-  protected real_store: Item[] = [];
+  protected realStore: Item[] = [];
 
-  hasKey(key: number) { return key in this.store }
+  hasKey(key: number) { return key in this.store; }
 
   hasItem(item: Item) { return this.store.includes(item); }
 
-  getItem(key: number): Item | undefined {
-    return this.store[key];
-  }
+  getItem(key: number): Item | undefined { return this.store[key]; }
 
   protected _setItem(key: number, item: Item) { this.store[key] = item; }
 
-  protected _removeItem(key: number) {
-    return delete this.store[key];
-  }
+  protected _removeItem(key: number) { return delete this.store[key]; }
 
   values() { return [...this.store]; }
 
   entries() { return [...this.store.entries()] }
 
-  /*protected _add(item: Item) { this.store.push(item); }
+  /*
+  protected _add(item: Item) { this.store.push(item); }
 
   protected _remove(item: Item) {
     const index = this.store.indexOf(item);
     if (index === -1) return false;
     this.store.splice(index, 1);
     return true;
-  }*/
+  }
+  */
 
   protected asSaved() { return this.values(); }
 
   protected loadFrom(items: readonly Item[]) { this.store = [...items]; }
 }
 
-export class ListPreferenceSet<Item extends AllowedTypes> extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
-  protected real_store: Set<Item> = new Set();
+export class ListPreferenceSet<Item extends AllowedTypes>
+  extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
+  protected realStore: Set<Item> = new Set();
 
   hasItem(item: Item) { return this.store.has(item); }
 
-  hasKey(key: null) { return false; }
+  hasKey(_key: null) { return false; }
 
   values() { return [...this.store.values()]; }
 
@@ -284,14 +289,16 @@ export class ListPreferenceSet<Item extends AllowedTypes> extends ListPreference
 
 
 // Gotta love it when DictionaryPreference<string, string> doesn't compile so you do this
-export class ListPreferenceMap<Key extends AllowedTypes, Item extends AllowedTypes> extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
-  protected real_store: Map<Key, Item> = new Map();
+export class ListPreferenceMap<Key extends AllowedTypes, Item extends AllowedTypes>
+  extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
+  protected realStore: Map<Key, Item> = new Map();
 
   hasKey(key: Key) { return this.store.has(key); }
 
   hasItem(item: Item) {
     for (const value of this.store.values())
-      if (value === item) return true;
+      if (value === item)
+        return true;
     return false;
   }
 
@@ -308,6 +315,4 @@ export class ListPreferenceMap<Key extends AllowedTypes, Item extends AllowedTyp
   protected asSaved() { return [...this.store.entries()]; }
 
   protected loadFrom(data: Array<[Key, Item]>) { this.store = new Map(data); }
-
-
 }

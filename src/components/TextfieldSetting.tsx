@@ -4,12 +4,11 @@ import { P } from "~src/preferences";
 type TextFieldSettingsProps = {
   id: keyof typeof P;
   value: string;
-  onchange: React.ChangeEventHandler<HTMLInputElement>,
-  pattern?: string
+  onchange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 export default function TextSetting(props: TextFieldSettingsProps) {
-  const { id, value, onchange, pattern } = props;
+  const { id, value, onchange } = props;
   return (
     <div>
       <input
@@ -17,7 +16,6 @@ export default function TextSetting(props: TextFieldSettingsProps) {
         id={id}
         value={value}
         onChange={onchange}
-        pattern={pattern || ".*"}
       />
       <label htmlFor={id}>{P[id]!.label}</label>
     </div>
