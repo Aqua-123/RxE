@@ -12,7 +12,7 @@ interface ImageFormat {
 }
 
 function extractBioImage(s: string) {
-    return s.match(/pfp:([A-Za-z0-9+/=]+)/)?.[1];
+    return s?.match(/pfp:([A-Za-z0-9+/=]+)/)?.[1];
 }
 
 const imageFormats: Record<ImageFormatType, ImageFormat> = {
