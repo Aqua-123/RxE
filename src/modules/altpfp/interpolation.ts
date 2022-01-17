@@ -1,31 +1,7 @@
+/* eslint-disable prettier/prettier */
 import { getImageData } from "~src/utils";
 
-/* eslint-disable prettier/prettier */
 const { ceil, round } = Math;
-
-type Vec2 = [number, number];
-
-type RGB = [number, number, number];
-
-// type RGBA = [number, number, number, number];
-
-type ImageAccessor = (x: number, y: number) => RGB | null;
-
-export type ImageInterpolator = (
-    accessor: ImageAccessor,
-    [x, y]: Vec2,
-    [dx, dy]: Vec2
-) => RGB | null;
-
-type Image = HTMLImageElement;
-
-type InterpolationType = "none";
-
-export interface SamplingOptions {
-    width: number;
-    height: number;
-    interpolator: ImageInterpolator;
-}
 
 export const interpolation: Record<InterpolationType, ImageInterpolator> = {
     none: (accessor, [x, y]) => accessor(round(x), round(y))

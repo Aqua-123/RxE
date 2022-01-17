@@ -2,7 +2,7 @@
 import browserWindow from '~src/browserWindow';
 import { wrapMethod } from '~src/utils';
 import * as format0 from './format0';
-import { SamplingOptions, interpolation } from './interpolation';
+import { interpolation } from './interpolation';
 
 type ImageFormatType = "0";
 
@@ -84,10 +84,11 @@ export function init() {
             const a = alert;
             const png = p("Enter image url:", "data:image/png;base64,");
             if (!png) return;
-            const size = p("Enter size", "64 x 64")?.split(/\s*x\s*/g);
+            const size = p("Enter size", "8x8")?.split(/\s*x\s*/g);
             if (!size) return;
             if (size.length !== 2) {
                 a(`Dimension must be two values: ${size}`);
+                return;
             }
             const [width, height] = size.map((dim) => parseInt(dim, 10));
             if (Number.isNaN(width) || Number.isNaN(height)) {
@@ -97,7 +98,9 @@ export function init() {
             const options = { width, height, interpolator: interpolation.none };
             const promise = compressImage(png, "0", options)
                 ?.then((image) => a(image))
-                ?.catch((error) => a(error?.message));
+                ?.catch((error) => error instanceof Error ? a(`${error.message}\n${error.stack}`) : a(error));
             if (!promise) a('got null');
         };
+
+    setTimeout(UserProfile.prototype.update_profile_picture, 0);
 }
