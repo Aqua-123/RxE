@@ -84,7 +84,7 @@ export function init() {
             const a = alert;
             const png = p("Enter image url:", "data:image/png;base64,");
             if (!png) return;
-            const size = p("Enter size", "8x8")?.split(/\s*x\s*/g);
+            const size = p("Enter size (8x8 to 64x64)", "8x8")?.split(/\s*x\s*/g);
             if (!size) return;
             if (size.length !== 2) {
                 a(`Dimension must be two values: ${size}`);
@@ -101,6 +101,4 @@ export function init() {
                 ?.catch((error) => error instanceof Error ? a(`${error.message}\n${error.stack}`) : a(error));
             if (!promise) a('got null');
         };
-
-    setTimeout(UserProfile.prototype.update_profile_picture, 0);
 }
