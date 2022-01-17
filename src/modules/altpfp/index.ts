@@ -1,63 +1,30 @@
 /* eslint-disable prettier/prettier */
-import { b64toU8, bitsplit, memoize } from "~src/utils";
+import browserWindow from '~src/browserWindow';
+import { wrapMethod } from '~src/utils';
+import * as format0 from './format0';
+import { SamplingOptions, interpolation } from './interpolation';
+
+type ImageFormatType = "0";
 
 interface ImageFormat {
     unpack(compressed: string): string | null;
-    compress(png64: string): string;
+    compress(url: string, options: SamplingOptions): Promise<string>;
 }
-
-type ImageFormatType = "0";
 
 function extractBioImage(s: string) {
     return s.match(/pfp:([A-Za-z0-9+/=]+)/)?.[1];
 }
 
-function canvasToPng(
-    callback: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void
-): string {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    callback(canvas, context!);
-    return canvas.toDataURL();
-}
-
-function b64HexColor(s: string) {
-    if (s.length === 0) throw new Error("");
-    const u8 = b64toU8(s);
-    if (u8 === null) return null;
-    const code = bitsplit(u8, 3, 6)
-        .map((u2) => (u2 * 5).toString(16))
-        .join("");
-    return `#${code}`;
-}
-
 const imageFormats: Record<ImageFormatType, ImageFormat> = {
-    "0": {
-        compress(_png64) {
-            throw new Error("Not implemented");
-        },
-        unpack: memoize((compressed) => {
-            const sizeSpecifier = b64toU8(compressed[0]) ?? 0;
-            const sizeScaling = (size: number) => Math.max(1, size * 8); // up to 512 × 512
-            const [width, height] = bitsplit(sizeSpecifier, 2, 6).map(sizeScaling);
-            const backgroundColor = b64HexColor(compressed[1]);
-            if (backgroundColor === null) return null;
-            return canvasToPng((canvas, context) => {
-                canvas.width = width;
-                canvas.height = height;
-                context.fillStyle = backgroundColor;
-                context.fillRect(0, 0, width, height);
-            });
-        })
-    }
+    "0": format0
 };
 
-/*
-function compressImage(png64: string, format: string) {
+
+function compressImage(png64: string, format: ImageFormatType, options: SamplingOptions) {
     if (!(format in imageFormats)) return null;
-    return imageFormats[format].compress(png64);
-} 
-*/
+    return imageFormats[format].compress(png64, options).then(data => format + data);
+}
+
 
 function unpackImage(compressed: string) {
     const format = compressed[0];
@@ -65,19 +32,72 @@ function unpackImage(compressed: string) {
     return imageFormats[format as ImageFormatType].unpack(compressed.slice(1));
 }
 
+function getDisplayPicture(user: EmeraldUser): string {
+    const imageCompressed = extractBioImage(user.bio);
+    if (imageCompressed) {
+        const imageUnpacked = unpackImage(imageCompressed);
+        if (imageUnpacked) {
+            console.info(
+                `Loaded custom image (${imageCompressed}) as (${imageUnpacked})`
+            );
+            return imageUnpacked;
+        }
+        console.error(`Could not unpack image: ${imageCompressed}`);
+    }
+    return user.display_picture;
+}
+
+function interceptUser<T, K extends FunctionKeys<T>>(
+    obj: T,
+    method: K,
+    getUser: PrependParam<ReplaceMethodReturn<T, K, EmeraldUser | undefined>, T>,
+    before = true
+) {
+    if (typeof obj[method] !== "function" || typeof getUser !== "function") return;
+    wrapMethod(obj, method, function wrapper(...params) {
+        const user = getUser(this, ...params);
+        if (user) user.display_picture = getDisplayPicture(user);
+    }, before);
+}
 
 export function init() {
-    const roomReceived = Room.prototype.received;
-    Room.prototype.received = function received(messageData) {
-        const imageCompressed = extractBioImage(messageData.user.bio);
-        if (imageCompressed) {
-            const imageUnpacked = unpackImage(imageCompressed);
-            if (imageUnpacked) messageData.user.display_picture = imageUnpacked;
-            // eslint-disable-next-line no-console
-            else console.error(`Could not unpack image: ${imageCompressed}`);
-            // eslint-disable-next-line no-console
-            console.info(`Loaded custom image (${imageCompressed}) as (${imageUnpacked})`);
-        }
-        roomReceived.call(this, messageData);
-    }
+    interceptUser(Room.prototype, 'received', (_, messageData) => messageData.user);
+    interceptUser(UserProfile.prototype, 'profile_picture', (self) => self.state.data.user);
+    interceptUser(FriendUnit.prototype, 'body', (self) => self.props.data);
+    interceptUser(browserWindow.Comment.prototype, 'render', (self) => self.state.comment_data?.user);
+    interceptUser(Micropost.prototype, 'render', (self) => self.state.data?.author)
+    interceptUser(MessageNotificationUnit.prototype, 'image', (self) => self.props.data.data.sender);
+    interceptUser(Message.prototype, 'render', (self) => self.props.data.user);
+    interceptUser(RoomUserUnit.prototype, 'body', (self) => self.props.data);
+    interceptUser(UserUnit.prototype, 'body', (self) => self.props.data);
+    interceptUser(UserView.prototype, 'top', (self) => self.state.user);
+    wrapMethod(Dashboard.prototype, 'render', function render() {
+        // todo: this isn't available immediately
+        this.state.user.display_picture = getDisplayPicture(App.user);
+    })
+
+    // todo (prototype)
+    UserProfile.prototype.update_profile_picture =
+        // eslint-disable-next-line camelcase
+        function update_profile_picture() {
+            const p = prompt;
+            const a = alert;
+            const png = p("Enter image url:", "data:image/png;base64,");
+            if (!png) return;
+            const size = p("Enter size", "64 x 64")?.split(/\s*x\s*/g);
+            if (!size) return;
+            if (size.length !== 2) {
+                a(`Dimension must be two values: ${size}`);
+            }
+            const [width, height] = size.map((dim) => parseInt(dim, 10));
+            if (Number.isNaN(width) || Number.isNaN(height)) {
+                a('Not a number');
+                return;
+            }
+            const options = { width, height, interpolator: interpolation.none };
+            const promise = compressImage(png, "0", options)
+                ?.then((image) => a(image))
+                ?.catch((error) => a(error?.message));
+            if (!promise) a('got null');
+        };
 }

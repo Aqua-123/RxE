@@ -110,6 +110,13 @@ declare class MessageNotificationUnit extends React.Component<{
 }> {
   image(): JSX.Element;
 }
+declare class MessageNotifications extends React.Component<any, {
+  data: {
+    read: MessageNotificationProps[],
+    unread: MessageNotificationProps[]
+  }
+}> { }
+
 
 declare type WallPost = {
   author_id: number;
@@ -184,11 +191,11 @@ declare type EmeraldUser = {
   created_at: string;
   display_name: string;
   display_picture: string;
-  email: string;
+  email?: string;
   flair: {
     color: string;
   };
-  gender: "m" | "f" | "o";
+  gender: string;
   gold: boolean;
   id: number;
   interests: string[];
@@ -366,6 +373,14 @@ declare class Menu extends React.Component {
 
 declare const MenuReact: Menu;
 
+declare class Dashboard extends React.Component<
+  any,
+  {
+    jumbotron: boolean,
+    user: { display_picture: string }
+  }
+> { }
+
 declare const DashboardClient: null | {
   setState: Function;
 };
@@ -379,17 +394,15 @@ declare class UserView extends React.Component<
   {
     muted: boolean,
     permamuted: boolean | undefined,
-    user: {
-      display_name: string;
-      id: number;
-    };
+    user: EmeraldUser;
   }
 > {
   componentDidMount: () => void;
   close: Function;
   view_profile: Function;
   exit_click: (e: MouseEvent) => void;
-  bottom: Function;
+  bottom: () => JSX.Element;
+  top: () => JSX.Element;
   unmute: Function;
   mute: Function;
   message: Function;
@@ -414,12 +427,15 @@ declare class UserProfile extends React.Component<
       friend: boolean;
       // NOTE: This is our own field
       actualFriend: boolean;
+      user: EmeraldUser;
     };
   }
 > {
   profile_buttons: Function;
   switch(id: number): void;
   close(): void;
+  update_profile_picture(): void;
+  profile_picture(): JSX.Element;
 }
 
 declare let UserProfileReact: null | UserProfile;
@@ -428,3 +444,41 @@ declare module PushNotifications {
   const idle: Function;
   const send: (name: string, data: { icon: string; body: string }) => void;
 }
+
+// yeah. conflicts
+declare class __Comment extends React.Component<
+  any,
+  {
+    compact: boolean;
+    micropost_data: unknown;
+    comment_data?: {
+      user: EmeraldUser;
+      likes_count: number;
+      liked: boolean;
+      comment: WallComment;
+    };
+    deleted: boolean;
+    reply: boolean;
+    sub_comments: unknown[];
+  }
+> { }
+
+declare class Micropost extends React.Component<any,
+  {
+    compact: boolean;
+    reply: boolean;
+    data?: {
+      comments: number[];
+      liked: boolean;
+      likes: unknown[];
+      comments_count: number;
+      likes_count: number;
+      micropost: WallPost;
+      wall: unknown; // Wall
+      author: EmeraldUser;
+      current_user: EmeraldUser,
+      subscribed: boolean,
+      muted: boolean,
+      picture: unknown
+    }
+  }> { }

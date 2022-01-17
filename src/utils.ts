@@ -1,5 +1,7 @@
 import React from "react";
 
+const { ceil, log2, max, min } = Math;
+
 /**
  * Slightly less verbose way to create a DOM element.
  */
@@ -28,19 +30,26 @@ export function loadCSS(css: string) {
 /**
  * Inject code in an object method
  */
-export function wrapMethod<T, K extends keyof T>(
+export function wrapMethod<T, K extends FunctionKeys<T>>(
   obj: T,
   method: K,
-  fn: T[K],
+  fn: MethodWrapper<T, K>,
   before = false
 ) {
-  const origFn = obj[method];
-  if (typeof origFn !== "function" || typeof fn !== "function") return;
-  obj[method] = <T[K]>(<unknown>function wrapper(this: T, ...args: any[]) {
-    const r = before && fn.apply(this, args);
-    if (!before || r !== false) origFn.apply(this, args);
-    if (!before) fn.apply(this, args);
-  });
+  const origFn = obj[method] as unknown as AnyFunction;
+  obj[method] = <T[K]>(
+    (<unknown>function wrapper(this: T, ...args: ParametersQ<T[K]>) {
+      const r = before && fn.apply(this, args);
+      let retval = null;
+      if (!before || r !== false) retval = origFn.apply(this, args);
+      if (!before) fn.apply(this, args);
+      return retval;
+    })
+  );
+}
+
+export function clamp(num: number, atLeast: number, atMost: number) {
+  return min(atMost, max(atLeast, num));
 }
 
 let printTimer: number;
@@ -62,6 +71,13 @@ export function printTransientMessage(msg: string) {
 
 export const sleep = (ms = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
+
+export function timeout<T>(promise: Promise<T>, ms: number) {
+  return Promise.race([
+    promise,
+    sleep(ms).then(() => Promise.reject(new Error("Timed out")))
+  ]);
+}
 
 export const until = async (check: () => boolean) => {
   // eslint-disable-next-line no-await-in-loop
@@ -128,7 +144,46 @@ export function decodeInvisible(str: string) {
   return atob(b64);
 }
 
-export function b64toU8(b64char: string) {
+export function bitSplit(
+  bits: number,
+  splits: number,
+  relevantBits = max(0, ceil(log2(bits)))
+) {
+  const splitSize = ~~(relevantBits / splits);
+  const baseMask = 2 ** splitSize - 1;
+  if (relevantBits % splits !== 0)
+    // eslint-disable-next-line no-console
+    console.warn(
+      `bitsplit: splits (${splits}) does not divide evenly into relevantBits (${relevantBits}).`
+    );
+  return Array.from({ length: splits }, (_, splitNo) => {
+    const shift = splitNo * splitSize;
+    const mask = baseMask << shift;
+    return (bits & mask) >> shift;
+  }).reverse();
+}
+
+export function bitJoin(numbers: number[], relevantBits: number) {
+  return numbers
+    .reverse()
+    .map((num, index) => num << (index * relevantBits))
+    .reduce((a, b) => a + b, 0);
+}
+
+export function u8toB64(u8: number) {
+  if (u8 < 0 || u8 > 63) throw new RangeError("u8 has to be from 0 to 63");
+  return b64Set[u8];
+}
+
+export function numToB64(num: number) {
+  const bits = max(0, ceil(log2(num)));
+  return bitSplit(num, ceil(bits / 6), ceil(bits / 6) * 6)
+    .map(u8toB64)
+    .join("");
+}
+
+export function b64toU8(b64char: string | undefined | null) {
+  if (!b64char) return null;
   const index = b64Set.indexOf(b64char);
   if (index === -1) return null;
   return index;
@@ -140,17 +195,120 @@ export function b64toU8Array(b64: string) {
   return new Uint8Array(array as number[]);
 }
 
-export function bitsplit(u8: number, splits: number, relevantBits = 8) {
-  const splitSize = ~~(relevantBits / splits);
-  const baseMask = 2 ** splitSize - 1;
-  if (relevantBits % splits !== 0)
-    // eslint-disable-next-line no-console
-    console.warn(
-      `bitsplit: splits (${splits}) does not divide evenly into relevantBits (${relevantBits}).`
+export function canvasToImage(
+  callback: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void,
+  type?: string
+): string {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  // this coercion is actually per spec
+  callback(canvas, context!);
+  return canvas.toDataURL(type);
+}
+
+export function b64HexColor(s: string | null | undefined) {
+  if (!s) return null;
+  if (s.length === 0) throw new Error("");
+  const u8 = b64toU8(s);
+  if (u8 === null) return null;
+  const code = bitSplit(u8, 3, 6)
+    .map((u2) => (u2 * 5).toString(16))
+    .join("");
+  return `#${code}`;
+}
+
+export function rgbToB64(colour: [number, number, number]) {
+  const [r, g, b] = colour.map((component) =>
+    clamp(Math.round((component * 3) / 255), 0, 3)
+  );
+  return u8toB64((r << 4) + (g << 2) + b);
+}
+
+export function getImageData(image: HTMLImageElement) {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d")!;
+  const { width, height } = image;
+  canvas.width = width;
+  canvas.height = height;
+  context.drawImage(image, 0, 0);
+  return context.getImageData(0, 0, width, height);
+}
+
+export class Tape {
+  protected __pointer: number = 0;
+
+  get pointer() {
+    return this.__pointer;
+  }
+
+  protected set pointer(value) {
+    this.__pointer = value;
+  }
+
+  public readonly data;
+
+  // eslint-disable-next-line no-useless-constructor
+  constructor(data: string) {
+    this.data = data;
+  }
+
+  advance(steps: number = 1): string | undefined {
+    this.pointer += steps;
+    return this.data[this.pointer];
+  }
+
+  read(chars: number = 1): string | undefined {
+    const string = this.peek(chars);
+    this.advance(chars);
+    return string;
+  }
+
+  peek(chars: number = 1): string | undefined {
+    const left = min(0, chars);
+    const right = max(0, chars);
+    return (
+      this.data.slice(this.pointer + left, this.pointer + right) || undefined
     );
-  return Array.from({ length: splits }, (_, splitNo) => {
-    const shift = splitNo * splitSize;
-    const mask = baseMask << shift;
-    return (u8 & mask) >> shift;
-  }).reverse();
+  }
+
+  warnExpected(message: string, expectedCount = 1) {
+    const { data, pointer } = this;
+    const context = data.slice(
+      pointer - 5 - expectedCount,
+      pointer - expectedCount
+    );
+    const missing = data
+      .slice(pointer - expectedCount, pointer)
+      .padEnd(expectedCount, "_");
+    console.warn(`${message}: ${context}${missing}`);
+  }
+
+  outOfBounds() {
+    return this.pointer >= this.data.length;
+  }
+}
+
+export function expect<T extends EventTarget>(
+  target: T,
+  eventType: string,
+  afterHook?: (t: T) => void
+) {
+  return new Promise((r) => {
+    target.addEventListener(eventType, r);
+    if (afterHook) afterHook(target);
+  });
+}
+
+/**
+ * Returns any of the most frequent elements of the array.
+ */
+export function mostFrequent<T>(array: T[]): T[] {
+  const occurences = new Map<T, number>();
+  array.forEach((item) => {
+    const occured = (occurences.get(item) ?? 0) + 1;
+    occurences.set(item, occured);
+  });
+  const entries = Array.from(occurences.entries());
+  entries.sort(([_, o1], [__, o2]) => o2 - o1);
+  return entries.map(([item]) => item);
 }
