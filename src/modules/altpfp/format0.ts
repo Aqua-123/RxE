@@ -78,7 +78,7 @@ export async function compress(url: string, options: SamplingOptions) {
     }
     viewTokenList(tokens);
     const compressed = tokens.map((token) => token.serialize()).join('');
-    if (compressed.length > 950) {
+    if (compressed.length > 2048) {
         console.warn(`Attempted to produce string: ${compressed}`);
         throw new Error("Resolution too big");
     }

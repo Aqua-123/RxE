@@ -56,7 +56,11 @@ function interceptUser<T, K extends FunctionKeys<T>>(
     if (typeof obj[method] !== "function" || typeof getUser !== "function") return;
     wrapMethod(obj, method, function wrapper(...params) {
         const user = getUser(this, ...params);
-        if (user) user.display_picture = getDisplayPicture(user);
+        if (!user || !('display_picture' in user)) {
+            console.warn("Did not get EmeraldUser object, failing safely")
+            return;
+        }
+        user.display_picture = getDisplayPicture(user);
     }, before);
 }
 
