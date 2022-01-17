@@ -259,8 +259,9 @@ export class OffsetColour extends ImageToken {
         if (offsetBits.shiftBits(BIT_HEADER_BITS) !== BIT_HEADER.OFFSET)
             throw new Error("Bytes read do not start with offset header");
         const offset = offsetBits.toNumber();
-        const colour = b64toU8(tape.read());
-        if (!colour) return null;
+        const colourChar = tape.read();
+        const colour = b64toU8(colourChar);
+        if (colour === null) return null;
         return new OffsetColour(offset, colour);
     }
 
@@ -281,7 +282,7 @@ export function parseTape(tape: Tape): ImageToken[] | null {
     while (!tape.outOfBounds()) {
         const header = b64toU8(tape.peek()!);
         if (header === null) {
-            tape.warnExpected(`Expected valid b64 digit`, 1, false);
+            tape.warnExpected(`expected valid b64 digit`, 1, false);
             return null;
         }
         switch (MATCH_BIT_HEADER(header)) {
@@ -289,7 +290,7 @@ export function parseTape(tape: Tape): ImageToken[] | null {
                 const offsetColour = OffsetColour.fromTape(tape);
                 if (!offsetColour) {
                     tape.warnExpected(
-                        "Expected OffsetColour token",
+                        "expected OffsetColour token",
                         TOKEN_DIGITS.OFFSET + 1
                     );
                     return null;
@@ -301,7 +302,7 @@ export function parseTape(tape: Tape): ImageToken[] | null {
                 const palletteSelection = PalletteSelection.fromTape(tape);
                 if (!palletteSelection) {
                     tape.warnExpected(
-                        "Expected PalletteSelection token",
+                        "expected PalletteSelection token",
                         TOKEN_DIGITS.PALLETTE_SELECTION
                     );
                     return null;
@@ -310,10 +311,10 @@ export function parseTape(tape: Tape): ImageToken[] | null {
                 break;
             }
             case undefined:
-                tape.warnExpected(`Could not infer header type: 0b${header.toString(2)}`);
+                tape.warnExpected(`could not infer header type: 0b${header.toString(2)}`);
                 return null
             default:
-                tape.warnExpected(`Unknown header type: 0b${header.toString(2)}`);
+                tape.warnExpected(`unknown header type: 0b${header.toString(2)}`);
                 return null;
         }
     }

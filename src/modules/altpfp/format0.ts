@@ -57,6 +57,11 @@ export async function compress(url: string, options: SamplingOptions) {
     const tokens: ImageToken[] = [new SizeSpecifier(width, height), new PalletteSpecifier(pallette)];
     for (let i = 0; i < imageData.length;) {
         const offset = i - nextPixel;
+        const colour = imageData[i];
+        if (offset < MAX_OFFSET && colour === backgroundColour) {
+            i += 1;
+            continue;
+        }
         if (offset === 0) {
             const palletteSelection = PalletteSelection.tryMake(
                 imageData.slice(i, i + PALLETTE_SELECTION_LENGTH),
@@ -69,17 +74,15 @@ export async function compress(url: string, options: SamplingOptions) {
                 continue;
             }
         }
-        const colour = imageData[i];
-        i += 1
-        if (offset < MAX_OFFSET && colour !== backgroundColour) {
-            tokens.push(new OffsetColour(offset, colour));
-            nextPixel = i;
-        }
+        tokens.push(new OffsetColour(offset, colour));
+        i += 1;
+        nextPixel = i;
     }
+
     viewTokenList(tokens);
     const compressed = tokens.map((token) => token.serialize()).join('');
     if (compressed.length > 2048) {
-        console.warn(`Attempted to produce string: ${compressed}`);
+        console.warn(`attempted to produce string: ${compressed}`);
         throw new Error("Resolution too big");
     }
     return compressed;
@@ -89,12 +92,12 @@ export const unpack = memoize((compressed) => {
     const tape = new Tape(compressed);
     const size = SizeSpecifier.fromTape(tape);
     if (!size) {
-        tape.warnExpected('Expected size specifier');
+        tape.warnExpected('expected size specifier');
         return null;
     }
     const palletteSpecifier = PalletteSpecifier.fromTape(tape);
     if (!palletteSpecifier) {
-        tape.warnExpected('Expected pallette specifier', PALLETTE_LENGTH);
+        tape.warnExpected('expected pallette specifier', PALLETTE_LENGTH);
         return null;
     }
     const pallette = palletteSpecifier.completeRGBPallette;
