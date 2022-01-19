@@ -145,7 +145,7 @@ declare type WallComment = {
 declare type NotificationProps = {
   created_at: string;
   data: {
-    unit: {
+    unit?: {
       post: WallPost;
       author: EmeraldUser;
       comment: WallComment;
@@ -388,6 +388,8 @@ declare class RoomPrivate extends React.Component<
 
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
+  content(): JSX.Element | JSX.Element[];
+  process(text: string): JSX.Element | string;
 }
 
 declare class MenuMicro extends React.Component {
@@ -531,6 +533,8 @@ declare type FlairProps = {
   onClick?(e: _MouseEvent): void
 }
 
-declare class Flair extends React.Component<FlairProps> {
+declare class Flair extends React.Component<FlairProps> { }
 
-}
+declare class MessagePicture extends React.Component<{
+  picture: EmeraldPicture
+}> { open_picture(): void; }

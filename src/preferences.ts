@@ -143,6 +143,11 @@ export const P = {
         label: "Reject"
       }
     ]
+  }),
+  highlightMentions: new BooleanPreference({
+    key: "highlightMentions",
+    label: T.preferences.highlightMentions.label,
+    default: false
   })
 } as const;
 

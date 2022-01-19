@@ -28,6 +28,7 @@ export default function Settings(this: any, props: SettingsProps) {
     antiSpam,
     permaMuteList,
     blockReqs,
+    highlightMentions,
     applySettings
   } = props;
 
@@ -90,6 +91,11 @@ export default function Settings(this: any, props: SettingsProps) {
         id="showInfo"
         value={showInfo}
         onChange={() => applySettings({ showInfo: !showInfo })}
+      />
+      <CheckboxSetting
+        id="highlightMentions"
+        value={highlightMentions}
+        onChange={() => applySettings({ highlightMentions: !highlightMentions })}
       />
       <TextSetting
         id="permaMuteList"

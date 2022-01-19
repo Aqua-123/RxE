@@ -68,6 +68,9 @@ export default {
     },
     blockReqs: {
       label: "Block friend requests from new accounts"
+    },
+    highlightMentions: {
+      label: "Highlight mentions of your display name"
     }
   },
   hiddenChannels: "hidden channels",

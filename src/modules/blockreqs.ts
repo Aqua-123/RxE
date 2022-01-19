@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 
-import React from "react";
 import { P, Preferences, RequestBlockMode } from "~src/preferences";
 import { DAY, timeSince } from "~src/utils";
 
@@ -35,7 +34,7 @@ function update() {
     return "updated";
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+/*
 function content(this: NotificationUnit) {
     const { data: { sender, content: message } } = this.props.data;
     const flair = React.createElement(Flair, {
@@ -56,11 +55,14 @@ function content(this: NotificationUnit) {
     }, text);
     return React.createElement('span', null, flair, messageSpan);
 }
+*/
 
 export async function early() {
     Notifications.prototype.update = update;
     if (!NotificationsReact) return;
     NotificationsReact.update = update;
-    filterNotifications(NotificationsReact.state.data);
+    if (NotificationsReact.state && NotificationsReact.state.data)
+        filterNotifications(NotificationsReact.state.data);
+    else console.warn('failed to filter friend requests early')
     // NotificationUnit.prototype.content = content;
 }

@@ -34,6 +34,7 @@ import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 import * as altpfp from "./modules/altpfp";
 import * as blockreqs from "./modules/blockreqs";
+import * as highlightMentions from "./modules/highlightmentions";
 
 async function init() {
   const featureSet = `(${[
@@ -86,6 +87,7 @@ async function init() {
   initPermaMute();
 
   altpfp.init();
+  highlightMentions.init();
   // start our script's rendering loop
   render([
     reorderMenu,

@@ -4,7 +4,6 @@ import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
 import window from "~src/browserWindow";
-import { divertEventListeners, wrapMethod } from "~src/utils";
 
 function hackOverrides() {
   if (!FEATURES.HACKS) return;
@@ -194,15 +193,15 @@ export function applyOverrides() {
     const notification = this.props.data;
     const user = notification.tier === "friend_request"
       ? notification.data.sender
-      : notification.data.unit.author;
-    if (!user) return console.warn("Could not get user from notification");
-    // const boundingRect = node.getBoundingClientRect();
-    UserViewGenerator.generate({ event, user });
-    /*
-    if (UserProfileReact) return UserProfileReact.load(user.id);
-    const userProfile = React.createElement(UserProfile, { id: user.id });
+      : notification.data.sender ?? notification.data.unit?.author;
+    if (user) return UserViewGenerator.generate({ event, user });
+    const id = notification.tier === "friend_request"
+      ? notification.data.sender?.id
+      : notification.sender_id ?? notification.data.sender?.id
+    console.warn("Could not get user from notification");
+    if (UserProfileReact) return UserProfileReact.load(id);
+    const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
-    */
   }
 
   /*

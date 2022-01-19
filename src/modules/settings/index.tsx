@@ -29,7 +29,8 @@ export function getSettings() {
       showGender: Preferences.get(P.showGender),
       antiSpam: Preferences.get(P.antiSpam),
       permaMuteList: Preferences.get(P.permaMuteList),
-      blockReqs: Preferences.get(P.blockReqs)
+      blockReqs: Preferences.get(P.blockReqs),
+      highlightMentions: Preferences.get(P.highlightMentions)
     }
   };
 }

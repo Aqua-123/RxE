@@ -81,6 +81,10 @@ function unpackImage(compressed: string): string | null {
 }
 
 function getDisplayPicture(user: EmeraldUser): string {
+    if (user.bio === undefined) {
+        console.warn('user.bio is undefined');
+        return user.display_picture;
+    }
     const imageCompressed = extractBioImage(user.bio);
     if (imageCompressed) {
         const imageUnpacked = unpackImage(imageCompressed);
@@ -113,11 +117,17 @@ function interceptUser<T, K extends FunctionKeys<T>>(
     const methodName = `${method}()`;
     wrapMethod(obj, method, function wrapper(...params) {
         const user = getUser(this, ...params);
+        const name = (obj as Prototype)?.constructor?.name;
+        const instance = name ? `'${name}' instance` : `unknown class instance`;
         if (user === undefined) return;
-        if (!user || typeof user !== "object" || !('display_picture' in user)) {
-            const name = (obj as Prototype)?.constructor?.name;
-            const instance = name ? `'${name}' instance` : `unknown class instance`;
-            console.warn(`expected EmeraldUser, got ${user} in wrapper on ${instance} ${methodName}`);
+        if (!user || typeof user !== "object"
+            || !('display_picture' in user) || user.display_picture === undefined) {
+
+            console.warn(`expected EmeraldUser, in wrapper on ${instance} ${methodName} got: `, user);
+            return;
+        }
+        if (user.bio === undefined) {
+            console.warn(`EmeraldUser is missing 'bio' in wrapper on ${instance} ${methodName}`, user);
             return;
         }
         user.display_picture = getDisplayPicture(user);
@@ -209,7 +219,9 @@ export function init() {
     interceptUser(UserView.prototype, 'top', (self) => self.state.user);
     wrapMethod(Dashboard.prototype, 'render', function render() {
         // todo: this isn't available immediately
-        this.state.user.display_picture = getDisplayPicture(App.user);
+        if (App.user.bio !== undefined)
+            this.state.user.display_picture = getDisplayPicture(App.user);
+        else console.warn('App.user.bio is undefined');
     })
 
     // todo (prototype)

@@ -282,3 +282,36 @@ export function timeSince(date: Date) {
 }
 
 export const DAY = 24 * 3600e3;
+
+
+export function allStringMatches(string: string, substring: string, caseSensitive = false): number[] {
+  let str = caseSensitive ? string : string.toLowerCase();
+  const subs = caseSensitive ? substring : substring.toLowerCase()
+  const matches: number[] = [];
+  let index = 0;
+  while (str.length > 0) {
+    index = str.indexOf(subs);
+    if (index === -1) return matches;
+    matches.push(index + string.length - str.length);
+    str = str.slice(index + Math.max(subs.length, 1));
+  }
+  return matches;
+}
+
+export function wrapStringMatches<T>(string: string, substring: string,
+  wrapper: (match: string) => T, caseSensitive = false): Array<T | string> {
+  const matches = allStringMatches(string, substring, caseSensitive);
+  if (matches.length === 0) return [string];
+  const subsLength = Math.max(substring.length, 1);
+  return matches.flatMap((index, matchno, { length, [matchno - 1]: last }) => {
+    const lastSliceEnd = last === undefined ? 0 : last + subsLength;
+    const slices = [
+      string.slice(lastSliceEnd, index),
+      wrapper(string.slice(index, index + subsLength))
+    ];
+    if (matchno === length - 1) slices.push(
+      string.slice(index + subsLength)
+    );
+    return slices;
+  })
+}
