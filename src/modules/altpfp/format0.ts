@@ -5,7 +5,7 @@ import { memoize, imageFromData } from "~src/utils";
 import Tape from "~src/tape";
 import { Tokenizer } from "./format0tokenizer";
 
-const MAX_SIZE_COMPRESSED = 2048;
+const MAX_SIZE_COMPRESSED = 4096;
 
 const LOG_SAMPLED_IMAGE = false;
 const LOG_TOKEN_LIST = false;

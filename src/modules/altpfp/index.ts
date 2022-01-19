@@ -162,7 +162,7 @@ export function init() {
             const promise = compressImage(png, "0", options)
                 ?.then((image) => saveBioImage(this.state.data.user, image))
                 ?.catch((error) => {
-                    if (error instanceof Error) a(`${error.message}\n${error.stack}`)
+                    if (error instanceof Error) a(`${error.message}\n(See console for trace)`)
                     else a(error);
                     throw error;
                 }
