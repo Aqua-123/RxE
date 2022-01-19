@@ -38,7 +38,6 @@ export default class SettingsDialog extends React.Component<
     const keys = Object.keys(obj);
     keys.forEach((key) => Preferences.set<any>(P[key], obj[key]));
     applySettings();
-
     this.setState({ settings: newSettings, needsReload: true });
   };
 

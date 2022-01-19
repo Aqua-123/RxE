@@ -30,9 +30,13 @@ export function initGender() {
 
   const ruuBody = RoomUserUnit.prototype.body;
   RoomUserUnit.prototype.body = function body() {
+    // todo: this doesn't work
     const div = ruuBody.apply(this);
-    if (div.props.children[0].type === "img") {
-      div.props.children[0].props["data-gender"] = this.props.data.gender;
+    const { children } = div.props;
+    const childProps = children[0]?.props;
+    const image = childProps?.children?.[0];
+    if (image?.type === "img") {
+      image.props["data-gender"] = this.props.data.gender;
     }
     return div;
   };

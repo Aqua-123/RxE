@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+import React, { Attributes } from 'react';
+import ReactDOM from 'react-dom';
 import browserWindow from '~src/browserWindow';
 import { wrapMethod, expect, timeout } from '~src/utils';
 import * as format0 from './format0';
@@ -52,7 +54,6 @@ async function saveBioImage(user: EmeraldUser, compressed: string) {
         } as JQueryAjaxSettings) // old jQuery moment
     });
 }
-
 
 const imageFormats: Record<ImageFormatType, ImageFormat> = {
     "0": format0
@@ -123,7 +124,79 @@ function interceptUser<T, K extends FunctionKeys<T>>(
     }, before);
 }
 
+async function uploadPicture(file: File | undefined, user: EmeraldUser) {
+    if (!file) { alert('No file uploaded.'); return; }
+    if (!file.type.startsWith('image')) { alert('File is not an image or its format is not supported.'); }
+    const reader = new FileReader();
+    await timeout(expect(reader, 'load', (fileReader) => fileReader.readAsDataURL(file)), 5000);
+
+    if (!reader.result) throw new Error("No result");
+    const url = reader.result.toString();
+    const options = { width: 48, height: 48 };
+
+    const image = await compressImage(url, "0", { interpolator: interpolation.none, ...options });
+    await saveBioImage(user, image);
+}
+
+
+// eslint-disable-next-line camelcase
+function profile_picture(this: UserProfile) {
+    // eslint-disable-next-line camelcase
+    const { user, current_user } = this.state.data;
+    if (user.id === current_user.id) {
+        const picture = React.createElement('img', {
+            // onMouseDown: this.update_profile_picture.bind(this),
+            className: 'user-profile-avatar',
+            src: user.display_picture
+        } as Attributes);
+        const cloudIcon = React.createElement('span', {
+            style: {
+                fontSize: '36px'
+            },
+            className: 'material-icons'
+        }, 'cloud_upload');
+        const fileInput = React.createElement('input', {
+            type: "file",
+            onChange(ev) {
+                const { currentTarget: input } = ev;
+                const file = input.files?.[0];
+                try { uploadPicture(file, user); }
+                catch (reason) { alert(`Image loading failed: ${reason}`); }
+            },
+            id: "ritsu-profile-picture-upload",
+            style: {
+                display: "none"
+            }
+        })
+        const overlay = React.createElement('label', {
+            // onMouseDown: this.update_profile_picture.bind(this),
+            className: 'user-profile-picture-hover',
+            for: "ritsu-profile-picture-upload"
+        }, cloudIcon);
+        return React.createElement('span', null, picture, fileInput, overlay);
+    }
+    // eslint-disable-next-line no-shadow, camelcase
+    const open_picture = function open_picture() {
+        const element = React.createElement(Picture, {
+            data: {
+                src: user.display_picture
+            }
+        });
+        ReactDOM.render(element, document.getElementById('ui-hatch-2'));
+    };
+    return React.createElement('img', {
+        onMouseDown: open_picture,
+        className: 'user-profile-avatar',
+        src: user.display_picture
+    });
+
+}
+
+
+
 export function init() {
+    // eslint-disable-next-line camelcase
+    UserProfile.prototype.profile_picture = profile_picture;
     interceptUser(Room.prototype, 'received', (_, messageData) => messageData.user);
     interceptUser(UserProfile.prototype, 'profile_picture', (self) => self.state.data.user);
     interceptUser(FriendUnit.prototype, 'body', (self) => self.props.data);

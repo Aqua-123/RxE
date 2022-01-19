@@ -1,16 +1,16 @@
 html.showGender {
   .room-component-message-avatar,
   .navigation-notification-unit-image {
-    border: 2px solid #0f0;
+    border: 2px inset rgb(0, 218, 62);
     width: 36px;
     height: 36px;
     margin: -2px 10px -2px -2px;
 
     &[data-gender="m"] {
-      border-color: #00f;
+      border-color: #0070ff;
     }
     &[data-gender="f"] {
-      border-color: #f6f;
+      border-color: #ff80ea;
     }
   }
   .room-component-message-avatar {

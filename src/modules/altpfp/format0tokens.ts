@@ -4,9 +4,9 @@ import {
     clamp,
     representColour,
     allOf,
-    wholeMatch,
     validColour,
-    colourClosestMatch
+    colourClosestMatch,
+    stringGroups
 } from "~src/utils";
 import {
     GroupedBits,
@@ -51,8 +51,8 @@ export interface ImageMetadata {
 }
 
 const colourSpace = colourSpaces.colour64;
-// update PaletteSelection fromTape() RegExp if line below changed
 const paletteColourSpace = colourSpaces.colour512;
+// const paletteColourSpace = colourSpaces.colour64;
 
 
 const BIT_HEADER_MASK = (2 ** DIGIT_SIZE) - (2 ** (DIGIT_SIZE - BIT_HEADER_BITS));
@@ -185,8 +185,8 @@ export class PaletteSpecifier extends ImageToken {
     protected static readTape(tape: Tape): PaletteSpecifier | null {
         const section = tape.readExactly(PaletteSpecifier.expectedDigits);
         if (!section) return null;
-        const matches = Array.from(section.matchAll(/../g)).map(wholeMatch);
-        const colours = allOf(matches.map(PaletteSpecifier.colourSpace.deserialize));
+        const matches = stringGroups(section, paletteColourSpace.digits);
+        const colours = allOf<RGB>(matches.map(PaletteSpecifier.colourSpace.deserialize));
         if (!colours) return null;
         return new PaletteSpecifier(colours);
     }

@@ -6,6 +6,7 @@ import TextSetting from "./TextfieldSetting";
 import T from "~src/text";
 import styles from "./style.module.scss";
 import { updateMutes } from "~src/modules/permamute";
+import RadioSetting from "./RadioSetting";
 
 const mutes_format = /^\{(\s*\d+\s*:\s*"[^"]*"\s*,\s*)*(\s*\d+\s*:\s*"[^"]*"\s*)?\}$/;
 
@@ -26,9 +27,9 @@ export default function Settings(this: any, props: SettingsProps) {
     showGender,
     antiSpam,
     permaMuteList,
+    blockReqs,
     applySettings
   } = props;
-
 
   return (
     <div>
@@ -47,6 +48,11 @@ export default function Settings(this: any, props: SettingsProps) {
         id="fancyColors"
         value={fancyColors}
         onChange={() => applySettings({ fancyColors: !fancyColors })}
+      />
+      <RadioSetting
+        id="blockReqs"
+        value={blockReqs}
+        onChange={(blockReqs) => applySettings({ blockReqs })}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
       <CheckboxSetting

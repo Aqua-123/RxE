@@ -4,6 +4,7 @@ import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
 import window from "~src/browserWindow";
+import { divertEventListeners, wrapMethod } from "~src/utils";
 
 function hackOverrides() {
   if (!FEATURES.HACKS) return;
@@ -79,6 +80,11 @@ export function applyOverrides() {
       setState: () => { }
     };
   }
+
+  $(window).off('resize').on('resize', () => {
+    var e = document.getElementById('messages');
+    if (e) e.scrollTop = e.scrollHeight
+  });
 
   /**
    * To be clear, this is not how you use React.
@@ -177,6 +183,46 @@ export function applyOverrides() {
     if (messages.length > max) messages.shift();
     this.setState({ messages });
   };
+
+  NotificationUnit.prototype.action = function action(event: _MouseEvent) {
+    const node = ReactDOM.findDOMNode(this) as Element;
+    const { target } = event;
+    if (!(target instanceof Node)) return;
+    let acTarget = target instanceof Element ? target : target.parentElement;
+    if (!acTarget) return;
+    if (acTarget.matches(".notification-button, .notification-button *")) return;
+    const notification = this.props.data;
+    const user = notification.tier === "friend_request"
+      ? notification.data.sender
+      : notification.data.unit.author;
+    if (!user) return console.warn("Could not get user from notification");
+    // const boundingRect = node.getBoundingClientRect();
+    UserViewGenerator.generate({ event, user });
+    /*
+    if (UserProfileReact) return UserProfileReact.load(user.id);
+    const userProfile = React.createElement(UserProfile, { id: user.id });
+    ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
+    */
+  }
+
+  /*
+  wrapMethod(NotificationUnit.prototype, 'friend_request_accept', function friend_request_accept(e: _MouseEvent) {
+    e?.stopImmediatePropagation();
+  }, true);
+
+  wrapMethod(NotificationUnit.prototype, 'friend_request_reject', function friend_request_reject(e: _MouseEvent) {
+    e?.stopImmediatePropagation();
+  }, true);
+  */
+
+  Flair.prototype.render = function render() {
+    const { data: { flair, string: name }, onClick } = this.props;
+    return React.createElement('span', {
+      className: 'user-flair',
+      style: flair ?? { color: '' },
+      onClick: onClick
+    }, name);
+  }
 
   if (FEATURES.HACKS) hackOverrides();
 }

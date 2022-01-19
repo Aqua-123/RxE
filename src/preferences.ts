@@ -4,7 +4,8 @@ import {
   StringPreference,
   PreferenceManager,
   ListPreference,
-  AllowedTypes
+  AllowedTypes,
+  MultichoicePreference
 } from "ts-preferences";
 import { preferences } from "~userscripter";
 
@@ -12,6 +13,13 @@ import U from "~src/userscript";
 import T from "~src/text";
 
 const darkMode = matchMedia("(prefers-color-scheme: dark)").matches;
+
+// eslint-disable-next-line no-shadow
+export enum RequestBlockMode {
+  None = 0,
+  Hide = 1,
+  Reject = 2
+}
 
 export const P = {
   // settings
@@ -116,6 +124,25 @@ export const P = {
     label: T.preferences.userSort.label,
     default: "name.asc",
     multiline: false
+  }),
+  blockReqs: new MultichoicePreference<RequestBlockMode>({
+    key: "blockReqs",
+    label: T.preferences.blockReqs.label,
+    default: 0,
+    options: [
+      {
+        value: RequestBlockMode.None,
+        label: "Off"
+      },
+      {
+        value: RequestBlockMode.Hide,
+        label: "Hide"
+      },
+      {
+        value: RequestBlockMode.Reject,
+        label: "Reject"
+      }
+    ]
   })
 } as const;
 

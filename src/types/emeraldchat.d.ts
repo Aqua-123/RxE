@@ -163,10 +163,45 @@ declare type NotificationProps = {
 };
 
 declare class NotificationUnit extends React.Component<{
-  data: NotificationProps;
+  data: NotificationProps | FriendRequest;
 }> {
   image(): JSX.Element;
+  content(): JSX.Element;
+  action(e: _MouseEvent): void;
+  friend_request_accept(e: _MouseEvent): void;
+  friend_request_reject(e: _MouseEvent): void;
 }
+
+declare type FriendRequest = {
+  created_at: string,
+  data: {
+    user: EmeraldUser,
+    sender: EmeraldUser,
+    content: string
+  },
+  id: number,
+  seen: boolean,
+  sender_id: number,
+  tier: "friend_request",
+  updated_at: string,
+  user_id: number
+}
+
+declare type NotificationsStateData = {
+  read: NotificationProps[],
+  unread: NotificationProps[],
+  friend_requests: FriendRequest[]
+}
+
+declare class Notifications extends React.Component<any, {
+  data: NotificationsStateData
+}> {
+  update(): string;
+  click(): void;
+  badge(): JSX.Element | null;
+}
+
+declare const NotificationsReact: Notifications;
 
 declare type Friend = {
   created_at: string;
@@ -386,7 +421,10 @@ declare const DashboardClient: null | {
 };
 
 declare const UserViewGenerator: {
-  generate(e: { event: any; user: any }): void;
+  generate(e: {
+    event: { clientX: number, clientY: number, preventDefault(): void }
+    user: { karma: number, id: number }
+  }): void;
 };
 
 declare class UserView extends React.Component<
@@ -416,7 +454,7 @@ declare let UserViewReact: undefined | UserView;
 declare class Popup extends React.Component {
   close: Function;
 }
-declare class Picture extends React.Component {
+declare class Picture extends React.Component<{ data: { src: string } }> {
   close: Function;
 }
 
@@ -428,6 +466,7 @@ declare class UserProfile extends React.Component<
       // NOTE: This is our own field
       actualFriend: boolean;
       user: EmeraldUser;
+      current_user: EmeraldUser;
     };
   }
 > {
@@ -483,3 +522,15 @@ declare class Micropost extends React.Component<any,
       picture: unknown
     }
   }> { }
+
+declare type FlairProps = {
+  data: {
+    flair: { color: string },
+    string: string
+  },
+  onClick?(e: _MouseEvent): void
+}
+
+declare class Flair extends React.Component<FlairProps> {
+
+}

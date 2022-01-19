@@ -219,6 +219,33 @@ export function expect<T extends EventTarget>(
   });
 }
 
+export function groups<T>(array: T[], groupSize: number): T[][] {
+  if (array.length === 0) return [];
+  const groupsAll: T[][] = [[]];
+  array.forEach((item) => {
+    let last = groupsAll[groupsAll.length - 1];
+    if (last.length === groupSize) {
+      last = [];
+      groupsAll.push(last);
+    }
+    last.push(item);
+  });
+  return groupsAll;
+}
+
+export function stringGroups(str: string, groupSize: number): string[] {
+  return groups(str.split(''), groupSize).map(group => group.join(''));
+}
+
+export function median(array: number[]) {
+  const numbers = Array.from(array);
+  numbers.sort((a, b) => a - b);
+  // eslint-disable-next-line prefer-destructuring
+  const length = numbers.length;
+  if (length % 2 === 0) return .5 * (numbers[~~(length / 2)] + numbers[~~(length / 2) - 1]);
+  return numbers[~~(length / 2)];
+}
+
 export function mostFrequent(array: string[]): string[] {
   const occurences: Record<string, number> = {};
   Array.prototype.forEach.call(array, (item) => {
@@ -238,3 +265,20 @@ export function allOf<T>(array: (T | null | undefined)[]): T[] | null {
 export function wholeMatch(array: RegExpMatchArray) {
   return array[0];
 }
+
+export function divertEventListeners(target: EventTarget, type: string): EventTarget {
+  const newTarget = new EventTarget();
+  target.addEventListener(type, (event) => {
+    const newEvent = new Event(event.type);
+    Object.assign(newEvent, event);
+    newTarget.dispatchEvent(newEvent);
+    event.stopPropagation();
+  }, true);
+  return newTarget;
+}
+
+export function timeSince(date: Date) {
+  return +new Date() - +date;
+}
+
+export const DAY = 24 * 3600e3;

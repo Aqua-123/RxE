@@ -28,7 +28,8 @@ export function getSettings() {
       showInfo: Preferences.get(P.showInfo),
       showGender: Preferences.get(P.showGender),
       antiSpam: Preferences.get(P.antiSpam),
-      permaMuteList: Preferences.get(P.permaMuteList)
+      permaMuteList: Preferences.get(P.permaMuteList),
+      blockReqs: Preferences.get(P.blockReqs)
     }
   };
 }
@@ -48,6 +49,7 @@ export function applySettings() {
       document.documentElement.classList.toggle(key, obj[key]);
     }
   });
+  NotificationsReact?.update();
   initTheme();
 }
 

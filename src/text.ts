@@ -65,6 +65,9 @@ export default {
       "name.desc": "Name Desc.",
       "age.asc": "Account age Asc.",
       "age.desc": "Account age Desc."
+    },
+    blockReqs: {
+      label: "Block friend requests from new accounts"
     }
   },
   hiddenChannels: "hidden channels",

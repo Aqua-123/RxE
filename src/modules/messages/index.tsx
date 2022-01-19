@@ -23,13 +23,28 @@ export function initMessages() {
       }
     }
     if (Preferences.get(P.showInfo)) {
+      const karma = user._karma ?? user.karma;
+      const karmaAbbrev =
+        Math.abs(karma) >= 1000
+          ? `${(karma / 1000).toPrecision(3)}K`
+          : `${karma}`;
+      const karmaSigned = karma >= 0 ? `+${karmaAbbrev}` : `${karmaAbbrev}`;
       const flair = messageRight.props.children[0];
+      const joinDate = new Date(user.created_at);
+      let accountAgeScale = Math.log(+new Date() - +joinDate + 1);
+      accountAgeScale = Math.min(accountAgeScale / Math.log(5e11), 1);
+      const joinColour = `hsl(${accountAgeScale * 256}, 50%, 50%)`;
       flair.props.children.push(
         <span className="user-extra">
-          <b>Karma: </b>
-          {user._karma ?? user.karma}
-          <b> Since </b>
-          {new Date(user.created_at).toLocaleDateString()}
+          {" "}
+          <b>({karmaSigned})</b>
+          {" / "}
+          <span
+            style={{ color: joinColour, textShadow: "0.01em 0.01em white" }}
+            title={`Joined: ${joinDate.toLocaleDateString()}`}
+          >
+            {$.timeago(joinDate)}
+          </span>
           {user.master && !user.proxy && (
             <b style={{ color: "#f00" }}> CALLAN </b>
           )}

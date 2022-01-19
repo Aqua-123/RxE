@@ -4,11 +4,12 @@
 import { memoize, imageFromData } from "~src/utils";
 import Tape from "~src/tape";
 import { Tokenizer } from "./format0tokenizer";
+import browserWindow from "~src/browserWindow";
 
 const MAX_SIZE_COMPRESSED = 4096;
 
-const LOG_SAMPLED_IMAGE = false;
 const LOG_TOKEN_LIST = false;
+const LOG_SAMPLED_IMAGE = false;
 const LOG_TOKENIZED_IMAGE = false;
 const LOG_SERIALIZED_IMAGE = false;
 
@@ -34,7 +35,7 @@ export const unpack = memoize((compressed) => {
 export async function compress(image: Image, options: SamplingOptions) {
     const { pixels, metadata } = Tokenizer.readImage(image, options);
     const { width, height } = metadata.size;
-    if (LOG_SAMPLED_IMAGE) console.log("Sampled image: ", imageFromData(pixels.toImage(), width, height));
+    if (LOG_SAMPLED_IMAGE) browserWindow.open(imageFromData(pixels.toImage(), width, height))
     const metadataTokens = [metadata.size, metadata.palette];
     const contentTokens = Tokenizer.fromPixels(pixels, metadata);
     const tokens = [...metadataTokens, ...contentTokens];

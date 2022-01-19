@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { colourDifference, imageFromData, mostFrequent } from "~src/utils";
+import { colourClosestMatch, colourDifference, imageFromData, median, mostFrequent } from "~src/utils";
 import { b64toU8 } from "~src/bitutils";
 import Tape from "~src/tape";
 import { PixelPlacer, PixelReader } from "./pixelBuffer";
@@ -85,19 +85,26 @@ export class Tokenizer {
         const tokens: Array<ImageContentToken | null> = [];
         while (!pixels.done()) tokens.push(this.readBufferToken(pixels, metadata));
         const tokensPure = tokens.filter((token) => !!token) as ImageContentToken[];
-        this.tokenStatistics(tokensPure);
+        this.tokenStatistics(tokensPure, metadata);
         return tokensPure;
     }
 
-    static tokenStatistics(tokens: ImageContentToken[]) {
+    static tokenStatistics(tokens: ImageContentToken[], metadata: ImageMetadata) {
         const percent = (fraction: number) => `${(fraction * 100).toPrecision(3)}%`;
 
-        const tokenRatio = tokens.filter((token) => token instanceof OffsetColour).length / tokens.length;
+        const offsetColours = tokens.filter((token) => token instanceof OffsetColour) as OffsetColour[];
+
+        const tokenRatio = offsetColours.length / tokens.length;
         const warning = `${percent(tokenRatio)} of tokens are OffsetColour`;
         const warning2 = `${percent(1 - tokenRatio)} of tokens are PaletteSelection`
         if (tokenRatio > .5) console.warn(warning);
         else if (tokenRatio > .25) console.info(warning);
         else if (tokenRatio < .1) console.warn(warning2);
+
+        const palette = metadata.palette.completePalette;
+        const colourDistances = offsetColours.map((offsetColour) => colourClosestMatch(palette, offsetColour.colour)[1]);
+        const medianDistance = median(colourDistances);
+        console.log(`median OffsetColour colour distance is+ ${medianDistance.toPrecision(3)}`);
 
         const zeroOffsetRatio =
             tokens.filter((token) => token instanceof OffsetColour && token.offset === 0).length / tokens.length;

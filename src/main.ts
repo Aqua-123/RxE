@@ -33,6 +33,7 @@ import { until } from "./utils";
 import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 import * as altpfp from "./modules/altpfp";
+import * as blockreqs from "./modules/blockreqs";
 
 async function init() {
   const featureSet = `(${[
@@ -40,8 +41,12 @@ async function init() {
     ...(FEATURES.P2P ? ["P2P"] : [])
   ]})`;
   log.log(`${U.name} Version ${U.version} ${featureSet}`);
+
+  blockreqs.early();
+
   // Wait for App to be loaded.
   await until(() => !!browserWindow.App);
+
   // migrate settings from older userscripts, if any
   migrateSettings();
 
