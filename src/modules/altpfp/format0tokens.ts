@@ -1,17 +1,24 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
 import {
+    clamp,
+    representColour,
+    allOf,
+    wholeMatch,
+    validColour,
+    colourClosestMatch
+} from "~src/utils";
+import {
+    GroupedBits,
     b64toU8,
     bitSplit,
-    clamp,
-    Tape,
     u8toB64,
-    rgbToU8,
-    u8toRGB,
     b64toU8Array,
-    GroupedBits,
     u8ArrayToB64
-} from "~src/utils";
+} from "~src/bitutils";
+import Tape from "~src/tape";
+import { colourSpaces } from "./interpolation";
+import { PixelPlacer, PixelReader } from "./pixelBuffer";
 
 const { ceil } = Math;
 
@@ -21,13 +28,32 @@ export const SIZE_STEP = MAX_SIZE / 8;
 
 export const DIGIT_SIZE = 6;
 
-export const PALLETTE_BITS = 3;
-export const PALLETTE_LENGTH = 2 ** PALLETTE_BITS;
+export const PALETTE_BITS = 3;
+export const PALETTE_LENGTH = 2 ** PALETTE_BITS;
 export const BIT_HEADER_BITS = 1;
+
+export const PAYLOAD_BITS = {
+    PALETTE_SELECTION: 2 * DIGIT_SIZE - 1,
+    OFFSET: DIGIT_SIZE - 1
+};
+
+export const MAX_PALETTE_APPROXIMATION = 0.05;
+export const MAX_BACKGROUND_APPROXIMATION = 0.05;
+
 export const BIT_HEADER = {
-    PALLETTE_SELECTION: 0b0,
+    PALETTE_SELECTION: 0b0,
     OFFSET: 0b1
 };
+
+export interface ImageMetadata {
+    size: SizeSpecifier,
+    palette: PaletteSpecifier
+}
+
+const colourSpace = colourSpaces.colour64;
+// update PaletteSelection fromTape() RegExp if line below changed
+const paletteColourSpace = colourSpaces.colour512;
+
 
 const BIT_HEADER_MASK = (2 ** DIGIT_SIZE) - (2 ** (DIGIT_SIZE - BIT_HEADER_BITS));
 
@@ -36,15 +62,10 @@ export const MATCH_BIT_HEADER = (digit: number) =>
         .find((key) => (digit & BIT_HEADER_MASK) === BIT_HEADER[key] << (DIGIT_SIZE - BIT_HEADER_BITS))
 
 
-export const PAYLOAD_BITS = {
-    PALLETTE_SELECTION: 2 * DIGIT_SIZE - 1,
-    OFFSET: DIGIT_SIZE - 1
-};
-
-export const PALLETTE_SELECTION_LENGTH = ~~(PAYLOAD_BITS.PALLETTE_SELECTION / PALLETTE_BITS);
+export const PALETTE_SELECTION_LENGTH = ~~(PAYLOAD_BITS.PALETTE_SELECTION / PALETTE_BITS);
 
 export const TOKEN_DIGITS = {
-    PALLETTE_SELECTION: ceil((BIT_HEADER_BITS + PAYLOAD_BITS.PALLETTE_SELECTION) / DIGIT_SIZE),
+    PALETTE_SELECTION: ceil((BIT_HEADER_BITS + PAYLOAD_BITS.PALETTE_SELECTION) / DIGIT_SIZE),
     OFFSET: ceil((BIT_HEADER_BITS + PAYLOAD_BITS.OFFSET) / DIGIT_SIZE)
 };
 
@@ -52,7 +73,9 @@ export const MAX_OFFSET = 2 ** PAYLOAD_BITS.OFFSET - 1;
 
 // tokenization might slow perf
 // but debugging is easier
+// also more flexible woo
 // DX > UX
+
 export abstract class ImageToken {
     abstract serialize(): string;
 
@@ -62,10 +85,17 @@ export abstract class ImageToken {
         return this.constructor.name;
     }
 }
+
+export abstract class ImageContentToken extends ImageToken {
+    abstract toPixelBuffer(pixels: PixelPlacer, metadata: ImageMetadata): boolean;
+}
+
 export class SizeSpecifier extends ImageToken {
     readonly width: number;
 
     readonly height: number;
+
+    get dataSize() { return this.width * this.height; }
 
     constructor(width: number, height: number) {
         super();
@@ -73,15 +103,17 @@ export class SizeSpecifier extends ImageToken {
         this.height = SizeSpecifier.clampSize(height);
     }
 
-    static clampSize(dimension: number): number {
+    // todo: i smell decomposition
+
+    protected static clampSize(dimension: number): number {
         return clamp(ceil(dimension / SIZE_STEP) * SIZE_STEP, SIZE_STEP, MAX_SIZE);
     }
 
-    static parseSize(u3: number): number {
+    protected static parseSize(u3: number): number {
         return (u3 + 1) * SIZE_STEP;
     }
 
-    static compressSize(dimension: number) {
+    protected static compressSize(dimension: number) {
         return dimension / SIZE_STEP - 1;
     }
 
@@ -99,7 +131,7 @@ export class SizeSpecifier extends ImageToken {
         return u8toB64((width << 3) + height);
     }
 
-    static fromTape(tape: Tape): SizeSpecifier | null {
+    protected static readTape(tape: Tape): SizeSpecifier | null {
         const digit = b64toU8(tape.read());
         if (digit === null) return null;
         const [width, height] = bitSplit(digit, 2, DIGIT_SIZE);
@@ -108,129 +140,176 @@ export class SizeSpecifier extends ImageToken {
             SizeSpecifier.parseSize(height)
         );
     }
+
+    static fromTape(tape: Tape): SizeSpecifier | null {
+        return this.readTape(tape) ??
+            tape.warnExpected('expected size specifier');
+    }
 }
-function validColour(colour: RGB): boolean {
-    return !colour.some((component) => component < 0 || component > 255);
-}
-export function representColour(colour: RGB): string {
-    return `rgb(${colour.join(", ")})`;
-}
-export class PalletteSpecifier extends ImageToken {
-    constructor(readonly colours: number[] | Uint8Array) {
+
+export class PaletteSpecifier extends ImageToken {
+    static expectedLength: number = PALETTE_LENGTH;
+
+    static expectedDigits: number = PALETTE_LENGTH * paletteColourSpace.digits;
+
+    static colourSpace: ColourSpace<string> = paletteColourSpace;
+
+    constructor(readonly colours: RGB[]) {
         super();
         if (colours.length === 0) throw new Error("No colours supplied");
-        if (colours.length > PALLETTE_LENGTH)
+        if (colours.length > PaletteSpecifier.expectedLength)
             throw new Error("Too many colours supplied");
-        if (colours.some((colour) => colour >= 64))
-            throw new RangeError("Colours out of bounds");
+        if (colours.some((colour) => !validColour(colour)))
+            throw new RangeError("Invalid colour");
     }
 
     representation() {
         const { name, colours } = this;
         return `${name}([${Array.from(colours)
-            .map(u8toRGB)
             .map(representColour)
             .join(", ")}])`;
     }
 
-    get completePallette(): number[] {
-        const remaining = PALLETTE_LENGTH - this.colours.length;
+    get completePalette(): RGB[] {
+        const remaining = PALETTE_LENGTH - this.colours.length;
         return [
             ...this.colours,
-            ...Uint8Array.from({ length: remaining }, () => this.colours.slice(-1)[0])
+            ...Array.from({ length: remaining }, () => this.colours.slice(-1)[0])
         ];
     }
 
-    get completeRGBPallette(): RGB[] {
-        return this.completePallette.map(u8toRGB);
-    }
-
     serialize() {
-        return this.completePallette.map(u8toB64).join("");
+        return this.completePalette.map(PaletteSpecifier.colourSpace.serialize).join("");
     }
 
-    static fromTape(tape: Tape): PalletteSpecifier | null {
-        const section = tape.read(PALLETTE_LENGTH);
-        if (!section || section.length !== PALLETTE_LENGTH) {
-            tape.advance(PALLETTE_LENGTH - (section?.length ?? 0));
-            return null;
-        }
-        const colours = b64toU8Array(section);
+    protected static readTape(tape: Tape): PaletteSpecifier | null {
+        const section = tape.readExactly(PaletteSpecifier.expectedDigits);
+        if (!section) return null;
+        const matches = Array.from(section.matchAll(/../g)).map(wholeMatch);
+        const colours = allOf(matches.map(PaletteSpecifier.colourSpace.deserialize));
         if (!colours) return null;
-        return new PalletteSpecifier(colours);
+        return new PaletteSpecifier(colours);
     }
 
-    static fromRGB(colours: RGB[]) {
-        if (colours.some((colour) => !validColour(colour)))
-            throw new Error("Invalid colour");
-        return new PalletteSpecifier(Uint8Array.from(colours.map(rgbToU8)));
+    static fromTape(tape: Tape): PaletteSpecifier | null {
+        return this.readTape(tape) ??
+            tape.warnExpected('expected palette specifier', PaletteSpecifier.expectedDigits);
+    }
+
+    static fromRGB(colours: RGB[]): PaletteSpecifier {
+        return new PaletteSpecifier(colours);
     }
 }
-export class PalletteSelection extends ImageToken {
-    constructor(readonly palletteIndices: number[] | Uint8Array) {
+
+export class PaletteSelection extends ImageContentToken {
+    static expectedLength = PALETTE_SELECTION_LENGTH;
+
+    static expectedDigits = TOKEN_DIGITS.PALETTE_SELECTION;
+
+    static matchHeader(u8: number) {
+        return MATCH_BIT_HEADER(u8) === "PALETTE_SELECTION";
+    }
+
+    constructor(readonly paletteIndices: number[] | Uint8Array) {
         super();
-        if (palletteIndices.length !== PALLETTE_SELECTION_LENGTH)
+        if (paletteIndices.length !== PaletteSelection.expectedLength)
             throw new Error(
-                `Pallette selection size does not match ${PALLETTE_SELECTION_LENGTH} expected colours: ${palletteIndices}`
+                `Palette selection size does not match ${PaletteSelection.expectedLength} expected colours: ${paletteIndices}`
             );
-        if (palletteIndices.some((index) => index < 0 || index > PALLETTE_LENGTH))
-            throw new Error(`Invalid pallette indicies: ${palletteIndices}`);
+        if (paletteIndices.some((index) => index < 0 || index > PaletteSpecifier.expectedLength))
+            throw new Error(`Invalid palette indicies: ${paletteIndices}`);
     }
 
     representation() {
-        return `${this.name}([${this.palletteIndices.join(", ")}])`;
+        return `${this.name}([${this.paletteIndices.join(", ")}])`;
     }
 
     serialize() {
-        const palletteBits = new GroupedBits(DIGIT_SIZE);
-        palletteBits.pushNumber(BIT_HEADER.PALLETTE_SELECTION, BIT_HEADER_BITS);
-        palletteBits.pushNumbers(Array.from(this.palletteIndices), PALLETTE_BITS);
-        return u8ArrayToB64(palletteBits.topUp().numbers);
+        const paletteBits = new GroupedBits(DIGIT_SIZE);
+        paletteBits.pushNumber(BIT_HEADER.PALETTE_SELECTION, BIT_HEADER_BITS);
+        paletteBits.pushNumbers(Array.from(this.paletteIndices), PALETTE_BITS);
+        return u8ArrayToB64(paletteBits.topUp().numbers);
     }
 
     static tryMake(
-        colours: number[] | Uint8Array,
-        pallette: number[]
-    ): PalletteSelection | null {
-        if (pallette.length > PALLETTE_LENGTH) throw new Error("Pallette too long");
-        if (colours.length < PALLETTE_SELECTION_LENGTH) return null;
-        const selection = Array.from(colours.slice(0, PALLETTE_SELECTION_LENGTH));
-        const indices = selection.map((colour) => pallette.indexOf(colour));
-        if (indices.includes(-1)) return null;
-        return new PalletteSelection(indices);
+        colours: RGB[],
+        palette: RGB[]
+    ): PaletteSelection | null {
+        if (palette.length > PaletteSpecifier.expectedLength) throw new Error("Palette too long");
+        if (colours.length < PaletteSelection.expectedLength) return null;
+        const selection = Array.from(colours.slice(0, PaletteSelection.expectedLength));
+        const indices = allOf(
+            selection.map((colour) => colourClosestMatch(palette, colour))
+                .map(([index, difference]) => difference > MAX_PALETTE_APPROXIMATION ? null : index)
+        );
+        if (!indices) return null;
+        return new PaletteSelection(indices);
     }
 
-    static fromTape(tape: Tape): PalletteSelection | null {
-        const tapeChars = tape.read(TOKEN_DIGITS.PALLETTE_SELECTION);
-        if (!tapeChars || tapeChars.length < TOKEN_DIGITS.PALLETTE_SELECTION)
-            return null;
+    static fromTape(tape: Tape): PaletteSelection | null {
+        const paletteSelection = this.readTape(tape);
+        if (paletteSelection == null) return tape.warnExpected(
+            "expected PaletteSelection token",
+            PaletteSelection.expectedDigits
+        );
+        return paletteSelection;
+    }
+
+    protected static readTape(tape: Tape): PaletteSelection | null {
+        const tapeChars = tape.readExactly(PaletteSelection.expectedDigits);
+        if (tapeChars === undefined) return null;
         const tapeDigits = b64toU8Array(tapeChars);
-        if (!tapeDigits) return null;
-        const palletteBits = new GroupedBits(PALLETTE_BITS);
-        palletteBits.pushNumbers(Array.from(tapeDigits), DIGIT_SIZE);
+        if (tapeDigits === null) return null;
+        const paletteBits = new GroupedBits(PALETTE_BITS);
+        paletteBits.pushNumbers(Array.from(tapeDigits), DIGIT_SIZE);
         if (
-            palletteBits.shiftBits(BIT_HEADER_BITS)! !== BIT_HEADER.PALLETTE_SELECTION
+            paletteBits.shiftBits(BIT_HEADER_BITS)! !== BIT_HEADER.PALETTE_SELECTION
         )
-            throw new Error("Bytes read do not start with pallette selection header");
-        return new PalletteSelection(palletteBits.trim().numbers);
+            throw new Error("Bytes read do not start with palette selection header");
+        return new PaletteSelection(paletteBits.trim().numbers);
     }
 
-    reify(pallette: RGB[]): RGB[] {
-        if (pallette.length < PALLETTE_LENGTH)
-            throw new Error("Received incomplete pallette");
-        return Array.from(this.palletteIndices).map((index) => pallette[index]);
+    selectFrom(palette: RGB[]): RGB[] {
+        if (palette.length < PALETTE_LENGTH)
+            throw new Error("Received incomplete palette");
+        return Array.from(this.paletteIndices).map((index) => palette[index]);
+    }
+
+    toPixelBuffer(buffer: PixelPlacer, metadata: ImageMetadata) {
+        return buffer.place(this.selectFrom(metadata.palette.completePalette));
+    }
+
+    static fromPixelBuffer(buffer: PixelReader, metadata: ImageMetadata): PaletteSelection | null {
+        if (buffer.offset > 0) return null;
+        if (!buffer.preview(PaletteSelection.expectedLength)) return null;
+        const palette = metadata.palette.completePalette;
+        const paletteSelection = PaletteSelection.tryMake(buffer.lastPreview(), palette);
+        buffer.consumeIf(paletteSelection !== null);
+        return paletteSelection;
     }
 }
-export class OffsetColour extends ImageToken {
-    constructor(readonly offset: number, readonly colour: number) {
+
+export class OffsetColour extends ImageContentToken {
+    static expectedDigits: number = TOKEN_DIGITS.OFFSET + 1;
+
+    static maxOffset: number = MAX_OFFSET;
+
+    static matchHeader(u8: number) {
+        return MATCH_BIT_HEADER(u8) === "OFFSET";
+    }
+
+    readonly colour: RGB;
+
+    constructor(readonly offset: number, colour: RGB) {
         super();
-        if (offset > MAX_OFFSET)
-            throw new Error(`Offset ${offset} too big to encode`);
+        if (offset < 0) throw new RangeError("Offset can't be negative");
+        if (offset > OffsetColour.maxOffset) throw new Error(`Offset ${offset} too big to encode`);
+        this.colour = colourSpace.map(colour);
     }
 
     representation() {
         return `${this.name}(${this.offset}, ${representColour(
-            u8toRGB(this.colour)
+            this.colour
         )})`;
     }
 
@@ -238,20 +317,20 @@ export class OffsetColour extends ImageToken {
         const offsetBits = new GroupedBits(DIGIT_SIZE);
         offsetBits.pushNumber(BIT_HEADER.OFFSET, BIT_HEADER_BITS);
         offsetBits.pushNumber(this.offset, PAYLOAD_BITS.OFFSET);
-        return u8ArrayToB64(offsetBits.topUp().numbers) + u8toB64(this.colour);
+        return u8ArrayToB64(offsetBits.topUp().numbers) + colourSpace.serialize(this.colour);
     }
 
     static fromTape(tape: Tape): OffsetColour | null {
-        const offsetChars = tape.read(TOKEN_DIGITS.OFFSET);
-        if (!offsetChars || offsetChars.length < TOKEN_DIGITS.OFFSET) {
-            tape.advance(1);
-            return null;
-        }
+        const offsetColour = this.readTape(tape);
+        if (!offsetColour) tape.warnExpected("expected OffsetColour token", OffsetColour.expectedDigits);
+        return offsetColour;
+    }
+
+    protected static readTape(tape: Tape): OffsetColour | null {
+        const offsetChars = tape.readExactly(TOKEN_DIGITS.OFFSET);
+        if (!offsetChars) { tape.advance(1); return null; }
         const offsetDigits = b64toU8Array(offsetChars);
-        if (!offsetDigits) {
-            tape.advance(1);
-            return null;
-        }
+        if (!offsetDigits) { tape.advance(1); return null; }
         const offsetBits = new GroupedBits(DIGIT_SIZE);
         offsetBits.pushNumbers(Array.from(offsetDigits), DIGIT_SIZE);
         // Assertion that function only starts if offset byte is already detected
@@ -260,63 +339,26 @@ export class OffsetColour extends ImageToken {
             throw new Error("Bytes read do not start with offset header");
         const offset = offsetBits.toNumber();
         const colourChar = tape.read();
-        const colour = b64toU8(colourChar);
+        if (colourChar === null) return null;
+        const colour = colourSpace.deserialize(colourChar);
         if (colour === null) return null;
         return new OffsetColour(offset, colour);
     }
 
     getRGB(): RGB {
-        return u8toRGB(this.colour);
+        return this.colour;
     }
-}
-export function viewTokenList(tokens: ImageToken[]) {
-    return console.log(
-        "tokens",
-        tokens
-            .map((token) => `${token.representation()}: '${token.serialize()}'`)
-            .join("\n")
-    );
-}
-export function parseTape(tape: Tape): ImageToken[] | null {
-    const tokens = [];
-    while (!tape.outOfBounds()) {
-        const header = b64toU8(tape.peek()!);
-        if (header === null) {
-            tape.warnExpected(`expected valid b64 digit`, 1, false);
-            return null;
-        }
-        switch (MATCH_BIT_HEADER(header)) {
-            case "OFFSET": {
-                const offsetColour = OffsetColour.fromTape(tape);
-                if (!offsetColour) {
-                    tape.warnExpected(
-                        "expected OffsetColour token",
-                        TOKEN_DIGITS.OFFSET + 1
-                    );
-                    return null;
-                }
-                tokens.push(offsetColour);
-                break;
-            }
-            case "PALLETTE_SELECTION": {
-                const palletteSelection = PalletteSelection.fromTape(tape);
-                if (!palletteSelection) {
-                    tape.warnExpected(
-                        "expected PalletteSelection token",
-                        TOKEN_DIGITS.PALLETTE_SELECTION
-                    );
-                    return null;
-                }
-                tokens.push(palletteSelection);
-                break;
-            }
-            case undefined:
-                tape.warnExpected(`could not infer header type: 0b${header.toString(2)}`);
-                return null
-            default:
-                tape.warnExpected(`unknown header type: 0b${header.toString(2)}`);
-                return null;
-        }
+
+    toPixelBuffer(buffer: PixelPlacer, _metadata: ImageMetadata) {
+        const success = buffer.skip(this.offset);
+        if (success) buffer.placeOne(this.getRGB());
+        return success;
     }
-    return tokens;
+
+    static fromPixelBuffer(buffer: PixelReader): OffsetColour | null {
+        if (!buffer.peekOne()) return null;
+        const offsetColour = new OffsetColour(buffer.offset, buffer.lastPreview()[0]);
+        buffer.consume();
+        return offsetColour;
+    }
 }

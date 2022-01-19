@@ -436,6 +436,7 @@ declare class UserProfile extends React.Component<
   close(): void;
   update_profile_picture(): void;
   profile_picture(): JSX.Element;
+  load(id: number): void;
 }
 
 declare let UserProfileReact: null | UserProfile;

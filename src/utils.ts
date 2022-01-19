@@ -2,7 +2,7 @@
 /* eslint-disable max-classes-per-file */
 import React from "react";
 
-const { ceil, log2, max, min } = Math;
+const { max, min } = Math;
 
 /**
  * Slightly less verbose way to create a DOM element.
@@ -118,7 +118,7 @@ export function setDiff<T>(set1: Set<T>, set2: Set<T>) {
   return { added, removed };
 }
 
-const b64Set =
+export const b64Set =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 // abuse of https://en.wikipedia.org/wiki/Tags_(Unicode_block)
 const tagSet = Array.from({ length: 65 }, (_, i) =>
@@ -146,201 +146,6 @@ export function decodeInvisible(str: string) {
   return atob(b64);
 }
 
-export function bitSplit(
-  bits: number,
-  splits: number,
-  relevantBits = max(0, ceil(log2(bits)))
-) {
-  if (bits < 0) throw new RangeError("bits can't be negative");
-  const splitSize = ~~(relevantBits / splits);
-  const baseMask = 2 ** splitSize - 1;
-  if (relevantBits % splits !== 0)
-    // eslint-disable-next-line no-console
-    console.warn(
-      `bitsplit: splits (${splits}) does not divide evenly into relevantBits (${relevantBits}).`
-    );
-  return Array.from({ length: splits }, (_, splitNo) => {
-    const shift = splitNo * splitSize;
-    const mask = baseMask << shift;
-    return (bits & mask) >> shift;
-  }).reverse();
-}
-
-export function bitJoin(numbers: number[] | Uint8Array, relevantBits: number) {
-  return Array.from(numbers)
-    .reverse()
-    .map((num, index) => num << (index * relevantBits))
-    .reduce((a, b) => a + b, 0);
-}
-
-export function u8toB64(u8: number) {
-  if (u8 < 0 || u8 > 63) throw new RangeError("u8 has to be from 0 to 63");
-  return b64Set[u8];
-}
-
-export function numToB64(num: number, digits?: number) {
-  if (num < 0) throw new RangeError("num can't be negative; did it overflow?");
-  // eslint-disable-next-line no-param-reassign
-  if (digits === undefined) digits = ceil(max(0, ceil(log2(num))) / 6);
-  if (digits === 0) return u8toB64(0);
-  const u8s = bitSplit(num, digits, digits * 6);
-  return u8s.map(u8toB64).join("");
-}
-
-export class GroupedBits {
-
-  // from 1 to numberBits
-  protected lastBits: number;
-
-  protected _numbers: number[];
-
-  // eslint-disable-next-line no-useless-constructor, no-empty-function
-  constructor(protected numberBits: number, numbers: number[] = []) {
-    this._numbers = Array.from(numbers);
-    this.lastBits = numberBits;
-  }
-
-  get length() {
-    return this._numbers.length;
-  }
-
-  protected set last(value) {
-    this._numbers[this.length - 1] = value;
-  }
-
-  protected get last() {
-    return this._numbers[this.length - 1];
-  }
-
-  push(bit: number): void {
-    if (bit > 1) console.warn('GroupedBits.push got bit > 1')
-    this.lastBits += 1;
-    if (this.lastBits > this.numberBits) {
-      this._numbers.push(0);
-      this.lastBits = 1;
-    }
-    this.last <<= 1;
-    this.last += bit & 1;
-  }
-
-  pushNumber(num: number, bits: number): void {
-    this.extend(bitSplit(num, bits, bits));
-  }
-
-  extend(bits: number[]) {
-    bits.forEach((bit) => this.push(bit));
-  }
-
-  pushNumbers(nums: number[], bits: number): void {
-    nums.forEach((num) => this.pushNumber(num, bits));
-  }
-
-  shift(): 0 | 1 | undefined {
-    if (this.length === 0) return undefined;
-    const maskOverflow = 1 << this.numberBits;
-    const maskMax = maskOverflow - 1;
-    const maskMaxLast = 1 << (this.lastBits - 1)
-    let shiftedValue: 0 | 1 = this.last & maskMaxLast ? 1 : 0;
-    this.last -= shiftedValue * maskMaxLast;
-    this.lastBits -= 1;
-    if (this.lastBits === 0) this._numbers.pop();
-    for (let i = this.length - 2; i >= 0; i -= 1) {
-      this._numbers[i] <<= 1;
-      this._numbers[i] += shiftedValue
-      shiftedValue = maskOverflow & this._numbers[i] ? 1 : 0;
-      this._numbers[i] &= maskMax;
-    }
-    return shiftedValue;
-  }
-
-  shiftBits(numBits: number): number | undefined {
-    const bits: Array<0 | 1> = [];
-    if (this.length < numBits) return undefined;
-    for (let i = 0; i < numBits; i += 1) bits.push(this.shift()!);
-    return bitJoin(bits, 1);
-  }
-
-  pop(): 0 | 1 | undefined {
-    if (this.length === 0) return undefined;
-    if (this.lastBits === 1) {
-      this.lastBits = this.numberBits;
-      return this._numbers.pop() ? 1 : 0;
-    }
-    const bit = this.last & 1 ? 1 : 0;
-    this.last >>= 1;
-    return bit;
-  }
-
-  consume(groupedBits: GroupedBits) {
-    while (groupedBits.length > 0) {
-      this.push(groupedBits.pop()!);
-    }
-  }
-
-  reverse(): GroupedBits {
-    const reverse = new GroupedBits(this.numberBits);
-    reverse.consume(this);
-    return reverse;
-  }
-
-  topUp(): GroupedBits {
-    this.last <<= (this.numberBits - this.lastBits);
-    this.lastBits = this.numberBits;
-    return this;
-  }
-
-  trim(): GroupedBits {
-    if (this.lastBits === this.numberBits)
-      return this;
-    this._numbers.pop();
-    this.lastBits = this.numberBits;
-    return this;
-  }
-
-  toNumber(): number {
-    return (bitJoin(this._numbers.slice(0, -1), this.numberBits) << this.lastBits) + this.last;
-  }
-
-  regroup(groupBits: number): GroupedBits {
-    const regroupedBits = new GroupedBits(groupBits);
-    regroupedBits.consume(this.reverse());
-    return regroupedBits;
-  }
-
-  get numbers() {
-    return Array.from(this._numbers);
-  }
-}
-
-export function bitsRegroup(
-  numbers: number[],
-  oldGroupBits: number,
-  newGroupBits: number
-): number[] {
-  const groupBits = new GroupedBits(oldGroupBits, numbers);
-  const regrouped = groupBits.regroup(newGroupBits).topUp().numbers;
-  const bmp = (a: number[]) => a.map(n => n.toString(2));
-  console.log(bmp(numbers), bmp(regrouped));
-  return regrouped;
-}
-
-export function b64toU8(b64char: string | undefined | null) {
-  if (!b64char) return null;
-  const index = b64Set.indexOf(b64char);
-  if (index === -1) return null;
-  return index;
-}
-
-export function b64toU8Array(b64: string) {
-  const array = Array.from(b64).map(b64toU8);
-  if (array.includes(null)) return null;
-  return new Uint8Array(array as number[]);
-}
-
-export function u8ArrayToB64(u8s: number[] | Uint8Array): string {
-  return Array.from(u8s).map(u8toB64).join('');
-}
-
 export function canvasToImage(
   callback: (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => void,
   type?: string
@@ -352,34 +157,27 @@ export function canvasToImage(
   return canvas.toDataURL(type);
 }
 
-export function u8toRGB(u8: number): RGB {
-  return bitSplit(u8, 3, 6).map((x) => (x * 255) / 3) as RGB;
+export function representColour(colour: RGB): string {
+  return `#${colour.map((comp) => comp.toString(16).padStart(2, '0')).join('')}`;
 }
 
-export function b64toRGB(s: string | null | undefined): RGB | null {
-  if (!s) return null;
-  if (s.length === 0) throw new Error("");
-  const u8 = b64toU8(s);
-  if (u8 === null) return null;
-  return u8toRGB(u8);
+export function imageFromData(image: RGB[] | Map<number, RGB>, width: number, height: number, backgroundColour?: RGB): string {
+  const imageData = Array.from(image.entries())
+  return canvasToImage((canvas, context) => {
+    canvas.width = width;
+    canvas.height = height;
+    if (backgroundColour)
+      context.fillStyle = representColour(backgroundColour);
+    context.fillRect(0, 0, width, height);
+    imageData.forEach(([offset, colour]) => {
+      context.fillStyle = representColour(colour);
+      context.fillRect(offset % width, ~~(offset / height), 1, 1);
+    });
+  });
 }
 
-export function b64HexColor(s: string | null | undefined): string | undefined {
-  const code = b64toRGB(s)
-    ?.map((u2) => (u2 * 5).toString(16))
-    ?.join("");
-  return code && `#${code}`;
-}
-
-export function rgbToU8(colour: RGB): number {
-  const [r, g, b] = colour.map((component) =>
-    clamp(Math.round((component * 3) / 255), 0, 3)
-  );
-  return (r << 4) + (g << 2) + b;
-}
-
-export function rgbToB64(colour: RGB): string {
-  return u8toB64(rgbToU8(colour));
+export function toNearestStep(value: number, step: number, minimum: number, maximum: number) {
+  return clamp(Math.round(value / step), minimum, maximum);
 }
 
 export function getImageData(image: HTMLImageElement) {
@@ -392,60 +190,22 @@ export function getImageData(image: HTMLImageElement) {
   return context.getImageData(0, 0, width, height);
 }
 
-export class Tape {
-  protected __pointer: number = 0;
+export function validColour(colour: RGB): boolean {
+  return !colour.some((component) => component < 0 || component > 255);
+}
 
-  get pointer() {
-    return this.__pointer;
-  }
+export function colourEqualTo([r, g, b]: RGB) {
+  return ([R, G, B]: RGB) => r === R && g === G && b === B
+};
 
-  protected set pointer(value) {
-    this.__pointer = value;
-  }
+export function colourDifference(colour1: RGB, colour2: RGB): number {
+  return colour1.map((x, i) => ((x - colour2[i]) / 255) ** 2).reduce((a, b) => a + b, 0) / 3;
+}
 
-  public readonly data;
-
-  // eslint-disable-next-line no-useless-constructor
-  constructor(data: string) {
-    this.data = data;
-  }
-
-  advance(steps: number = 1): string | undefined {
-    this.pointer += steps;
-    return this.data[this.pointer];
-  }
-
-  read(chars: number = 1): string | undefined {
-    const string = this.peek(chars);
-    this.advance(chars);
-    return string;
-  }
-
-  peek(chars: number = 1): string | undefined {
-    const left = min(0, chars);
-    const right = max(0, chars);
-    return (
-      this.data.slice(this.pointer + left, this.pointer + right) || undefined
-    );
-  }
-
-  debug() {
-    console.log(`${this.data.slice(0, this.pointer)}[${this.peek()}]${this.data.slice(this.pointer + 1)}`);
-  }
-
-  warnExpected(message: string, expectedCount = 1, read = true) {
-    const { data, pointer } = this;
-    const start = read ? pointer - expectedCount : pointer;
-    const context = data.slice(start - 5, start);
-    const missing = data
-      .slice(start, start + expectedCount)
-      .padEnd(expectedCount, "_");
-    console.warn(`${message}: ${context}[${missing}]`);
-  }
-
-  outOfBounds() {
-    return this.pointer >= this.data.length - 1;
-  }
+export function colourClosestMatch(palette: RGB[], colour: RGB): [number, number] {
+  const differences = palette.map((x, i) => [i, colourDifference(x, colour)]);
+  differences.sort((a, b) => a[1] - b[1]);
+  return differences[0] as [number, number];
 }
 
 export function expect<T extends EventTarget>(
@@ -459,16 +219,22 @@ export function expect<T extends EventTarget>(
   });
 }
 
-/**
- * Returns any of the most frequent elements of the array.
- */
-export function mostFrequent<T, A extends ArrayLike<T>>(array: A): T[] {
-  const occurences = new Map<T, number>();
+export function mostFrequent(array: string[]): string[] {
+  const occurences: Record<string, number> = {};
   Array.prototype.forEach.call(array, (item) => {
-    const occured = (occurences.get(item) ?? 0) + 1;
-    occurences.set(item, occured);
+    const occured = (occurences[item] ?? 0) + 1;
+    occurences[item] = occured;
   });
-  const entries = Array.from(occurences.entries());
+  const entries = Array.from(Object.entries(occurences));
   entries.sort(([_, o1], [__, o2]) => o2 - o1);
   return Array.from(entries).map(([item]) => item);
+}
+
+export function allOf<T>(array: (T | null | undefined)[]): T[] | null {
+  if (array.includes(null) || array.includes(undefined)) return null;
+  return array as T[];
+}
+
+export function wholeMatch(array: RegExpMatchArray) {
+  return array[0];
 }

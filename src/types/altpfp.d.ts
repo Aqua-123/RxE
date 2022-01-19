@@ -21,3 +21,12 @@ declare interface SamplingOptions {
     height: number;
     interpolator: ImageInterpolator;
 }
+
+declare type ColourSpaceType = "colour64" | "colour512";
+
+declare interface ColourSpace<T> {
+    map(colour: RGB): RGB,
+    serialize(colour: RGB): T,
+    deserialize(t: T): RGB | null,
+    digits: number
+}

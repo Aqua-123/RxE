@@ -1,123 +1,47 @@
 /* eslint-disable no-continue */
 /* eslint-disable max-classes-per-file */
 /* eslint-disable prettier/prettier */
-import {
-    canvasToImage,
-    expect,
-    mostFrequent,
-    memoize,
-    Tape,
-    timeout,
-    rgbToU8
-} from "~src/utils";
-import {
-    representColour,
-    ImageToken,
-    SizeSpecifier,
-    PalletteSpecifier,
-    PalletteSelection,
-    OffsetColour,
-    viewTokenList,
-    parseTape,
-    PALLETTE_LENGTH,
-    MAX_OFFSET,
-    PALLETTE_SELECTION_LENGTH
-} from "./format0tokens";
-import { sampleImage } from "./interpolation";
+import { memoize, imageFromData } from "~src/utils";
+import Tape from "~src/tape";
+import { Tokenizer } from "./format0tokenizer";
 
-function imageFromData(image: RGB[] | Map<number, RGB>, width: number, height: number, backgroundColour?: RGB): string {
-    const imageData = Array.from(image.entries())
-    return canvasToImage((canvas, context) => {
-        canvas.width = width;
-        canvas.height = height;
-        if (backgroundColour)
-            context.fillStyle = representColour(backgroundColour);
-        context.fillRect(0, 0, width, height);
-        imageData.forEach(([offset, colour]) => {
-            context.fillStyle = representColour(colour);
-            context.fillRect(offset % width, ~~(offset / height), 1, 1);
-        });
-    });
-}
+const MAX_SIZE_COMPRESSED = 2048;
 
-const LOG_SAMPLED_IMAGE = true;
+const LOG_SAMPLED_IMAGE = false;
+const LOG_TOKEN_LIST = false;
+const LOG_TOKENIZED_IMAGE = false;
+const LOG_SERIALIZED_IMAGE = false;
 
-export async function compress(url: string, options: SamplingOptions) {
-    const { width, height } = options;
-    const image = new Image();
-    await timeout(expect(image, "load", (img) => { img.src = url }), 5000);
-    const sampledImage = sampleImage(image, options);
-    if (sampledImage.length === 0) throw new Error("Error sampling image");
-    if (LOG_SAMPLED_IMAGE)
-        console.log("Sampled image: ", imageFromData(sampledImage, options.width, options.height));
-    const imageData = Uint8Array.from(sampledImage.map(rgbToU8));
-    const pallette = mostFrequent<number, Uint8Array>(imageData).slice(0, PALLETTE_LENGTH);
-    const backgroundColour = pallette[0];
-    let nextPixel = 0;
-    const tokens: ImageToken[] = [new SizeSpecifier(width, height), new PalletteSpecifier(pallette)];
-    for (let i = 0; i < imageData.length;) {
-        const offset = i - nextPixel;
-        const colour = imageData[i];
-        if (offset < MAX_OFFSET && colour === backgroundColour) {
-            i += 1;
-            continue;
-        }
-        if (offset === 0) {
-            const palletteSelection = PalletteSelection.tryMake(
-                imageData.slice(i, i + PALLETTE_SELECTION_LENGTH),
-                pallette
-            );
-            if (palletteSelection) {
-                tokens.push(palletteSelection);
-                i += PALLETTE_SELECTION_LENGTH;
-                nextPixel = i;
-                continue;
-            }
-        }
-        tokens.push(new OffsetColour(offset, colour));
-        i += 1;
-        nextPixel = i;
-    }
-
-    viewTokenList(tokens);
-    const compressed = tokens.map((token) => token.serialize()).join('');
-    if (compressed.length > 2048) {
-        console.warn(`attempted to produce string: ${compressed}`);
-        throw new Error("Resolution too big");
-    }
-    return compressed;
+function assertLengthLimit(compressed: string) {
+    if (compressed.length <= MAX_SIZE_COMPRESSED) return;
+    const { length } = compressed;
+    // lawful evil be like
+    // const { length } = compressed;
+    console.warn(`attempted to produce string (${length}): ${compressed}`);
+    throw new Error(`Resolution too big (result would be ${length} characters long)`);
 }
 
 export const unpack = memoize((compressed) => {
     const tape = new Tape(compressed);
-    const size = SizeSpecifier.fromTape(tape);
-    if (!size) {
-        tape.warnExpected('expected size specifier');
-        return null;
-    }
-    const palletteSpecifier = PalletteSpecifier.fromTape(tape);
-    if (!palletteSpecifier) {
-        tape.warnExpected('expected pallette specifier', PALLETTE_LENGTH);
-        return null;
-    }
-    const pallette = palletteSpecifier.completeRGBPallette;
-    const backgroundColour = pallette[0];
-    const tokens = parseTape(tape);
+    const metadata = Tokenizer.parseMetadata(tape);
+    if (!metadata) return null;
+    const tokens = Tokenizer.parseContent(tape);
     if (tokens === null) return null;
-    viewTokenList([size, palletteSpecifier, ...tokens]);
-    const image = new Map<number, RGB>();
-    let nextPixel = 0;
-    tokens.forEach((token) => {
-        if (token instanceof PalletteSelection) {
-            const colours = token.reify(pallette);
-            for (; colours.length > 0; nextPixel += 1)
-                image.set(nextPixel, colours.shift()!);
-        }
-        else if (token instanceof OffsetColour) {
-            nextPixel += token.offset;
-            image.set(nextPixel, token.getRGB())
-            nextPixel += 1;
-        }
-    });
-    return imageFromData(image, size.width, size.height, backgroundColour);
+    if (LOG_TOKEN_LIST) Tokenizer.viewTokenList([metadata.size, metadata.palette, ...tokens]);
+    return Tokenizer.writeImage(tokens, metadata);
 });
+
+export async function compress(image: Image, options: SamplingOptions) {
+    const { pixels, metadata } = Tokenizer.readImage(image, options);
+    const { width, height } = metadata.size;
+    if (LOG_SAMPLED_IMAGE) console.log("Sampled image: ", imageFromData(pixels.toImage(), width, height));
+    const metadataTokens = [metadata.size, metadata.palette];
+    const contentTokens = Tokenizer.fromPixels(pixels, metadata);
+    const tokens = [...metadataTokens, ...contentTokens];
+    if (LOG_TOKEN_LIST) Tokenizer.viewTokenList(tokens);
+    if (LOG_TOKENIZED_IMAGE) console.log("(Un)tokenized image: ", Tokenizer.writeImage(contentTokens, metadata));
+    const compressed = Tokenizer.serializeTokens(tokens);
+    if (LOG_SERIALIZED_IMAGE) console.log("(Un)serialized image: ", unpack(compressed));
+    assertLengthLimit(compressed);
+    return compressed;
+}
