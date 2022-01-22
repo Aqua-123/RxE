@@ -1,59 +1,73 @@
 import React from "react";
 import { P, Preferences } from "~src/preferences";
-import { loadCSS } from "~src/utils";
+import { accountAgeScaled as userExperience, existing, formatSignedAmount, loadCSS } from "~src/utils";
 import css from "./style.scss";
+
+function getRoomMember(userId: number) {
+  if (!('state' in RoomChannelMembersClient)) return undefined;
+  return existing(RoomChannelMembersClient.state.members)
+    .find((user) => user.id == userId);
+}
 
 export function initMessages() {
   loadCSS(css);
-  const mRender = Message.prototype.render;
-  Message.prototype.render = function render() {
-    const userId = this.props.data.user.id;
-    const user =
-      (RoomChannelMembersClient as RoomChannelMembers)?.state?.members.find(
-        (member) => member.id === userId
-      ) || this.props.data.user;
-    const tree = mRender.apply(this);
-    tree.props["data-id"] = user.id;
-    const messageRight = tree.props.children[1];
-    if (Preferences.get(P.imgProtect)) {
-      const { picture } = this.props.data;
-      if (picture && (user.temp || user.karma < 10)) {
-        const messageText = messageRight.props.children[1];
-        delete messageText.props.children;
-      }
-    }
-    if (Preferences.get(P.showInfo)) {
-      const karma = user._karma ?? user.karma;
-      const karmaAbbrev =
-        Math.abs(karma) >= 1000
-          ? `${(karma / 1000).toPrecision(3)}K`
-          : `${karma}`;
-      const karmaSigned = karma >= 0 ? `+${karmaAbbrev}` : `${karmaAbbrev}`;
-      const flair = messageRight.props.children[0];
-      const joinDate = new Date(user.created_at);
-      let accountAgeScale = Math.log(+new Date() - +joinDate + 1);
-      accountAgeScale = Math.min(accountAgeScale / Math.log(5e11), 1);
-      const joinColour = `hsl(${accountAgeScale * 256}, 50%, 50%)`;
-      flair.props.children.push(
-        <span className="user-extra">
-          {" "}
-          <b>({karmaSigned})</b>
-          {" / "}
-          <span
-            style={{ color: joinColour, textShadow: "0.01em 0.01em white" }}
-            title={`Joined: ${joinDate.toLocaleDateString()}`}
-          >
-            {$.timeago(joinDate)}
-          </span>
-          {user.master && !user.proxy && (
-            <b style={{ color: "#f00" }}> CALLAN </b>
-          )}
-          {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
-        </span>
-      );
-    }
-    return tree;
+  Message.prototype.content = function content() {
+    const { picture, messages, user } = this.props.data;
+    if (picture && (user?.temp || (user?.karma ?? 0) < 10)) return [];
+    if (picture)
+      return (
+        <MessagePicture picture={picture} />
+      )
+    return messages.map((text) =>
+      <div key={JSON.stringify(text)}>
+        {this.process(text)}
+      </div>
+    );
+  }
+}
+Message.prototype.render = function render() {
+  if (!this.props.data.user) console.warn('this.props.data.user may be falsy despite declaration')
+  const user = (getRoomMember(this.props.data.user.id) || this.props.data.user as EmeraldUser | null)
+  const flair = {
+    string: user?.display_name || "<empty name>",
+    flair: user?.flair ?? { color: '' }
   };
+  const karma = formatSignedAmount(user?._karma ?? user?._karma ?? 0);
+  const experience = user ? userExperience(user) : 0;
+  const timeago = user ? $.timeago(new Date(user.created_at)) : null;
+  const color = `hsl(${experience * 256}, 50%, 50%)`;
+  const textShadow = "0.005em 0.005em #FFF5";
+  return (
+    <div className="room-component-message-container" data-id={user?.id}>
+      <div className="room-component-message-left">
+        <img
+          className='room-component-message-avatar'
+          src={user?.display_picture}
+          onMouseDown={(event) => user && UserViewGenerator.generate({ event, user })}
+        />
+      </div>
+      <div className="room-component-message-right">
+        <div className="room-component-flair">
+          <Flair data={flair} />
+        </div>
+        <Badge badge={user?.badge ?? null} />
+        {Preferences.get(P.showInfo) && !!user &&
+          <span className="user-extra">
+            <b>({karma})</b>
+            {" / "}
+            <span style={{ color, textShadow }}>{timeago!}</span>
+            {user.master && !user.proxy && (
+              <b style={{ color: "#f00" }}> CALLAN </b>
+            )}
+            {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
+          </span>
+        }
+        <div className="room-component-message-text">
+          {this.content()}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /**

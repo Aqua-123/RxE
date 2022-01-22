@@ -4,6 +4,7 @@ import tickSVG from "./tick.svg";
 // 1. replace /badges/tick.svg broken images with a data: tickSVG URI
 // 2. do something cool with other broken images somehow.
 
+
 export function renderBrokenImages() {
   const goldImages = document.querySelectorAll('img[src*="/badges/tick.svg"]');
   goldImages.forEach((img) => {
@@ -20,9 +21,13 @@ export function renderBrokenImages() {
       "https://static.emeraldchat.com/uploads/picture/image/9675465/avicons_strict.png";
   });
   // basic remediation against broken images since AWS cut Callan off.
+
+  /*
   Array.from(document.images).forEach((img) => {
     if (!img.onerror) {
       img.onerror = async () => {
+        if (img.src.startsWith('https://robohash.org/'))
+          return;
         const hash = await getHash(img.src);
         img.src = `https://robohash.org/${hash}.png?set=set4`;
       };
@@ -31,4 +36,5 @@ export function renderBrokenImages() {
       img.onerror("");
     }
   });
+  */
 }

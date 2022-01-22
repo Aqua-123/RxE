@@ -75,7 +75,7 @@ export function initAntiSpam() {
       } else {
         if (
           !RoomChannelMembersClient.state.members.some(
-            (m) => m.id === e.user.id
+            (oldMember) => oldMember && oldMember.id === e.user.id
           )
         ) {
           printTransientMessage(`User ${e.user.display_name} joined the chat.`);

@@ -219,8 +219,24 @@ declare class UserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;
 }
 
+declare type UserBadge = {
+  name: string
+}
+
+declare type DetailedUserBadge = {
+  name: string,
+  html: JSX.Element
+}
+
+declare type EmptyUserBadge = {
+  name?: string,
+  html: null
+}
+
+declare type BadgeStore = DetailedUserBadge[];
+
 declare type EmeraldUser = {
-  badge: null;
+  badge: UserBadge | null;
   badges: string[];
   bio: string;
   created_at: string;
@@ -364,7 +380,7 @@ declare const RoomChannelSelectClient: RoomChannelSelect;
 
 declare class RoomChannelMembers extends React.Component<
   any,
-  { members: EmeraldUser[] }
+  { members: (EmeraldUser | null)[] }
 > {
   add_member(e: EmeraldUser): void;
   remove_member(e: EmeraldUser): void;
@@ -389,7 +405,7 @@ declare class RoomPrivate extends React.Component<
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
   content(): JSX.Element | JSX.Element[];
-  process(text: string): JSX.Element | string;
+  process(text: string): JSX.Element | (JSX.Element | string)[] | string;
 }
 
 declare class MenuMicro extends React.Component {
@@ -538,3 +554,12 @@ declare class Flair extends React.Component<FlairProps> { }
 declare class MessagePicture extends React.Component<{
   picture: EmeraldPicture
 }> { open_picture(): void; }
+
+
+
+declare class Badge extends React.Component<
+  { key?: number, badge: UserBadge | null },
+  { badge: EmptyUserBadge | DetailedUserBadge | null }
+> {
+  badges: DetailedUserBadge[]
+}

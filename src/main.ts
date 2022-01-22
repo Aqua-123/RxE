@@ -34,7 +34,8 @@ import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 import * as altpfp from "./modules/altpfp";
 import * as blockreqs from "./modules/blockreqs";
-import * as highlightMentions from "./modules/highlightmentions";
+import * as highlightMentions from "./modules/highlightmentions/index";
+import * as messageLinks from "./modules/messagelinks"
 
 async function init() {
   const featureSet = `(${[
@@ -88,6 +89,7 @@ async function init() {
 
   altpfp.init();
   highlightMentions.init();
+  messageLinks.init();
   // start our script's rendering loop
   render([
     reorderMenu,

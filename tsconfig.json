@@ -15,5 +15,10 @@
     "lib": ["esnext", "dom"],
     "jsx": "react"
   },
-  "include": ["./src/*.d.ts", "./src/**/*.tsx", "./src/**/*.ts"]
+  "include": [
+    "./src/*.d.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.ts",
+    "./src/types/*.d.ts"
+  ]
 }

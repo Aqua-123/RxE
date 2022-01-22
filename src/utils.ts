@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
 import React from "react";
+import { string } from "yargs";
 
 const { max, min } = Math;
 
@@ -262,6 +263,11 @@ export function allOf<T>(array: (T | null | undefined)[]): T[] | null {
   return array as T[];
 }
 
+export function existing<T>(array: (T | null | undefined)[] | null | undefined): T[] {
+  if (array === null || array === undefined) return [];
+  return array.filter((item) => item !== undefined && item !== null) as T[];
+}
+
 export function wholeMatch(array: RegExpMatchArray) {
   return array[0];
 }
@@ -298,20 +304,111 @@ export function allStringMatches(string: string, substring: string, caseSensitiv
   return matches;
 }
 
-export function wrapStringMatches<T>(string: string, substring: string,
-  wrapper: (match: string) => T, caseSensitive = false): Array<T | string> {
-  const matches = allStringMatches(string, substring, caseSensitive);
+type StringWrapper<T> = (match: string) => null | T | T[];
+
+export function wrapAlternating<S, T>(
+  strings: string[], wrapper1: StringWrapper<S>, wrapper2: StringWrapper<T>
+): (T | S)[] {
+  let wrapFirst = false;
+  return strings.flatMap((string) => {
+    wrapFirst = !wrapFirst;
+    const wrapped = wrapFirst ? wrapper1(string) : wrapper2(string);
+    if (wrapped === null) return [];
+    return wrapped instanceof Array ? wrapped : [wrapped];
+  });
+}
+
+type PartitionMatches = [number, number][] | number[];
+
+function extractPartitions(string: string, matches: [number, number][]): string[];
+function extractPartitions(string: string, matches: number[], length: number): string[];
+
+function extractPartitions(string: string, matches: PartitionMatches, length?: number): string[] {
   if (matches.length === 0) return [string];
+  const indices: (number | undefined)[] = matches.flatMap((item) => {
+    if (typeof item === "number") {
+      if (length === undefined)
+        throw new Error("Length must not be undefined if matches is of type number[]");
+      return [item, item + length]
+    }
+    const [index, len] = item;
+    return [index, index + len];
+  });
+  indices.push(undefined);
+  const partitions = indices.map((index, count, { [count - 1]: last }) => string.slice(last ?? 0, index));
+  return partitions;
+}
+
+export function wrapMatches<S>(string: string, regexp: RegExp, wrapper: StringWrapper<S>) {
+  return wrapPartitions(string, regexp, wrapper, (text) => text);
+}
+
+export function wrapPartitions<S, T>(
+  string: string, regexp: RegExp,
+  wrapper: StringWrapper<S>, restwrapper: StringWrapper<T>
+): (S | T)[] {
+  const matches = Array.from(string.matchAll(regexp))
+    .map((match) => {
+      if (match.index === undefined)
+        throw new Error("So TypeScript really was right about match.index");
+      return [match.index, match[0].length] as [number, number];
+    });
+  const partitions = extractPartitions(string, matches);
+  return wrapAlternating(partitions, restwrapper, wrapper);
+}
+
+export function wrapStringMatches<T>(string: string, substring: string,
+  wrapper: (match: string) => T, caseSensitive = false) {
+  return wrapStringPartitions(string, substring, wrapper, (text) => text, caseSensitive);
+}
+
+export function wrapStringPartitions<S, T>(string: string, substring: string,
+  wrapper: StringWrapper<T>, restwrapper: StringWrapper<S>, caseSensitive = false): Array<S | T> {
+  const matches = allStringMatches(string, substring, caseSensitive);
   const subsLength = Math.max(substring.length, 1);
-  return matches.flatMap((index, matchno, { length, [matchno - 1]: last }) => {
-    const lastSliceEnd = last === undefined ? 0 : last + subsLength;
-    const slices = [
-      string.slice(lastSliceEnd, index),
-      wrapper(string.slice(index, index + subsLength))
-    ];
-    if (matchno === length - 1) slices.push(
-      string.slice(index + subsLength)
-    );
-    return slices;
-  })
+  const partitions = extractPartitions(string, matches, subsLength);
+  return wrapAlternating(partitions, restwrapper, wrapper);
+}
+
+export namespace sorters {
+  export const string: Sorter<string> =
+    (a, b) => a.localeCompare(b);
+  export const numeric: Sorter<number> =
+    (a, b) => a - b;
+}
+
+export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
+  return (a, b) => func(b, a);
+}
+
+export const equals = <T>(a: T, b: T) => a === b;
+
+export const equalsTo = <T>(a: T) => (b: T) => a === b;
+
+export function bothFrom<T, KT, K extends KeysOfType<T, KT>, R>(propName: K, func: TwoToOne<KT, R>): TwoToOne<T, R> {
+  return (a, b) => func(a[propName] as unknown as KT, b[propName] as unknown as KT);
+}
+
+export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inSitu = false) {
+  const items = inSitu ? array : Array.from(array);
+  const sorterOrdered = order === 'asc' ? sorter : swap(sorter);
+  items.sort(sorterOrdered);
+  return items;
+}
+
+export function sortBy<T, KT, K extends KeysOfType<T, KT>>(array: T[], key: K, sorter: Sorter<KT>, order: SortOrder, inSitu = false) {
+  return sortWith(array, bothFrom(key, sorter), order, inSitu);
+}
+
+export function formatSignedAmount(amount: number) {
+  const abbrev =
+    Math.abs(amount) >= 1000
+      ? `${(amount / 1000).toPrecision(3)}K`
+      : `${amount}`;
+  return amount >= 0 ? `+${abbrev}` : `${abbrev}`;
+}
+
+export function accountAgeScaled(user: EmeraldUser) {
+  const ageLog = Math.log(+new Date() - +new Date(user.created_at) + 1);
+  return Math.min(ageLog / Math.log(5e11), 1);
 }

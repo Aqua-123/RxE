@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import RitsuDialog from "~src/components/RitsuDialog";
 import { crel } from "~src/utils";
-import { ListPreferenceMap, P, Preferences } from "~src/preferences";
+import { P, Preferences } from "~src/preferences";
 import { initTheme, Theme } from "~src/themes";
 
 export function getSettings() {

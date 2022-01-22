@@ -50,7 +50,10 @@ export function decorateHeader() {
   const iconsHolder = document.querySelector(".navigation-notification-icons");
   if (
     document.fullscreenEnabled &&
-    iconsHolder?.firstChild?.textContent?.indexOf("full") === -1
+    iconsHolder?.children &&
+    Array.from(iconsHolder?.children).some((child) =>
+      child?.textContent?.includes("full")
+    )
   ) {
     const fullscreenIcon = crel("span", {
       className: "material-icons navigation-notification-unit",

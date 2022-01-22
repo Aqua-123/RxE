@@ -1,7 +1,22 @@
+.room-component-message-right {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.user-badge-container {
+  align-self: center;
+}
+
+.user-badge-tick {
+  display: flex;
+  position: static;
+}
+
 .room-component-flair {
-  white-space: nowrap;
+  max-width: 100%;
 }
 
 .user-extra {
-  padding-left: 0em;
+  padding: 0 0.5em;
 }

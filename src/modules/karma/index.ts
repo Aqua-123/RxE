@@ -50,7 +50,10 @@ function karmaOverrides() {
     if (e && "members" in e) {
       // foreach new member, find a previous member if present, compare karma.
       e.members.forEach((member) => {
-        const oldMember = this.state.members.find((m) => m.id === member.id);
+        if (!member) return;
+        const oldMember = this.state.members.find(
+          (memberOld) => memberOld && memberOld.id === member.id
+        );
         member.delta = oldMember ? member.karma - oldMember.karma : 0;
       });
     }
@@ -112,7 +115,7 @@ function updateUserRoomCount() {
           if (currentChannel) {
             const newMembers = [...RoomChannelMembersClient.state.members];
             currentChannel.members.forEach((member) => {
-              const idx = newMembers.findIndex((m) => m.id === member.id);
+              const idx = newMembers.findIndex((m) => m && m.id === member.id);
               if (idx > -1) {
                 newMembers[idx] = member;
               } else {
