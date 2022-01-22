@@ -339,6 +339,8 @@ declare class Room extends React.Component {
   load_messages(r: number): void;
   start_typing(e: EmeraldUser): void;
   stop_typing(): void;
+  send(message: string): void;
+  process?: (message: string) => string | null;
 }
 
 declare type EmeraldChannel = {

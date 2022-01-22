@@ -35,7 +35,8 @@ import { initLoadMore } from "./modules/fixloadmore";
 import * as altpfp from "./modules/altpfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/highlightmentions/index";
-import * as messageLinks from "./modules/messagelinks"
+import * as messageLinks from "./modules/messagelinks";
+import * as onbeforesend from "./modules/onbeforesend";
 
 async function init() {
   const featureSet = `(${[
@@ -90,6 +91,8 @@ async function init() {
   altpfp.init();
   highlightMentions.init();
   messageLinks.init();
+  onbeforesend.init();
+
   // start our script's rendering loop
   render([
     reorderMenu,

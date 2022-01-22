@@ -27,12 +27,12 @@ export function initMessages() {
 }
 Message.prototype.render = function render() {
   if (!this.props.data.user) console.warn('this.props.data.user may be falsy despite declaration')
-  const user = (getRoomMember(this.props.data.user.id) || this.props.data.user as EmeraldUser | null)
+  const user = (getRoomMember(this.props.data.user.id) || this.props.data.user) as EmeraldUser | null
   const flair = {
     string: user?.display_name || "<empty name>",
     flair: user?.flair ?? { color: '' }
   };
-  const karma = formatSignedAmount(user?._karma ?? user?._karma ?? 0);
+  const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
   const experience = user ? userExperience(user) : 0;
   const timeago = user ? $.timeago(new Date(user.created_at)) : null;
   const color = `hsl(${experience * 256}, 50%, 50%)`;
