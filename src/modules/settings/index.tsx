@@ -60,8 +60,14 @@ export function openSettings() {
 
 export function injectRitsuMenu() {
   const ritsuMenu = document.querySelector(".navigation-dropdown-ritsu");
-  if (!ritsuMenu) {
-    document.querySelector(".navigation-dropdown-content")?.prepend(
+  const dropdownContent = document.querySelector(".navigation-dropdown-content");
+  if (!ritsuMenu && dropdownContent) {
+    /* i give up
+    const settingsButton = dropdownContent.parentElement?.children[0]
+    if (settingsButton instanceof HTMLElement)
+      settingsButton.style.color = "var(--ritsu-menu-fg-color)";
+      */
+    dropdownContent.prepend(
       crel("li", {
         className: "navigation-dropdown-ritsu",
         textContent: "Ritsu Menu",
