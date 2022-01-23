@@ -7,6 +7,7 @@ import T from "~src/text";
 import styles from "./style.module.scss";
 import { updateMutes } from "~src/modules/permamute";
 import RadioSetting from "./RadioSetting";
+import ListSetting from "./ListSetting";
 
 const mutes_format = /^\{(\s*\d+\s*:\s*"[^"]*"\s*,\s*)*(\s*\d+\s*:\s*"[^"]*"\s*)?\}$/;
 
@@ -111,6 +112,17 @@ export default function Settings(this: any, props: SettingsProps) {
           applySettings({ permaMuteList: mute_list });
           return true;
         }}
+      />
+      <ListSetting
+        id="permaMuteList"
+        value={permaMuteList}
+        removeItem={([id], items) => items.filter(item => item[0] !== id)}
+        renderItem={([id, name]) =>
+          <span
+            onClick={(event) => UserViewGenerator.generate({ event, user: { id: id, karma: 0 } })}
+            className="ritsu-permamutelist-user-name">{name}</span>
+        }
+        onChange={(items) => applySettings({ permaMuteList: items })}
       />
     </div>
   );

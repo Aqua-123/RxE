@@ -458,3 +458,5 @@ export function pairwise<S, T, R>(func: (s: S, t: T) => R) {
 }
 
 export const percent = (fraction: number) => `${(Number.isNaN(fraction) ? 0 : fraction * 100).toPrecision(3)}%`;
+
+export const without = <T>(item: T, array: T[]) => array.filter((arrayItem) => arrayItem !== item);
