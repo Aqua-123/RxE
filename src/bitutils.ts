@@ -1,4 +1,4 @@
-import { b64Set, clamp } from "./utils";
+import { allOf, b64Set, clamp, tagSet } from "./utils";
 
 const { max, ceil, log2 } = Math;
 
@@ -32,6 +32,11 @@ export function bitJoin(numbers: number[] | Uint8Array, relevantBits: number) {
 export function u8toB64(u8: number) {
   if (u8 < 0 || u8 > 63) throw new RangeError("u8 has to be from 0 to 63");
   return b64Set[u8];
+}
+
+export function u8toB64i(u8: number) {
+  if (u8 < 0 || u8 > 63) throw new RangeError("u8 has to be from 0 to 63");
+  return tagSet[u8];
 }
 
 export function numToB64(num: number, digits?: number) {
@@ -108,11 +113,12 @@ export class GroupedBits {
     const maskMaxLast = 1 << (this.lastBits - 1);
     let shiftedValue: 0 | 1 = this.last & maskMaxLast ? 1 : 0;
     this.last -= shiftedValue ? maskMaxLast : 0;
+    const beforeLast = this.length - 2;
     if (this.lastBits === 1) {
       this._numbers.pop();
       this.lastBits = this.numberBits;
     } else this.lastBits -= 1;
-    for (let i = this.length - 2; i >= 0; i -= 1) {
+    for (let i = beforeLast; i >= 0; i -= 1) {
       this._numbers[i] <<= 1;
       this._numbers[i] += shiftedValue;
       shiftedValue = maskOverflow & this._numbers[i] ? 1 : 0;
@@ -121,9 +127,13 @@ export class GroupedBits {
     return shiftedValue;
   }
 
+  get numBits() {
+    return (this.length - 1) * this.numberBits + this.lastBits;
+  }
+
   shiftBits(numBits: number): number | undefined {
     const bits: Array<0 | 1> = [];
-    if (this.length < numBits) return undefined;
+    if (this.numBits < numBits) return undefined;
     for (let i = 0; i < numBits; i += 1) bits.push(this.shift()!);
     return bitJoin(bits, 1);
   }
@@ -215,19 +225,25 @@ export function bitsRegroup(
 
 export function b64toU8(b64char: string | undefined | null) {
   if (!b64char) return null;
-  const index = b64Set.indexOf(b64char);
-  if (index === -1) return null;
-  return index;
+  const index = tagSet.indexOf(b64char)
+  if (index != -1) return index;
+  const index2 = b64Set.indexOf(b64char);
+  if (index2 != -1) return index2;
+  return null;
 }
 
 export function b64toU8Array(b64: string) {
-  const array = Array.from(b64).map(b64toU8);
-  if (array.includes(null)) return null;
-  return new Uint8Array(array as number[]);
+  const array = allOf(b64.split('').map(b64toU8));
+  if (!array) return null;
+  return new Uint8Array(array);
 }
 
 export function u8ArrayToB64(u8s: number[] | Uint8Array): string {
   return Array.from(u8s).map(u8toB64).join("");
+}
+
+export function u8ArrayToB64i(u8s: number[] | Uint8Array): string {
+  return Array.from(u8s).map(u8toB64i).join("");
 }
 
 export function u8toRGB(u8: number): RGB {
@@ -258,4 +274,8 @@ export function rgbToU8(colour: RGB): number {
 
 export function rgbToB64(colour: RGB): string {
   return u8toB64(rgbToU8(colour));
+}
+
+export function rgbToB64i(colour: RGB): string {
+  return u8toB64i(rgbToU8(colour));
 }

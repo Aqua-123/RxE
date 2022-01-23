@@ -13,8 +13,8 @@ interface ImageFormat {
     compress(image: Image, options: SamplingOptions): Promise<string>;
 }
 
-const BIO_IMAGE = /rxe-pfp:([A-Za-z0-9+/=]+)/g;
-const makeBioImage = (compressed: string) => `rxe-pfp:${compressed}`;
+const BIO_IMAGE = /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
+const makeBioImage = (compressed: string) => `[rxe-pfp:${compressed}]`;
 
 function extractBioImage(bio: string): string | null {
     return Array.from(bio.matchAll(BIO_IMAGE))
@@ -203,7 +203,6 @@ function profile_picture(this: UserProfile) {
 }
 
 
-
 export function init() {
     // eslint-disable-next-line camelcase
     UserProfile.prototype.profile_picture = profile_picture;
@@ -223,35 +222,4 @@ export function init() {
             this.state.user.display_picture = getDisplayPicture(App.user);
         else console.warn('App.user.bio is undefined');
     })
-
-    // todo (prototype)
-    UserProfile.prototype.update_profile_picture =
-        // eslint-disable-next-line camelcase
-        function update_profile_picture() {
-            const p = prompt;
-            const a = alert;
-            const png = p("Enter image url:", "data:image/png;base64,");
-            if (!png) return;
-            const size = p("Enter size (8x8 to 64x64)", "8x8")?.split(/\s*x\s*/g);
-            if (!size) return;
-            if (size.length !== 2) {
-                a(`Dimension must be two values: ${size}`);
-                return;
-            }
-            const [width, height] = size.map((dim) => parseInt(dim, 10));
-            if (Number.isNaN(width) || Number.isNaN(height)) {
-                a('Not a number');
-                return;
-            }
-            const options = { width, height, interpolator: interpolation.none };
-            const promise = compressImage(png, "0", options)
-                ?.then((image) => saveBioImage(this.state.data.user, image))
-                ?.catch((error) => {
-                    if (error instanceof Error) a(`${error.message}\n(See console for trace)`)
-                    else a(error);
-                    throw error;
-                }
-                );
-            if (!promise) a('got null');
-        };
 }

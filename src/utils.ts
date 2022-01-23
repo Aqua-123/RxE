@@ -122,10 +122,13 @@ export function setDiff<T>(set1: Set<T>, set2: Set<T>) {
 export const b64Set =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 // abuse of https://en.wikipedia.org/wiki/Tags_(Unicode_block)
-const tagSet = Array.from({ length: 65 }, (_, i) =>
+export const tagSet = Array.from({ length: 65 }, (_, i) =>
   String.fromCodePoint(i + 0xe0020)
 ).join("");
 
+/**
+ * @deprecated
+ */
 export function encodeInvisible(urlPath: string) {
   const str = btoa(urlPath);
   let out = "";
@@ -137,6 +140,9 @@ export function encodeInvisible(urlPath: string) {
   return out;
 }
 
+/**
+ * @deprecated
+ */
 export function decodeInvisible(str: string) {
   let b64 = "";
   for (let pos = 1; pos < str.length; pos += 2) {
@@ -162,17 +168,21 @@ export function representColour(colour: RGB): string {
   return `#${colour.map((comp) => comp.toString(16).padStart(2, '0')).join('')}`;
 }
 
-export function imageFromData(image: RGB[] | Map<number, RGB>, width: number, height: number, backgroundColour?: RGB): string {
+export function imageFromData(
+  image: RGB[] | Map<number, RGB>, width: number, height: number,
+  backgroundColour?: RGB, scale = 1): string {
   const imageData = Array.from(image.entries())
   return canvasToImage((canvas, context) => {
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = scale * width;
+    canvas.height = scale * height;
     if (backgroundColour)
       context.fillStyle = representColour(backgroundColour);
-    context.fillRect(0, 0, width, height);
+    context.fillRect(0, 0, scale * width, scale * height);
     imageData.forEach(([offset, colour]) => {
       context.fillStyle = representColour(colour);
-      context.fillRect(offset % width, ~~(offset / height), 1, 1);
+      context.fillRect(
+        scale * (offset % width), scale * ~~(offset / height), scale, scale
+      );
     });
   });
 }
@@ -247,15 +257,15 @@ export function median(array: number[]) {
   return numbers[~~(length / 2)];
 }
 
-export function mostFrequent(array: string[]): string[] {
+export function getFrequencies(array: string[]): [string, number][] {
   const occurences: Record<string, number> = {};
   Array.prototype.forEach.call(array, (item) => {
     const occured = (occurences[item] ?? 0) + 1;
     occurences[item] = occured;
   });
   const entries = Array.from(Object.entries(occurences));
-  entries.sort(([_, o1], [__, o2]) => o2 - o1);
-  return Array.from(entries).map(([item]) => item);
+  sortBy(entries, '1', sorters.numeric, 'desc', true);
+  return Array.from(entries);
 }
 
 export function allOf<T>(array: (T | null | undefined)[]): T[] | null {
@@ -385,8 +395,12 @@ export const equals = <T>(a: T, b: T) => a === b;
 
 export const equalsTo = <T>(a: T) => (b: T) => a === b;
 
-export function bothFrom<T, KT, K extends KeysOfType<T, KT>, R>(propName: K, func: TwoToOne<KT, R>): TwoToOne<T, R> {
-  return (a, b) => func(a[propName] as unknown as KT, b[propName] as unknown as KT);
+export function extractBoth<S, T, V>(extract: (s: S) => T, pair: (t1: T, t2: T) => V): (s1: S, s2: S) => V {
+  return (s1, s2) => pair(extract(s1), extract(s2));
+}
+
+export function sortingOn<T, V, K extends KeysOfType<T, V>, R>(propName: K, func: TwoToOne<V, R>): TwoToOne<T, R> {
+  return (a, b) => func(a[propName] as unknown as V, b[propName] as unknown as V);
 }
 
 export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inSitu = false) {
@@ -396,8 +410,8 @@ export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inS
   return items;
 }
 
-export function sortBy<T, KT, K extends KeysOfType<T, KT>>(array: T[], key: K, sorter: Sorter<KT>, order: SortOrder, inSitu = false) {
-  return sortWith(array, bothFrom(key, sorter), order, inSitu);
+export function sortBy<T, V, K extends KeysOfType<T, V>>(array: T[], key: K, sorter: Sorter<V>, order: SortOrder, inSitu = false) {
+  return sortWith(array, sortingOn(key, sorter), order, inSitu);
 }
 
 export function formatSignedAmount(amount: number) {
@@ -412,3 +426,35 @@ export function accountAgeScaled(user: EmeraldUser) {
   const ageLog = Math.log(+new Date() - +new Date(user.created_at) + 1);
   return Math.min(ageLog / Math.log(5e11), 1);
 }
+
+export function mapValues<K extends string | number | symbol, V, V2>(
+  dict: Record<K, V>, func: (k: K, v: V) => V2
+): Record<K, V2> {
+  const keys = Object.getOwnPropertyNames(dict) as K[];
+  const entries = keys.map((key) => [key, func(key, dict[key])] as [K, V2]);
+  return Object.fromEntries(entries) as Record<K, V2>;
+}
+
+export function choosePairs<T>(array: T[]): [T, T][] {
+  const pairs: [T, T][] = [];
+  for (let i = 0; i < array.length; i++)
+    for (let j = i + 1; j < array.length; j++)
+      pairs.push(([array[i], array[j]]));
+  return pairs;
+}
+
+export function sum(array: number[]) {
+  return array.reduce((a, b) => a + b, 0);
+}
+
+export const multiply = (a: number, b: number) => a * b;
+
+export function product(array: number[]) {
+  return array.reduce(multiply, 1);
+}
+
+export function pairwise<S, T, R>(func: (s: S, t: T) => R) {
+  return ([s, t]: [S, T]) => func(s, t);
+}
+
+export const percent = (fraction: number) => `${(Number.isNaN(fraction) ? 0 : fraction * 100).toPrecision(3)}%`;

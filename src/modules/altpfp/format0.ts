@@ -16,9 +16,7 @@ const LOG_SERIALIZED_IMAGE = false;
 function assertLengthLimit(compressed: string) {
     if (compressed.length <= MAX_SIZE_COMPRESSED) return;
     const { length } = compressed;
-    // lawful evil be like
-    // const { length } = compressed;
-    console.warn(`attempted to produce string (${length}): ${compressed}`);
+    console.warn(`attempted to produce string (${length}): ${{ compressed }}`);
     throw new Error(`Resolution too big (result would be ${length} characters long)`);
 }
 
@@ -40,9 +38,12 @@ export async function compress(image: Image, options: SamplingOptions) {
     const contentTokens = Tokenizer.fromPixels(pixels, metadata);
     const tokens = [...metadataTokens, ...contentTokens];
     if (LOG_TOKEN_LIST) Tokenizer.viewTokenList(tokens);
-    if (LOG_TOKENIZED_IMAGE) console.log("(Un)tokenized image: ", Tokenizer.writeImage(contentTokens, metadata));
+    if (LOG_TOKENIZED_IMAGE) browserWindow.open(Tokenizer.writeImage(contentTokens, metadata));
     const compressed = Tokenizer.serializeTokens(tokens);
-    if (LOG_SERIALIZED_IMAGE) console.log("(Un)serialized image: ", unpack(compressed));
+    if (LOG_SERIALIZED_IMAGE) {
+        const unpacked = unpack(compressed);
+        if (unpacked) browserWindow.open(unpacked);
+    }
     assertLengthLimit(compressed);
     return compressed;
 }

@@ -13,7 +13,7 @@ interface ObjectConstructor {
 }
 
 type AnyFunction = (...a: any[]) => any;
-type KeysOfType<T, KT> = { [K in keyof T]: T[K] extends KT ? K : never }[keyof T];
+type KeysOfType<T, V> = { [K in keyof T]: T[K] extends V ? K : never }[keyof T];
 type FunctionKeys<T> = KeysOfType<T, AnyFunction>;
 type ParametersQ<T> = T extends AnyFunction ? Parameters<T> : any[];
 type ReplaceThis<T extends AnyFunction, ThisType> = (this: ThisType, ...a: Parameters<T>) => ReturnType<T>;
@@ -27,3 +27,5 @@ type MethodWrapper<T, K extends FunctionKeys<T>> = ReplaceMethodReturn<T, K, boo
 type TwoToOne<T, R> = (a: T, b: T) => R;
 type Sorter<T> = TwoToOne<T, number>;
 type SortOrder = 'asc' | 'desc';
+
+type Arg0<T extends AnyFunction> = T extends (arg0: infer U) => any ? U : never;

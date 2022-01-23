@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { colourClosestMatch, colourDifference, imageFromData, median, mostFrequent } from "~src/utils";
-import { b64toU8 } from "~src/bitutils";
+import { colourClosestMatch, colourDifference, imageFromData, median, getFrequencies, sorters, percent, choosePairs, pairwise, sortWith, extractBoth } from "~src/utils";
+import { b64toU8, b64toU8Array, u8toB64 } from "~src/bitutils";
 import Tape from "~src/tape";
 import { PixelPlacer, PixelReader } from "./pixelBuffer";
 import {
@@ -11,7 +11,10 @@ import {
     ImageContentToken,
     PaletteSelection,
     OffsetColour,
-    MAX_BACKGROUND_APPROXIMATION
+    MAX_BACKGROUND_APPROXIMATION,
+    OffsetColourLong,
+    OffsetColourAbstract,
+    PaletteSelectionShort
 } from "./format0tokens";
 import { colourSpaces, sampleImage } from "./interpolation";
 
@@ -21,7 +24,8 @@ export class Tokenizer {
         metadata: ImageMetadata
     ): ImageContentToken | null {
         const palette = metadata.palette.completePalette;
-        if (pixels.offset < OffsetColour.maxOffset) {
+        if (pixels.offset < OffsetColourLong.maxOffset) {
+            // if (pixels.offset < OffsetColour.maxOffset) {
             const peek = pixels.peekOne();
             if (peek && colourDifference(peek, palette[0]) < MAX_BACKGROUND_APPROXIMATION) {
                 pixels.skip();
@@ -29,15 +33,25 @@ export class Tokenizer {
             }
             pixels.backtrack();
         }
-        else return OffsetColour.fromPixelBuffer(pixels);
+        else return OffsetColourLong.fromPixelBuffer(pixels);
+        // else return OffsetColour.fromPixelBuffer(pixels);
         return (
-            PaletteSelection.fromPixelBuffer(pixels, metadata) ??
-            OffsetColour.fromPixelBuffer(pixels)
+            PaletteSelection.fromPixelBuffer(pixels, metadata)
+            ?? PaletteSelectionShort.fromPixelBuffer(pixels, metadata)
+            ?? (
+                // OffsetColour.fromPixelBuffer(pixels)
+                pixels.offset >= OffsetColour.maxOffset ?
+                    OffsetColourLong.fromPixelBuffer(pixels) :
+                    OffsetColour.fromPixelBuffer(pixels)
+            )
         );
     }
 
     static serializeTokens(tokens: ImageToken[]) {
-        return tokens.map((token) => token.serialize()).join("");
+        console.time('serializeTokens()')
+        const tokensSerialized = tokens.map((token) => token.serialize()).join("");
+        console.timeEnd('serializeTokens()')
+        return tokensSerialized;
     }
 
     static viewTokenList(tokens: ImageToken[]) {
@@ -54,20 +68,46 @@ export class Tokenizer {
     }
 
     static readImage(image: Image, options: SamplingOptions) {
+        console.time('readImage()')
         const size = new SizeSpecifier(options.width, options.height);
         const { width, height } = size;
         Object.assign(options, { width, height });
         const sampledImage = sampleImage(image, options).map(colourSpaces.colour512.map);
         if (sampledImage.length === 0) throw new Error("Error sampling image");
-        const serializedPixels = sampledImage.map(colourSpaces.colour512.serialize);
-        const paletteRGB = mostFrequent(serializedPixels)
-            .slice(0, PaletteSpecifier.expectedLength)
-            .map(colourSpaces.colour512.deserialize) as RGB[];
+        const serializedPixels: string[] = sampledImage.map(colourSpaces.colour512.serialize)
+            .map((colour) => colour.map(u8toB64).join(""));
+        const paletteRGB = Tokenizer.selectPalette(serializedPixels);
         const palette = PaletteSpecifier.fromRGB(paletteRGB);
-        return {
+        const readImage = {
             pixels: PixelReader.fromImage(sampledImage),
             metadata: { size, palette } as ImageMetadata
+        };
+        console.timeEnd('readImage()');
+        return readImage;
+    }
+
+    static selectPalette(image: string[]): RGB[] {
+        const colourSpace = colourSpaces.colour512;
+        const palette: RGB[] = [];
+        let frequencies = getFrequencies(image).map(([colour, frequency]) => [colour, frequency, 1] as [string, number, number]);
+        while (palette.length < PaletteSpecifier.expectedLength
+            && frequencies.length > 0) {
+            const newColour = Array.from(b64toU8Array(frequencies.shift()![0])!);
+            palette.push(colourSpace.deserialize(newColour as any)!);
+            frequencies = frequencies.map(([colour, frequency]) => {
+                const rgb = colourSpace.deserialize(Array.from(b64toU8Array(colour)!) as ReturnType<typeof colourSpace.serialize>)!;
+                const distance = palette.map((c) => colourDifference(c, rgb))
+                    .reduce((a, b) => a + b, 0) / palette.length;
+                return [colour, frequency, distance];
+            })
+            sortWith(frequencies,
+                extractBoth(([_, freq, dist]) => freq * dist, sorters.numeric),
+                'desc',
+                true
+            );
+            // sortBy(frequencies, '1', sorters.numeric, 'desc', true);
         }
+        return palette;
     }
 
     static writeImage(tokens: ImageContentToken[], metadata: ImageMetadata): string {
@@ -75,45 +115,67 @@ export class Tokenizer {
         const buffer = new PixelPlacer(metadata.size.dataSize);
         tokens.forEach((token) => token.toPixelBuffer(buffer, metadata));
         const image = buffer.toImage();
-        return imageFromData(image, size.width, size.height, palette.completePalette[0]);
+        return imageFromData(image, size.width, size.height, palette.completePalette[0], 4);
     }
 
     static fromPixels(
         pixels: PixelReader,
         metadata: ImageMetadata
     ): ImageContentToken[] {
+        console.time('fromPixels()')
         const tokens: Array<ImageContentToken | null> = [];
         while (!pixels.done()) tokens.push(this.readBufferToken(pixels, metadata));
         const tokensPure = tokens.filter((token) => !!token) as ImageContentToken[];
+        console.timeEnd('fromPixels()')
         this.tokenStatistics(tokensPure, metadata);
         return tokensPure;
     }
 
     static tokenStatistics(tokens: ImageContentToken[], metadata: ImageMetadata) {
-        const percent = (fraction: number) => `${(fraction * 100).toPrecision(3)}%`;
+        const offsetColours = tokens.filter((token) =>
+            token instanceof OffsetColour
+            || token instanceof OffsetColourLong) as OffsetColourAbstract[];
 
-        const offsetColours = tokens.filter((token) => token instanceof OffsetColour) as OffsetColour[];
+        const offsetColourLongs = offsetColours.filter((token) => token instanceof OffsetColourLong);
+        const offsetColourSmalls = offsetColours.filter((token) => token instanceof OffsetColour);
+        const zeroOffsets = offsetColours.filter((token) => token.offset === 0);
+        const maxOffsets = offsetColourSmalls.filter((token) => token.offset === OffsetColour.maxOffset);
+        const maxOffsetLongs = offsetColourLongs.filter((token) => token.offset === OffsetColourLong.maxOffset);
 
         const tokenRatio = offsetColours.length / tokens.length;
-        const warning = `${percent(tokenRatio)} of tokens are OffsetColour`;
-        const warning2 = `${percent(1 - tokenRatio)} of tokens are PaletteSelection`
-        if (tokenRatio > .5) console.warn(warning);
-        else if (tokenRatio > .25) console.info(warning);
-        else if (tokenRatio < .1) console.warn(warning2);
-
+        const offsetRatio = offsetColourSmalls.length / offsetColours.length;
+        const zeroRatio = zeroOffsets.length / offsetColours.length;
+        const maxRatio = maxOffsets.length / offsetColourSmalls.length;
+        const maxRatioLong = maxOffsetLongs.length / offsetColourLongs.length;
         const palette = metadata.palette.completePalette;
-        const colourDistances = offsetColours.map((offsetColour) => colourClosestMatch(palette, offsetColour.colour)[1]);
-        const medianDistance = median(colourDistances);
-        console.log(`median OffsetColour colour distance is+ ${medianDistance.toPrecision(3)}`);
+        const medianPaletteRange = median(choosePairs(palette).map(pairwise(colourDifference)));
 
-        const zeroOffsetRatio =
-            tokens.filter((token) => token instanceof OffsetColour && token.offset === 0).length / tokens.length;
-        if (zeroOffsetRatio > 0.1) console.warn(`${percent(zeroOffsetRatio)} of tokens are zero-offset OffsetColour tokens`);
+        const warning = `${percent(tokenRatio)} of tokens are of type OffsetColour`;
+        if (tokenRatio > .5) console.warn(warning);
+        else console.info(warning);
+
+        console.info(`${percent(offsetRatio)} and ${percent(1 - offsetRatio)} \
+of OffsetColour tokens are of subtype OFFSET and OFFSET_LONG`);
+
+        const zeroWarning = `${percent(zeroRatio)} of OffsetColour tokens have an offset of zero`;
+        if (zeroRatio > .5) console.warn(zeroWarning);
+        else console.info(zeroWarning);
+
+        console.info(`${percent(maxRatio)} and ${percent(maxRatioLong)} of OFFSET and OFFSET_LONG tokens \
+have their maximum respective offset`);
+
+        console.info(`palette colours have a median distance of ${percent(medianPaletteRange)} from one another`);
+
+        const colourDistances = offsetColours.map((offsetColour) => colourClosestMatch(palette, offsetColour.getRGB())[1]);
+        const medianDistance = median(colourDistances);
+        console.info(`OffsetColour tokens have a median distance of ${percent(medianDistance)} from the palette`);
 
         const backgroundPalettes =
             tokens.filter((token) => token instanceof PaletteSelection && token.paletteIndices.every(index => index === 0));
         const bgPaletteRatio = backgroundPalettes.length / tokens.length
-        if (bgPaletteRatio > 0.05) console.warn(`${percent(bgPaletteRatio)} of tokens are background PaletteSelection tokens`);
+        const bgPaletteWarning = `${percent(bgPaletteRatio)} of tokens are background PaletteSelection tokens`;
+        if (bgPaletteRatio > 0.05) console.warn(bgPaletteWarning)
+        else console.info(bgPaletteWarning);
 
     }
 
@@ -135,8 +197,19 @@ export class Tokenizer {
                 const offsetColour = OffsetColour.fromTape(tape);
                 if (offsetColour) tokens.push(offsetColour);
                 else return null;
-            } else if (PaletteSelection.matchHeader(header)) {
+            }
+            else if (OffsetColourLong.matchHeader(header)) {
+                const offsetColour = OffsetColourLong.fromTape(tape);
+                if (offsetColour) tokens.push(offsetColour);
+                else return null;
+            }
+            else if (PaletteSelection.matchHeader(header)) {
                 const paletteSelection = PaletteSelection.fromTape(tape);
+                if (paletteSelection) tokens.push(paletteSelection);
+                else return null;
+            }
+            else if (PaletteSelectionShort.matchHeader(header)) {
+                const paletteSelection = PaletteSelectionShort.fromTape(tape);
                 if (paletteSelection) tokens.push(paletteSelection);
                 else return null;
             }

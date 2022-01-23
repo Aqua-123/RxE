@@ -61,7 +61,7 @@ const urlOneSlash = /\//g;
 const urlTwoDots = /\..+?\./g;
 const urlCommonDomains = /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov/;
 const extraTests = [urlOneSlash, urlTwoDots, urlCommonDomains];
-const urlEmeraldRequest = /emeraldchat.{1,3}com/gi;
+const urlEmeraldRequest = /emeraldchat/gi;
 const extraFilters = [urlEmeraldRequest];
 
 export function init() {

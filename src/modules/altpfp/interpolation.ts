@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { clamp, getImageData, toNearestStep } from "~src/utils";
-import { b64toRGB, b64toU8Array, bitsRegroup, rgbToB64, u8ArrayToB64 } from "~src/bitutils";
+import { b64toRGB, b64toU8, b64toU8Array, bitsRegroup, rgbToB64, rgbToB64i, rgbToU8, u8ArrayToB64, u8toRGB } from "~src/bitutils";
 import { DIGIT_SIZE } from "./format0tokens";
 
 const { ceil, round } = Math;
@@ -14,32 +14,31 @@ const COMPONENT_BITS: Record<ColourSpaceType, number> = {
     "colour512": 3
 }
 
-export const colourSpaces: Record<ColourSpaceType, ColourSpace<string>> = {
+export const colourSpaces = {
     colour64: {
         map(colour: RGB) {
             const max = (1 << COMPONENT_BITS.colour64) - 1;
             const step = 255 / max;
             return colour.map((comp) => toNearestStep(comp, step, 0, max) * step) as RGB;
         },
-        deserialize(base64: string) {
-            return b64toRGB(base64);
+        deserialize(u8s) {
+            return u8toRGB(u8s[0]);
         },
         serialize(colour: RGB) {
-            return rgbToB64(colour);
+            return [rgbToU8(colour)];
         },
         digits: 1
-    },
+    } as ColourSpace<[number]>,
     colour512: {
         map(colour: RGB) {
             const max = (1 << COMPONENT_BITS.colour512) - 1;
             const step = 255 / max;
             return colour.map((comp) => clamp(round(toNearestStep(comp, step, 0, max) * step), 0, 255)) as RGB;
         },
-        deserialize(base64: string) {
+        deserialize(u8s) {
+            if (!u8s) return null;
             const max = (1 << COMPONENT_BITS.colour512) - 1;
             const step = 255 / max;
-            const u8s = b64toU8Array(base64);
-            if (!u8s) return null;
             return bitsRegroup(
                 Array.from(u8s), DIGIT_SIZE, COMPONENT_BITS.colour512
             ).slice(0, 3).map((component) => clamp(round(component * step), 0, 255)) as RGB | null;
@@ -48,10 +47,10 @@ export const colourSpaces: Record<ColourSpaceType, ColourSpace<string>> = {
             const max = (1 << COMPONENT_BITS.colour512) - 1;
             const step = 255 / max;
             const components = colour.map((comp) => toNearestStep(comp, step, 0, max));
-            return u8ArrayToB64(bitsRegroup(components, COMPONENT_BITS.colour512, DIGIT_SIZE));
+            return bitsRegroup(components, COMPONENT_BITS.colour512, DIGIT_SIZE);
         },
         digits: 2
-    }
+    } as ColourSpace<[number, number]>
 };
 
 function imageAccessor(image: Image): ImageAccessor {
