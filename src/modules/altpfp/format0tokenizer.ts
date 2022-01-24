@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { colourClosestMatch, colourDifference, imageFromData, median, getFrequencies, sorters, percent, choosePairs, pairwise, sortWith, extractBoth } from "~src/utils";
+import { colourClosestMatch, colourDifference, imageFromData, median, getFrequencies, sorters, percent, choosePairs, pairwise, sortWith, extractBoth, colourEqualTo } from "~src/utils";
 import { b64toU8, b64toU8Array, u8toB64 } from "~src/bitutils";
 import Tape from "~src/tape";
 import { PixelPlacer, PixelReader } from "./pixelBuffer";
@@ -24,6 +24,10 @@ export class Tokenizer {
         metadata: ImageMetadata
     ): ImageContentToken | null {
         const palette = metadata.palette.completePalette;
+        if (pixels.findNext((colour) => !colourEqualTo(palette[0])(colour)) === null) {
+            pixels.finish();
+            return null;
+        }
         if (pixels.offset < OffsetColourLong.maxOffset) {
             // if (pixels.offset < OffsetColour.maxOffset) {
             const peek = pixels.peekOne();
@@ -112,10 +116,11 @@ export class Tokenizer {
 
     static writeImage(tokens: ImageContentToken[], metadata: ImageMetadata): string {
         const { size, palette } = metadata;
-        const buffer = new PixelPlacer(metadata.size.dataSize);
+        const backgroundColour = palette.completePalette[0];
+        const buffer = new PixelPlacer(metadata.size.dataSize, backgroundColour);
         tokens.forEach((token) => token.toPixelBuffer(buffer, metadata));
         const image = buffer.toImage();
-        return imageFromData(image, size.width, size.height, palette.completePalette[0], 4);
+        return imageFromData(image, size.width, size.height, backgroundColour, 4);
     }
 
     static fromPixels(
@@ -149,6 +154,9 @@ export class Tokenizer {
         const maxRatioLong = maxOffsetLongs.length / offsetColourLongs.length;
         const palette = metadata.palette.completePalette;
         const medianPaletteRange = median(choosePairs(palette).map(pairwise(colourDifference)));
+
+        console.log(`size is: ${metadata.size.representation()}`);
+        console.log(`palette is: ${metadata.palette.representation()}`);
 
         const warning = `${percent(tokenRatio)} of tokens are of type OffsetColour`;
         if (tokenRatio > .5) console.warn(warning);

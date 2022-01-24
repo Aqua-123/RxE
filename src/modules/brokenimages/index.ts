@@ -13,28 +13,27 @@ export function renderBrokenImages() {
     img.outerHTML = tickSVG;
     parent?.querySelector("svg")?.classList.add("user-badge-tick");
   });
-  const oldImages = document.querySelectorAll<HTMLImageElement>(
+  /* const oldImages = document.querySelectorAll<HTMLImageElement>(
     'img[src*="/avicons_strict/"]'
   );
   oldImages.forEach((img) => {
     img.src =
       "https://static.emeraldchat.com/uploads/picture/image/9675465/avicons_strict.png";
-  });
+  });*/
   // basic remediation against broken images since AWS cut Callan off.
 
-  /*
   Array.from(document.images).forEach((img) => {
     if (!img.onerror) {
       img.onerror = async () => {
         if (img.src.startsWith('https://robohash.org/'))
           return;
-        const hash = await getHash(img.src);
-        img.src = `https://robohash.org/${hash}.png?set=set4`;
+        // const hash = await getHash(img.src);
+        img.src = `https://emeraldchat.com/avicons_strict/1.png`;
       };
     }
     if (img.complete && img.naturalHeight === 0) {
       img.onerror("");
     }
   });
-  */
+
 }

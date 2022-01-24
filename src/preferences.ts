@@ -148,6 +148,12 @@ export const P = {
     key: "highlightMentions",
     label: T.preferences.highlightMentions.label,
     default: false
+  }),
+  altpfpBackground: new StringPreference({
+    key: "altpfpBackground",
+    label: T.preferences.altpfpBackground.label,
+    default: "#fff",
+    multiline: false
   })
 } as const;
 

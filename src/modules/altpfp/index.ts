@@ -2,6 +2,7 @@
 import React, { Attributes } from 'react';
 import ReactDOM from 'react-dom';
 import browserWindow from '~src/browserWindow';
+import { P, Preferences } from '~src/preferences';
 import { wrapMethod, expect, timeout } from '~src/utils';
 import * as format0 from './format0';
 import { interpolation } from './interpolation';
@@ -163,8 +164,28 @@ function profile_picture(this: UserProfile) {
             style: {
                 fontSize: '36px'
             },
-            className: 'material-icons'
+            className: 'material-icons',
+            title: "Upload a profile picture"
         }, 'cloud_upload');
+        const customizeIcon = React.createElement('span', {
+            style: {
+                fontSize: '36px'
+            },
+            className: 'material-icons',
+            title: "Customize how your picture gets uploaded",
+            onClick: (ev) => {
+                ev.stopPropagation();
+                ev.preventDefault();
+                const colour = prompt(
+                    "Background colour for partially transparent pictures:",
+                    Preferences.get(P.altpfpBackground)
+                );
+                if (colour === null) return;
+                const matches = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(colour);
+                if (!matches) alert("Sorry, try looking up the hex code for your colour online.")
+                else Preferences.set(P.altpfpBackground, colour);
+            }
+        }, 'palette');
         const fileInput = React.createElement('input', {
             type: "file",
             onChange(ev) {
@@ -182,7 +203,7 @@ function profile_picture(this: UserProfile) {
             // onMouseDown: this.update_profile_picture.bind(this),
             className: 'user-profile-picture-hover',
             for: "ritsu-profile-picture-upload"
-        }, cloudIcon);
+        }, cloudIcon, customizeIcon);
         return React.createElement('span', null, picture, fileInput, overlay);
     }
     // eslint-disable-next-line no-shadow, camelcase

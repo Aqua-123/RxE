@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { clamp, getImageData, toNearestStep } from "~src/utils";
-import { b64toRGB, b64toU8, b64toU8Array, bitsRegroup, rgbToB64, rgbToB64i, rgbToU8, u8ArrayToB64, u8toRGB } from "~src/bitutils";
+import { clamp, getImageData, hexToRGB, toNearestStep } from "~src/utils";
+import { bitsRegroup, rgbToU8, u8toRGB } from "~src/bitutils";
 import { DIGIT_SIZE } from "./format0tokens";
+import { P, Preferences } from "~src/preferences";
 
-const { ceil, round } = Math;
+const { round } = Math;
 
 export const interpolation: Record<InterpolationType, ImageInterpolator> = {
     none: (accessor, [x, y]) => accessor(round(x), round(y))
@@ -56,6 +57,7 @@ export const colourSpaces = {
 function imageAccessor(image: Image): ImageAccessor {
     const { width } = image;
     const imageData = getImageData(image);
+    const canvasColour = hexToRGB(Preferences.get(P.altpfpBackground)) ?? [255, 255, 255];
     return (x, y) => {
         const index = 4 * (y * width + x);
         const data: number[] = Array.prototype.slice.call(
@@ -63,11 +65,13 @@ function imageAccessor(image: Image): ImageAccessor {
             index,
             index + 3
         );
+        const alpha = imageData.data[index + 3] / 255;
         if (data.length !== 3) {
             // eslint-disable-next-line no-console
-            console.warn(`Failed getting image data for index ${index}`, data);
+            console.warn(`Failed getting image data for index ${index} (data[${imageData.data.length}])`, data);
             return null;
         }
+        data.forEach((comp, i) => { data[i] = alpha * comp + (1 - alpha) * canvasColour[i] });
         return data as RGB;
     };
 }
@@ -78,17 +82,22 @@ export function sampleImage(
 ): RGB[] {
     const sampledImage: RGB[] = Array.from({ length: width * height });
     const accessor = imageAccessor(image);
+    // fitting a rectangle into another rectangle
+    const scale = Math.min(image.height / height, image.width / width);
+    const [sampledWidth, sampledHeight] = [scale * width, scale * height];
+    const x0 = (image.width - sampledWidth) / 2;
+    const y0 = (image.height - sampledHeight) / 2;
     for (let x = 0; x < width; x += 1) {
         for (let y = 0; y < height; y += 1) {
-            const rgba = interpolator(
+            const rgb = interpolator(
                 accessor,
-                [x / width * image.width, y / width * image.width],
-                [ceil(image.width / width), ceil(image.height / height)]
+                [x0 + x * scale, y0 + y * scale],
+                [0, 0]
             );
             // todo: add more details to message
             // eslint-disable-next-line no-console
-            if (rgba === null || rgba === undefined) console.warn(`Interpolation failed at ${x}, ${y}`);
-            sampledImage[y * width + x] = rgba ?? [0, 0, 0];
+            if (rgb === null) console.warn(`Interpolation failed at ${x}, ${y}`);
+            sampledImage[y * width + x] = rgb ?? [0, 0, 0];
         }
     }
     return sampledImage;

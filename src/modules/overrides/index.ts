@@ -4,6 +4,7 @@ import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
 import window from "~src/browserWindow";
+import { Spinner } from "~src/components/Spinner";
 
 function hackOverrides() {
   if (!FEATURES.HACKS) return;
@@ -221,6 +222,20 @@ export function applyOverrides() {
       style: flair ?? { color: '' },
       onClick: onClick
     }, name);
+  }
+
+  UserProfile.prototype.render = function render() {
+    const content = this.state.data
+      ? [this.top(), this.bottom()]
+      : [React.createElement(Spinner)]
+    return React.createElement('div', {
+      className: 'ui-menu-container'
+    }, React.createElement('div', {
+      onMouseDown: this.close.bind(this),
+      className: 'animated fadeIn ui-bg'
+    }), React.createElement('div', {
+      className: 'animated zoomIn user-profile-menu'
+    }, ...content));
   }
 
   if (FEATURES.HACKS) hackOverrides();

@@ -30,7 +30,7 @@ class PixelBuffer {
 
     protected pixels: RGB[];
 
-    constructor(readonly length: number, defaultColour: RGB = [0, 0, 0]) {
+    constructor(readonly length: number, defaultColour: RGB = [255, 255, 255]) {
         this.pixels = Array.from<RGB>({ length }).fill(defaultColour);
     }
 
@@ -50,6 +50,10 @@ class PixelBuffer {
 
     protected canMoveBy(move: number) {
         return this.inBounds(this.pointer + move);
+    }
+
+    finish() {
+        this.pointer = this.length;
     }
 
     done() {
@@ -178,6 +182,13 @@ data following it will be read next.
     lastPreview(): RGB[] {
         this.assertLastPreview();
         return Array.from(this.lastPreviewed!);
+    }
+
+    findNext(predicate: (colour: RGB) => boolean): number | null {
+        for (let i = this.pointer; i < this.length; i++)
+            if (predicate(this.pixels[i]))
+                return i - this.pointer;
+        return null;
     }
 
     protected assertLastPreview() {

@@ -71,6 +71,10 @@ export default {
     },
     highlightMentions: {
       label: "Highlight mentions of your display name"
+    },
+    altpfpBackground: {
+      label:
+        "Choose the background colour for pictures with a transparent background"
     }
   },
   hiddenChannels: "hidden channels",

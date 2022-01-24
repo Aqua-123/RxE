@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
 import React from "react";
-import { string } from "yargs";
 
 const { max, min } = Math;
 
@@ -51,6 +50,24 @@ export function wrapMethod<T, K extends FunctionKeys<T>>(
   );
 }
 
+export function groups<T>(array: T[], groupSize: number): T[][] {
+  if (array.length === 0) return [];
+  const groupsAll: T[][] = [[]];
+  array.forEach((item) => {
+    let last = groupsAll[groupsAll.length - 1];
+    if (last.length === groupSize) {
+      last = [];
+      groupsAll.push(last);
+    }
+    last.push(item);
+  });
+  return groupsAll;
+}
+
+export function stringGroups(str: string, groupSize: number): string[] {
+  return groups(str.split(''), groupSize).map(group => group.join(''));
+}
+
 export function clamp(num: number, atLeast: number, atMost: number) {
   return min(atMost, max(atLeast, num));
 }
@@ -86,6 +103,40 @@ export const until = async (check: () => boolean) => {
   // eslint-disable-next-line no-await-in-loop
   while (!check()) await sleep();
 };
+
+export namespace sorters {
+  export const string: Sorter<string> =
+    (a, b) => a.localeCompare(b);
+  export const numeric: Sorter<number> =
+    (a, b) => a - b;
+}
+
+export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
+  return (a, b) => func(b, a);
+}
+
+export const equals = <T>(a: T, b: T) => a === b;
+
+export const equalsTo = <T>(a: T) => (b: T) => a === b;
+
+export function extractBoth<S, T, V>(extract: (s: S) => T, pair: (t1: T, t2: T) => V): (s1: S, s2: S) => V {
+  return (s1, s2) => pair(extract(s1), extract(s2));
+}
+
+export function sortingOn<T, V, K extends KeysOfType<T, V>, R>(propName: K, func: TwoToOne<V, R>): TwoToOne<T, R> {
+  return (a, b) => func(a[propName] as unknown as V, b[propName] as unknown as V);
+}
+
+export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inSitu = false) {
+  const items = inSitu ? array : Array.from(array);
+  const sorterOrdered = order === 'asc' ? sorter : swap(sorter);
+  items.sort(sorterOrdered);
+  return items;
+}
+
+export function sortBy<T, V, K extends KeysOfType<T, V>>(array: T[], key: K, sorter: Sorter<V>, order: SortOrder, inSitu = false) {
+  return sortWith(array, sortingOn(key, sorter), order, inSitu);
+}
 
 export function memoize<R>(compute: (arg0: string) => R) {
   const cache: Record<string, R> = {};
@@ -168,6 +219,15 @@ export function representColour(colour: RGB): string {
   return `#${colour.map((comp) => comp.toString(16).padStart(2, '0')).join('')}`;
 }
 
+export function hexToRGB(colour: string): RGB | null {
+  const matches = colour.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if (matches === null) return null;
+  const components = matches[1].length === 6
+    ? matches[1]
+    : matches[1].replace(/[0-9a-f]/gi, "$&$&");
+  return stringGroups(components, 2).map((comp) => parseInt(comp, 16)) as RGB;
+}
+
 export function imageFromData(
   image: RGB[] | Map<number, RGB>, width: number, height: number,
   backgroundColour?: RGB, scale = 1): string {
@@ -228,24 +288,6 @@ export function expect<T extends EventTarget>(
     target.addEventListener(eventType, r);
     if (afterHook) afterHook(target);
   });
-}
-
-export function groups<T>(array: T[], groupSize: number): T[][] {
-  if (array.length === 0) return [];
-  const groupsAll: T[][] = [[]];
-  array.forEach((item) => {
-    let last = groupsAll[groupsAll.length - 1];
-    if (last.length === groupSize) {
-      last = [];
-      groupsAll.push(last);
-    }
-    last.push(item);
-  });
-  return groupsAll;
-}
-
-export function stringGroups(str: string, groupSize: number): string[] {
-  return groups(str.split(''), groupSize).map(group => group.join(''));
 }
 
 export function median(array: number[]) {
@@ -331,8 +373,10 @@ export function wrapAlternating<S, T>(
 type PartitionMatches = [number, number][] | number[];
 
 function extractPartitions(string: string, matches: [number, number][]): string[];
+// eslint-disable-next-line no-redeclare
 function extractPartitions(string: string, matches: number[], length: number): string[];
 
+// eslint-disable-next-line no-redeclare
 function extractPartitions(string: string, matches: PartitionMatches, length?: number): string[] {
   if (matches.length === 0) return [string];
   const indices: (number | undefined)[] = matches.flatMap((item) => {
@@ -349,10 +393,6 @@ function extractPartitions(string: string, matches: PartitionMatches, length?: n
   return partitions;
 }
 
-export function wrapMatches<S>(string: string, regexp: RegExp, wrapper: StringWrapper<S>) {
-  return wrapPartitions(string, regexp, wrapper, (text) => text);
-}
-
 export function wrapPartitions<S, T>(
   string: string, regexp: RegExp,
   wrapper: StringWrapper<S>, restwrapper: StringWrapper<T>
@@ -367,9 +407,8 @@ export function wrapPartitions<S, T>(
   return wrapAlternating(partitions, restwrapper, wrapper);
 }
 
-export function wrapStringMatches<T>(string: string, substring: string,
-  wrapper: (match: string) => T, caseSensitive = false) {
-  return wrapStringPartitions(string, substring, wrapper, (text) => text, caseSensitive);
+export function wrapMatches<S>(string: string, regexp: RegExp, wrapper: StringWrapper<S>) {
+  return wrapPartitions(string, regexp, wrapper, (text) => text);
 }
 
 export function wrapStringPartitions<S, T>(string: string, substring: string,
@@ -380,38 +419,10 @@ export function wrapStringPartitions<S, T>(string: string, substring: string,
   return wrapAlternating(partitions, restwrapper, wrapper);
 }
 
-export namespace sorters {
-  export const string: Sorter<string> =
-    (a, b) => a.localeCompare(b);
-  export const numeric: Sorter<number> =
-    (a, b) => a - b;
-}
 
-export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
-  return (a, b) => func(b, a);
-}
-
-export const equals = <T>(a: T, b: T) => a === b;
-
-export const equalsTo = <T>(a: T) => (b: T) => a === b;
-
-export function extractBoth<S, T, V>(extract: (s: S) => T, pair: (t1: T, t2: T) => V): (s1: S, s2: S) => V {
-  return (s1, s2) => pair(extract(s1), extract(s2));
-}
-
-export function sortingOn<T, V, K extends KeysOfType<T, V>, R>(propName: K, func: TwoToOne<V, R>): TwoToOne<T, R> {
-  return (a, b) => func(a[propName] as unknown as V, b[propName] as unknown as V);
-}
-
-export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inSitu = false) {
-  const items = inSitu ? array : Array.from(array);
-  const sorterOrdered = order === 'asc' ? sorter : swap(sorter);
-  items.sort(sorterOrdered);
-  return items;
-}
-
-export function sortBy<T, V, K extends KeysOfType<T, V>>(array: T[], key: K, sorter: Sorter<V>, order: SortOrder, inSitu = false) {
-  return sortWith(array, sortingOn(key, sorter), order, inSitu);
+export function wrapStringMatches<T>(string: string, substring: string,
+  wrapper: (match: string) => T, caseSensitive = false) {
+  return wrapStringPartitions(string, substring, wrapper, (text) => text, caseSensitive);
 }
 
 export function formatSignedAmount(amount: number) {
@@ -437,8 +448,8 @@ export function mapValues<K extends string | number | symbol, V, V2>(
 
 export function choosePairs<T>(array: T[]): [T, T][] {
   const pairs: [T, T][] = [];
-  for (let i = 0; i < array.length; i++)
-    for (let j = i + 1; j < array.length; j++)
+  for (let i = 0; i < array.length; i += 1)
+    for (let j = i + 1; j < array.length; j += 1)
       pairs.push(([array[i], array[j]]));
   return pairs;
 }
