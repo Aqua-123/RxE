@@ -145,7 +145,7 @@ export const P = {
   highlightMentions: new BooleanPreference({
     key: "highlightMentions",
     label: T.preferences.highlightMentions.label,
-    default: false
+    default: true
   }),
   altpfpBackground: new StringPreference({
     key: "altpfpBackground",

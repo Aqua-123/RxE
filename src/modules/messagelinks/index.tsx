@@ -64,30 +64,35 @@ class MessageAnchor extends React.Component<{ href: string }> {
     }
 }
 
-const urlFull =
+const urlFull = () =>
     /(https?:\/\/)?([-a-z0-9@:%_+.~#?&=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b){2,256}(\s?\(\s?(\.|dot)\s?\)|\.\u200b?|%2E)\s?[a-z]{2,}\b(\/([-a-z0-9@:%_+.~#?&/=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b)*)?/gi;
-const urlOneSlash = /\//g;
-const urlTwoDots = /\.[^.]+?\./g;
-const urlCommonDomains = /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov/;
-const extraTests = [urlOneSlash, urlTwoDots, urlCommonDomains];
-const urlEmeraldRequest = /emeraldchat/gi;
-const extraFilters = [urlEmeraldRequest];
+const urlOneSlash = () => /\//g;
+const urlTwoDots = () => /\.[^.]+?\./g;
+const urlCommonDomains = () => /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov/;
+const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
+const urlEmeraldRequest = () => /emeraldchat/gi;
+const extraFilters = () => [urlEmeraldRequest()];
 
 export function init() {
     loadCSS("a.ritsu-message-anchor { text-decoration: underline; }");
     const mpProcess = Message.prototype.process;
     Message.prototype.process = function process(text: string) {
+        console.log("Begin process messagelinks")
         const processOld = mpProcess.bind(this);
-        if (text.includes("youtu.be") || text.includes("youtube.com"))
+        if (text.includes("youtu.be") || text.includes("youtube.com")) {
+            console.log("Links not processed");
             return processOld(text);
+        }
+        console.log("Links processed");
         return wrapPartitions(
             text,
-            urlFull,
+            urlFull(),
             (urlMatch) => {
+                console.log(urlMatch);
                 const url = desanitizeURL(urlMatch);
                 if (
-                    extraTests.some((test) => test.test(url)) &&
-                    extraFilters.every((test) => !test.test(url))
+                    extraTests().some((test) => test.test(url)) &&
+                    extraFilters().every((test) => !test.test(url))
                 )
                     return <MessageAnchor href={url} />;
                 return urlMatch || null;

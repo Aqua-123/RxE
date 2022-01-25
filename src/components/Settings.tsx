@@ -51,10 +51,12 @@ export default function Settings(this: any, props: SettingsProps) {
         value={fancyColors}
         onChange={() => applySettings({ fancyColors: !fancyColors })}
       />
+      <br />
       <RadioSetting
         id="blockReqs"
         value={blockReqs}
         onChange={(blockReqs) => applySettings({ blockReqs })}
+        inline={false}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
       <CheckboxSetting
@@ -98,21 +100,6 @@ export default function Settings(this: any, props: SettingsProps) {
         value={highlightMentions}
         onChange={() => applySettings({ highlightMentions: !highlightMentions })}
       />
-      <TextSetting
-        id="permaMuteList"
-        value={JSON.stringify(Object.fromEntries(permaMuteList))}
-        onchange={event => {
-          if (!(mutes_format.test(event.target.value))) return true;
-          const mutes: Record<number, string> = JSON.parse(event.target.value);
-          const mute_list: Array<[number, string]> = [];
-          for (const uid in mutes)
-            if ("number" === typeof uid && "string" === typeof mutes[uid])
-              mute_list.push([uid, mutes[uid]]);
-          updateMutes(mute_list);
-          applySettings({ permaMuteList: mute_list });
-          return true;
-        }}
-      />
       <ListSetting
         id="permaMuteList"
         value={permaMuteList}
@@ -122,7 +109,7 @@ export default function Settings(this: any, props: SettingsProps) {
             onClick={(event) => UserViewGenerator.generate({ event, user: { id: id, karma: 0 } })}
             className="ritsu-permamutelist-user-name">{name}</span>
         }
-        onChange={(items) => applySettings({ permaMuteList: items })}
+        onChange={(items) => { updateMutes(items); applySettings({ permaMuteList: items }) }}
       />
     </div>
   );

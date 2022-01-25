@@ -3,7 +3,7 @@ import U from "./userscript";
 export default {
   title: `${U.name} ${U.version}`,
   themeTitle: "Choose your theme",
-  ...(FEATURES.HACKS && { hacksTitle: "Enable various hacks here" }),
+  ...(FEATURES.HACKS && { hacksTitle: "Extra Settings" }),
   generalTitle: "General Settings",
   imagesTitle: "Image Settings",
   messageTitle: "Message Settings",
@@ -14,47 +14,47 @@ export default {
     },
     ...(FEATURES.HACKS && {
       superTemp: {
-        label: "Remove some temporary account restrictions"
+        label: "Spoof karma and registered status locally"
       },
       enableModUI: {
-        label: "Enable non-functional Moderator interface"
+        label: "Spoof mod status locally"
       },
       universalFriend: {
-        label: "Access any profile"
+        label: "See any user's profile"
       },
       antiBan: {
-        label: "Prevent bans from closing the chat immediately"
+        label: "Ignore ban temporarily"
       }
     }),
     adBlocker: {
       label: "Remove ads and nags"
     },
     fancyColors: {
-      label: "Use any color for your flair"
+      label: "Choose your own flair color"
     },
     imgControl: {
-      label: "Overlay controls to block and favorite images"
+      label: "Block and favorite images"
     },
     imgProtect: {
-      label: "Hide images from low karma accounts"
+      label: "No images from low karma accounts"
     },
     imgBlur: {
-      label: "Blur all user images until hovered"
+      label: "Blur all user images"
     },
     hidePfp: {
       label: "Hide profile pictures in chat"
     },
     showInfo: {
-      label: "Show user info (karma,gender,since) on messages"
+      label: "Show extra user info"
     },
     antiSpam: {
-      label: "Auto-mute users flooding the chat"
+      label: "Mute spammers automatically"
     },
     showGender: {
-      label: "Gender-color the outline around avatars"
+      label: "Show gender on profile pictures"
     },
     trackKarma: {
-      label: "Display Karma in header and track changes"
+      label: "Show live karma & flash changes"
     },
     mutelist: {
       label: "Perma mute list"
@@ -70,11 +70,10 @@ export default {
       label: "Block friend requests from new accounts"
     },
     highlightMentions: {
-      label: "Highlight mentions of your display name"
+      label: "Highlight your name when you're mentioned"
     },
     altpfpBackground: {
-      label:
-        "Choose the background colour for pictures with a transparent background"
+      label: "Choose the background colour for transparent pictures"
     }
   },
   hiddenChannels: "hidden channels",
