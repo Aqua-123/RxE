@@ -77,18 +77,13 @@ export function init() {
     loadCSS("a.ritsu-message-anchor { text-decoration: underline; }");
     const mpProcess = Message.prototype.process;
     Message.prototype.process = function process(text: string) {
-        console.log("Begin process messagelinks")
         const processOld = mpProcess.bind(this);
-        if (text.includes("youtu.be") || text.includes("youtube.com")) {
-            console.log("Links not processed");
+        if (text.includes("youtu.be") || text.includes("youtube.com"))
             return processOld(text);
-        }
-        console.log("Links processed");
         return wrapPartitions(
             text,
             urlFull(),
             (urlMatch) => {
-                console.log(urlMatch);
                 const url = desanitizeURL(urlMatch);
                 if (
                     extraTests().some((test) => test.test(url)) &&

@@ -12,16 +12,12 @@ const makeMention = (string: string) =>
 export function init() {
     const mpProcess = Message.prototype.process;
     Message.prototype.process = function process(message: string) {
-        console.log("Begin process highlightmentions")
         const processOld = mpProcess.bind(this);
         const hasEmbed =
             message.includes("youtu.be") || message.includes("youtube.com");
         const name = nameNormalized();
-        if (!name || hasEmbed || !Preferences.get(P.highlightMentions)) {
-            console.log("Mentions not processed")
+        if (!name || hasEmbed || !Preferences.get(P.highlightMentions))
             return processOld(message);
-        }
-        console.log("Mentions processed")
         const messageContent = wrapStringPartitions(
             message,
             name,

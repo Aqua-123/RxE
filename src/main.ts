@@ -37,6 +37,7 @@ import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/highlightmentions/index";
 import * as messageLinks from "./modules/messagelinks";
 import * as onbeforesend from "./modules/onbeforesend";
+import * as messageStyles from "./modules/messagestyles";
 
 async function init() {
   const featureSet = `(${[
@@ -89,10 +90,10 @@ async function init() {
   initPermaMute();
 
   altpfp.init();
-  highlightMentions.init();
   messageLinks.init();
+  messageStyles.init();
+  highlightMentions.init();
   onbeforesend.init();
-
   // start our script's rendering loop
   render([
     reorderMenu,
