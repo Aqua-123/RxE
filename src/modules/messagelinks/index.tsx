@@ -65,7 +65,7 @@ class MessageAnchor extends React.Component<{ href: string }> {
 }
 
 const urlFull =
-    /(https?:\/\/)?([-a-z0-9@:%_+.~#?&=]|\s?\(\s?(\.|dot)\s?\)\s?){2,256}(\s?\(\s?(\.|dot)\s?\)|\.|%2E)\s?[a-z]{2,}\b(\/([-a-z0-9@:%_+.~#?&/=]|\s?\(\s?(\.|dot)\s?\)\s?)*)?/gi;
+    /(https?:\/\/)?([-a-z0-9@:%_+.~#?&=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b){2,256}(\s?\(\s?(\.|dot)\s?\)|\.\u200b?|%2E)\s?[a-z]{2,}\b(\/([-a-z0-9@:%_+.~#?&/=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b)*)?/gi;
 const urlOneSlash = /\//g;
 const urlTwoDots = /\.[^.]+?\./g;
 const urlCommonDomains = /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov/;
