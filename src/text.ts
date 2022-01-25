@@ -60,7 +60,7 @@ export default {
       label: "Perma mute list"
     },
     userSort: {
-      label: "Sort users by..",
+      "label": "Sort users by..",
       "name.asc": "Name Asc.",
       "name.desc": "Name Desc.",
       "age.asc": "Account age Asc.",

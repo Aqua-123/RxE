@@ -25,7 +25,7 @@ import { decoratePictures, initPictures } from "./modules/pictures";
 import { initPluginAPI } from "./modules/plugin";
 import { render } from "./modules/render";
 import { reorderMenu } from "./modules/reordermenu";
-import { initSendPictures } from "./modules/sendpictures";
+// import { initSendPictures } from "./modules/sendpictures";
 import { applySettings, injectRitsuMenu } from "./modules/settings";
 import { initUserList } from "./modules/userlist";
 import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
@@ -74,7 +74,7 @@ async function init() {
   initPicturesBlur();
   initHideProfilePictures();
   initPictureAlbum();
-  initSendPictures();
+  // initSendPictures();
   // karma tracker
   initKarmaTracker();
   // anti-spam

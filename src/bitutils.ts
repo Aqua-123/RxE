@@ -225,15 +225,15 @@ export function bitsRegroup(
 
 export function b64toU8(b64char: string | undefined | null) {
   if (!b64char) return null;
-  const index = tagSet.indexOf(b64char)
-  if (index != -1) return index;
+  const index = tagSet.indexOf(b64char);
+  if (index !== -1) return index;
   const index2 = b64Set.indexOf(b64char);
-  if (index2 != -1) return index2;
+  if (index2 !== -1) return index2;
   return null;
 }
 
 export function b64toU8Array(b64: string) {
-  const array = allOf(b64.split('').map(b64toU8));
+  const array = allOf(b64.split("").map(b64toU8));
   if (!array) return null;
   return new Uint8Array(array);
 }

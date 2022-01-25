@@ -16,6 +16,7 @@ module.exports = {
   ignorePatterns: ["**/*.d.ts", "dist/*.js"],
   rules: {
     "prettier/prettier": "error",
+    "prettier/prettier/single-quote": "off",
     "react/jsx-filename-extension": [1, { extensions: [".tsx", ".ts"] }],
     "react/jsx-props-no-spreading": "off",
     "no-use-before-define": "off",
@@ -41,7 +42,8 @@ module.exports = {
     "import/no-extraneous-dependencies": [
       "error",
       { devDependencies: ["*.ts"] }
-    ]
+    ],
+    "indent": [0]
   },
   settings: {
     react: {

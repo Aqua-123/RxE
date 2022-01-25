@@ -251,6 +251,7 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
                 throw new Error(`Invalid palette indicies: ${paletteIndices}`);
         }
 
+        // eslint-disable-next-line class-methods-use-this
         get name() {
             return type === "PALETTE_SELECTION_SHORT" ? "PaletteSelectionShort" : "PaletteSelection";
         }
@@ -330,6 +331,7 @@ export const PaletteSelectionShort = makePaletteSelectionClass("PALETTE_SELECTIO
 
 export abstract class OffsetColourAbstract extends ImageContentToken {
     abstract getRGB(): RGB;
+
     readonly offset: number = NaN;
 }
 
@@ -352,6 +354,7 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
             this.colour = colourSpace.map(colour);
         }
 
+        // eslint-disable-next-line class-methods-use-this
         get name() {
             return type === "OFFSET" ? "OffsetColour" : "OffsetColourLong";
         }
@@ -368,7 +371,7 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
             offsetBits.pushNumber(this.offset, PAYLOAD_BITS[type]);
             offsetBits.topUp();
             const serialized = u8ArrayToB64([...offsetBits.numbers, ...colourSpace.serialize(this.colour)]);
-            if (serialized.length != OffsetColourClass.expectedDigits)
+            if (serialized.length !== OffsetColourClass.expectedDigits)
                 throw new Error(`Expected token serialization of length ${OffsetColourClass.expectedDigits}, got "${serialized}"`);
             return serialized;
         }

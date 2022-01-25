@@ -12,8 +12,6 @@ import { preferences } from "~userscripter";
 import U from "~src/userscript";
 import T from "~src/text";
 
-const darkMode = matchMedia("(prefers-color-scheme: dark)").matches;
-
 // eslint-disable-next-line no-shadow
 export enum RequestBlockMode {
   None = 0,
@@ -27,7 +25,7 @@ export const P = {
     key: "theme",
     label: T.preferences.theme.label,
     description: T.preferences.theme.description,
-    default: darkMode ? "ritsu" : "light",
+    default: "ritsu",
     multiline: false
   }),
   ...(FEATURES.HACKS && {

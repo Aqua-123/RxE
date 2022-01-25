@@ -3,7 +3,7 @@
   --ritsu-hair-dark-color: #b821bd;
 }
 html > body {
-  background: var(--header-alt-bg-color);
+  background: var(--app-bg-color);
 }
 body > div > nav {
   background: var(--header-bg-color);
@@ -167,4 +167,9 @@ body > div > nav {
   span {
     text-shadow: black 0 0 3px;
   }
+}
+
+.user-flair.user-flair,
+.user-extra-gender {
+  text-shadow: -0.05em -0.05em #fff5;
 }

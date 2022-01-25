@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
-import React from "react";
+import React, { KeyboardEvent, MouseEvent } from "react";
 
 const { max, min } = Math;
 
@@ -177,9 +177,6 @@ export const tagSet = Array.from({ length: 65 }, (_, i) =>
   String.fromCodePoint(i + 0xe0020)
 ).join("");
 
-/**
- * @deprecated
- */
 export function encodeInvisible(urlPath: string) {
   const str = btoa(urlPath);
   let out = "";
@@ -191,9 +188,6 @@ export function encodeInvisible(urlPath: string) {
   return out;
 }
 
-/**
- * @deprecated
- */
 export function decodeInvisible(str: string) {
   let b64 = "";
   for (let pos = 1; pos < str.length; pos += 2) {
@@ -471,3 +465,45 @@ export function pairwise<S, T, R>(func: (s: S, t: T) => R) {
 export const percent = (fraction: number) => `${(Number.isNaN(fraction) ? 0 : fraction * 100).toPrecision(3)}%`;
 
 export const without = <T>(item: T, array: T[]) => array.filter((arrayItem) => arrayItem !== item);
+
+export const stripBiDi = (s: string) => s.replace(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g, "");
+
+// from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
+export function computeEntropy(msg: string, sep: RegExp | string = "") {
+  const sorted = msg.split(sep).sort();
+  const len = sorted.length;
+  const unique = sorted.filter((c, i, a) => c !== a[i - 1]);
+  const f = unique.map((c) =>
+    sorted.reduce((a, cc) => (cc === c ? a + 1 : a), 0)
+  );
+  const p = f.map((v) => v / len);
+  return p.reduce((H, v) => H + -v * Math.log2(v), 0);
+}
+
+export function isRepeating(msg: string) {
+  const i = (msg + msg).indexOf(msg, 1);
+  return i > -1 && i !== msg.length ? msg.length / i : 0;
+}
+
+type HandlerPropOpts = {
+  allowSpace: boolean,
+  otherKeysStopPropagation: boolean,
+  otherKeysPreventDefault: boolean
+}
+
+export function handlerProps<T>(
+  handler: (ev: MouseEvent<T> | KeyboardEvent<T>) => void,
+  { allowSpace, otherKeysStopPropagation, otherKeysPreventDefault }: HandlerPropOpts
+) {
+  return {
+    onClick: handler,
+    onKeyUp: (ev: KeyboardEvent<T>) => {
+      if (ev.key === "Enter" || (allowSpace && ev.key === ""))
+        handler(ev);
+      else {
+        if (otherKeysStopPropagation) ev.stopPropagation();
+        if (otherKeysPreventDefault) ev.preventDefault();
+      }
+    }
+  };
+}

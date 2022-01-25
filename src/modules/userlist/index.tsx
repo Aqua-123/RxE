@@ -14,7 +14,13 @@ function lookup() {
   if (typeof UserViewReact === "undefined") {
     // run a bogus user view to get the right setup
     UserViewGenerator.generate({
-      event: { preventDefault: () => { }, clientX: 100, clientY: 100 },
+      event: {
+        preventDefault: () => {
+          /* Do nothing */
+        },
+        clientX: 100,
+        clientY: 100
+      },
       user: {
         karma: 100,
         id: 2
@@ -25,7 +31,7 @@ function lookup() {
   /* eslint-disable-next-line no-alert */
   const input = prompt("Enter a user id", `${UserViewReact.state.user.id}`);
   if (input === null) return;
-  const id = parseInt(input);
+  const id = parseInt(input, 10);
   if (Number.isNaN(id)) return;
   UserViewReact.state.user.id = id;
   UserViewReact.view_profile();
@@ -95,15 +101,18 @@ export function initUserList() {
   };
   const rcmSetState = RoomChannelMembers.prototype.setState;
   RoomChannelMembers.prototype.setState = function setState(e) {
-    if (!e || !('members' in e)) return;
-    if (!this.state.members) console.warn('this.state.members is falsy despite declaration')
-    const idsPresent = existing(this.state.members ?? []).map((user) => user.id);
+    if (!e || !("members" in e)) return;
+    if (!this.state.members)
+      console.warn("this.state.members is falsy despite declaration");
+    const idsPresent = existing(this.state.members ?? []).map(
+      (user) => user.id
+    );
     const members = existing(e.members);
-    const [property, order] = Preferences.get(P.userSort).split('.');
-    const sortOrder: SortOrder = order == 'asc' ? 'asc' : 'desc';
+    const [property, order] = Preferences.get(P.userSort).split(".");
+    const sortOrder: SortOrder = order === "asc" ? "asc" : "desc";
     if (property === "age")
-      sortBy(members, 'id', sorters.numeric, sortOrder, true);
-    else sortBy(members, 'display_name', sorters.string, sortOrder, true);
+      sortBy(members, "id", sorters.numeric, sortOrder, true);
+    else sortBy(members, "display_name", sorters.string, sortOrder, true);
     members.forEach((member) => {
       if (!idsPresent.some(equalsTo(member.id)))
         browserWindow.RxE.dispatchEvent("room.userlist", member);

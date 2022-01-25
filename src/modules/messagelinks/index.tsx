@@ -27,7 +27,7 @@ ${characters.map(characterDetail)}`
 const urlSchema = /^https?:\/\//;
 
 const desanitizeURL = (href: string) =>
-    href.replace(/%2E/gi, ".").replace(/\s?\(\s?(\.|dot)\s?\)\s?/g, ".");
+    href.replace(/%2E/gi, ".").replace(/\s?\(\s?(\.|dot)\s?\)\s?/g, ".").replace(/\.\u200b/g, ".");
 
 const parseURL = (href: string) =>
     urlSchema.test(href) ? href : `https://${href}`;

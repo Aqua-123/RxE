@@ -23,7 +23,8 @@ export function decorateHeader() {
     document.head.prepend(favicon);
   }
   // set title
-  const title = `${App.user.display_name} - ${U.shortName} ${U.version}`;
+  const displayName = App.user.display_name ?? "(...)";
+  const title = `${displayName} - ${U.shortName} ${U.version}`;
   if (document.title !== title) {
     document.title = title;
   }
@@ -51,7 +52,7 @@ export function decorateHeader() {
   if (
     document.fullscreenEnabled &&
     iconsHolder?.children &&
-    Array.from(iconsHolder?.children).some((child) =>
+    !Array.from(iconsHolder?.children).some((child) =>
       child?.textContent?.includes("full")
     )
   ) {

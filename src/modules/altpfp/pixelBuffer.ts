@@ -185,7 +185,7 @@ data following it will be read next.
     }
 
     findNext(predicate: (colour: RGB) => boolean): number | null {
-        for (let i = this.pointer; i < this.length; i++)
+        for (let i = this.pointer; i < this.length; i += 1)
             if (predicate(this.pixels[i]))
                 return i - this.pointer;
         return null;

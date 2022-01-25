@@ -115,6 +115,7 @@ function updateUserRoomCount() {
           if (currentChannel) {
             const newMembers = [...RoomChannelMembersClient.state.members];
             currentChannel.members.forEach((member) => {
+              if (!member) return;
               const idx = newMembers.findIndex((m) => m && m.id === member.id);
               if (idx > -1) {
                 newMembers[idx] = member;
@@ -127,7 +128,7 @@ function updateUserRoomCount() {
             });
             // check if our karma is in there already
             const self = currentChannel.members.find(
-              (member) => member.id === id
+              (member) => member?.id === id
             );
             if (self) {
               updateKarma(self.karma);

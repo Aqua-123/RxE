@@ -1,12 +1,19 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from "react";
 import { P, Preferences } from "~src/preferences";
-import { accountAgeScaled as userExperience, existing, formatSignedAmount, loadCSS } from "~src/utils";
+import {
+  accountAgeScaled as userExperience,
+  existing,
+  formatSignedAmount,
+  loadCSS
+} from "~src/utils";
 import css from "./style.scss";
 
 function getRoomMember(userId: number) {
-  if (!('state' in RoomChannelMembersClient)) return undefined;
-  return existing(RoomChannelMembersClient.state.members)
-    .find((user) => user.id == userId);
+  if (!("state" in RoomChannelMembersClient)) return undefined;
+  return existing(RoomChannelMembersClient.state.members).find(
+    (user) => user.id === userId
+  );
 }
 
 export function initMessages() {
@@ -14,60 +21,78 @@ export function initMessages() {
   Message.prototype.content = function content() {
     const { picture, messages, user } = this.props.data;
     if (picture && (user?.temp || (user?.karma ?? 0) < 10)) return [];
-    if (picture)
-      return (
-        <MessagePicture picture={picture} />
-      )
-    return messages.map((text) =>
-      <div key={JSON.stringify(text)}>
-        {this.process(text)}
+    if (picture) return <MessagePicture picture={picture} />;
+    return messages.map((text) => (
+      <div key={JSON.stringify(text)}>{this.process(text)}</div>
+    ));
+  };
+
+  Message.prototype.render = function render() {
+    if (!this.props.data.user)
+      console.warn("this.props.data.user may be falsy despite declaration");
+    const user = (getRoomMember(this.props.data.user.id) ||
+      this.props.data.user) as EmeraldUser | null;
+    const flair = {
+      string: user?.display_name || "<empty name>",
+      flair: user?.flair ?? { color: "" }
+    };
+    const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
+    const experience = user ? userExperience(user) : 0;
+    const timeago = user ? $.timeago(new Date(user.created_at)) : null;
+    const color = `hsl(${experience * 256}, 50%, 50%)`;
+    const textShadow = "0.005em 0.005em #FFF5";
+    return (
+      <div className="room-component-message-container" data-id={user?.id}>
+        <div className="room-component-message-left">
+          <img
+            className="room-component-message-avatar"
+            alt="User display avatar"
+            src={user?.display_picture}
+            onMouseDown={(event) =>
+              user && UserViewGenerator.generate({ event, user })
+            }
+          />
+        </div>
+        <div className="room-component-message-right">
+          <div className="room-component-flair">
+            <Flair data={flair} />
+          </div>
+          <Badge badge={user?.badge ?? null} />
+          {Preferences.get(P.showInfo) && !!user && (
+            <span className="user-extra">
+              <b>({karma})</b>
+              {" / "}
+              <span style={{ color, textShadow }}>{timeago!}</span>
+              {user.master && !user.proxy && (
+                <b style={{ color: "#f00" }}> CALLAN </b>
+              )}
+              {user.mod && !user.proxy && (
+                <b style={{ color: "#f00" }}> MOD </b>
+              )}
+            </span>
+          )}
+          <div className="room-component-message-text">{this.content()}</div>
+        </div>
       </div>
     );
-  }
-}
-Message.prototype.render = function render() {
-  if (!this.props.data.user) console.warn('this.props.data.user may be falsy despite declaration')
-  const user = (getRoomMember(this.props.data.user.id) || this.props.data.user) as EmeraldUser | null
-  const flair = {
-    string: user?.display_name || "<empty name>",
-    flair: user?.flair ?? { color: '' }
   };
-  const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
-  const experience = user ? userExperience(user) : 0;
-  const timeago = user ? $.timeago(new Date(user.created_at)) : null;
-  const color = `hsl(${experience * 256}, 50%, 50%)`;
-  const textShadow = "0.005em 0.005em #FFF5";
-  return (
-    <div className="room-component-message-container" data-id={user?.id}>
-      <div className="room-component-message-left">
-        <img
-          className='room-component-message-avatar'
-          src={user?.display_picture}
-          onMouseDown={(event) => user && UserViewGenerator.generate({ event, user })}
-        />
-      </div>
-      <div className="room-component-message-right">
-        <div className="room-component-flair">
-          <Flair data={flair} />
-        </div>
-        <Badge badge={user?.badge ?? null} />
-        {Preferences.get(P.showInfo) && !!user &&
-          <span className="user-extra">
-            <b>({karma})</b>
-            {" / "}
-            <span style={{ color, textShadow }}>{timeago!}</span>
-            {user.master && !user.proxy && (
-              <b style={{ color: "#f00" }}> CALLAN </b>
-            )}
-            {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
-          </span>
-        }
-        <div className="room-component-message-text">
-          {this.content()}
-        </div>
-      </div>
-    </div>
-  );
+  Room.prototype.received = function received(e) {
+    if (e.user.id !== App.user.id && e.messages) {
+      App.room.play_sound("/sfx/simple_alert.wav");
+      this.append(e, true);
+      if (PushNotifications.idle()) {
+        PushNotifications.send(e.user.display_name, {
+          icon: e.user.display_picture,
+          body: e.messages[0]
+        });
+      }
+    } else if (e.typing) {
+      if (e.user.id !== App.user.id) {
+        this.setState({ typing: e.user.display_name });
+        setTimeout(() => this.stop_typing(), 1e4);
+      }
+    }
+  };
 }
 
 /**
@@ -207,21 +232,3 @@ export function betterMessageRendering() {
     });
   };
 }
-
-Room.prototype.received = function received(e) {
-  if (e.user.id !== App.user.id && e.messages) {
-    App.room.play_sound("/sfx/simple_alert.wav");
-    this.append(e, true);
-    if (PushNotifications.idle()) {
-      PushNotifications.send(e.user.display_name, {
-        icon: e.user.display_picture,
-        body: e.messages[0]
-      });
-    }
-  } else if (e.typing) {
-    if (e.user.id !== App.user.id) {
-      this.setState({ typing: e.user.display_name });
-      setTimeout(() => this.stop_typing(), 1e4);
-    }
-  }
-};

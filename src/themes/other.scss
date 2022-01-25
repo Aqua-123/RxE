@@ -84,17 +84,11 @@ body.themeChange * {
   transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-/* the web app shows unwanted scrollbars on firefox. hide them */
-body {
-  overflow: hidden;
-}
-
-/* neutralize RTL characters in display names */
-span.user-flair:before {
-  content: "\2066";
-}
-span.user-flair:after {
-  content: "\2069";
+@media screen and (min-width: 640px) {
+  /* the web app shows unwanted scrollbars on firefox. hide them */
+  body {
+    overflow: hidden;
+  }
 }
 
 body.tmp-message span.room-component-print:last-of-type {
@@ -104,4 +98,8 @@ body.tmp-message span.room-component-print:last-of-type {
 /* the bottom of quick user action tooltip can be unclickable. fix it. */
 .user-profile-micro.user-profile-micro {
   width: auto;
+}
+
+.navigation-notification-badge {
+  position: absolute;
 }

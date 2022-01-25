@@ -1,6 +1,13 @@
 /* eslint-disable camelcase */
 import { P, Preferences } from "~src/preferences";
-import { printTransientMessage, wrapMethod } from "~src/utils";
+import {
+  computeEntropy,
+  existing,
+  isRepeating,
+  printTransientMessage,
+  stripBiDi,
+  wrapMethod
+} from "~src/utils";
 
 const GREETERS = [21550262, 19422865];
 
@@ -20,23 +27,6 @@ function colorRating(rating: SpamRating[number]) {
 }
 */
 
-// from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
-function computeEntropy(msg: string, sep: RegExp | string = "") {
-  const sorted = msg.split(sep).sort();
-  const len = sorted.length;
-  const unique = sorted.filter((c, i, a) => c !== a[i - 1]);
-  const f = unique.map((c) =>
-    sorted.reduce((a, cc) => (cc === c ? a + 1 : a), 0)
-  );
-  const p = f.map((v) => v / len);
-  return p.reduce((H, v) => H + -v * Math.log2(v), 0);
-}
-
-function isRepeating(msg: string) {
-  const i = (msg + msg).indexOf(msg, 1);
-  return i > -1 && i !== msg.length ? msg.length / i : 0;
-}
-
 export function initAntiSpam() {
   const spamRating: SpamRating = {};
   const autoMuted: Record<string, true> = {};
@@ -45,7 +35,7 @@ export function initAntiSpam() {
   const rcsJoin = RoomChannelSelect.prototype.join;
   RoomChannelSelect.prototype.join = function join(e) {
     if (e.members) {
-      e.members = e.members.filter((v: any) => !!v);
+      e.members = existing(e.members);
     }
     rcsJoin.call(this, e);
   };
@@ -53,20 +43,20 @@ export function initAntiSpam() {
   const rpSetState = RoomPrivate.prototype.setState;
   RoomPrivate.prototype.setState = function setState(state) {
     if (state && "online" in state) {
-      state.online = state.online.filter((v: any) => !!v);
+      state.online = existing(state.online);
     }
     if (state && "offline" in state) {
-      state.offline = state.offline.filter((v: any) => !!v);
+      state.offline = existing(state.offline);
     }
     return rpSetState.call(this, state as any);
   };
 
-  function onMessage(e: Parameters<typeof App.room.client.received>[0]) {
+  function onMessage(e: MessageData) {
     if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")
       return;
 
     // neutralize silly RTL nonsense
-    e.user.display_name = `\u2066${e.user.display_name}\u2069`;
+    e.user.display_name = stripBiDi(e.user.display_name);
 
     // since we're here, update user list more accurately
     if ("state" in RoomChannelMembersClient && e.user) {

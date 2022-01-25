@@ -12,6 +12,8 @@ import * as CONFIG from "./src/config";
 import * as SITE from "./src/site";
 import U from "./src/userscript";
 
+const PORT = 9001;
+
 const config: webpack.Configuration = {
   ...createWebpackConfig({
     buildConfig: {
@@ -28,13 +30,14 @@ const config: webpack.Configuration = {
     env: process.env
   }),
   externals: {
-    react: "React",
+    "react": "React",
     "react-dom": "ReactDOM"
   },
   devServer: {
+    allowedHosts: ["192.168.*.*"],
     liveReload: false,
     injectClient: false,
-    port: 9001,
+    port: PORT,
     open: true,
     before: (app) =>
       app.get("/", (req, res) =>

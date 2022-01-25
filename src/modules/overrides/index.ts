@@ -195,7 +195,11 @@ export function applyOverrides() {
     const user = notification.tier === "friend_request"
       ? notification.data.sender
       : notification.data.sender ?? notification.data.unit?.author;
-    if (user) return UserViewGenerator.generate({ event, user });
+    if (user && !('unit' in notification.data)) {
+      return UserViewGenerator.generate({ event, user });
+    }
+    if ('unit' in notification.data)
+      App.params = notification.data.unit;
     const id = notification.tier === "friend_request"
       ? notification.data.sender?.id
       : notification.sender_id ?? notification.data.sender?.id
@@ -204,16 +208,6 @@ export function applyOverrides() {
     const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
   }
-
-  /*
-  wrapMethod(NotificationUnit.prototype, 'friend_request_accept', function friend_request_accept(e: _MouseEvent) {
-    e?.stopImmediatePropagation();
-  }, true);
-
-  wrapMethod(NotificationUnit.prototype, 'friend_request_reject', function friend_request_reject(e: _MouseEvent) {
-    e?.stopImmediatePropagation();
-  }, true);
-  */
 
   Flair.prototype.render = function render() {
     const { data: { flair, string: name }, onClick } = this.props;

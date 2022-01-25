@@ -2,7 +2,6 @@
 import React from "react";
 import { ListPreference, Preference } from "ts-preferences";
 import { P } from "~src/preferences";
-import { without } from "~src/utils";
 
 type ListSettingProps<T> = {
     id: keyof typeof P;
@@ -11,17 +10,45 @@ type ListSettingProps<T> = {
     renderItem: (t: T) => JSX.Element;
     removeItem: (t: T, list: T[]) => T[];
 };
-
-export default class ListSetting<T> extends React.Component<ListSettingProps<T>, { items: T[] }> {
+export default class ListSetting<T> extends React.Component<
+    ListSettingProps<T>, { items: T[] }
+> {
     constructor(props: ListSettingProps<T>) {
         super(props);
         this.state = { items: Array.from(props.value) };
     }
-    items() {
-        return this.state.items;
+
+    handleItemRemoval(item: T) {
+        const { onChange, removeItem } = this.props;
+        const itemsNew = removeItem(item, this.items());
+        this.setState({
+            items: itemsNew
+        });
+        onChange(itemsNew);
     }
+
+    items() {
+        const { items } = this.state;
+        return Array.from(items);
+    }
+
+    itemJSX(item: T) {
+        const { renderItem } = this.props;
+        return <div>
+            <span className="ui-button-text"
+                onClick={() => this.handleItemRemoval(item)}
+                onKeyPress={(event) =>
+                    ["Enter", "Space"].includes(event.key)
+                    && this.handleItemRemoval(item)}
+                role="button"
+                tabIndex={0}
+            >×</span>
+            <span>{renderItem(item)}</span>
+        </div>
+    }
+
     render() {
-        const { id, onChange, renderItem, removeItem } = this.props;
+        const { id } = this.props;
         const { items } = this.state;
         const preference = P[id] as Preference<any>;
         if (!(preference instanceof ListPreference))
@@ -31,20 +58,7 @@ export default class ListSetting<T> extends React.Component<ListSettingProps<T>,
         return (
             <div>
                 <div id={id} style={{ display: "block" }}>
-                    {items.map((item) => (
-                        <div>
-                            <span className="ui-button-text"
-                                onClick={() => {
-                                    const itemsNew = removeItem(item, items)
-                                    this.setState({
-                                        items: itemsNew
-                                    })
-                                    onChange(itemsNew);
-                                }}
-                            >×</span>
-                            <span>{renderItem(item)}</span>
-                        </div>
-                    ))}
+                    {items.map(this.itemJSX)}
                 </div>
             </div>
         );

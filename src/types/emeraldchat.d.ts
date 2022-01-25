@@ -55,6 +55,7 @@ declare interface AppInterface {
   temp: {
     check: Function;
   };
+  params: any
 }
 
 declare const App: AppInterface;
@@ -360,7 +361,7 @@ declare type EmeraldChannel = {
 
 declare type ChannelJsonResponse = {
   channel: EmeraldChannel;
-  members: EmeraldUser[];
+  members: (EmeraldUser | null)[];
   messages: MessageData[];
 };
 
@@ -374,7 +375,7 @@ declare class RoomChannelSelect extends React.Component<
     voice_channels: Array<ChannelJsonResponse>;
   }
 > {
-  join(e: any): void;
+  join(e: ChannelJsonResponse): void;
   body(): JSX.Element;
   channel_button(e: ChannelJsonResponse): JSX.Element;
 }
@@ -398,8 +399,8 @@ declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
 declare class RoomPrivate extends React.Component<
   unknown,
   {
-    online: EmeraldUser[];
-    offline: EmeraldUser[];
+    online: (EmeraldUser | null)[];
+    offline: (EmeraldUser | null)[];
     search: any[];
   }
 > { }

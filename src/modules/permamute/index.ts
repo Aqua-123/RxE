@@ -67,12 +67,15 @@ export function initPermaMute() {
         const { id, display_name } = this.state.user;
         permaMuteAdd(id, display_name);
         App.room.mute(id, display_name, "Permamuted by user");
+        // For blockreqs
+        NotificationsReact.update();
         this.forceUpdate();
     }
     UserView.prototype.permaunmute = function () {
         const { id } = this.state.user;
         permaMuteRemove(id);
         App.room.unmute(id);
+        NotificationsReact.update();
         this.forceUpdate();
     }
     // TODO: belongs in a more general file
