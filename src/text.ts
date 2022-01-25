@@ -74,6 +74,9 @@ export default {
     },
     altpfpBackground: {
       label: "Choose the background colour for transparent pictures"
+    },
+    bigEmoji: {
+      label: "Jumbo-sized emoji"
     }
   },
   hiddenChannels: "hidden channels",

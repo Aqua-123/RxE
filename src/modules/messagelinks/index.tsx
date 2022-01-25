@@ -73,6 +73,23 @@ const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
 const urlEmeraldRequest = () => /emeraldchat/gi;
 const extraFilters = () => [urlEmeraldRequest()];
 
+export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
+    return wrapPartitions(
+        text,
+        urlFull(),
+        (urlMatch) => {
+            const url = desanitizeURL(urlMatch);
+            if (
+                extraTests().some((test) => test.test(url)) &&
+                extraFilters().every((test) => !test.test(url))
+            )
+                return <MessageAnchor href={url} />;
+            return urlMatch || null;
+        },
+        restWrapper
+    );
+}
+
 export function init() {
     loadCSS("a.ritsu-message-anchor { text-decoration: underline; }");
     const mpProcess = Message.prototype.process;
@@ -80,19 +97,6 @@ export function init() {
         const processOld = mpProcess.bind(this);
         if (text.includes("youtu.be") || text.includes("youtube.com"))
             return processOld(text);
-        return wrapPartitions(
-            text,
-            urlFull(),
-            (urlMatch) => {
-                const url = desanitizeURL(urlMatch);
-                if (
-                    extraTests().some((test) => test.test(url)) &&
-                    extraFilters().every((test) => !test.test(url))
-                )
-                    return <MessageAnchor href={url} />;
-                return urlMatch || null;
-            },
-            processOld
-        );
+        return wrapLinks(text, processOld);
     };
 }

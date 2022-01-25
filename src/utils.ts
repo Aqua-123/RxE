@@ -350,8 +350,6 @@ export function allStringMatches(string: string, substring: string, caseSensitiv
   return matches;
 }
 
-type StringWrapper<T> = (match: string) => null | T | T[];
-
 export function wrapAlternating<S, T>(
   strings: string[], wrapper1: StringWrapper<S>, wrapper2: StringWrapper<T>
 ): (T | S)[] {

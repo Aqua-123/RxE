@@ -29,3 +29,5 @@ type Sorter<T> = TwoToOne<T, number>;
 type SortOrder = 'asc' | 'desc';
 
 type Arg0<T extends AnyFunction> = T extends (arg0: infer U) => any ? U : never;
+
+type StringWrapper<T> = (match: string) => null | T | T[];

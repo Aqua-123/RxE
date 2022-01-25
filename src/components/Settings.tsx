@@ -30,6 +30,7 @@ export default function Settings(this: any, props: SettingsProps) {
     permaMuteList,
     blockReqs,
     highlightMentions,
+    bigEmoji,
     applySettings
   } = props;
 
@@ -99,6 +100,11 @@ export default function Settings(this: any, props: SettingsProps) {
         id="highlightMentions"
         value={highlightMentions}
         onChange={() => applySettings({ highlightMentions: !highlightMentions })}
+      />
+      <CheckboxSetting
+        id="bigEmoji"
+        value={bigEmoji}
+        onChange={() => applySettings({ bigEmoji: !bigEmoji })}
       />
       <ListSetting
         id="permaMuteList"

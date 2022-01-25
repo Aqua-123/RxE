@@ -152,6 +152,11 @@ export const P = {
     label: T.preferences.altpfpBackground.label,
     default: "#fff",
     multiline: false
+  }),
+  bigEmoji: new BooleanPreference({
+    key: "bigEmoji",
+    label: T.preferences.bigEmoji.label,
+    default: true
   })
 } as const;
 

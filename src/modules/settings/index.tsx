@@ -30,7 +30,8 @@ export function getSettings() {
       antiSpam: Preferences.get(P.antiSpam),
       permaMuteList: Preferences.get(P.permaMuteList),
       blockReqs: Preferences.get(P.blockReqs),
-      highlightMentions: Preferences.get(P.highlightMentions)
+      highlightMentions: Preferences.get(P.highlightMentions),
+      bigEmoji: Preferences.get(P.bigEmoji)
     }
   };
 }

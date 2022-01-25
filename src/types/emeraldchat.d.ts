@@ -489,6 +489,7 @@ declare class UserProfile extends React.Component<
       user: EmeraldUser;
       current_user: EmeraldUser;
     };
+    compact_bio: boolean;
   }
 > {
   profile_buttons: Function;
@@ -499,6 +500,8 @@ declare class UserProfile extends React.Component<
   load(id: number): void;
   top(): JSX.Element;
   bottom(): JSX.Element;
+  bio(): JSX.Element;
+  bio_expand(): void;
 }
 
 declare let UserProfileReact: null | UserProfile;

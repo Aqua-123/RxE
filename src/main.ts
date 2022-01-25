@@ -38,6 +38,7 @@ import * as highlightMentions from "./modules/highlightmentions/index";
 import * as messageLinks from "./modules/messagelinks";
 import * as onbeforesend from "./modules/onbeforesend";
 import * as messageStyles from "./modules/messagestyles";
+import * as richBio from "./modules/richbio";
 
 async function init() {
   const featureSet = `(${[
@@ -93,6 +94,7 @@ async function init() {
   messageLinks.init();
   messageStyles.init();
   highlightMentions.init();
+  richBio.init();
   onbeforesend.init();
   // start our script's rendering loop
   render([

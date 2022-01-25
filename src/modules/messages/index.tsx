@@ -116,6 +116,7 @@ export function decorateMessages() {
       }
       if (divs) {
         if (
+          Preferences.get(P.bigEmoji) &&
           lines.length === 1 &&
           /^\p{Extended_Pictographic}{1,5}$/u.test(lines[0])
         ) {

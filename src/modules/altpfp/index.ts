@@ -14,23 +14,29 @@ interface ImageFormat {
     compress(image: Image, options: SamplingOptions): Promise<string>;
 }
 
-const BIO_IMAGE = /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
+export const BIO_IMAGE = () => /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
+
 const makeBioImage = (compressed: string) => `[rxe-pfp:${compressed}]`;
 
-function extractBioImage(bio: string): string | null {
-    return Array.from(bio.matchAll(BIO_IMAGE))
+export function extractBioImage(bio: string): string | null {
+    return Array.from(bio.matchAll(BIO_IMAGE()))
         .map((match) => match[1])
         .slice(-1)[0] ?? null;
 }
 
-function replaceBioImage(bio: string, compressed: string) {
-    const lastIndex = Array.from(bio.matchAll(BIO_IMAGE))
+export function bioWithoutImage(bio: string): string {
+    const lastIndex = Array.from(bio.matchAll(BIO_IMAGE()))
         .map((match) => match.index)
         .filter(index => index !== undefined)
         .slice(-1)[0];
     // intended behaviour if undefined
-    return bio.slice(0, lastIndex)
-        + (bio[(lastIndex ?? 0) - 1] === "\n" ? "" : "\n")
+    return bio.slice(0, lastIndex);
+}
+
+function replaceBioImage(bio: string, compressed: string) {
+    const rawBio = bioWithoutImage(bio);
+    return rawBio
+        + (rawBio[rawBio.length - 1] === "\n" ? "" : "\n")
         + makeBioImage(compressed);
 }
 
