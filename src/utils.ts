@@ -484,14 +484,24 @@ export function isRepeating(msg: string) {
 }
 
 type HandlerPropOpts = {
-  allowSpace: boolean,
-  otherKeysStopPropagation: boolean,
-  otherKeysPreventDefault: boolean
+  allowSpace?: boolean,
+  otherKeysStopPropagation?: boolean,
+  otherKeysPreventDefault?: boolean
 }
 
-export function handlerProps<T>(
+const handlerOptsDefault: HandlerPropOpts = {
+  allowSpace: false,
+  otherKeysPreventDefault: false,
+  otherKeysStopPropagation: false
+}
+
+export function onClickOrKeyUp<T>(
   handler: (ev: MouseEvent<T> | KeyboardEvent<T>) => void,
-  { allowSpace, otherKeysStopPropagation, otherKeysPreventDefault }: HandlerPropOpts
+  {
+    allowSpace,
+    otherKeysStopPropagation,
+    otherKeysPreventDefault
+  }: HandlerPropOpts = handlerOptsDefault
 ) {
   return {
     onClick: handler,
@@ -504,4 +514,29 @@ export function handlerProps<T>(
       }
     }
   };
+}
+
+/**
+ * Concatenates a list of regular expressions. Uses flag from last RegExp.
+ * @param res Array of regular expressions or strings
+ */
+export function regexpcc(...res: (RegExp | string)[]) {
+  if (res.length === 0) throw new Error("Must supply at least one RegExp")
+  const last = res[res.length - 1];
+  const lastFlagsOnly = typeof last === 'string';
+  const sources = res.slice(0, lastFlagsOnly ? -1 : 0);
+  const flags = typeof last === 'string' ? last : last.flags
+  const getSource = (re: RegExp | string) => (typeof re === 'string' ? re : re.source)
+  return new RegExp(sources.map(getSource).join(""), flags);
+}
+
+export async function firstSuccessAsync<T>(funcs: (() => Promise<T>)[]): Promise<T> {
+  for (let i = 0; i < funcs.length; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    try { return await funcs[i](); }
+    catch (e) {
+      if (i === funcs.length - 1) throw e;
+    }
+  }
+  throw new Error("funcs cannot be empty");
 }

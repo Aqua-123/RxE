@@ -78,6 +78,9 @@ body > div > nav {
 .navigation-notification-unit {
   color: var(--header-fg-color);
 }
+:last-child > .navigation-notification-unit {
+  color: var(--header-hover-fg-color);
+}
 .navigation-dropdown-content.navigation-dropdown-content {
   background: var(--menu-bg-color);
   color: var(--menu-fg-color);

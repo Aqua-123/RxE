@@ -80,8 +80,8 @@ export const MATCH_BIT_HEADER = (digit: number) =>
 const PALETTE_SELECTION_LENGTH = (type: keyof typeof BIT_HEADER) =>
     ~~(PAYLOAD_BITS[type] / PALETTE_BITS);
 
-export const MAX_PALETTE_APPROXIMATION = 0.05;
-export const MAX_BACKGROUND_APPROXIMATION = 0.05;
+export const MAX_PALETTE_APPROXIMATION = () => 0.04;
+export const MAX_BACKGROUND_APPROXIMATION = () => 0.04;
 
 export interface ImageMetadata {
     size: SizeSpecifier,
@@ -276,7 +276,7 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
             const selection = Array.from(colours.slice(0, PaletteSelectionClass.expectedLength));
             const indices = allOf(
                 selection.map((colour) => colourClosestMatch(palette, colour))
-                    .map(([index, difference]) => difference > MAX_PALETTE_APPROXIMATION ? null : index)
+                    .map(([index, difference]) => difference > MAX_PALETTE_APPROXIMATION() ? null : index)
             );
             if (!indices) return null;
             return new PaletteSelectionClass(indices);

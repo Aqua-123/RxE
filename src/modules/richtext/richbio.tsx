@@ -1,10 +1,14 @@
 /* eslint-disable prettier/prettier */
 import React from "react";
-import { bioWithoutImage, extractBioImage } from "../altpfp";
-import { wrapLinks } from "../messagelinks";
-import { wrapMaterialIcons } from "../messagestyles";
+import { onClickOrKeyUp } from "~src/utils";
+import { bioWithoutImage, extractBioImage, saveBio } from "../altpfp";
+import { wrapRich } from "./richtext";
 
-function BioImage({ raw }: { raw: string }) {
+function BioImage({ raw, onRemove }: { raw: string, onRemove: () => void }) {
+    const remove = () => {
+        if (confirm('Are you sure you want to remove your profile picture?'))
+            onRemove()
+    };
     return <div style={{
         padding: "0.3em",
         margin: "0.5em",
@@ -17,16 +21,10 @@ function BioImage({ raw }: { raw: string }) {
     }}
         title={raw}>
         Profile picture ({raw.length} chars)
+        {" "}
+        <b {...onClickOrKeyUp(remove)}>×</b>
     </div>
 }
-
-function wrapBio(bio: string) {
-    return wrapMaterialIcons(bio,
-        (nonIcon) =>
-            wrapLinks(nonIcon, (rest) => rest)
-        , true);
-}
-
 
 export function init() {
     UserProfile.prototype.bio = function bio() {
@@ -37,13 +35,15 @@ export function init() {
         const isCompact = compactBio && user.bio.length > 202;
         const bioImageRaw = extractBioImage(user.bio);
         const bioStripped = bioWithoutImage(user.bio);
-        const bioImage = bioImageRaw && <BioImage raw={bioImageRaw} />;
+        const bioImage = bioImageRaw && <BioImage raw={bioImageRaw} onRemove={
+            () => saveBio(user, bioStripped)
+        } />;
         // some icons may be cut off
         const bioCompact = `${bioStripped.slice(0, 202)}... `;
         const bioRaw = isCompact ? bioCompact : bioStripped;
         return (
             <span>
-                {wrapBio(bioRaw)}
+                {wrapRich(bioRaw, (rest) => rest)}
                 {isCompact && (
                     <span
                         role="button"

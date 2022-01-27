@@ -2,6 +2,7 @@
 import React from "react";
 import { ListPreference, Preference } from "ts-preferences";
 import { P } from "~src/preferences";
+import { onClickOrKeyUp } from "~src/utils";
 
 type ListSettingProps<T> = {
     id: keyof typeof P;
@@ -36,10 +37,10 @@ export default class ListSetting<T> extends React.Component<
         const { renderItem } = this.props;
         return <div>
             <span className="ui-button-text"
-                onClick={() => this.handleItemRemoval(item)}
-                onKeyPress={(event) =>
-                    ["Enter", "Space"].includes(event.key)
-                    && this.handleItemRemoval(item)}
+                {...onClickOrKeyUp(
+                    () => this.handleItemRemoval(item),
+                    { allowSpace: true }
+                )}
                 role="button"
                 tabIndex={0}
             >×</span>
@@ -58,7 +59,7 @@ export default class ListSetting<T> extends React.Component<
         return (
             <div>
                 <div id={id} style={{ display: "block" }}>
-                    {items.map(this.itemJSX)}
+                    {items.map(this.itemJSX.bind(this))}
                 </div>
             </div>
         );

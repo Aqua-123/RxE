@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import React from "react";
-import { loadCSS, wrapPartitions } from "~src/utils";
+import { regexpcc, wrapPartitions } from "~src/utils";
 
 const linkConfirmation = (host: string) =>
     `⚠ Are you sure you want to open this link? ⚠
 Note that shady sites can guess your location and earmark your browser. \
+Beware URLs on safe domains that look like redirects. \
 The site you're about to visit is hosted by ${host}.`;
 
 const getNonAscii = (text: string) =>
@@ -64,13 +65,22 @@ class MessageAnchor extends React.Component<{ href: string }> {
     }
 }
 
-const urlFull = () =>
-    /(https?:\/\/)?([-a-z0-9@:%_+.~#?&=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b){2,256}(\s?\(\s?(\.|dot)\s?\)|\.\u200b?|%2E)\s?[a-z]{2,}\b(\/([-a-z0-9@:%_+.~#?&/=]|\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b)*)?/gi;
+const urlProtocol = /(https?:\/\/)?/.source;
+const dot = /(\s?\(\s?(\.|dot)\s?\)\s?|\.\u200b?|%2E)/.source;
+const urlChar = /[-a-z0-9@:%_+[\].~#?&=]/.source;
+const urlFull = () => regexpcc(
+    urlProtocol,
+    `(${dot}|${urlChar}){2,256}`,
+    `${dot}[a-z]{2,}`,
+    `\\b(\\/(${dot}|${urlChar}|\\/)*)?`,
+    'gi'
+);
+console.log("urlFull", urlFull());
 const urlOneSlash = () => /\//g;
 const urlTwoDots = () => /\.[^.]+?\./g;
 const urlCommonDomains = () => /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov/;
 const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
-const urlEmeraldRequest = () => /emeraldchat/gi;
+const urlEmeraldRequest = () => /emeraldchat/gi; // this is not foolproof
 const extraFilters = () => [urlEmeraldRequest()];
 
 export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
@@ -88,15 +98,4 @@ export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
         },
         restWrapper
     );
-}
-
-export function init() {
-    loadCSS("a.ritsu-message-anchor { text-decoration: underline; }");
-    const mpProcess = Message.prototype.process;
-    Message.prototype.process = function process(text: string) {
-        const processOld = mpProcess.bind(this);
-        if (text.includes("youtu.be") || text.includes("youtube.com"))
-            return processOld(text);
-        return wrapLinks(text, processOld);
-    };
 }

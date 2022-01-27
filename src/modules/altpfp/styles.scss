@@ -1,0 +1,10 @@
+.user-profile-picture-wrapper:hover .user-profile-picture-hover {
+  display: inline-flex;
+}
+
+.user-profile-picture-wrapper .user-profile-picture-hover {
+  flex-direction: column;
+  padding: 0;
+  justify-content: center;
+  align-items: center;
+}

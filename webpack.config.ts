@@ -78,4 +78,9 @@ config.plugins!.unshift(
   })
 );
 
+config.module?.rules.push({
+  test: /\.png$/,
+  loader: "file-loader"
+});
+
 export default config;

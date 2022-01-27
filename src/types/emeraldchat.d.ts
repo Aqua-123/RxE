@@ -547,7 +547,11 @@ declare class Micropost extends React.Component<any,
       muted: boolean,
       picture: unknown
     }
-  }> { }
+  }> {
+  content(): JSX.Element | null
+  more(): void
+  youtube_process(text: string): JSX.Element
+}
 
 declare type FlairProps = {
   data: {

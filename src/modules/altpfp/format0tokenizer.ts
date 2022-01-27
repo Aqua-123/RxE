@@ -1,5 +1,18 @@
 /* eslint-disable prettier/prettier */
-import { colourClosestMatch, colourDifference, imageFromData, median, getFrequencies, sorters, percent, choosePairs, pairwise, sortWith, extractBoth, colourEqualTo } from "~src/utils";
+import {
+    colourClosestMatch,
+    colourDifference,
+    imageFromData,
+    median,
+    getFrequencies,
+    sorters,
+    percent,
+    choosePairs,
+    pairwise,
+    sortWith,
+    extractBoth,
+    colourEqualTo
+} from "~src/utils";
 import { b64toU8, b64toU8Array, u8toB64 } from "~src/bitutils";
 import Tape from "~src/tape";
 import { PixelPlacer, PixelReader } from "./pixelBuffer";
@@ -18,6 +31,8 @@ import {
 } from "./format0tokens";
 import { colourSpaces, sampleImage } from "./interpolation";
 
+const PALETTE_DIST_WEIGHT = () => 0.3;
+
 export class Tokenizer {
     protected static readBufferToken(
         pixels: PixelReader,
@@ -29,21 +44,18 @@ export class Tokenizer {
             return null;
         }
         if (pixels.offset < OffsetColourLong.maxOffset) {
-            // if (pixels.offset < OffsetColour.maxOffset) {
             const peek = pixels.peekOne();
-            if (peek && colourDifference(peek, palette[0]) < MAX_BACKGROUND_APPROXIMATION) {
+            if (peek && colourDifference(peek, palette[0]) < MAX_BACKGROUND_APPROXIMATION()) {
                 pixels.skip();
                 return null;
             }
             pixels.backtrack();
         }
         else return OffsetColourLong.fromPixelBuffer(pixels);
-        // else return OffsetColour.fromPixelBuffer(pixels);
         return (
             PaletteSelection.fromPixelBuffer(pixels, metadata)
             ?? PaletteSelectionShort.fromPixelBuffer(pixels, metadata)
             ?? (
-                // OffsetColour.fromPixelBuffer(pixels)
                 pixels.offset >= OffsetColour.maxOffset ?
                     OffsetColourLong.fromPixelBuffer(pixels) :
                     OffsetColour.fromPixelBuffer(pixels)
@@ -100,12 +112,13 @@ export class Tokenizer {
             palette.push(colourSpace.deserialize(newColour as any)!);
             frequencies = frequencies.map(([colour, frequency]) => {
                 const rgb = colourSpace.deserialize(Array.from(b64toU8Array(colour)!) as ReturnType<typeof colourSpace.serialize>)!;
-                const distance = palette.map((c) => colourDifference(c, rgb))
-                    .reduce((a, b) => a + b, 0) / palette.length;
+                const distances = palette.map((c) => colourDifference(c, rgb));
+                // const distance = sum(distances) / palette.length;
+                const distance = Math.min(...distances);
                 return [colour, frequency, distance];
             })
             sortWith(frequencies,
-                extractBoth(([_, freq, dist]) => freq * dist, sorters.numeric),
+                extractBoth(([_, freq, dist]) => freq * (dist ** PALETTE_DIST_WEIGHT()), sorters.numeric),
                 'desc',
                 true
             );

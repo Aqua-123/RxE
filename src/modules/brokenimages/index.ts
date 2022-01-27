@@ -17,7 +17,11 @@ export function renderBrokenImages() {
   Array.from(document.images).forEach((img) => {
     if (!img.onerror) {
       img.onerror = async () => {
-        if (img.src.startsWith("https://robohash.org/")) return;
+        if (
+          img.src.startsWith("https://robohash.org/") ||
+          img.src.includes("emeraldchat.com/avicons_strict/")
+        )
+          return;
         img.src = `https://emeraldchat.com/avicons_strict/1.png`;
       };
     }

@@ -1,11 +1,13 @@
 /* eslint-disable prettier/prettier */
-import React, { Attributes } from 'react';
+import React, { Attributes, DragEvent } from 'react';
 import ReactDOM from 'react-dom';
+// import avicons1 from 'static/assets/avicons_strict_1.png';
 import browserWindow from '~src/browserWindow';
 import { P, Preferences } from '~src/preferences';
-import { wrapMethod, expect, timeout } from '~src/utils';
+import { wrapMethod, expect, timeout, firstSuccessAsync, loadCSS } from '~src/utils';
 import * as format0 from './format0';
 import { interpolation } from './interpolation';
+import css from './styles.scss'
 
 type ImageFormatType = "0";
 
@@ -40,12 +42,11 @@ function replaceBioImage(bio: string, compressed: string) {
         + makeBioImage(compressed);
 }
 
-async function saveBioImage(user: EmeraldUser, compressed: string) {
-    console.log(`compressed: ${compressed.length} chars`)
+export async function saveBio(user: EmeraldUser, bio: string) {
     return new Promise<void>((resolve, reject) => {
         const params = {
             display_name: user.display_name,
-            bio: replaceBioImage(user.bio, compressed),
+            bio,
             flair: { color: user.flair.color },
             gender: user.gender
         };
@@ -88,9 +89,12 @@ function unpackImage(compressed: string): string | null {
 }
 
 function getDisplayPicture(user: EmeraldUser): string {
+    const fallback = user.display_picture.includes("emeraldchat.com/uploads")
+        ? "https://emeraldchat.com/avicons_strict/1.png"
+        : user.display_picture;
     if (user.bio === undefined) {
         console.warn('user.bio is undefined');
-        return user.display_picture;
+        return fallback;
     }
     const imageCompressed = extractBioImage(user.bio);
     if (imageCompressed) {
@@ -104,7 +108,7 @@ function getDisplayPicture(user: EmeraldUser): string {
             return imageUnpacked;
         }
     }
-    return user.display_picture;
+    return fallback;
 }
 
 // lame
@@ -145,14 +149,26 @@ async function uploadPicture(file: File | undefined, user: EmeraldUser) {
     if (!file) { alert('No file uploaded.'); return; }
     if (!file.type.startsWith('image')) { alert('File is not an image or its format is not supported.'); }
     const reader = new FileReader();
-    await timeout(expect(reader, 'load', (fileReader) => fileReader.readAsDataURL(file)), 5000);
+    try {
+        await timeout(
+            expect(reader, 'load', (fileReader) => fileReader.readAsDataURL(file))
+            , 5000);
+    }
+    catch (_) {
+        alert('Could not load image.');
+        return;
+    }
 
     if (!reader.result) throw new Error("No result");
     const url = reader.result.toString();
-    const options = { width: 48, height: 48 };
+    const options = [
+        { interpolator: interpolation.none, width: 64, height: 64 },
+        { interpolator: interpolation.none, width: 48, height: 48 }
+    ];
 
-    const image = await compressImage(url, "0", { interpolator: interpolation.none, ...options });
-    await saveBioImage(user, image);
+    const image = await firstSuccessAsync<string>(options.map((opts) => () => compressImage(url, "0", opts)));
+    console.log(`compressed: ${image.length} chars`);
+    await saveBio(user, replaceBioImage(user.bio, image));
 }
 
 
@@ -160,18 +176,30 @@ async function uploadPicture(file: File | undefined, user: EmeraldUser) {
 function profile_picture(this: UserProfile) {
     // eslint-disable-next-line camelcase
     const { user, current_user } = this.state.data;
+    const onDrop = (ev: DragEvent) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const file = ev.dataTransfer.files?.[0];
+        try { uploadPicture(file, user); }
+        catch (reason) { alert(`Image loading failed: ${reason}`); }
+    }
     if (user.id === current_user.id) {
         const picture = React.createElement('img', {
             // onMouseDown: this.update_profile_picture.bind(this),
             className: 'user-profile-avatar',
-            src: user.display_picture
+            src: user.display_picture,
+            onDrop
         } as Attributes);
+        // drag'n'drop worked before I swear
+        // const dragNDrop = React.createElement('span', { onDrop }, 'DRAG &', React.createElement('br'), 'DROP')
+        const dragNDrop = null;
         const cloudIcon = React.createElement('span', {
             style: {
                 fontSize: '36px'
             },
             className: 'material-icons',
-            title: "Upload a profile picture"
+            title: "Upload a profile picture",
+            onDrop
         }, 'cloud_upload');
         const customizeIcon = React.createElement('span', {
             style: {
@@ -179,6 +207,7 @@ function profile_picture(this: UserProfile) {
             },
             className: 'material-icons',
             title: "Customize how your picture gets uploaded",
+            onDrop,
             onClick: (ev) => {
                 ev.stopPropagation();
                 ev.preventDefault();
@@ -200,6 +229,7 @@ function profile_picture(this: UserProfile) {
                 try { uploadPicture(file, user); }
                 catch (reason) { alert(`Image loading failed: ${reason}`); }
             },
+            onDrop,
             id: "ritsu-profile-picture-upload",
             style: {
                 display: "none"
@@ -208,9 +238,10 @@ function profile_picture(this: UserProfile) {
         const overlay = React.createElement('label', {
             // onMouseDown: this.update_profile_picture.bind(this),
             className: 'user-profile-picture-hover',
-            for: "ritsu-profile-picture-upload"
-        }, cloudIcon, customizeIcon);
-        return React.createElement('span', null, picture, fileInput, overlay);
+            for: "ritsu-profile-picture-upload",
+            onDrop
+        }, dragNDrop, cloudIcon, customizeIcon);
+        return React.createElement('span', { onDrop }, picture, fileInput, overlay);
     }
     // eslint-disable-next-line no-shadow, camelcase
     const open_picture = function open_picture() {
@@ -231,6 +262,7 @@ function profile_picture(this: UserProfile) {
 
 
 export function init() {
+    loadCSS(css);
     // eslint-disable-next-line camelcase
     UserProfile.prototype.profile_picture = profile_picture;
     interceptUser(Room.prototype, 'received', (_, messageData) => messageData.user);
