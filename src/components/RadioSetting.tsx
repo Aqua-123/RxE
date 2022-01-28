@@ -19,7 +19,9 @@ export default function RadioSetting<T>(props: RadioSettingProps<T>) {
         );
     return (
         <div className="ritsu-radio-setting-root">
-            <label htmlFor={id}>{preference.label}</label>
+            <label htmlFor={id} style={{
+                padding: "0.5em 0"
+            }}>{preference.label}</label>
             <div id={id} style={{
                 display: "flex",
                 flexDirection: inline ? "row" : "column"

@@ -38,7 +38,11 @@ export function initMessages() {
     };
     const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
     const experience = user ? userExperience(user) : 0;
-    const timeago = user ? $.timeago(new Date(user.created_at)) : null;
+    const createdAt = user?.created_at && new Date(user?.created_at);
+    const timeago =
+      createdAt && !Number.isNaN(createdAt.getTime())
+        ? $.timeago(createdAt)
+        : null;
     const color = `hsl(${experience * 256}, 50%, 50%)`;
     const textShadow = "0.005em 0.005em #FFF5";
     return (

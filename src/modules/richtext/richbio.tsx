@@ -4,11 +4,11 @@ import { onClickOrKeyUp } from "~src/utils";
 import { bioWithoutImage, extractBioImage, saveBio } from "../altpfp";
 import { wrapRich } from "./richtext";
 
-function BioImage({ raw, onRemove }: { raw: string, onRemove: () => void }) {
-    const remove = () => {
+function BioImage({ raw, onRemove }: { raw: string, onRemove: null | (() => void) }) {
+    const remove = onRemove && (() => {
         if (confirm('Are you sure you want to remove your profile picture?'))
             onRemove()
-    };
+    });
     return <div style={{
         padding: "0.3em",
         margin: "0.5em",
@@ -21,9 +21,12 @@ function BioImage({ raw, onRemove }: { raw: string, onRemove: () => void }) {
     }}
         title={raw}>
         Profile picture ({raw.length} chars)
-        {" "}
-        <b {...onClickOrKeyUp(remove)}>×</b>
-    </div>
+        {!!remove &&
+            [
+                " ",
+                <b {...onClickOrKeyUp(remove)}>×</b>
+            ]}
+    </div >
 }
 
 export function init() {
@@ -36,7 +39,9 @@ export function init() {
         const bioImageRaw = extractBioImage(user.bio);
         const bioStripped = bioWithoutImage(user.bio);
         const bioImage = bioImageRaw && <BioImage raw={bioImageRaw} onRemove={
-            () => saveBio(user, bioStripped)
+            user.id === App.user.id
+                ? () => saveBio(user, bioStripped)
+                : null
         } />;
         // some icons may be cut off
         const bioCompact = `${bioStripped.slice(0, 202)}... `;
