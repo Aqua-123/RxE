@@ -118,6 +118,29 @@ export function applyOverrides() {
     });
   };
 
+  RoomChannelSelect.prototype.join = function (this: Room, e) {
+    console.log("joined strangers", e), e.members.length >= 10000000 || (App.webrtc.client && this.voice_disconnect(), this.expand(!1), RoomClient?.setState({
+      messages: []
+    }), Room.prototype.updated = function (this: Room) {
+      this.setState({
+        current_channel: e.channel
+      }), $.ajax({
+        type: "GET",
+        url: "channel_json?id=" + e.channel.id,
+        dataType: "json",
+        success: function (e: ChannelJsonResponse) {
+          console.log("loading chat", e), RoomChannelMembersClient.setState({
+            members: e.members
+          });
+          for (var t = 0; t < e.messages.length; t++) RoomClient?.append(e.messages[t]);
+          RoomClient?.scroll()
+        }.bind(this)
+      }), App.room.join("channel" + e.channel.id), setTimeout(function () {
+        RoomClient?.scroll()
+      }, 0), "voice" == e.channel.channel_type && this.voice_connect(e)
+    }.bind(this), RoomClient?.updated(), Room.prototype.updated = function () { })
+  };
+
   function menuMicroClose(this: React.Component) {
     $("#menu-micro-bg").removeClass("animated fadeIn");
     $("#menu-micro-bg").addClass("animated fadeOut");

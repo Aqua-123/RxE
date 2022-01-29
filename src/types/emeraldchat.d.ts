@@ -56,6 +56,9 @@ declare interface AppInterface {
     check: Function;
   };
   params: any
+  webrtc: {
+    client: null;
+  }
 }
 
 declare const App: AppInterface;
@@ -342,6 +345,10 @@ declare class Room extends React.Component {
   stop_typing(): void;
   send(message: string): void;
   process?: (message: string) => string | null;
+  updated(): void;
+  voice_connect(e: ChannelJsonResponse): void;
+  voice_disconnect(): void;
+  expand(e: boolean): void;
 }
 
 declare type EmeraldChannel = {
@@ -378,6 +385,8 @@ declare class RoomChannelSelect extends React.Component<
   join(e: ChannelJsonResponse): void;
   body(): JSX.Element;
   channel_button(e: ChannelJsonResponse): JSX.Element;
+  voice_disconnect(): void;
+  expand(): void;
 }
 declare const RoomChannelSelectClient: RoomChannelSelect;
 
@@ -390,7 +399,7 @@ declare class RoomChannelMembers extends React.Component<
   body(): JSX.Element | null;
 }
 
-declare const RoomChannelMembersClient: {} | RoomChannelMembers;
+declare const RoomChannelMembersClient: RoomChannelMembers;
 
 declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;
