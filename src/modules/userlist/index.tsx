@@ -7,8 +7,8 @@ import React from "react";
 import { Preferences, P } from "~src/preferences";
 import T from "~src/text";
 import browserWindow from "~src/browserWindow";
-// import { equalsTo, existing, loadCSS, sortBy, sorters } from "~src/utils";
-import { existing, loadCSS } from "~src/utils";
+import { equalsTo, existing, loadCSS, sortBy, sorters } from "~src/utils";
+// import { existing, loadCSS } from "~src/utils";
 import style from "./style.scss";
 
 function lookup() {
@@ -101,15 +101,15 @@ export function initUserList() {
     );
   };
   const rcmSetState = RoomChannelMembers.prototype.setState;
-  /*
-  RoomChannelMembers.prototype.setState = function setState(e) {
-    if (!e || !("members" in e)) return;
+
+  RoomChannelMembers.prototype.setState = function setState(stateNew) {
+    if (!stateNew || !("members" in stateNew)) return;
     if (!this.state.members)
       console.warn("this.state.members is falsy despite declaration");
     const idsPresent = existing(this.state.members ?? []).map(
       (user) => user.id
     );
-    const members = existing(e.members);
+    const members = existing(stateNew.members);
     const [property, order] = Preferences.get(P.userSort).split(".");
     const sortOrder: SortOrder = order === "asc" ? "asc" : "desc";
     if (property === "age")
@@ -119,9 +119,11 @@ export function initUserList() {
       if (!idsPresent.some(equalsTo(member.id)))
         browserWindow.RxE.dispatchEvent("room.userlist", member);
     });
-    rcmSetState.call(this, e);
-  }; */
+    stateNew.members = members;
+    rcmSetState.call(this, stateNew);
+  };
 
+  /*
   // Taking reference from previous version of this code cause above one went shwoop my head :)
   RoomChannelMembers.prototype.setState = function setState(e) {
     if (e && "members" in e) {
@@ -161,6 +163,7 @@ export function initUserList() {
     }
     rcmSetState.call(this, e as any);
   };
+  */
 
   loadCSS(style);
 }

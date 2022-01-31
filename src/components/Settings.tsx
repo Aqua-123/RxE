@@ -2,20 +2,17 @@
 import React from "react";
 import { SettingsDialogSettings } from "./SettingsDialog";
 import CheckboxSetting from "./CheckboxSetting";
-import TextSetting from "./TextfieldSetting";
 import T from "~src/text";
 import styles from "./style.module.scss";
 import { updateMutes } from "~src/modules/permamute";
 import RadioSetting from "./RadioSetting";
 import ListSetting from "./ListSetting";
 
-const mutes_format = /^\{(\s*\d+\s*:\s*"[^"]*"\s*,\s*)*(\s*\d+\s*:\s*"[^"]*"\s*)?\}$/;
-
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
 };
 
-export default function Settings(this: any, props: SettingsProps) {
+export default function Settings(props: SettingsProps) {
   const {
     adBlocker,
     trackKarma,
@@ -99,23 +96,34 @@ export default function Settings(this: any, props: SettingsProps) {
       <CheckboxSetting
         id="highlightMentions"
         value={highlightMentions}
-        onChange={() => applySettings({ highlightMentions: !highlightMentions })}
+        onChange={() =>
+          applySettings({ highlightMentions: !highlightMentions })
+        }
       />
       <CheckboxSetting
         id="bigEmoji"
         value={bigEmoji}
         onChange={() => applySettings({ bigEmoji: !bigEmoji })}
       />
+      <label htmlFor="permaMuteList">Permanent mute list</label>
       <ListSetting
         id="permaMuteList"
         value={permaMuteList}
-        removeItem={([id], items) => items.filter(item => item[0] !== id)}
-        renderItem={([id, name]) =>
+        removeItem={([id], items) => items.filter((item) => item[0] !== id)}
+        renderItem={([id, name]) => (
           <span
-            onClick={(event) => UserViewGenerator.generate({ event, user: { id: id, karma: 0 } })}
-            className="ritsu-permamutelist-user-name">{name}</span>
-        }
-        onChange={(items) => { updateMutes(items); applySettings({ permaMuteList: items }) }}
+            onClick={(event) =>
+              UserViewGenerator.generate({ event, user: { id: id, karma: 0 } })
+            }
+            className="ritsu-permamutelist-user-name"
+          >
+            {name}
+          </span>
+        )}
+        onChange={(items) => {
+          updateMutes(items);
+          applySettings({ permaMuteList: items });
+        }}
       />
     </div>
   );
