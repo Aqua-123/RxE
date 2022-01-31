@@ -317,6 +317,11 @@ declare class PictureAlbum extends React.Component<
   load_more_button(): JSX.Element | null;
 }
 
+declare class PictureUpload extends React.Component {
+  uploadImage(e: any): void;
+  body(): void;
+  close(): void;
+}
 declare const RoomClient: null | Room;
 
 declare class Room extends React.Component {

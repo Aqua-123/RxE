@@ -32,6 +32,7 @@ import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
+import { initSendPics } from "./modules/newsendpics";
 import * as altpfp from "./modules/altpfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/highlightmentions/index";
@@ -87,6 +88,7 @@ async function init() {
 
   initUserList();
   initPermaMute();
+  initSendPics();
 
   altpfp.init();
   highlightMentions.init();
