@@ -3,7 +3,7 @@ import Tape from "~src/tape";
 import { Tokenizer } from "./format0tokenizer";
 import browserWindow from "~src/browserWindow";
 
-const MAX_SIZE_COMPRESSED = 8192;
+const MAX_SIZE_COMPRESSED = 7500;
 
 const LOG_TOKEN_LIST = false;
 const LOG_SAMPLED_IMAGE = false;
