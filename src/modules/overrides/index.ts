@@ -48,7 +48,7 @@ function hackOverrides() {
     return value;
   };
 
-  UpgradeAccount.prototype.signup = () => { };
+  UpgradeAccount.prototype.signup = () => {};
 }
 
 export function domOverrides() {
@@ -77,14 +77,16 @@ export function applyOverrides() {
   }
   if (!window.DashboardClient) {
     window.DashboardClient = {
-      setState: () => { }
+      setState: () => {}
     };
   }
 
-  $(window).off('resize').on('resize', () => {
-    var e = document.getElementById('messages');
-    if (e) e.scrollTop = e.scrollHeight
-  });
+  $(window)
+    .off("resize")
+    .on("resize", () => {
+      var e = document.getElementById("messages");
+      if (e) e.scrollTop = e.scrollHeight;
+    });
 
   /**
    * To be clear, this is not how you use React.
@@ -119,26 +121,70 @@ export function applyOverrides() {
   };
 
   RoomChannelSelect.prototype.join = function (this: Room, e) {
-    console.log("joined strangers", e), e.members.length >= 10000000 || (App.webrtc.client && this.voice_disconnect(), this.expand(!1), RoomClient?.setState({
-      messages: []
-    }), Room.prototype.updated = function (this: Room) {
-      this.setState({
-        current_channel: e.channel
-      }), $.ajax({
-        type: "GET",
-        url: "channel_json?id=" + e.channel.id,
-        dataType: "json",
-        success: function (e: ChannelJsonResponse) {
-          console.log("loading chat", e), RoomChannelMembersClient.setState({
-            members: e.members
-          });
-          for (var t = 0; t < e.messages.length; t++) RoomClient?.append(e.messages[t]);
-          RoomClient?.scroll()
-        }.bind(this)
-      }), App.room.join("channel" + e.channel.id), setTimeout(function () {
-        RoomClient?.scroll()
-      }, 0), "voice" == e.channel.channel_type && this.voice_connect(e)
-    }.bind(this), RoomClient?.updated(), Room.prototype.updated = function () { })
+    console.log("joined strangers", e),
+      e.members.length >= 10000000 ||
+        (App.webrtc.client && this.voice_disconnect(),
+        this.expand(!1),
+        RoomClient?.setState({
+          messages: []
+        }),
+        (Room.prototype.updated = function (this: Room) {
+          this.setState({
+            current_channel: e.channel
+          }),
+            $.ajax({
+              type: "GET",
+              url: "channel_json?id=" + e.channel.id,
+              dataType: "json",
+              success: function (e: ChannelJsonResponse) {
+                console.log("loading chat", e),
+                  RoomChannelMembersClient.setState({
+                    members: e.members
+                  });
+                for (var t = 0; t < e.messages.length; t++)
+                  RoomClient?.append(e.messages[t]);
+                RoomClient?.scroll();
+              }.bind(this)
+            }),
+            App.room.join("channel" + e.channel.id),
+            setTimeout(function () {
+              RoomClient?.scroll();
+            }, 0),
+            "voice" == e.channel.channel_type && this.voice_connect(e);
+        }.bind(this)),
+        RoomClient?.updated(),
+        (Room.prototype.updated = function () {}));
+  };
+
+  //fixing friends list crashing due to deleted accounts
+  FriendsMenu.prototype.componentDidMount = function () {
+    $.ajax({
+      type: "GET",
+      url: "/friends_json",
+      dataType: "json",
+      success: function (this: FriendsMenu, e: any) {
+        console.log(e);
+        var obj = e.friends;
+        e.friends = obj.filter((x: []) => x !== null);
+        this.setState(e);
+      }.bind(this)
+    });
+  };
+  FriendsMenu.prototype.load_friends = function (this: FriendsMenu) {
+    $.ajax({
+      type: "GET",
+      url: "/load_friends_json?offset=" + this.state.friends.length,
+      dataType: "json",
+      success: function (this: any, e: []) {
+        var list = e.filter((x) => x !== null);
+        var state = {
+          search: [],
+          friends: this.state.friends.concat(list),
+          count: this.state.count
+        };
+        this.setState(state);
+      }.bind(this)
+    });
   };
 
   function menuMicroClose(this: React.Component) {
@@ -196,7 +242,7 @@ export function applyOverrides() {
   };
 
   // non-hack: "Sign up to continue" only shows once at start
-  App.temp.check = () => { };
+  App.temp.check = () => {};
 
   // Allow more messages in group chat. (make configurable?)
   // const rTrim = Room.prototype.trim_messages;
@@ -213,47 +259,65 @@ export function applyOverrides() {
     if (!(target instanceof Node)) return;
     let acTarget = target instanceof Element ? target : target.parentElement;
     if (!acTarget) return;
-    if (acTarget.matches(".notification-button, .notification-button *")) return;
+    if (acTarget.matches(".notification-button, .notification-button *"))
+      return;
     const notification = this.props.data;
-    const user = notification.tier === "friend_request"
-      ? notification.data.sender
-      : notification.data.sender ?? notification.data.unit?.author;
-    if (user && !('unit' in notification.data)) {
+    const user =
+      notification.tier === "friend_request"
+        ? notification.data.sender
+        : notification.data.sender ?? notification.data.unit?.author;
+    if (user && !("unit" in notification.data)) {
       return UserViewGenerator.generate({ event, user });
     }
-    if ('unit' in notification.data)
-      App.params = notification.data.unit;
-    const id = notification.tier === "friend_request"
-      ? notification.data.sender?.id
-      : notification.sender_id ?? notification.data.sender?.id
+    if ("unit" in notification.data) App.params = notification.data.unit;
+    const id =
+      notification.tier === "friend_request"
+        ? notification.data.sender?.id
+        : notification.sender_id ?? notification.data.sender?.id;
     console.warn("Could not get user from notification");
     if (UserProfileReact) return UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
-  }
+  };
 
   Flair.prototype.render = function render() {
-    const { data: { flair, string: name }, onClick } = this.props;
-    return React.createElement('span', {
-      className: 'user-flair',
-      style: flair ?? { color: '' },
-      onClick: onClick
-    }, name);
-  }
+    const {
+      data: { flair, string: name },
+      onClick
+    } = this.props;
+    return React.createElement(
+      "span",
+      {
+        className: "user-flair",
+        style: flair ?? { color: "" },
+        onClick: onClick
+      },
+      name
+    );
+  };
 
   UserProfile.prototype.render = function render() {
     const content = this.state.data
       ? [this.top(), this.bottom()]
-      : [React.createElement(Spinner)]
-    return React.createElement('div', {
-      className: 'ui-menu-container'
-    }, React.createElement('div', {
-      onMouseDown: this.close.bind(this),
-      className: 'animated fadeIn ui-bg'
-    }), React.createElement('div', {
-      className: 'animated zoomIn user-profile-menu'
-    }, ...content));
-  }
+      : [React.createElement(Spinner)];
+    return React.createElement(
+      "div",
+      {
+        className: "ui-menu-container"
+      },
+      React.createElement("div", {
+        onMouseDown: this.close.bind(this),
+        className: "animated fadeIn ui-bg"
+      }),
+      React.createElement(
+        "div",
+        {
+          className: "animated zoomIn user-profile-menu"
+        },
+        ...content
+      )
+    );
+  };
 
   if (FEATURES.HACKS) hackOverrides();
 }

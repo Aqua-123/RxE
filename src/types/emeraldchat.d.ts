@@ -10,8 +10,6 @@ declare const Cookies: {
 
 declare class MuteButton extends React.Component<any, { muted: boolean }> {
   //
-
-
 }
 
 declare const MuteButtonClient: MuteButton;
@@ -55,10 +53,10 @@ declare interface AppInterface {
   temp: {
     check: Function;
   };
-  params: any
+  params: any;
   webrtc: {
     client: null;
-  }
+  };
 }
 
 declare const App: AppInterface;
@@ -77,8 +75,7 @@ declare class UpgradeAccount {
   signup: Function;
 }
 
-
-declare class ModPanel extends React.Component { }
+declare class ModPanel extends React.Component {}
 
 declare type MessageData = {
   messages: string[];
@@ -114,13 +111,15 @@ declare class MessageNotificationUnit extends React.Component<{
 }> {
   image(): JSX.Element;
 }
-declare class MessageNotifications extends React.Component<any, {
-  data: {
-    read: MessageNotificationProps[],
-    unread: MessageNotificationProps[]
+declare class MessageNotifications extends React.Component<
+  any,
+  {
+    data: {
+      read: MessageNotificationProps[];
+      unread: MessageNotificationProps[];
+    };
   }
-}> { }
-
+> {}
 
 declare type WallPost = {
   author_id: number;
@@ -177,29 +176,32 @@ declare class NotificationUnit extends React.Component<{
 }
 
 declare type FriendRequest = {
-  created_at: string,
+  created_at: string;
   data: {
-    user: EmeraldUser,
-    sender: EmeraldUser,
-    content: string
-  },
-  id: number,
-  seen: boolean,
-  sender_id: number,
-  tier: "friend_request",
-  updated_at: string,
-  user_id: number
-}
+    user: EmeraldUser;
+    sender: EmeraldUser;
+    content: string;
+  };
+  id: number;
+  seen: boolean;
+  sender_id: number;
+  tier: "friend_request";
+  updated_at: string;
+  user_id: number;
+};
 
 declare type NotificationsStateData = {
-  read: NotificationProps[],
-  unread: NotificationProps[],
-  friend_requests: FriendRequest[]
-}
+  read: NotificationProps[];
+  unread: NotificationProps[];
+  friend_requests: FriendRequest[];
+};
 
-declare class Notifications extends React.Component<any, {
-  data: NotificationsStateData
-}> {
+declare class Notifications extends React.Component<
+  any,
+  {
+    data: NotificationsStateData;
+  }
+> {
   update(): string;
   click(): void;
   badge(): JSX.Element | null;
@@ -224,18 +226,18 @@ declare class UserUnit extends React.Component<{ data: EmeraldUser }> {
 }
 
 declare type UserBadge = {
-  name: string
-}
+  name: string;
+};
 
 declare type DetailedUserBadge = {
-  name: string,
-  html: JSX.Element
-}
+  name: string;
+  html: JSX.Element;
+};
 
 declare type EmptyUserBadge = {
-  name?: string,
-  html: null
-}
+  name?: string;
+  html: null;
+};
 
 declare type BadgeStore = DetailedUserBadge[];
 
@@ -316,7 +318,6 @@ declare class PictureAlbum extends React.Component<
 }
 
 declare const RoomClient: null | Room;
-
 
 declare class Room extends React.Component {
   state: {
@@ -412,7 +413,7 @@ declare class RoomPrivate extends React.Component<
     offline: (EmeraldUser | null)[];
     search: any[];
   }
-> { }
+> {}
 
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
@@ -441,10 +442,10 @@ declare const MenuReact: Menu;
 declare class Dashboard extends React.Component<
   any,
   {
-    jumbotron: boolean,
-    user: { display_picture: string }
+    jumbotron: boolean;
+    user: { display_picture: string };
   }
-> { }
+> {}
 
 declare const DashboardClient: null | {
   setState: Function;
@@ -452,16 +453,16 @@ declare const DashboardClient: null | {
 
 declare const UserViewGenerator: {
   generate(e: {
-    event: { clientX: number, clientY: number, preventDefault(): void }
-    user: { karma: number, id: number }
+    event: { clientX: number; clientY: number; preventDefault(): void };
+    user: { karma: number; id: number };
   }): void;
 };
 
 declare class UserView extends React.Component<
   any,
   {
-    muted: boolean,
-    permamuted: boolean | undefined,
+    muted: boolean;
+    permamuted: boolean | undefined;
     user: EmeraldUser;
   }
 > {
@@ -488,6 +489,15 @@ declare class Picture extends React.Component<{ data: { src: string } }> {
   close: Function;
 }
 
+declare class FriendsMenu extends React.Component<
+  any,
+  {
+    friends: [];
+  }
+> {
+  componentDidMount(): void;
+  load_friends(): void;
+}
 declare class UserProfile extends React.Component<
   any,
   {
@@ -536,9 +546,10 @@ declare class __Comment extends React.Component<
     reply: boolean;
     sub_comments: unknown[];
   }
-> { }
+> {}
 
-declare class Micropost extends React.Component<any,
+declare class Micropost extends React.Component<
+  any,
   {
     compact: boolean;
     reply: boolean;
@@ -551,36 +562,37 @@ declare class Micropost extends React.Component<any,
       micropost: WallPost;
       wall: unknown; // Wall
       author: EmeraldUser;
-      current_user: EmeraldUser,
-      subscribed: boolean,
-      muted: boolean,
-      picture: unknown
-    }
-  }> {
-  content(): JSX.Element | null
-  more(): void
-  youtube_process(text: string): JSX.Element
+      current_user: EmeraldUser;
+      subscribed: boolean;
+      muted: boolean;
+      picture: unknown;
+    };
+  }
+> {
+  content(): JSX.Element | null;
+  more(): void;
+  youtube_process(text: string): JSX.Element;
 }
 
 declare type FlairProps = {
   data: {
-    flair: { color: string },
-    string: string
-  },
-  onClick?(e: _MouseEvent): void
-}
+    flair: { color: string };
+    string: string;
+  };
+  onClick?(e: _MouseEvent): void;
+};
 
-declare class Flair extends React.Component<FlairProps> { }
+declare class Flair extends React.Component<FlairProps> {}
 
 declare class MessagePicture extends React.Component<{
-  picture: EmeraldPicture
-}> { open_picture(): void; }
-
-
+  picture: EmeraldPicture;
+}> {
+  open_picture(): void;
+}
 
 declare class Badge extends React.Component<
-  { key?: number, badge: UserBadge | null },
+  { key?: number; badge: UserBadge | null },
   { badge: EmptyUserBadge | DetailedUserBadge | null }
 > {
-  badges: DetailedUserBadge[]
+  badges: DetailedUserBadge[];
 }
