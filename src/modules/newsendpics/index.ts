@@ -14,7 +14,7 @@ export function initSendPics() {
     // compatibility with fav pictures
     PictureUploader.onUploaded = function onUploaded(picture) {
       if (RoomClient === null) return;
-      const image = imageFromURL(picture.url);
+      const image = imageFromURL(picture.url, true);
       if (image) RoomClient.sendRitsuPicture?.(image);
     };
   };

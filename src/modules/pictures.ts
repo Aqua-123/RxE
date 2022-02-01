@@ -74,6 +74,7 @@ export async function decoratePictures() {
         crel("div", {
           className: "picture-button block material-icons",
           textContent: "delete_forever",
+          title: "Block this image",
           onmousedown: (e: MouseEvent) => {
             if (e.target instanceof HTMLElement) {
               const img = e.target.parentElement?.parentElement
@@ -87,6 +88,7 @@ export async function decoratePictures() {
         crel("div", {
           className: "picture-button save material-icons",
           textContent: "bookmark_border",
+          title: "Bookmark this image",
           onmousedown: (e: MouseEvent) => {
             if (e.target instanceof HTMLElement) {
               const img = e.target.parentElement?.parentElement
@@ -123,11 +125,10 @@ export async function decoratePictures() {
   });
   // eslint-disable-next-line no-console
   // console.log(savedPictures);
-  savedPictures.values().map(async (src) => {
-    const hash = await getHash(src);
+  savedPictures.values().forEach((src) => {
     const image = crel("div", {
       style: `background-image: url(${encodeURI(src)}), url(${encodeURI(
-        `https://robohash.org/${hash}.png?set=set4`
+        `https://emeraldchat.com/avicons_strict/1.png`
       )})`,
       onmousedown: () => {
         insertPicture(src);
@@ -138,6 +139,7 @@ export async function decoratePictures() {
       crel("div", {
         className: "picture-button material-icons",
         textContent: "bookmark_remove",
+        title: "Unbookmark this image",
         onmousedown: (event: Event) => {
           event.stopPropagation();
           // eslint-disable-next-line no-alert

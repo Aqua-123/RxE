@@ -4,7 +4,7 @@ import {
 } from "~src/utils";
 import { dot, sanitizeURL } from "../richtext/linkutils";
 
-export const HIDE_IMGUR_LINK = () => false;
+export const HIDE_IMGUR_LINK: () => boolean = () => false;
 
 export const IMGUR_ENDPOINT = "https://api.imgur.com/3/image/";
 
@@ -46,9 +46,18 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   return toChatImage({ id: data.id, payload: encodeImage(data.id) });
 }
 
-export function imageFromURL(text: string): RitsuChatImage | null {
+export function imageFromURL(
+  text: string,
+  reencode = false
+): RitsuChatImage | null {
   const url = text.match(IMGUR_URL_REGEXP());
-  return url && toChatImage({ payload: sanitizeURL(url[0]), id: url[1] });
+  return (
+    url &&
+    toChatImage({
+      payload: reencode ? encodeImage(url[1]) : sanitizeURL(url[0]),
+      id: url[1]
+    })
+  );
 }
 
 export function decodeImage(encoded: string): RitsuChatImage | null {
