@@ -1,5 +1,6 @@
 import React from "react";
 import { IMGUR_ENDPOINT } from "./imgur";
+import { canUpload, nextUpload, uploadInfo } from "./ratelimit";
 
 export const uploadForm = () => (
   <MenuMicro>
@@ -20,6 +21,7 @@ export function initComponents() {
         />
         <span
           className="room-component-input-icon material-icons"
+          title="Attach image"
           onMouseDown={() => this.upload_picture()}
           role="button"
           tabIndex={0}
@@ -31,6 +33,7 @@ export function initComponents() {
   };
 
   PictureUpload.prototype.body = function body() {
+    const enabled = canUpload();
     return (
       <form
         id="picture_upload"
@@ -45,20 +48,33 @@ export function initComponents() {
           name="image"
           type="file"
           accept="image/*"
-          onChange={() => this.uploadImage?.()}
+          disabled={!enabled}
+          onChange={() => enabled && this.uploadImage?.()}
         />
         <label htmlFor="image">
           <span
             className="material-icons"
             style={{
-              verticalAlign: "text-top",
-              marginRight: "5px"
+              verticalAlign: "middle",
+              marginRight: "5px",
+              cursor: enabled ? "pointer" : "not-allowed"
             }}
           >
-            cloud_upload
+            {enabled ? "cloud_upload" : "hourglass_top"}
           </span>
-          {" Choose a file"}
+          {enabled
+            ? " Choose a file"
+            : ` Wait ${$.timeago(nextUpload())} before uploading again.`}
         </label>
+        <div
+          style={{
+            fontSize: "14px",
+            fontWeight: 400,
+            color: "#adb6c7"
+          }}
+        >
+          Note: {uploadInfo}
+        </div>
       </form>
     );
   };

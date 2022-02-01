@@ -5,15 +5,18 @@ import * as imgur from "./imgur";
 
 const rxeUrl = sanitizeURL(links.repo_minified);
 
-const IMG_PLACEHOLDER = (version: string) =>
-  ` · Pic not working? Get RxE ${version}+: ${rxeUrl}`;
+const PAYLOAD_DESC = () =>
+  imgur.HIDE_IMGUR_LINK() ? "Not seeing much" : "See just a link";
+
+const IMG_PLACEHOLDER = (version: string, payload: string) =>
+  `${payload} · ${PAYLOAD_DESC()}? Get RxE ${version}+: ${rxeUrl}`;
 
 export function emit(image: RitsuChatImage): string {
   const payload = /\w/.test(image.payload)
-    ? `${image.payload} `
-    : image.payload;
-  if (Math.random() < 0.5) return payload + IMG_PLACEHOLDER(image.version);
-  return image.payload;
+    ? `Image: ${image.payload}`
+    : `(Image${image.payload})`;
+  if (Math.random() < 0.5) return IMG_PLACEHOLDER(image.version, payload);
+  return payload;
 }
 
 export function picture({ url }: RitsuChatImage) {

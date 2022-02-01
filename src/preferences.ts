@@ -157,6 +157,11 @@ export const P = {
     key: "bigEmoji",
     label: T.preferences.bigEmoji.label,
     default: true
+  }),
+  imgurLastUploadTimes: new ListPreference<number>({
+    key: "imgurLastUploadTimes",
+    label: "imgurLastUploadTimes",
+    default: []
   })
 } as const;
 
@@ -226,7 +231,7 @@ abstract class ListPreferenceCacheKeyed<
   Key extends AllowedTypes,
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
-  > extends ListPreferenceCache<Store, Pref, Item> {
+> extends ListPreferenceCache<Store, Pref, Item> {
   public abstract hasKey(key: Key): boolean;
 
   public abstract getItem(key: Key): Item | undefined;
@@ -258,7 +263,7 @@ abstract class ListPreferenceCacheUnkeyed<
   Pref extends AllowedTypes,
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
-  > extends ListPreferenceCache<Store, Pref, Item> {
+> extends ListPreferenceCache<Store, Pref, Item> {
   public add(item: Item): void {
     this._add(item);
     this.save();
@@ -278,7 +283,7 @@ abstract class ListPreferenceCacheUnkeyed<
 export class ListPreferenceArray<
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
-  > extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
+> extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
   protected realStore: Item[] = [];
 
   hasKey(key: number) {
@@ -332,7 +337,7 @@ export class ListPreferenceArray<
 export class ListPreferenceSet<
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
-  > extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
+> extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
   protected realStore: Set<Item> = new Set();
 
   hasItem(item: Item) {
@@ -374,7 +379,7 @@ export class ListPreferenceMap<
   Key extends AllowedTypes,
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
-  > extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
+> extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
   protected realStore: Map<Key, Item> = new Map();
 
   hasKey(key: Key) {

@@ -4,7 +4,7 @@ import {
 } from "~src/utils";
 import { dot, sanitizeURL } from "../richtext/linkutils";
 
-const HIDE_IMGUR_LINK = false;
+export const HIDE_IMGUR_LINK = () => false;
 
 export const IMGUR_ENDPOINT = "https://api.imgur.com/3/image/";
 
@@ -27,7 +27,7 @@ function toChatImage({ id, payload }: ImgurImage): RitsuChatImage {
 }
 
 function encodeImage(id: string): string {
-  if (HIDE_IMGUR_LINK) return `${IMGUR_HEADER_ENCODED}${encode(id)}`;
+  if (HIDE_IMGUR_LINK()) return `${IMGUR_HEADER_ENCODED}${encode(id)}`;
   // just in case link processing is off
   return sanitizeURL(imgurPNG(id));
 }
