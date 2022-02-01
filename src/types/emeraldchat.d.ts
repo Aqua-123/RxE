@@ -3,6 +3,12 @@
 
 // Some fields are added by our modules, and are commented as such
 
+type JSXSingleton = string | JSX.Element;
+type JSXContent = JSXSingleton | JSXSingleton[];
+type JSXOpt = JSX.Element | null;
+type JSXSingletonOpt = JSXSingleton | null;
+type JSXContentOpt = JSXContent | null;
+
 declare const Cookies: {
   get(key: string): string;
   set(key: string, value: string): void;
@@ -272,29 +278,34 @@ declare type EmeraldUser = {
 };
 
 declare type EmeraldPicture = {
-  author_id: number;
-  created_at: string;
-  description: string | null;
-  id: number;
+  url: string;
+};
+
+declare type EmeraldPictureDetailed = {
+  author_id: number; // unused
+  created_at: string; // unused
+  description: string | null; // unused
+  id: number; // likely unused
   image: {
     thumb: {
       url: string;
     };
     url: string;
   };
-  image_processing: boolean;
-  image_tmp: null;
-  micropost_id: number | null;
-  picture_album_id: number | null;
-  temporary: boolean;
-  title: string | null;
-  updated_at: string;
+  // unused
+  image_processing: boolean; // unused
+  image_tmp: null; // unused
+  micropost_id: number | null; // unused
+  picture_album_id: number | null; // unused
+  temporary: boolean; // unused
+  title: string | null; // unused
+  updated_at: string; // unused
   url: string;
 };
 
 declare const PictureUploader: {
-  success: (e: EmeraldPicture) => void;
-  onUploaded: (e: EmeraldPicture) => void;
+  success: (e: EmeraldPictureDetailed) => void;
+  onUploaded: (e: EmeraldPictureDetailed) => void;
 };
 
 declare class PictureAlbum extends React.Component<
@@ -309,7 +320,7 @@ declare class PictureAlbum extends React.Component<
     };
     edit: boolean;
     loaded: boolean;
-    pictures: EmeraldPicture[];
+    pictures: EmeraldPictureDetailed[];
     pictures_count: number;
   }
 > {
@@ -318,7 +329,7 @@ declare class PictureAlbum extends React.Component<
 }
 
 declare class PictureUpload extends React.Component {
-  uploadImage(e: any): void;
+  uploadImage?(): void; // custom
   body(): void;
   close(): void;
 }
@@ -336,13 +347,14 @@ declare class Room extends React.Component {
   };
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
+  sendRitsuPicture?(id: RitsuChatImage): void; // custom
   print(elt?: JSX.Element): void;
   print_append(elt?: JSX.Element): void;
   append(e: MessageData, doTyping?: boolean): void; // NOTE: doTyping is our own field
   trim_messages(): void;
   room_input(): JSX.Element;
-  scroll(e?: { lock: boolean }): void;
-  input(e: KeyboardEvent): void;
+  scroll(e?: { lock?: boolean }): void;
+  input(e: React.KeyboardEvent<HTMLTextAreaElement>): void;
   upload_picture(): void;
   received(e: MessageData): void;
   room_messages(className: string): JSX.Element;
@@ -422,8 +434,8 @@ declare class RoomPrivate extends React.Component<
 
 declare class Message extends React.Component<{ data: MessageData }> {
   render(): JSX.Element;
-  content(): JSX.Element | JSX.Element[];
-  process(text: string): JSX.Element | (JSX.Element | string)[] | string;
+  content(): JSXContent;
+  process(text: string): JSXContentOpt;
 }
 
 declare class MenuMicro extends React.Component {

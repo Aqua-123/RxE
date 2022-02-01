@@ -1,6 +1,7 @@
+import { log } from "~userscripter";
 import { memoize, imageFromData } from "~src/utils";
 import Tape from "~src/tape";
-import { Tokenizer } from "./format0tokenizer";
+import Tokenizer from "./format0tokenizer";
 import browserWindow from "~src/browserWindow";
 
 const MAX_SIZE_COMPRESSED = 7500;
@@ -13,7 +14,7 @@ const LOG_SERIALIZED_IMAGE = false;
 function assertLengthLimit(compressed: string) {
   if (compressed.length <= MAX_SIZE_COMPRESSED) return;
   const { length } = compressed;
-  console.warn(`attempted to produce string (${length}): ${{ compressed }}`);
+  log.warning(`attempted to produce string (${length}): ${{ compressed }}`);
   throw new Error(
     `Resolution too big (result would be ${length} characters long)`
   );

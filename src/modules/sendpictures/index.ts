@@ -72,7 +72,7 @@ export function initSendPictures() {
         user: e.user,
         picture: {
           url: `https://static.emeraldchat.com/uploads/picture/${path}`
-        } as EmeraldPicture
+        }
       });
     };
 

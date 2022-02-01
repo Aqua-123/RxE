@@ -1,4 +1,5 @@
 import { links } from "~src/meta";
+import { sanitizeURL } from "../richtext/linkutils";
 
 const commands = {
   all: {
@@ -23,12 +24,6 @@ const commands = {
   }
 };
 
-function linkSanitize(message: string) {
-  return message
-    .replace(/(\w)\.(\w)/g, "$1.\u200b$2")
-    .replace(/https?:\/\//, "");
-}
-
 export function init() {
   Room.prototype.send = function send(rawMessage: string) {
     const message = this.process ? this.process(rawMessage) : rawMessage;
@@ -42,7 +37,7 @@ export function init() {
   };
   Room.prototype.process = function process(messageRaw) {
     if (commands.process(messageRaw)) return null;
-    const message = linkSanitize(messageRaw);
+    const message = sanitizeURL(messageRaw);
     return message;
   };
 }

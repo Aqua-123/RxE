@@ -22,9 +22,9 @@ export function initPictureAlbum() {
       dataType: "json",
       success: function success(
         this: PictureAlbum,
-        e: { pictures: EmeraldPicture[] }
+        response: { pictures: EmeraldPictureDetailed[] }
       ) {
-        const pictures = this.state.pictures.concat(e.pictures);
+        const pictures = this.state.pictures.concat(response.pictures);
         this.setState({
           pictures
         });

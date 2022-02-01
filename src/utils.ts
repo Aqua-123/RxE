@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
 import React, { KeyboardEvent, MouseEvent } from "react";
 
@@ -65,7 +64,7 @@ export function groups<T>(array: T[], groupSize: number): T[][] {
 }
 
 export function stringGroups(str: string, groupSize: number): string[] {
-  return groups(str.split(''), groupSize).map(group => group.join(''));
+  return groups(str.split(""), groupSize).map((group) => group.join(""));
 }
 
 export function clamp(num: number, atLeast: number, atMost: number) {
@@ -105,10 +104,8 @@ export const until = async (check: () => boolean) => {
 };
 
 export namespace sorters {
-  export const string: Sorter<string> =
-    (a, b) => a.localeCompare(b);
-  export const numeric: Sorter<number> =
-    (a, b) => a - b;
+  export const string: Sorter<string> = (a, b) => a.localeCompare(b);
+  export const numeric: Sorter<number> = (a, b) => a - b;
 }
 
 export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
@@ -117,24 +114,45 @@ export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
 
 export const equals = <T>(a: T, b: T) => a === b;
 
-export const equalsTo = <T>(a: T) => (b: T) => a === b;
+export const equalsTo =
+  <T>(a: T) =>
+  (b: T) =>
+    a === b;
 
-export function extractBoth<S, T, V>(extract: (s: S) => T, pair: (t1: T, t2: T) => V): (s1: S, s2: S) => V {
+export function extractBoth<S, T, V>(
+  extract: (s: S) => T,
+  pair: (t1: T, t2: T) => V
+): (s1: S, s2: S) => V {
   return (s1, s2) => pair(extract(s1), extract(s2));
 }
 
-export function sortingOn<T, V, K extends KeysOfType<T, V>, R>(propName: K, func: TwoToOne<V, R>): TwoToOne<T, R> {
-  return (a, b) => func(a[propName] as unknown as V, b[propName] as unknown as V);
+export function sortingOn<T, V, K extends KeysOfType<T, V>, R>(
+  propName: K,
+  func: TwoToOne<V, R>
+): TwoToOne<T, R> {
+  return (a, b) =>
+    func(a[propName] as unknown as V, b[propName] as unknown as V);
 }
 
-export function sortWith<T>(array: T[], sorter: Sorter<T>, order: SortOrder, inSitu = false) {
+export function sortWith<T>(
+  array: T[],
+  sorter: Sorter<T>,
+  order: SortOrder,
+  inSitu = false
+) {
   const items = inSitu ? array : Array.from(array);
-  const sorterOrdered = order === 'asc' ? sorter : swap(sorter);
+  const sorterOrdered = order === "asc" ? sorter : swap(sorter);
   items.sort(sorterOrdered);
   return items;
 }
 
-export function sortBy<T, V, K extends KeysOfType<T, V>>(array: T[], key: K, sorter: Sorter<V>, order: SortOrder, inSitu = false) {
+export function sortBy<T, V, K extends KeysOfType<T, V>>(
+  array: T[],
+  key: K,
+  sorter: Sorter<V>,
+  order: SortOrder,
+  inSitu = false
+) {
   return sortWith(array, sortingOn(key, sorter), order, inSitu);
 }
 
@@ -210,38 +228,49 @@ export function canvasToImage(
 }
 
 export function representColour(colour: RGB): string {
-  return `#${colour.map((comp) => comp.toString(16).padStart(2, '0')).join('')}`;
+  return `#${colour
+    .map((comp) => comp.toString(16).padStart(2, "0"))
+    .join("")}`;
 }
 
 export function hexToRGB(colour: string): RGB | null {
   const matches = colour.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
   if (matches === null) return null;
-  const components = matches[1].length === 6
-    ? matches[1]
-    : matches[1].replace(/[0-9a-f]/gi, "$&$&");
+  const components =
+    matches[1].length === 6
+      ? matches[1]
+      : matches[1].replace(/[0-9a-f]/gi, "$&$&");
   return stringGroups(components, 2).map((comp) => parseInt(comp, 16)) as RGB;
 }
 
 export function imageFromData(
-  image: RGB[] | Map<number, RGB>, width: number, height: number,
-  backgroundColour?: RGB, scale = 1): string {
-  const imageData = Array.from(image.entries())
+  image: RGB[] | Map<number, RGB>,
+  width: number,
+  height: number,
+  backgroundColour?: RGB,
+  scale = 1
+): string {
+  const imageData = Array.from(image.entries());
   return canvasToImage((canvas, context) => {
     canvas.width = scale * width;
     canvas.height = scale * height;
-    if (backgroundColour)
-      context.fillStyle = representColour(backgroundColour);
+    if (backgroundColour) context.fillStyle = representColour(backgroundColour);
     context.fillRect(0, 0, scale * width, scale * height);
     imageData.forEach(([offset, colour]) => {
+      const x = scale * (offset % width);
+      const y = scale * ~~(offset / height);
       context.fillStyle = representColour(colour);
-      context.fillRect(
-        scale * (offset % width), scale * ~~(offset / height), scale, scale
-      );
+      context.fillRect(x, y, scale, scale);
     });
   });
 }
 
-export function toNearestStep(value: number, step: number, minimum: number, maximum: number) {
+export function toNearestStep(
+  value: number,
+  step: number,
+  minimum: number,
+  maximum: number
+) {
   return clamp(Math.round(value / step), minimum, maximum);
 }
 
@@ -260,14 +289,25 @@ export function validColour(colour: RGB): boolean {
 }
 
 export function colourEqualTo([r, g, b]: RGB) {
-  return ([R, G, B]: RGB) => r === R && g === G && b === B
-};
-
-export function colourDifference(colour1: RGB, colour2: RGB): number {
-  return colour1.map((x, i) => ((x - colour2[i]) / 255) ** 2).reduce((a, b) => a + b, 0) / 3;
+  return ([R, G, B]: RGB) => r === R && g === G && b === B;
 }
 
-export function colourClosestMatch(palette: RGB[], colour: RGB): [number, number] {
+export function colourDifference(colour1: RGB, colour2: RGB): number {
+  return (
+    colour1
+      .map((x, i) => ((x - colour2[i]) / 255) ** 2)
+      .reduce((a, b) => a + b, 0) / 3
+  );
+}
+
+/**
+ * Finds the closest matching colour in a palette of colours.
+ * @returns {[number, number]} Index in palette and colour difference.
+ */
+export function colourClosestMatch(
+  palette: RGB[],
+  colour: RGB
+): [number, number] {
   const differences = palette.map((x, i) => [i, colourDifference(x, colour)]);
   differences.sort((a, b) => a[1] - b[1]);
   return differences[0] as [number, number];
@@ -289,7 +329,8 @@ export function median(array: number[]) {
   numbers.sort((a, b) => a - b);
   // eslint-disable-next-line prefer-destructuring
   const length = numbers.length;
-  if (length % 2 === 0) return .5 * (numbers[~~(length / 2)] + numbers[~~(length / 2) - 1]);
+  if (length % 2 === 0)
+    return 0.5 * (numbers[~~(length / 2)] + numbers[~~(length / 2) - 1]);
   return numbers[~~(length / 2)];
 }
 
@@ -300,7 +341,7 @@ export function getFrequencies(array: string[]): [string, number][] {
     occurences[item] = occured;
   });
   const entries = Array.from(Object.entries(occurences));
-  sortBy(entries, '1', sorters.numeric, 'desc', true);
+  sortBy(entries, "1", sorters.numeric, "desc", true);
   return Array.from(entries);
 }
 
@@ -309,7 +350,9 @@ export function allOf<T>(array: (T | null | undefined)[]): T[] | null {
   return array as T[];
 }
 
-export function existing<T>(array: (T | null | undefined)[] | null | undefined): T[] {
+export function existing<T>(
+  array: (T | null | undefined)[] | null | undefined
+): T[] {
   if (array === null || array === undefined) return [];
   return array.filter((item) => item !== undefined && item !== null) as T[];
 }
@@ -318,14 +361,25 @@ export function wholeMatch(array: RegExpMatchArray) {
   return array[0];
 }
 
-export function divertEventListeners(target: EventTarget, type: string): EventTarget {
+/**
+ * Returns a new EventTarget receiving all events of the given type
+previously routed to the given EventTarget, bypassing previous event handlers.
+ */
+export function divertEventListeners(
+  target: EventTarget,
+  type: string
+): EventTarget {
   const newTarget = new EventTarget();
-  target.addEventListener(type, (event) => {
-    const newEvent = new Event(event.type);
-    Object.assign(newEvent, event);
-    newTarget.dispatchEvent(newEvent);
-    event.stopPropagation();
-  }, true);
+  target.addEventListener(
+    type,
+    (event) => {
+      const newEvent = new Event(event.type);
+      Object.assign(newEvent, event);
+      newTarget.dispatchEvent(newEvent);
+      event.stopPropagation();
+    },
+    true
+  );
   return newTarget;
 }
 
@@ -335,10 +389,13 @@ export function timeSince(date: Date) {
 
 export const DAY = 24 * 3600e3;
 
-
-export function allStringMatches(string: string, substring: string, caseSensitive = false): number[] {
+export function allStringMatches(
+  string: string,
+  substring: string,
+  caseSensitive = false
+): number[] {
   let str = caseSensitive ? string : string.toLowerCase();
-  const subs = caseSensitive ? substring : substring.toLowerCase()
+  const subs = caseSensitive ? substring : substring.toLowerCase();
   const matches: number[] = [];
   let index = 0;
   while (str.length > 0) {
@@ -351,7 +408,9 @@ export function allStringMatches(string: string, substring: string, caseSensitiv
 }
 
 export function wrapAlternating<S, T>(
-  strings: string[], wrapper1: StringWrapper<S>, wrapper2: StringWrapper<T>
+  strings: string[],
+  wrapper1: StringWrapper<S>,
+  wrapper2: StringWrapper<T>
 ): (T | S)[] {
   let wrapFirst = false;
   return strings.flatMap((string) => {
@@ -364,57 +423,91 @@ export function wrapAlternating<S, T>(
 
 type PartitionMatches = [number, number][] | number[];
 
-function extractPartitions(string: string, matches: [number, number][]): string[];
+function extractPartitions(
+  string: string,
+  matches: [number, number][]
+): string[];
 // eslint-disable-next-line no-redeclare
-function extractPartitions(string: string, matches: number[], length: number): string[];
+function extractPartitions(
+  string: string,
+  matches: number[],
+  length: number
+): string[];
 
 // eslint-disable-next-line no-redeclare
-function extractPartitions(string: string, matches: PartitionMatches, length?: number): string[] {
+function extractPartitions(
+  string: string,
+  matches: PartitionMatches,
+  length?: number
+): string[] {
   if (matches.length === 0) return [string];
   const indices: (number | undefined)[] = matches.flatMap((item) => {
     if (typeof item === "number") {
       if (length === undefined)
-        throw new Error("Length must not be undefined if matches is of type number[]");
-      return [item, item + length]
+        throw new Error(
+          "Length must not be undefined if matches is of type number[]"
+        );
+      return [item, item + length];
     }
     const [index, len] = item;
     return [index, index + len];
   });
   indices.push(undefined);
-  const partitions = indices.map((index, count, { [count - 1]: last }) => string.slice(last ?? 0, index));
+  const partitions = indices.map((index, count, { [count - 1]: last }) =>
+    string.slice(last ?? 0, index)
+  );
   return partitions;
 }
 
 export function wrapPartitions<S, T>(
-  string: string, regexp: RegExp,
-  wrapper: StringWrapper<S>, restwrapper: StringWrapper<T>
+  string: string,
+  regexp: RegExp,
+  wrapper: StringWrapper<S>,
+  restwrapper: StringWrapper<T>
 ): (S | T)[] {
-  const matches = Array.from(string.matchAll(regexp))
-    .map((match) => {
-      if (match.index === undefined)
-        throw new Error("So TypeScript really was right about match.index");
-      return [match.index, match[0].length] as [number, number];
-    });
+  const matches = Array.from(string.matchAll(regexp)).map((match) => {
+    if (match.index === undefined)
+      throw new Error("So TypeScript really was right about match.index");
+    return [match.index, match[0].length] as [number, number];
+  });
   const partitions = extractPartitions(string, matches);
   return wrapAlternating(partitions, restwrapper, wrapper);
 }
 
-export function wrapMatches<S>(string: string, regexp: RegExp, wrapper: StringWrapper<S>) {
+export function wrapMatches<S>(
+  string: string,
+  regexp: RegExp,
+  wrapper: StringWrapper<S>
+) {
   return wrapPartitions(string, regexp, wrapper, (text) => text);
 }
 
-export function wrapStringPartitions<S, T>(string: string, substring: string,
-  wrapper: StringWrapper<T>, restwrapper: StringWrapper<S>, caseSensitive = false): Array<S | T> {
+export function wrapStringPartitions<S, T>(
+  string: string,
+  substring: string,
+  wrapper: StringWrapper<T>,
+  restwrapper: StringWrapper<S>,
+  caseSensitive = false
+): Array<S | T> {
   const matches = allStringMatches(string, substring, caseSensitive);
   const subsLength = Math.max(substring.length, 1);
   const partitions = extractPartitions(string, matches, subsLength);
   return wrapAlternating(partitions, restwrapper, wrapper);
 }
 
-
-export function wrapStringMatches<T>(string: string, substring: string,
-  wrapper: (match: string) => T, caseSensitive = false) {
-  return wrapStringPartitions(string, substring, wrapper, (text) => text, caseSensitive);
+export function wrapStringMatches<T>(
+  string: string,
+  substring: string,
+  wrapper: (match: string) => T,
+  caseSensitive = false
+) {
+  return wrapStringPartitions(
+    string,
+    substring,
+    wrapper,
+    (text) => text,
+    caseSensitive
+  );
 }
 
 export function formatSignedAmount(amount: number) {
@@ -431,7 +524,8 @@ export function accountAgeScaled(user: EmeraldUser) {
 }
 
 export function mapValues<K extends string | number | symbol, V, V2>(
-  dict: Record<K, V>, func: (k: K, v: V) => V2
+  dict: Record<K, V>,
+  func: (k: K, v: V) => V2
 ): Record<K, V2> {
   const keys = Object.getOwnPropertyNames(dict) as K[];
   const entries = keys.map((key) => [key, func(key, dict[key])] as [K, V2]);
@@ -442,7 +536,7 @@ export function choosePairs<T>(array: T[]): [T, T][] {
   const pairs: [T, T][] = [];
   for (let i = 0; i < array.length; i += 1)
     for (let j = i + 1; j < array.length; j += 1)
-      pairs.push(([array[i], array[j]]));
+      pairs.push([array[i], array[j]]);
   return pairs;
 }
 
@@ -460,11 +554,14 @@ export function pairwise<S, T, R>(func: (s: S, t: T) => R) {
   return ([s, t]: [S, T]) => func(s, t);
 }
 
-export const percent = (fraction: number) => `${(Number.isNaN(fraction) ? 0 : fraction * 100).toPrecision(3)}%`;
+export const percent = (fraction: number) =>
+  `${(Number.isNaN(fraction) ? 0 : fraction * 100).toPrecision(3)}%`;
 
-export const without = <T>(item: T, array: T[]) => array.filter((arrayItem) => arrayItem !== item);
+export const without = <T>(item: T, array: T[]) =>
+  array.filter((arrayItem) => arrayItem !== item);
 
-export const stripBiDi = (s: string) => s.replace(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g, "");
+export const stripBiDi = (s: string) =>
+  s.replace(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g, "");
 
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
 export function computeEntropy(msg: string, sep: RegExp | string = "") {
@@ -484,16 +581,16 @@ export function isRepeating(msg: string) {
 }
 
 type HandlerPropOpts = {
-  allowSpace?: boolean,
-  otherKeysStopPropagation?: boolean,
-  otherKeysPreventDefault?: boolean
-}
+  allowSpace?: boolean;
+  otherKeysStopPropagation?: boolean;
+  otherKeysPreventDefault?: boolean;
+};
 
 const handlerOptsDefault: HandlerPropOpts = {
   allowSpace: false,
   otherKeysPreventDefault: false,
   otherKeysStopPropagation: false
-}
+};
 
 export function onClickOrKeyUp<T>(
   handler: (ev: MouseEvent<T> | KeyboardEvent<T>) => void,
@@ -506,8 +603,7 @@ export function onClickOrKeyUp<T>(
   return {
     onClick: handler,
     onKeyUp: (ev: KeyboardEvent<T>) => {
-      if (ev.key === "Enter" || (allowSpace && ev.key === ""))
-        handler(ev);
+      if (ev.key === "Enter" || (allowSpace && ev.key === "")) handler(ev);
       else {
         if (otherKeysStopPropagation) ev.stopPropagation();
         if (otherKeysPreventDefault) ev.preventDefault();
@@ -517,24 +613,29 @@ export function onClickOrKeyUp<T>(
 }
 
 /**
- * Concatenates a list of regular expressions. Uses flag from last RegExp.
+ * Concatenates a list of regular expressions. 
+Uses flag from last RegExp or interprets last string as flags.
  * @param res Array of regular expressions or strings
  */
 export function regexpcc(...res: (RegExp | string)[]) {
-  if (res.length === 0) throw new Error("Must supply at least one RegExp")
+  if (res.length === 0) throw new Error("Must supply at least one RegExp");
   const last = res[res.length - 1];
-  const lastFlagsOnly = typeof last === 'string';
+  const lastFlagsOnly = typeof last === "string";
   const sources = res.slice(0, lastFlagsOnly ? -1 : 0);
-  const flags = typeof last === 'string' ? last : last.flags
-  const getSource = (re: RegExp | string) => (typeof re === 'string' ? re : re.source)
+  const flags = typeof last === "string" ? last : last.flags;
+  const getSource = (re: RegExp | string) =>
+    typeof re === "string" ? re : re.source;
   return new RegExp(sources.map(getSource).join(""), flags);
 }
 
-export async function firstSuccessAsync<T>(funcs: (() => Promise<T>)[]): Promise<T> {
+export async function firstSuccessAsync<T>(
+  funcs: (() => Promise<T>)[]
+): Promise<T> {
   for (let i = 0; i < funcs.length; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
-    try { return await funcs[i](); }
-    catch (e) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      return await funcs[i]();
+    } catch (e) {
       if (i === funcs.length - 1) throw e;
     }
   }

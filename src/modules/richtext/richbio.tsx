@@ -59,7 +59,7 @@ export function init() {
     const bioRaw = isCompact ? bioCompact : bioStripped;
     return (
       <span>
-        {wrapRich(bioRaw, (rest) => rest)}
+        {wrapRich(bioRaw)}
         {isCompact && (
           <span
             role="button"

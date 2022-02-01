@@ -23,16 +23,16 @@ import {
   ImageContentToken,
   PaletteSelection,
   OffsetColour,
-  MAX_BACKGROUND_APPROXIMATION,
   OffsetColourLong,
   OffsetColourAbstract,
-  PaletteSelectionShort
+  PaletteSelectionShort,
+  MAX_BACKGROUND_APPROXIMATION
 } from "./format0tokens";
 import { colourSpaces, sampleImage } from "./interpolation";
 
 const PALETTE_DIST_WEIGHT = () => 0.3;
 
-export class Tokenizer {
+export default class Tokenizer {
   protected static readBufferToken(
     pixels: PixelReader,
     metadata: ImageMetadata

@@ -13,7 +13,7 @@ export function init() {
       const compacted = words.slice(0, maxWords).join(" ");
       return (
         <span>
-          {wrapRich(compacted, (rest) => rest)}
+          {wrapRich(compacted)}
           {" ..."}
           <span
             className="user-micropost-text-button"

@@ -143,7 +143,7 @@ interface Prototype {
 }
 
 function interceptUser<T, K extends FunctionKeys<T>>(
-  obj: T,
+  { prototype: obj }: { prototype: T },
   method: K,
   getUser: PrependParam<ReplaceMethodReturn<T, K, EmeraldUser | undefined>, T>,
   before = true
@@ -331,36 +331,18 @@ export function init() {
   loadCSS(css);
   // eslint-disable-next-line camelcase
   UserProfile.prototype.profile_picture = profile_picture;
-  interceptUser(
-    Room.prototype,
-    "received",
-    (_, messageData) => messageData.user
-  );
-  interceptUser(
-    UserProfile.prototype,
-    "profile_picture",
-    (self) => self.state.data.user
-  );
-  interceptUser(FriendUnit.prototype, "body", (self) => self.props.data);
-  interceptUser(
-    browserWindow.Comment.prototype,
-    "render",
-    (self) => self.state.comment_data?.user
-  );
-  interceptUser(
-    Micropost.prototype,
-    "render",
-    (self) => self.state.data?.author
-  );
-  interceptUser(
-    MessageNotificationUnit.prototype,
-    "image",
-    (self) => self.props.data.data.sender
-  );
-  interceptUser(Message.prototype, "render", (self) => self.props.data.user);
-  interceptUser(RoomUserUnit.prototype, "body", (self) => self.props.data);
-  interceptUser(UserUnit.prototype, "body", (self) => self.props.data);
-  interceptUser(UserView.prototype, "top", (self) => self.state.user);
+  interceptUser(Room, "received", (_, messageData) => messageData.user);
+  interceptUser(UserProfile, "profile_picture", (self) => self.state.data.user);
+  interceptUser(FriendUnit, "body", (self) => self.props.data);
+  const { Comment } = browserWindow;
+  interceptUser(Comment, "render", (self) => self.state.comment_data?.user);
+  interceptUser(Micropost, "render", (self) => self.state.data?.author);
+  const MNU = MessageNotificationUnit;
+  interceptUser(MNU, "image", (self) => self.props.data.data.sender);
+  interceptUser(Message, "render", (self) => self.props.data.user);
+  interceptUser(RoomUserUnit, "body", (self) => self.props.data);
+  interceptUser(UserUnit, "body", (self) => self.props.data);
+  interceptUser(UserView, "top", (self) => self.state.user);
   wrapMethod(Dashboard.prototype, "render", function render() {
     // todo: this isn't available immediately
     if (App.user.bio !== undefined)
