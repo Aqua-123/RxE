@@ -11,7 +11,7 @@ export const IMGUR_ENDPOINT = "https://api.imgur.com/3/image/";
 const IMGUR_HEADER_ENCODED = encode("rxe-imgur:");
 // note that the header is encoded seperately and then concatenated.
 // this is not identical to concatenating and then encoding.
-const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(.*)$`);
+const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(\\S*)`);
 // hint: don't add the global flag if you want capture groups, silly
 const IMGUR_URL_REGEXP = () =>
   new RegExp(`i${dot}imgur${dot}com/([a-z0-9]+)${dot}\\w+`, "i");

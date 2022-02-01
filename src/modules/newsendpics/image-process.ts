@@ -1,15 +1,19 @@
 import React from "react";
-import { urlFull } from "../richtext/linkutils";
+import { links } from "~src/meta";
+import { sanitizeURL } from "../richtext/linkutils";
 import * as imgur from "./imgur";
 
+const rxeUrl = sanitizeURL(links.repo_minified);
+
 const IMG_PLACEHOLDER = (version: string) =>
-  `Use Ritsu x Emerald ${version} or newer to see an image instead of this placeholder.`;
+  ` · Pic not working? Get RxE ${version}+: ${rxeUrl}`;
 
 export function emit(image: RitsuChatImage): string {
-  const payload = urlFull().test(image.payload)
-    ? ` (${image.payload})`
+  const payload = /\w/.test(image.payload)
+    ? `${image.payload} `
     : image.payload;
-  return IMG_PLACEHOLDER(image.version) + payload;
+  if (Math.random() < 0.5) return payload + IMG_PLACEHOLDER(image.version);
+  return image.payload;
 }
 
 export function picture({ url }: RitsuChatImage) {
