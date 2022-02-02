@@ -1,6 +1,7 @@
 // #5. Image control
 
-import { P as PREFS, Preferences, ListPreferenceSet } from "~src/preferences";
+import { P as PREFS, Preferences } from "~src/preferences";
+import { ListPreferenceSet } from "~src/listprefcache";
 import { crel, memoizeAsync } from "~src/utils";
 
 const blockedHashes = new ListPreferenceSet(PREFS.blockedHashes);
@@ -125,7 +126,7 @@ export async function decoratePictures() {
   });
   // eslint-disable-next-line no-console
   // console.log(savedPictures);
-  savedPictures.values().forEach((src) => {
+  savedPictures.values().forEach((src: string) => {
     const image = crel("div", {
       style: `background-image: url(${encodeURI(src)}), url(${encodeURI(
         `https://emeraldchat.com/avicons_strict/1.png`

@@ -1,4 +1,5 @@
-import { P, Preferences } from "~src/preferences";
+import { Preferences } from "~src/preferences";
+import { PX } from "~src/x/preferences";
 
 function isFunction<T>(f: Function | T): f is Function {
   return typeof f === "function";
@@ -28,7 +29,7 @@ export function initNetwork() {
             xhr: JQuery.jqXHR
           ) => {
             if (
-              Preferences.get(P.universalFriend!) &&
+              Preferences.get(PX?.universalFriend!) &&
               settings.url?.startsWith("/profile_json?")
             ) {
               e.actualFriend = e.friend;

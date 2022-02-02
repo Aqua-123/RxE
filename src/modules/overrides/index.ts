@@ -2,7 +2,8 @@
 /* eslint-disable */
 import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
-import { P, Preferences } from "~src/preferences";
+import { Preferences } from "~src/preferences";
+import { PX } from "~src/x/preferences";
 import window from "~src/browserWindow";
 import { Spinner } from "~src/components/Spinner";
 
@@ -12,12 +13,12 @@ function hackOverrides() {
   let user = App.user || {};
   const proxyHandler = {
     get(_: EmeraldUser, prop: keyof EmeraldUser) {
-      if (Preferences.get(P.superTemp!)) {
+      if (Preferences.get(PX?.superTemp!)) {
         if (prop === "temp") return false;
         if (prop === "karma") return 31337;
         if (prop === "_karma") return user.karma;
       }
-      if (Preferences.get(P.enableModUI!)) {
+      if (Preferences.get(PX?.enableModUI!)) {
         if (prop === "master") return true;
         if (prop === "mod") return true;
       }

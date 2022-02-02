@@ -2,36 +2,34 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import RitsuDialog from "~src/components/RitsuDialog";
-import { crel } from "~src/utils";
-import { P, Preferences } from "~src/preferences";
+import { crel, mapValues, pickValues } from "~src/utils";
+import { Preferences, P } from "~src/preferences";
+import { PX } from "~src/x/preferences";
 import { initTheme, Theme } from "~src/themes";
+import {
+  BooleanPreference as BooleanPreference,
+  Preference
+} from "ts-preferences";
+
+function booleanSettings<
+  K extends string | number | symbol,
+  T extends Record<K, Preference<any>>
+>(prefDict: T): Record<KeysOfType<T, BooleanPreference>, boolean> {
+  return mapValues(pickValues(prefDict, BooleanPreference), (_, pref) =>
+    Preferences.get(pref)
+  );
+}
 
 export function getSettings() {
   return {
     theme: Preferences.get(P.theme) as Theme,
     ...(FEATURES.HACKS && {
-      hacks_: {
-        superTemp: Preferences.get(P.superTemp!),
-        enableModUI: Preferences.get(P.enableModUI!),
-        universalFriend: Preferences.get(P.universalFriend!),
-        antiBan: Preferences.get(P.antiBan!)
-      }
+      hacks_: booleanSettings(PX!)
     }),
     settings: {
-      adBlocker: Preferences.get(P.adBlocker),
-      trackKarma: Preferences.get(P.trackKarma),
-      fancyColors: Preferences.get(P.fancyColors!),
-      imgControl: Preferences.get(P.imgControl),
-      imgProtect: Preferences.get(P.imgProtect),
-      imgBlur: Preferences.get(P.imgBlur),
-      hidePfp: Preferences.get(P.hidePfp),
-      showInfo: Preferences.get(P.showInfo),
-      showGender: Preferences.get(P.showGender),
-      antiSpam: Preferences.get(P.antiSpam),
-      permaMuteList: Preferences.get(P.permaMuteList),
+      ...booleanSettings(P),
       blockReqs: Preferences.get(P.blockReqs),
-      highlightMentions: Preferences.get(P.highlightMentions),
-      bigEmoji: Preferences.get(P.bigEmoji)
+      permaMuteList: Preferences.get(P.permaMuteList)
     }
   };
 }
@@ -61,7 +59,9 @@ export function openSettings() {
 
 export function injectRitsuMenu() {
   const ritsuMenu = document.querySelector(".navigation-dropdown-ritsu");
-  const dropdownContent = document.querySelector(".navigation-dropdown-content");
+  const dropdownContent = document.querySelector(
+    ".navigation-dropdown-content"
+  );
   if (!ritsuMenu && dropdownContent) {
     /* i give up
     const settingsButton = dropdownContent.parentElement?.children[0]

@@ -4,7 +4,7 @@ import { SettingsDialogSettings } from "./SettingsDialog";
 import CheckboxSetting from "./CheckboxSetting";
 import T from "~src/text";
 import styles from "./style.module.scss";
-import { updateMutes } from "~src/modules/permamute";
+import { updateRoomMutes } from "~src/modules/permamute";
 import RadioSetting from "./RadioSetting";
 import ListSetting from "./ListSetting";
 
@@ -28,6 +28,7 @@ export default function Settings(props: SettingsProps) {
     blockReqs,
     highlightMentions,
     bigEmoji,
+    hideImageFallback,
     applySettings
   } = props;
 
@@ -49,7 +50,6 @@ export default function Settings(props: SettingsProps) {
         value={fancyColors}
         onChange={() => applySettings({ fancyColors: !fancyColors })}
       />
-      <br />
       <RadioSetting
         id="blockReqs"
         value={blockReqs}
@@ -76,6 +76,13 @@ export default function Settings(props: SettingsProps) {
         id="imgBlur"
         value={imgBlur}
         onChange={() => applySettings({ imgBlur: !imgBlur })}
+      />
+      <CheckboxSetting
+        id="hideImageFallback"
+        value={hideImageFallback}
+        onChange={() =>
+          applySettings({ hideImageFallback: !hideImageFallback })
+        }
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.messageTitle}</div>
       <CheckboxSetting
@@ -105,7 +112,7 @@ export default function Settings(props: SettingsProps) {
         value={bigEmoji}
         onChange={() => applySettings({ bigEmoji: !bigEmoji })}
       />
-      <label htmlFor="permaMuteList">Permanent mute list</label>
+      <div className={`m1 ${styles.settingsSection}`}>{T.mutelistTitle}</div>
       <ListSetting
         id="permaMuteList"
         value={permaMuteList}
@@ -120,8 +127,8 @@ export default function Settings(props: SettingsProps) {
             {name}
           </span>
         )}
-        onChange={(items) => {
-          updateMutes(items);
+        onChange={(items: Array<[number, string]>) => {
+          updateRoomMutes(items);
           applySettings({ permaMuteList: items });
         }}
       />

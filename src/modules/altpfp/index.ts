@@ -135,13 +135,6 @@ function getDisplayPicture(user: EmeraldUser): string {
   return fallback;
 }
 
-// lame
-interface Prototype {
-  constructor: {
-    name: string;
-  };
-}
-
 function interceptUser<T, K extends FunctionKeys<T>>(
   { prototype: obj }: { prototype: T },
   method: K,
@@ -156,7 +149,7 @@ function interceptUser<T, K extends FunctionKeys<T>>(
     method,
     function wrapper(...params) {
       const user = getUser(this, ...params);
-      const name = (obj as Prototype)?.constructor?.name;
+      const name = (obj as any as Prototype<T>)?.constructor?.name;
       const instance = name ? `'${name}' instance` : `unknown class instance`;
       if (user === undefined) return;
       if (

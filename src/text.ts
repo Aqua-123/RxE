@@ -7,6 +7,7 @@ export default {
   generalTitle: "General Settings",
   imagesTitle: "Image Settings",
   messageTitle: "Message Settings",
+  mutelistTitle: "Permanent Mutes",
   preferences: {
     theme: {
       label: "Theme",
@@ -77,6 +78,9 @@ export default {
     },
     bigEmoji: {
       label: "Jumbo-sized emoji"
+    },
+    hideImageFallback: {
+      label: "Hide your images from non-RxE users"
     }
   },
   hiddenChannels: "hidden channels",

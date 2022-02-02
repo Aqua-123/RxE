@@ -1,5 +1,6 @@
 import React from "react";
 import { P, Preferences } from "~src/preferences";
+import { PX } from "~src/x/preferences";
 
 import SettingsView from "./Settings";
 import ThemesView from "./Themes";
@@ -54,7 +55,7 @@ export default class SettingsDialog extends React.Component<
       const { hacks_ } = this.state;
       const newHacks = { ...hacks_, ...obj };
       const keys = Object.keys(obj);
-      keys.forEach((key) => Preferences.set(P[key]!, obj[key]));
+      keys.forEach((key) => Preferences.set(PX?.[key]!, obj[key]));
       applySettings();
       this.setState({ hacks_: newHacks, needsReload: true });
     }
@@ -64,8 +65,8 @@ export default class SettingsDialog extends React.Component<
     const { theme, settings, hacks_, needsReload } = this.state;
     return (
       <div>
-        <SettingsView {...settings} applySettings={this.applySettings} />
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
+        <SettingsView {...settings} applySettings={this.applySettings} />
         {FEATURES.HACKS && (
           <HacksView {...hacks_} applyHacks={this.applyHacks_} />
         )}

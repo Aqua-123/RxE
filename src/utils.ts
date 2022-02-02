@@ -532,6 +532,18 @@ export function mapValues<K extends string | number | symbol, V, V2>(
   return Object.fromEntries(entries) as Record<K, V2>;
 }
 
+export function pickValues<T extends Record<string | number | symbol, any>, V>(
+  dict: T,
+  type: Constructor<V>
+): Record<KeysOfType<T, V> & keyof T, V> {
+  const keys = Object.getOwnPropertyNames(dict) as (keyof T)[];
+  const keysOfType = keys.filter(
+    (key) => (dict[key] as any) instanceof type
+  ) as any as KeysOfType<T, V>[];
+  const entries = keysOfType.map((k) => [k, dict[k]] as [KeysOfType<T, V>, V]);
+  return Object.fromEntries(entries) as Record<KeysOfType<T, V>, V>;
+}
+
 export function choosePairs<T>(array: T[]): [T, T][] {
   const pairs: [T, T][] = [];
   for (let i = 0; i < array.length; i += 1)

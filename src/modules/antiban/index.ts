@@ -1,4 +1,5 @@
-import { P, Preferences } from "~src/preferences";
+import { Preferences } from "~src/preferences";
+import { PX } from "~src/x/preferences";
 import { crel, loadCSS, wrapMethod } from "~src/utils";
 import css from "./style.scss";
 import T from "~src/text";
@@ -18,7 +19,7 @@ export function initAntiBan() {
     App.events,
     "received",
     (e) => {
-      if (!Preferences.get(P.antiBan!)) return;
+      if (!Preferences.get(PX?.antiBan!)) return;
       if (e.ban) {
         e.ban = false;
         showBanBanner();

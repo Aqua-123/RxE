@@ -1,5 +1,6 @@
 import { log } from "~userscripter";
 import { P, Preferences } from "./preferences";
+import { PX } from "./x/preferences";
 
 export function migrateSettings() {
   // eslint-disable-next-line camelcase
@@ -15,7 +16,7 @@ export function migrateSettings() {
   if (hacksToMigrate) {
     Preferences.set(P.adBlocker, !!hacksToMigrate.disableNags);
     if (FEATURES.HACKS) {
-      Preferences.set(P.superTemp!, !!hacksToMigrate.disableNags);
+      Preferences.set(PX?.superTemp!, !!hacksToMigrate.disableNags);
     }
     Preferences.set(P.fancyColors, !!hacksToMigrate.fancyColors);
     log.log("Migrated HACKS");
