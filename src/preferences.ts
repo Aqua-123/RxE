@@ -154,7 +154,7 @@ export const PA = {
 };
 
 export const Preferences = new PreferenceManager(
-  P,
+  PA,
   `${U.id}-preference-`,
   preferences.loggingResponseHandler
 );
