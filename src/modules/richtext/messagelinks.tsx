@@ -50,8 +50,6 @@ class MessageAnchor extends React.Component<{ href: string }> {
 const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
 const extraFilters = () => [urlEmeraldRequest()];
 
-console.log("urlFull", urlFull());
-
 export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
   return wrapPartitions(
     text,

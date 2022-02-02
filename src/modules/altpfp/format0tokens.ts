@@ -74,10 +74,10 @@ export const MATCH_BIT_HEADER = (digit: number) =>
   );
 
 {
-  console.log("BIT_HEADER_BINARY", BIT_HEADER_BINARY);
+  /* console.log("BIT_HEADER_BINARY", BIT_HEADER_BINARY);
   console.log("BIT_HEADER_BITS", BIT_HEADER_BITS);
   console.log("PAYLOAD_BITS", PAYLOAD_BITS);
-  console.log("MAX_VALUE", MAX_VALUE);
+  console.log("MAX_VALUE", MAX_VALUE); */
   const conflict = choosePairs(Object.entries(BIT_HEADER)).find(
     ([[_1, header1], [_2, header2]]) =>
       header1.startsWith(header2) || header2.startsWith(header1)
