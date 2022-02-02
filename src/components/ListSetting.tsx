@@ -54,7 +54,7 @@ export default class ListSetting<T> extends React.Component<
   }
 
   render() {
-    const { id } = this.props;
+    const { id, children } = this.props;
     const { items } = this.state;
     const preference = PA[id] as Preference<any>;
     if (!(preference instanceof ListPreference))
@@ -62,7 +62,7 @@ export default class ListSetting<T> extends React.Component<
     return (
       <div>
         <div id={id} style={{ display: "block" }}>
-          {items.map(this.itemJSX.bind(this))}
+          {items.length === 0 ? children : items.map(this.itemJSX.bind(this))}
         </div>
       </div>
     );
