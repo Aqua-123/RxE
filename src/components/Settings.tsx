@@ -131,7 +131,9 @@ export default function Settings(props: SettingsProps) {
           updateRoomMutes(items);
           applySettings({ permaMuteList: items });
         }}
-      />
+      >
+        No mutes active
+      </ListSetting>
     </div>
   );
 }
