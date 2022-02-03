@@ -1,10 +1,12 @@
+import { P, Preferences } from "~src/preferences";
 import {
   decodeInvisible as decode,
   encodeInvisible as encode
 } from "~src/utils";
 import { dot, sanitizeURL } from "../richtext/linkutils";
 
-export const HIDE_IMGUR_LINK: () => boolean = () => false;
+export const HIDE_IMGUR_LINK: () => boolean = () =>
+  Preferences.get(P.hideImageFallback);
 
 export const IMGUR_ENDPOINT = "https://api.imgur.com/3/image/";
 
