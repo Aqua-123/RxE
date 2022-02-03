@@ -112,6 +112,29 @@ export function swap<T, R>(func: TwoToOne<T, R>): TwoToOne<T, R> {
   return (a, b) => func(b, a);
 }
 
+export function sum(array: number[]) {
+  return array.reduce((a, b) => a + b, 0);
+}
+
+export const multiply = (a: number, b: number) => a * b;
+
+export function product(array: number[]) {
+  return array.reduce(multiply, 1);
+}
+
+export const some = <T>(item: T | null | undefined): T => {
+  if (item === null) throw new Error("got null");
+  if (item === undefined) throw new Error("got undefined");
+  if (typeof item === "number" && Number.isNaN(item))
+    throw new Error("got NaN");
+  return item;
+};
+
+export const always =
+  <T>(item: T) =>
+  () =>
+    item;
+
 export const equals = <T>(a: T, b: T) => a === b;
 
 export const equalsTo =
@@ -288,16 +311,16 @@ export function validColour(colour: RGB): boolean {
   return !colour.some((component) => component < 0 || component > 255);
 }
 
+export function assertValidColour(colour: RGB) {
+  if (!validColour(colour)) throw new Error(`Invalid colour ${colour}`);
+}
+
 export function colourEqualTo([r, g, b]: RGB) {
   return ([R, G, B]: RGB) => r === R && g === G && b === B;
 }
 
-export function colourDifference(colour1: RGB, colour2: RGB): number {
-  return (
-    colour1
-      .map((x, i) => ((x - colour2[i]) / 255) ** 2)
-      .reduce((a, b) => a + b, 0) / 3
-  );
+export function colourDifference([r, g, b]: RGB, [R, G, B]: RGB): number {
+  return sum([r - R, g - G, b - B].map((dif) => (dif / 255) ** 2)) / 3;
 }
 
 /**
@@ -307,10 +330,14 @@ export function colourDifference(colour1: RGB, colour2: RGB): number {
 export function colourClosestMatch(
   palette: RGB[],
   colour: RGB
-): [number, number] {
-  const differences = palette.map((x, i) => [i, colourDifference(x, colour)]);
+): [number, number, RGB] {
+  const differences = palette.map((x, i) => [
+    i,
+    colourDifference(x, colour),
+    x
+  ]) as [number, number, RGB][];
   differences.sort((a, b) => a[1] - b[1]);
-  return differences[0] as [number, number];
+  return differences[0];
 }
 
 export function expect<T extends EventTarget>(
@@ -552,16 +579,6 @@ export function choosePairs<T>(array: T[]): [T, T][] {
   return pairs;
 }
 
-export function sum(array: number[]) {
-  return array.reduce((a, b) => a + b, 0);
-}
-
-export const multiply = (a: number, b: number) => a * b;
-
-export function product(array: number[]) {
-  return array.reduce(multiply, 1);
-}
-
 export function pairwise<S, T, R>(func: (s: S, t: T) => R) {
   return ([s, t]: [S, T]) => func(s, t);
 }
@@ -640,6 +657,12 @@ export function regexpcc(...res: (RegExp | string)[]) {
   return new RegExp(sources.map(getSource).join(""), flags);
 }
 
+export class PassableError extends Error {}
+
+/**
+ * Returns the result of the first function that does not throw a PassableError.
+Throws if any other Error is thrown, or if the last function throws.
+ */
 export async function firstSuccessAsync<T>(
   funcs: (() => Promise<T>)[]
 ): Promise<T> {
@@ -648,8 +671,19 @@ export async function firstSuccessAsync<T>(
       // eslint-disable-next-line no-await-in-loop
       return await funcs[i]();
     } catch (e) {
-      if (i === funcs.length - 1) throw e;
+      if (!(e instanceof PassableError) || i === funcs.length - 1) throw e;
+      else console.log(`Item ${i} threw: `, e.message);
     }
   }
   throw new Error("funcs cannot be empty");
+}
+
+export function cached<T>(compute: () => T): () => T {
+  let computed = false;
+  let value: T | null = null;
+  return () => {
+    value = computed ? value : compute();
+    computed = true;
+    return value!;
+  };
 }

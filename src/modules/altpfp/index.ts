@@ -10,7 +10,7 @@ import {
   firstSuccessAsync,
   loadCSS
 } from "~src/utils";
-import * as format0 from "./format0";
+import * as format0 from "./format0/index";
 import { interpolation } from "./interpolation";
 import css from "./styles.scss";
 

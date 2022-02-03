@@ -1,13 +1,15 @@
 /* eslint-disable max-classes-per-file */
 import {
   clamp,
-  representColour,
+  representColour as repr,
   allOf,
   validColour,
   colourClosestMatch,
   groups,
   mapValues,
-  choosePairs
+  choosePairs,
+  colourDifference,
+  assertValidColour
 } from "~src/utils";
 import {
   GroupedBits,
@@ -20,32 +22,21 @@ import {
   u8ArrayToB64
 } from "~src/bitutils";
 import Tape from "~src/tape";
-import { colourSpaces } from "./interpolation";
-import { PixelPlacer, PixelReader } from "./pixelBuffer";
+import { colourSpaces } from "../interpolation";
+import { PixelPlacer, PixelReader } from "~src/pixelBuffer";
+import {
+  BIT_HEADER,
+  TOKEN_DIGITS,
+  DIGIT_SIZE,
+  PALETTE_BITS,
+  IMAGE_SIZE_STEP,
+  IMAGE_SIZE_MAX,
+  PALETTE_LENGTH,
+  MAX_APPROXIMATION,
+  LOG_ENCODING_INFO
+} from "./config";
 
 const { ceil } = Math;
-
-export const DIGIT_SIZE = 6;
-
-export const IMAGE_SIZE_MAX = 128;
-export const IMAGE_SIZE_STEP = IMAGE_SIZE_MAX / (1 << 3);
-export const PALETTE_BITS = 4;
-export const PALETTE_LENGTH = 1 << PALETTE_BITS;
-
-const BIT_HEADER = {
-  PALETTE_SELECTION: "00",
-  PALETTE_SELECTION_SHORT: "01",
-  /* OFFSET: "10",
-    OFFSET_LONG: "11", */
-  OFFSET: "1"
-};
-
-const TOKEN_DIGITS = {
-  OFFSET: 1,
-  // OFFSET_LONG: 2,
-  PALETTE_SELECTION_SHORT: 1,
-  PALETTE_SELECTION: 3
-};
 
 export const BIT_HEADER_BINARY = mapValues(BIT_HEADER, (_, string) =>
   parseInt(string, 2)
@@ -74,10 +65,12 @@ export const MATCH_BIT_HEADER = (digit: number) =>
   );
 
 {
-  /* console.log("BIT_HEADER_BINARY", BIT_HEADER_BINARY);
-  console.log("BIT_HEADER_BITS", BIT_HEADER_BITS);
-  console.log("PAYLOAD_BITS", PAYLOAD_BITS);
-  console.log("MAX_VALUE", MAX_VALUE); */
+  if (LOG_ENCODING_INFO) {
+    console.log("BIT_HEADER_BINARY", BIT_HEADER_BINARY);
+    console.log("BIT_HEADER_BITS", BIT_HEADER_BITS);
+    console.log("PAYLOAD_BITS", PAYLOAD_BITS);
+    console.log("MAX_VALUE", MAX_VALUE);
+  }
   const conflict = choosePairs(Object.entries(BIT_HEADER)).find(
     ([[_1, header1], [_2, header2]]) =>
       header1.startsWith(header2) || header2.startsWith(header1)
@@ -91,9 +84,6 @@ export const MATCH_BIT_HEADER = (digit: number) =>
 const PALETTE_SELECTION_LENGTH = (type: keyof typeof BIT_HEADER) =>
   ~~(PAYLOAD_BITS[type] / PALETTE_BITS);
 
-export const MAX_PALETTE_APPROXIMATION = () => 0.002;
-export const MAX_BACKGROUND_APPROXIMATION = () => 0.002;
-
 export interface ImageMetadata {
   size: SizeSpecifier;
   palette: PaletteSpecifier;
@@ -105,14 +95,52 @@ const paletteColourSpace = colourSpaces.colour512;
 type ColourRepr = ReturnType<typeof colourSpace.serialize>;
 type PaletteColourRepr = ReturnType<typeof paletteColourSpace.serialize>;
 
+/**
+ * Note: Argument order matters!
+ */
+export function colourAssignableTo(colour: RGB, paletteColour: RGB): boolean {
+  assertValidColour(colour);
+  assertValidColour(paletteColour);
+  const colourCoerced = colourSpace.map(colour);
+  const difference2 = colourDifference(colour, paletteColour);
+  const difference = colourDifference(colourCoerced, paletteColour);
+  return Math.min(difference, difference2) <= MAX_APPROXIMATION();
+}
+
+function _findInPalette(colour: RGB, palette: RGB[]) {
+  assertValidColour(colour);
+  const [index, difference, paletteColour] = colourClosestMatch(
+    palette,
+    colour
+  );
+  return difference > MAX_APPROXIMATION()
+    ? null
+    : ([index, paletteColour] as [number, RGB]);
+}
+
+// AKA: Noo I'm not that colour
+// -coerces to that colour later-
+export function findInPalette(colour: RGB, palette: RGB[]) {
+  return (
+    _findInPalette(colour, palette) ??
+    _findInPalette(colourSpace.map(colour), palette)
+  );
+}
+
 // tokenization might slow perf
 // but debugging is easier
 // also more flexible woo
 // DX > UX
 
 export abstract class ImageToken {
+  /**
+   * Returns a dense serialization of the token.
+   */
   abstract serialize(): string;
 
+  /**
+   * Returns a human-readable serialization of the token.
+   */
   abstract representation(): string;
 
   protected get name(): string {
@@ -121,6 +149,9 @@ export abstract class ImageToken {
 }
 
 export abstract class ImageContentToken extends ImageToken {
+  /**
+   * Attempts to render this token's pixels into the given pixel buffer.
+   */
   abstract toPixelBuffer(pixels: PixelPlacer, metadata: ImageMetadata): boolean;
 }
 
@@ -129,8 +160,12 @@ export class SizeSpecifier extends ImageToken {
 
   readonly height: number;
 
-  get dataSize() {
+  get pixels() {
     return this.width * this.height;
+  }
+
+  toString() {
+    return `${this.width}, ${this.height}`;
   }
 
   constructor(width: number, height: number) {
@@ -181,38 +216,49 @@ export class SizeSpecifier extends ImageToken {
     );
   }
 
+  /**
+   * Attempts to deserialize a token of this type read from the tape.
+   */
   static fromTape(tape: Tape): SizeSpecifier | null {
     return this.readTape(tape) ?? tape.warnExpected("expected size specifier");
   }
 }
 
 export class PaletteSpecifier extends ImageToken {
-  static expectedLength: number = PALETTE_LENGTH;
+  /**
+   * Expected number of colours in the palette.
+   */
+  static paletteLength: number = PALETTE_LENGTH;
 
+  /**
+   * Expected length of token when serializaed.
+   */
   static expectedDigits: number = PALETTE_LENGTH * paletteColourSpace.digits;
 
+  /**
+   * Colour precision used by colours in the palette.
+   */
   static colourSpace = paletteColourSpace;
+
+  readonly completePalette: RGB[];
 
   constructor(readonly colours: RGB[]) {
     super();
     if (colours.length === 0) throw new Error("No colours supplied");
-    if (colours.length > PaletteSpecifier.expectedLength)
+    if (colours.length > PaletteSpecifier.paletteLength)
       throw new Error("Too many colours supplied");
     if (colours.some((colour) => !validColour(colour)))
       throw new RangeError("Invalid colour");
+    const remaining = PALETTE_LENGTH - this.colours.length;
+    this.completePalette = [
+      ...this.colours,
+      ...Array.from({ length: remaining }, () => this.colours.slice(-1)[0])
+    ];
   }
 
   representation() {
     const { name, colours } = this;
-    return `${name}([${Array.from(colours).map(representColour).join(", ")}])`;
-  }
-
-  get completePalette(): RGB[] {
-    const remaining = PALETTE_LENGTH - this.colours.length;
-    return [
-      ...this.colours,
-      ...Array.from({ length: remaining }, () => this.colours.slice(-1)[0])
-    ];
+    return `${name}([${Array.from(colours).map(repr).join(", ")}])`;
   }
 
   serialize() {
@@ -237,6 +283,9 @@ export class PaletteSpecifier extends ImageToken {
     return new PaletteSpecifier(colours);
   }
 
+  /**
+   * Attempts to deserialize a token of this type read from the tape.
+   */
   static fromTape(tape: Tape): PaletteSpecifier | null {
     return (
       this.readTape(tape) ??
@@ -247,34 +296,49 @@ export class PaletteSpecifier extends ImageToken {
     );
   }
 
+  /**
+   * Creates a PaletteSpecifier token from a given colour palette.
+   */
   static fromRGB(colours: RGB[]): PaletteSpecifier {
     return new PaletteSpecifier(colours);
   }
 }
 
 abstract class PaletteSelectionAbstract extends ImageContentToken {
+  /**
+   * Returns the sequence of colours represented by the token given a colour palette.
+   */
   abstract renderFrom(palette: RGB[]): RGB[];
 }
 
 function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
   return class PaletteSelectionClass extends PaletteSelectionAbstract {
-    static expectedLength = PALETTE_SELECTION_LENGTH(type);
+    /**
+     * Number of colours represented by a token of this class.
+     */
+    static expectedColours = PALETTE_SELECTION_LENGTH(type);
 
+    /**
+     * Expeted length of this token when serialized.
+     */
     static expectedDigits = TOKEN_DIGITS[type];
 
+    /**
+     * Checks whether the given numeric bit header is that of this token's serialization.
+     */
     static matchHeader(u8: number) {
       return MATCH_BIT_HEADER(u8) === type;
     }
 
     constructor(readonly paletteIndices: number[] | Uint8Array) {
       super();
-      if (paletteIndices.length !== PaletteSelectionClass.expectedLength)
+      if (paletteIndices.length !== PaletteSelectionClass.expectedColours)
         throw new Error(
-          `Palette selection size does not match ${PaletteSelectionClass.expectedLength} expected colours: ${paletteIndices}`
+          `Palette selection size does not match ${PaletteSelectionClass.expectedColours} expected colours: ${paletteIndices}`
         );
       if (
         paletteIndices.some(
-          (index) => index < 0 || index > PaletteSpecifier.expectedLength
+          (index) => index < 0 || index > PaletteSpecifier.paletteLength
         )
       )
         throw new Error(`Invalid palette indicies: ${paletteIndices}`);
@@ -282,9 +346,9 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
 
     // eslint-disable-next-line class-methods-use-this
     get name() {
-      return type === "PALETTE_SELECTION_SHORT"
-        ? "PaletteSelectionShort"
-        : "PaletteSelection";
+      return type === "PALETTE_SELECTION"
+        ? "PaletteSelection"
+        : "PaletteSelectionShort";
     }
 
     representation() {
@@ -302,23 +366,22 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
       colours: RGB[],
       palette: RGB[]
     ): PaletteSelectionClass | null {
-      if (palette.length > PaletteSpecifier.expectedLength)
+      if (palette.length > PaletteSpecifier.paletteLength)
         throw new Error("Palette too long");
-      if (colours.length < PaletteSelectionClass.expectedLength) return null;
+      if (colours.length < PaletteSelectionClass.expectedColours) return null;
       const selection = Array.from(
-        colours.slice(0, PaletteSelectionClass.expectedLength)
+        colours.slice(0, PaletteSelectionClass.expectedColours)
       );
       const indices = allOf(
-        selection
-          .map((colour) => colourClosestMatch(palette, colour))
-          .map(([index, difference]) =>
-            difference > MAX_PALETTE_APPROXIMATION() ? null : index
-          )
+        selection.map((colour) => findInPalette(colour, palette)?.[0])
       );
       if (!indices) return null;
       return new PaletteSelectionClass(indices);
     }
 
+    /**
+     * Attempts to deserialize a token of this type read from the tape.
+     */
     static fromTape(tape: Tape): PaletteSelectionClass | null {
       const paletteSelection = this.readTape(tape);
       if (paletteSelection == null)
@@ -356,18 +419,27 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
       return buffer.place(this.renderFrom(metadata.palette.completePalette));
     }
 
+    /**
+     * Attempts to create an instance of this token represent the buffer's next pixels.
+     */
     static fromPixelBuffer(
       buffer: PixelReader,
-      metadata: ImageMetadata
+      metadata: ImageMetadata,
+      fromSkipped = false
     ): PaletteSelectionClass | null {
-      if (buffer.offset > 0) return null;
-      if (!buffer.preview(PaletteSelectionClass.expectedLength)) return null;
+      const { expectedColours: expectedLength } = PaletteSelectionClass;
+      const pixelsAvailable = fromSkipped
+        ? buffer.offset >= expectedLength
+        : buffer.offset === 0;
+      if (!pixelsAvailable) return null;
+      const pixels = fromSkipped
+        ? buffer.skipped.slice(0, expectedLength)
+        : buffer.preview(expectedLength);
+      if (!pixels) return null;
       const palette = metadata.palette.completePalette;
-      const paletteSelection = PaletteSelectionClass.tryMake(
-        buffer.lastPreview(),
-        palette
-      );
-      buffer.consumeIf(paletteSelection !== null);
+      const paletteSelection = PaletteSelectionClass.tryMake(pixels, palette);
+      if (!fromSkipped) buffer.consumeIf(paletteSelection !== null);
+      else if (paletteSelection !== null) buffer.consumeSkipped(expectedLength);
       return paletteSelection;
     }
   };
@@ -375,9 +447,121 @@ function makePaletteSelectionClass(type: keyof typeof BIT_HEADER) {
 
 export const PaletteSelection = makePaletteSelectionClass("PALETTE_SELECTION");
 
-export const PaletteSelectionShort = makePaletteSelectionClass(
+/* export const PaletteSelectionShort = makePaletteSelectionClass(
   "PALETTE_SELECTION_SHORT"
-);
+); */
+
+export class BackgroundSelection extends ImageContentToken {
+  static expectedDigits = TOKEN_DIGITS.BACKGROUND_SELECTION_STREAM;
+
+  static maxLength =
+    1 << (PAYLOAD_BITS.BACKGROUND_SELECTION_STREAM - PALETTE_BITS);
+
+  constructor(readonly paletteIndex: number, readonly length: number) {
+    super();
+    if (paletteIndex > PALETTE_LENGTH) throw new Error("Invalid palette index");
+    if (length <= 0) throw new Error("Length must be positive");
+    if (length > BackgroundSelection.maxLength)
+      throw new Error("Length too big");
+  }
+
+  /**
+   * Checks whether the given numeric bit header is that of this token's serialization.
+   */
+  static matchHeader(u8: number) {
+    return MATCH_BIT_HEADER(u8) === "BACKGROUND_SELECTION_STREAM";
+  }
+
+  representation() {
+    return `${this.name}(${this.paletteIndex}, ${this.length})`;
+  }
+
+  serialize() {
+    const bits = new GroupedBits(DIGIT_SIZE);
+    bits.pushNumber(
+      BIT_HEADER_BINARY.BACKGROUND_SELECTION_STREAM,
+      BIT_HEADER_BITS.BACKGROUND_SELECTION_STREAM
+    );
+    bits.pushNumber(this.paletteIndex, PALETTE_BITS);
+    bits.pushNumber(
+      this.length - 1,
+      PAYLOAD_BITS.BACKGROUND_SELECTION_STREAM - PALETTE_BITS
+    );
+    return u8ArrayToB64(bits.topUp().numbers);
+  }
+
+  renderFrom(palette: RGB[]): RGB[] {
+    if (palette.length < PALETTE_LENGTH)
+      throw new Error("Received incomplete palette");
+    return Array.from<RGB>({ length: this.length }).fill(
+      palette[this.paletteIndex]
+    );
+  }
+
+  /**
+   * Attempts to deserialize a token of this type read from the tape.
+   */
+  static fromTape(tape: Tape): BackgroundSelection | null {
+    const token = this.readTape(tape);
+    if (token === null)
+      tape.warnExpected(
+        "expected BackgroundSelectionStream token",
+        BackgroundSelection.expectedDigits
+      );
+    return token;
+  }
+
+  protected static readTape(tape: Tape): BackgroundSelection | null {
+    const tapeChars = tape.readExactly(BackgroundSelection.expectedDigits);
+    if (tapeChars === undefined) return null;
+    const tapeDigits = b64toU8Array(tapeChars);
+    if (tapeDigits === null) return null;
+    const bits = new GroupedBits(DIGIT_SIZE, Array.from(tapeDigits));
+    const header = bits.shiftBits(BIT_HEADER_BITS.BACKGROUND_SELECTION_STREAM);
+    if (header !== BIT_HEADER_BINARY.BACKGROUND_SELECTION_STREAM)
+      throw new Error(
+        `Bytes read (${header?.toString(
+          2
+        )}) do not start with background selection header`
+      );
+    const paletteIndex = bits.shiftBits(PALETTE_BITS);
+    const length = bits.shiftBits(
+      PAYLOAD_BITS.BACKGROUND_SELECTION_STREAM - PALETTE_BITS
+    );
+    if (paletteIndex === undefined || length === undefined) return null;
+    return new BackgroundSelection(paletteIndex, length + 1);
+  }
+
+  toPixelBuffer(pixels: PixelPlacer, metadata: ImageMetadata) {
+    pixels.backgroundColour =
+      metadata.palette.completePalette[this.paletteIndex];
+    return pixels.skip(this.length);
+  }
+
+  /**
+   * Attempts to create an instance of this token represent the buffer's next pixels.
+   */
+  static fromPixelBuffer(
+    buffer: PixelReader,
+    metadata: ImageMetadata,
+    force: boolean = false
+  ): BackgroundSelection | null {
+    if (buffer.done()) throw new Error("Buffer is exhausted");
+    const { offset, backgroundColour: background, skipped } = buffer;
+    const { completePalette } = metadata.palette;
+    if (offset < (force ? 1 : PaletteSelection.expectedColours)) return null;
+    const skippedLast = skipped[skipped.length - 1];
+    if (!colourAssignableTo(skippedLast, background)) skipped.pop();
+    // Checks be priceless
+    if (skipped.some((colour) => !colourAssignableTo(colour, background))) {
+      buffer.debug();
+      throw new Error("Cannot create stream over non-bg colour");
+    }
+    const paletteMatch = findInPalette(background, completePalette)!;
+    buffer.consumeSkipped(skipped.length);
+    return new BackgroundSelection(paletteMatch[0], skipped.length);
+  }
+}
 
 export abstract class OffsetColourAbstract extends ImageContentToken {
   abstract getRGB(): RGB;
@@ -391,18 +575,30 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
 
     static maxOffset: number = MAX_VALUE[type];
 
+    /**
+     * Checks whether the given numeric bit header is that of this token's serialization.
+     */
     static matchHeader(u8: number) {
       return MATCH_BIT_HEADER(u8) === type;
     }
 
+    /**
+     * The colour represented by this token.
+     */
     readonly colour: RGB;
 
-    constructor(readonly offset: number, colour: RGB) {
+    /**
+     * The number of pixels after which this token's colour is to appear.
+     */
+    readonly offset: number;
+
+    constructor(offset: number, colour: RGB) {
       super();
       if (offset < 0) throw new RangeError("Offset can't be negative");
       if (offset > MAX_VALUE[type])
         throw new Error(`Offset ${offset} too big to encode`);
       this.colour = colourSpace.map(colour);
+      this.offset = offset;
     }
 
     // eslint-disable-next-line class-methods-use-this
@@ -411,7 +607,7 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
     }
 
     representation() {
-      return `${this.name}(${this.offset}, ${representColour(this.colour)})`;
+      return `${this.name}(${this.offset}, ${repr(this.colour)})`;
     }
 
     serialize() {
@@ -430,6 +626,9 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
       return serialized;
     }
 
+    /**
+     * Attempts to deserialize a token of this type read from the tape.
+     */
     static fromTape(tape: Tape): OffsetColourClass | null {
       const offsetColour = this.readTape(tape);
       if (!offsetColour)
@@ -473,6 +672,9 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
       return new OffsetColourClass(offset, colour);
     }
 
+    /**
+     * Retrieves this token's represented colour.
+     */
     getRGB(): RGB {
       return this.colour;
     }
@@ -483,13 +685,19 @@ function makeOffsetColourClass(type: keyof typeof BIT_HEADER) {
       return success;
     }
 
-    static fromPixelBuffer(buffer: PixelReader): OffsetColourClass | null {
-      if (!buffer.peekOne()) return null;
-      const offsetColour = new OffsetColourClass(
-        buffer.offset,
-        buffer.lastPreview()[0]
-      );
-      buffer.consume();
+    /**
+     * Attempts to create an instance of this token represent the buffer's next pixels.
+     */
+    static fromPixelBuffer(
+      buffer: PixelReader,
+      useSkipped = false
+    ): OffsetColourClass | null {
+      const pixel = useSkipped ? buffer.skipped.slice(-1)[0] : buffer.getNext();
+      const offset = useSkipped ? buffer.offset - 1 : buffer.offset;
+      if (offset < 0) throw new Error("Can't use last skipped pixel");
+      const offsetColour = new OffsetColourClass(offset, pixel!);
+      if (!useSkipped) buffer.consumeCount(1);
+      else buffer.consumeSkipped(1);
       return offsetColour;
     }
   };
