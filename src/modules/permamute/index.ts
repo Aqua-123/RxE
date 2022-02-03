@@ -17,13 +17,13 @@ export function updateRoomMutes(permamuteList: Array<[number, string]>) {
 }
 
 function permaMuteAdd(id: number, name: string) {
-  const muted = new ListPreferenceMap(P.permaMuteList);
+  const muted = new ListPreferenceMap(P.permaMuteList, true);
   muted.addItem(id, name);
   muted.destroy();
 }
 
 function permaMuteRemove(id: number) {
-  const muted = new ListPreferenceMap(P.permaMuteList);
+  const muted = new ListPreferenceMap(P.permaMuteList, true);
   muted.removeItem(id);
   muted.destroy();
 }
