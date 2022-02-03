@@ -202,7 +202,7 @@ of OFFSET (/LONG) tokens have their maximum offset`
 
     warnIf(
       maxLenRatio > 0.8,
-      `\t{percent(maxLenRatio)} of BackgroundSelectionStream tokens \
+      `\t${percent(maxLenRatio)} of BackgroundSelectionStream tokens \
 have their maximum length`
     );
 
