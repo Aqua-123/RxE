@@ -7,7 +7,7 @@ import React from "react";
 import { Preferences, P } from "~src/preferences";
 import T from "~src/text";
 import browserWindow from "~src/browserWindow";
-import { equalsTo, existing, loadCSS, sortBy, sorters } from "~src/utils";
+import { equalsTo, existing, loadCSS, sortBy, sorters, swap } from "~src/utils";
 // import { existing, loadCSS } from "~src/utils";
 import style from "./style.scss";
 
@@ -113,7 +113,7 @@ export function initUserList() {
     const [property, order] = Preferences.get(P.userSort).split(".");
     const sortOrder: SortOrder = order === "asc" ? "asc" : "desc";
     if (property === "age")
-      sortBy(members, "id", sorters.numeric, sortOrder, true);
+      sortBy(members, "id", swap(sorters.numeric), sortOrder, true);
     else sortBy(members, "display_name", sorters.string, sortOrder, true);
     members.forEach((member) => {
       if (!idsPresent.some(equalsTo(member.id)))
