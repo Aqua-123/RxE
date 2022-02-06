@@ -145,6 +145,11 @@ export const P = {
     key: "hideImageFallback",
     label: T.preferences.hideImageFallback.label,
     default: false
+  }),
+  imgurDeleteHashes: new ListPreference<[string, string]>({
+    key: "imgurDeleteHashes",
+    label: "imgurDeleteHashes",
+    default: []
   })
 } as const;
 

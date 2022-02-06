@@ -14,7 +14,7 @@ export function processImage(text: string, restWrapper: Wrap = id) {
 }
 
 function makeMaterialIcon(match: string): JSXContent {
-  const className = "material-icons material-icons-inline";
+  const className = "material-icons";
   const title = match.toLocaleLowerCase();
   return <span {...{ className, title }}>{match.slice(2, -1)}</span>;
 }

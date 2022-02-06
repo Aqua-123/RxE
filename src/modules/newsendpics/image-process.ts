@@ -2,6 +2,7 @@ import React from "react";
 import { links } from "~src/meta";
 import { sanitizeURL } from "../richtext/linkutils";
 import * as imgur from "./imgur";
+import { ratelimitInfo as ratelimit } from "./ratelimit";
 
 const rxeUrl = sanitizeURL(links.repo_minified);
 
@@ -46,3 +47,5 @@ export function decodeImage(encoded: string): RitsuChatImage | null {
 export async function upload(image: File): Promise<RitsuChatImage> {
   return imgur.upload(image);
 }
+
+export const uploadInfo = { ratelimit, destination: imgur.destinationInfo };

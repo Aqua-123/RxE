@@ -29,6 +29,6 @@ export function nextUpload(): number {
   return +new Date() + (INTERVAL - timeSince(new Date(lastBlockingUpload)));
 }
 
-export const uploadInfo = `You can upload ${MAX_IMAGES} new images per ${$.timeago(
+export const ratelimitInfo = `You can upload ${MAX_IMAGES} new images per ${$.timeago(
   +new Date() - INTERVAL
 )}.`;

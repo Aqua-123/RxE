@@ -1,6 +1,8 @@
 import React from "react";
 import { IMGUR_ENDPOINT } from "./imgur";
-import { canUpload, nextUpload, uploadInfo } from "./ratelimit";
+import { canUpload, nextUpload } from "./ratelimit";
+import { uploadInfo } from "./image-process";
+import { loadCSS } from "~src/utils";
 
 export const uploadForm = () => (
   <MenuMicro>
@@ -8,7 +10,29 @@ export const uploadForm = () => (
   </MenuMicro>
 );
 
+const initCSS = () =>
+  loadCSS(`.picture-upload-info {
+  font-size: 14px;
+  font-weight: 400;
+  color: "#adb6c7";
+}
+
+.picture-upload-info div {
+  margin-bottom: 1em;
+}
+
+.picture-upload-error {
+  color: red;
+  font-weight: bold;
+}
+
+.picture-upload-error-reason {
+  font-weight: initial;
+}`);
+
 export function initComponents() {
+  initCSS();
+
   Room.prototype.room_input = function roomInput() {
     return (
       <div className="room-component-input">
@@ -33,7 +57,29 @@ export function initComponents() {
   };
 
   PictureUpload.prototype.body = function body() {
+    const { failureReason } = this.state;
     const enabled = canUpload();
+    const notesSection = (
+      <div className="picture-upload-info">
+        <div>
+          <b>Note</b>: {uploadInfo.destination}
+        </div>
+        <div>
+          <b>Note</b>: {uploadInfo.ratelimit}
+        </div>
+        {failureReason && (
+          <div className="picture-upload-error">
+            <div>We couldn&apos;t upload your picture.</div>
+            <div>
+              {"Reason: "}
+              <span className="picture-upload-error-reason">
+                {failureReason}
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
     return (
       <form
         id="picture_upload"
@@ -66,15 +112,7 @@ export function initComponents() {
             ? " Choose a file"
             : ` Wait ${$.timeago(nextUpload())} before uploading again.`}
         </label>
-        <div
-          style={{
-            fontSize: "14px",
-            fontWeight: 400,
-            color: "#adb6c7"
-          }}
-        >
-          Note: {uploadInfo}
-        </div>
+        {notesSection}
       </form>
     );
   };

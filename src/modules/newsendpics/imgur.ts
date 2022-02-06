@@ -1,9 +1,12 @@
+import React from "react";
+import { ListPreferenceMap } from "~src/listprefcache";
 import { P, Preferences } from "~src/preferences";
 import {
   decodeInvisible as decode,
   encodeInvisible as encode
 } from "~src/utils";
 import { dot, sanitizeURL } from "../richtext/linkutils";
+import { newUpload as recordUpload } from "./ratelimit";
 
 export const HIDE_IMGUR_LINK: () => boolean = () =>
   Preferences.get(P.hideImageFallback);
@@ -44,7 +47,12 @@ export async function upload(image: File): Promise<RitsuChatImage> {
     },
     body: payload
   });
+  if (!response.ok) throw new Error(response.statusText);
   const { data }: ImgurResponse = await response.json();
+  const imgurDeleteHashes = new ListPreferenceMap(P.imgurDeleteHashes, true);
+  imgurDeleteHashes.addItem(data.id, data.deletehash);
+  imgurDeleteHashes.destroy();
+  recordUpload();
   return toChatImage({ id: data.id, payload: encodeImage(data.id) });
 }
 
@@ -70,3 +78,9 @@ export function decodeImage(encoded: string): RitsuChatImage | null {
   const id = decode(payload);
   return toChatImage({ id, payload });
 }
+
+export const destinationInfo = [
+  `You are uploading your image to `,
+  React.createElement("a", { href: "https://imgurinc.com/privacy" }, "Imgur"),
+  `. Anyone with the link can save or share it.`
+];

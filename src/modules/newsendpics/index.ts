@@ -1,9 +1,9 @@
 import ReactDOM from "react-dom";
-import * as ratelimit from "./ratelimit";
 import { log } from "~userscripter";
 import { initComponents, uploadForm } from "./components";
 import { upload, decodeImage, display, emit } from "./image-process";
 import { imageFromURL } from "./imgur";
+import { canUpload } from "./ratelimit";
 
 export function initSendPics() {
   initComponents();
@@ -27,16 +27,21 @@ export function initSendPics() {
   };
 
   PictureUpload.prototype.uploadImage = async function uploadImage() {
-    if (!ratelimit.canUpload()) return;
+    if (!canUpload()) return;
     const fileInput = document.querySelector(
       ".picture-upload-button"
     ) as HTMLInputElement;
     const imageFile = fileInput.files?.[0];
     if (imageFile === undefined || RoomClient === null) return;
-    this.close();
-    const image = await upload(imageFile);
-    ratelimit.newUpload();
-    RoomClient.sendRitsuPicture?.(image);
+    try {
+      const image = await upload(imageFile);
+      this.close();
+      RoomClient.sendRitsuPicture?.(image);
+    } catch (error) {
+      this.setState({
+        failureReason: error instanceof Error ? error.message : `${error}`
+      });
+    }
   };
 
   const rReceived = Room.prototype.received;

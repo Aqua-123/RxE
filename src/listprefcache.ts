@@ -132,7 +132,7 @@ export class ListPreferenceArray<
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
 > extends ListPreferenceCacheKeyed<Item[], Item, number, Item> {
-  protected realStore: Item[] = [];
+  protected realStore!: Item[];
 
   hasKey(key: number) {
     return key in this.store;
@@ -186,7 +186,7 @@ export class ListPreferenceSet<
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
 > extends ListPreferenceCacheUnkeyed<Set<Item>, Item, Item> {
-  protected realStore: Set<Item> = new Set();
+  protected realStore!: Set<Item>;
 
   hasItem(item: Item) {
     return this.store.has(item);
@@ -228,7 +228,7 @@ export class ListPreferenceMap<
   Item extends AllowedTypes
   // eslint-disable-next-line prettier/prettier
 > extends ListPreferenceCacheKeyed<Map<Key, Item>, [Key, Item], Key, Item> {
-  protected realStore: Map<Key, Item> = new Map();
+  protected realStore!: Map<Key, Item>;
 
   hasKey(key: Key) {
     return this.store.has(key);

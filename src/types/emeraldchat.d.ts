@@ -328,7 +328,12 @@ declare class PictureAlbum extends React.Component<
   load_more_button(): JSX.Element | null;
 }
 
-declare class PictureUpload extends React.Component {
+declare class PictureUpload extends React.Component<
+  {},
+  {
+    failureReason?: string;
+  }
+> {
   uploadImage?(): void; // custom
   body(): void;
   close(): void;
