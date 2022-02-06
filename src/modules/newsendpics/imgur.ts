@@ -23,6 +23,10 @@ const IMGUR_URL_REGEXP = () =>
 
 const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
 
+const headers = {
+  Authorization: `Client-ID b8f69bdcc4d1373`
+};
+
 function toChatImage({ id, payload }: ImgurImage): RitsuChatImage {
   return {
     url: imgurPNG(id),
@@ -42,9 +46,7 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   payload.append("image", image);
   const response = await fetch(IMGUR_ENDPOINT, {
     method: "POST",
-    headers: {
-      Authorization: `Client-ID b8f69bdcc4d1373`
-    },
+    headers,
     body: payload
   });
   if (!response.ok) throw new Error(response.statusText);
@@ -54,6 +56,14 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   imgurDeleteHashes.destroy();
   recordUpload();
   return toChatImage({ id: data.id, payload: encodeImage(data.id) });
+}
+
+export async function deleteImage(deleteHash: string): Promise<void> {
+  const response = await fetch(`${IMGUR_ENDPOINT}${deleteHash}`, {
+    method: "DELETE",
+    headers
+  });
+  if (!response.ok) throw new Error(response.statusText);
 }
 
 export function imageFromURL(
