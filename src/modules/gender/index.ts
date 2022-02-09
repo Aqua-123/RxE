@@ -1,5 +1,5 @@
 import { P, Preferences } from "~src/preferences";
-import { loadCSS } from "~src/utils";
+import { loadCSS, notNum } from "~src/utils";
 import css from "./style.scss";
 
 export function initGender() {
@@ -59,7 +59,7 @@ export function initGender() {
   Message.prototype.render = function render() {
     const div = mRender.apply(this);
     div.props.children[0].props.children.props["data-gender"] =
-      this.props.data.user.gender;
+      notNum(this.props.data.user)?.gender ?? "";
     return div;
   };
 }

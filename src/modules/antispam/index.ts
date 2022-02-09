@@ -3,6 +3,7 @@ import { P, Preferences } from "~src/preferences";
 import {
   computeEntropy,
   existing,
+  getUserId,
   isRepeating,
   printTransientMessage,
   stripBiDi,
@@ -56,16 +57,17 @@ export function initAntiSpam() {
       return;
 
     // neutralize silly RTL nonsense
-    e.user.display_name = stripBiDi(e.user.display_name);
+    if (typeof e.user !== "number")
+      e.user.display_name = stripBiDi(e.user.display_name);
 
     // since we're here, update user list more accurately
-    if ("state" in RoomChannelMembersClient && e.user) {
+    if ("state" in RoomChannelMembersClient && typeof e.user !== "number") {
       if (e.user_disconnected) {
         printTransientMessage(`User ${e.user.display_name} left the chat.`);
       } else {
         if (
           !RoomChannelMembersClient.state.members.some(
-            (oldMember) => oldMember && oldMember.id === e.user.id
+            (oldMember) => oldMember && oldMember.id === getUserId(e.user)
           )
         ) {
           printTransientMessage(`User ${e.user.display_name} joined the chat.`);
@@ -75,6 +77,7 @@ export function initAntiSpam() {
     }
 
     if (typeof e.messages === "undefined") return;
+    if (typeof e.user === "number") return;
     const { id, display_name, created_at } = e.user;
     if (App.user.id === id) return;
     const message = e.messages.join("");

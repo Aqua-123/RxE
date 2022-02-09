@@ -5,14 +5,16 @@ import {
   accountAgeScaled as userExperience,
   existing,
   formatSignedAmount,
-  loadCSS
+  loadCSS,
+  notNum,
+  getUserId
 } from "~src/utils";
 import css from "./style.scss";
 
-function getRoomMember(userId: number) {
+function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
   return existing(RoomChannelMembersClient.state.members).find(
-    (user) => user.id === userId
+    (user) => user.id === id
   );
 }
 
@@ -20,7 +22,8 @@ export function initMessages() {
   loadCSS(css);
   Message.prototype.content = function content() {
     const { picture, messages, user } = this.props.data;
-    if (picture && (user?.temp || (user?.karma ?? 0) < 10)) return [];
+    if (picture && (notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10))
+      return [];
     if (picture) return <MessagePicture picture={picture} />;
     return messages.map((text) => (
       <div key={JSON.stringify(text)}>{this.process(text)}</div>
@@ -30,10 +33,10 @@ export function initMessages() {
   Message.prototype.render = function render() {
     if (!this.props.data.user)
       console.warn("this.props.data.user may be falsy despite declaration");
-    const user = (getRoomMember(this.props.data.user.id) ||
+    const user = (getRoomMember(getUserId(this.props.data.user)) ||
       this.props.data.user) as EmeraldUser | null;
     const flair = {
-      string: user?.display_name || "<empty name>",
+      string: user?.display_name || "Unknown name",
       flair: user?.flair ?? { color: "" }
     };
     const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
@@ -81,18 +84,18 @@ export function initMessages() {
     );
   };
   Room.prototype.received = function received(e) {
-    if (e.user.id !== App.user.id && e.messages) {
+    if (getUserId(e.user) !== App.user.id && e.messages) {
       App.room.play_sound("/sfx/simple_alert.wav");
       this.append(e, true);
       if (PushNotifications.idle()) {
-        PushNotifications.send(e.user.display_name, {
-          icon: e.user.display_picture,
+        PushNotifications.send(notNum(e.user)?.display_name ?? "", {
+          icon: notNum(e.user)?.display_picture ?? "",
           body: e.messages[0]
         });
       }
     } else if (e.typing) {
-      if (e.user.id !== App.user.id) {
-        this.setState({ typing: e.user.display_name });
+      if (getUserId(e.user) !== App.user.id) {
+        this.setState({ typing: notNum(e.user)?.display_name });
         setTimeout(() => this.stop_typing(), 1e4);
       }
     }
@@ -206,24 +209,25 @@ export function betterMessageRendering() {
     const max = this.state.mode === "channel" ? 50 : 5000; // original= 50: 5000
     const { messages } = this.state;
     if (messages.length > max) messages.shift();
+    const lastMessage = messages[messages.length - 1];
     if (
-      messages[messages.length - 1] &&
-      messages[messages.length - 1].user.id === e.user.id &&
-      !messages[messages.length - 1].picture &&
+      lastMessage &&
+      getUserId(lastMessage.user) === getUserId(e.user) &&
+      !lastMessage.picture &&
       !e.picture &&
-      messages[messages.length - 1].messages.length < 16
+      lastMessage.messages.length < 16
     ) {
-      const n = messages[messages.length - 1].messages;
+      const n = lastMessage.messages;
       const r = n[n.length - 1];
       if (e.messages[0] === r) return;
-      messages[messages.length - 1].messages.push(e.messages[0]);
+      lastMessage.messages.push(e.messages[0]);
     } else messages.push(e);
     // inline typing check here.
     let { typing } = this.state;
     if (doTyping) {
       if (e.typing) {
-        if (e.user.id !== App.user.id) {
-          typing = e.user.display_name;
+        if (getUserId(e.user) !== App.user.id) {
+          typing = notNum(e.user)?.display_name || "";
           setTimeout(() => this.stop_typing(), 1e4);
         }
       } else {

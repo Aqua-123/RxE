@@ -86,7 +86,7 @@ declare class ModPanel extends React.Component {}
 declare type MessageData = {
   messages: string[];
   picture?: null | EmeraldPicture;
-  user: EmeraldUser;
+  user: EmeraldUser | number;
   user_connected?: true;
   user_disconnected?: true;
   typing?: true;

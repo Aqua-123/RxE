@@ -38,6 +38,7 @@ import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/highlightmentions/index";
 import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
+import * as dev from "./modules/dev";
 
 async function init() {
   const featureSet = `(${[
@@ -50,6 +51,8 @@ async function init() {
 
   // Wait for App to be loaded.
   await until(() => !!browserWindow.App);
+
+  dev.init();
 
   // migrate settings from older userscripts, if any
   migrateSettings();

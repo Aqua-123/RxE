@@ -687,3 +687,14 @@ export function cached<T>(compute: () => T): () => T {
     return value!;
   };
 }
+
+export function notNum<T>(mixed: T | number): T | undefined {
+  if (typeof mixed === "number") {
+    return undefined;
+  }
+  return mixed;
+}
+
+export function getUserId(mixed: EmeraldUser | number): number {
+  return typeof mixed === "number" ? mixed : mixed.id;
+}

@@ -19,7 +19,8 @@ export function renderBrokenImages() {
       img.onerror = async () => {
         if (
           img.src.startsWith("https://robohash.org/") ||
-          img.src.includes("emeraldchat.com/avicons_strict/") ||
+          img.src.includes("/avicons_strict/") ||
+          img.src.startsWith("data:image") ||
           img.classList.contains("room-component-message-picture")
         )
           return;

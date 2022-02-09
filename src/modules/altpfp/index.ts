@@ -8,13 +8,17 @@ import {
   expect,
   timeout,
   firstSuccessAsync,
-  loadCSS
+  loadCSS,
+  notNum,
+  existing
 } from "~src/utils";
 import * as format0 from "./format0/index";
 import { interpolation } from "./interpolation";
 import css from "./styles.scss";
 
 type ImageFormatType = "0";
+
+// TODO: refactor, TSX
 
 interface ImageFormat {
   unpack(compressed: string): string | null;
@@ -124,54 +128,55 @@ function getDisplayPicture(user: EmeraldUser): string {
   if (imageCompressed) {
     const imageUnpacked = unpackImage(imageCompressed);
     if (imageUnpacked) {
-      /*
-            console.info(
-                `Loaded custom image (${imageCompressed}) as (${imageUnpacked})`
-            );
-            */
+      console.log(`loaded custom image for user ${user.display_name}`);
       return imageUnpacked;
     }
   }
   return fallback;
 }
 
-function interceptUser<T, K extends FunctionKeys<T>>(
+function interceptUsers<T, K extends FunctionKeys<T>>(
   { prototype: obj }: { prototype: T },
   method: K,
-  getUser: PrependParam<ReplaceMethodReturn<T, K, EmeraldUser | undefined>, T>,
+  getUsers: PrependParam<
+    ReplaceMethodReturn<T, K, (EmeraldUser | undefined)[]>,
+    T
+  >,
   before = true
 ) {
-  if (typeof obj[method] !== "function" || typeof getUser !== "function")
+  if (typeof obj[method] !== "function" || typeof getUsers !== "function")
     return;
   const methodName = `${method}()`;
   wrapMethod(
     obj,
     method,
     function wrapper(...params) {
-      const user = getUser(this, ...params);
-      const name = (obj as any as Prototype<T>)?.constructor?.name;
-      const instance = name ? `'${name}' instance` : `unknown class instance`;
-      if (user === undefined) return;
-      if (
-        !user ||
-        typeof user !== "object" ||
-        !("display_picture" in user) ||
-        user.display_picture === undefined
-      ) {
-        console.warn(
-          `expected EmeraldUser, in wrapper on ${instance} ${methodName} got: `,
-          user
-        );
-        return;
-      }
-      if (user.bio === undefined) {
-        console.warn(
-          `EmeraldUser is missing 'bio' in wrapper on ${instance} ${methodName}`,
-          user
-        );
-        return;
-      }
-      user.display_picture = getDisplayPicture(user);
+      const users = getUsers(this, ...params);
+      const name = (obj as any)?.constructor?.displayName;
+      const instance = name ? `${name}.prototype` : `(???)`;
+      users.forEach((user) => {
+        if (user === undefined) return;
+        if (
+          !user ||
+          typeof user !== "object" ||
+          !("display_picture" in user) ||
+          user.display_picture === undefined
+        ) {
+          console.warn(
+            `expected EmeraldUser, in wrapper on ${instance}.${methodName} got: `,
+            user
+          );
+          return;
+        }
+        if (user.bio === undefined) {
+          console.warn(
+            `EmeraldUser is missing 'bio' in wrapper on ${instance}.${methodName}`,
+            user
+          );
+          return;
+        }
+        user.display_picture = getDisplayPicture(user);
+      });
     },
     before
   );
@@ -322,20 +327,34 @@ function profile_picture(this: UserProfile) {
 
 export function init() {
   loadCSS(css);
+  loadCSS(`.room-component-message-avatar {
+  background-color: #3e4149;
+  color: transparent;
+  background: url("/avicons_strict/1.png");
+  }`);
   // eslint-disable-next-line camelcase
   UserProfile.prototype.profile_picture = profile_picture;
-  interceptUser(Room, "received", (_, messageData) => messageData.user);
-  interceptUser(UserProfile, "profile_picture", (self) => self.state.data.user);
-  interceptUser(FriendUnit, "body", (self) => self.props.data);
+  interceptUsers(Room, "received", (_, messageData) => [
+    notNum(messageData.user)
+  ]);
+  interceptUsers(Room, "append", (_, { user }) => [notNum(user)]);
+  interceptUsers(RoomChannelMembers, "setState", (_, state) => {
+    if (state && "members" in state) return existing(state.members);
+    return [];
+  });
+  interceptUsers(UserProfile, "profile_picture", (self) => [
+    self.state.data.user
+  ]);
+  interceptUsers(FriendUnit, "body", (self) => [self.props.data]);
   const { Comment } = browserWindow;
-  interceptUser(Comment, "render", (self) => self.state.comment_data?.user);
-  interceptUser(Micropost, "render", (self) => self.state.data?.author);
+  interceptUsers(Comment, "render", (self) => [self.state.comment_data?.user]);
+  interceptUsers(Micropost, "render", (self) => [self.state.data?.author]);
   const MNU = MessageNotificationUnit;
-  interceptUser(MNU, "image", (self) => self.props.data.data.sender);
-  interceptUser(Message, "render", (self) => self.props.data.user);
-  interceptUser(RoomUserUnit, "body", (self) => self.props.data);
-  interceptUser(UserUnit, "body", (self) => self.props.data);
-  interceptUser(UserView, "top", (self) => self.state.user);
+  interceptUsers(MNU, "image", (self) => [self.props.data.data.sender]);
+  interceptUsers(Message, "render", (self) => [notNum(self.props.data.user)]);
+  interceptUsers(RoomUserUnit, "body", (self) => [self.props.data]);
+  interceptUsers(UserUnit, "body", (self) => [self.props.data]);
+  interceptUsers(UserView, "top", (self) => [self.state.user]);
   wrapMethod(Dashboard.prototype, "render", function render() {
     // todo: this isn't available immediately
     if (App.user.bio !== undefined)
