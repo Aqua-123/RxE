@@ -51,11 +51,10 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   });
   if (!response.ok) throw new Error(response.statusText);
   const { data }: ImgurResponse = await response.json();
-  const imgurDeleteHashes = new ListPreferenceMap(P.imgurDeleteHashes, true);
-  imgurDeleteHashes.addItem(data.id, data.deletehash);
-  imgurDeleteHashes.destroy();
+  const { id, deletehash: hash } = data;
+  ListPreferenceMap.addItem({ key: id, item: hash }, P.imgurDeleteHashes);
   recordUpload();
-  return toChatImage({ id: data.id, payload: encodeImage(data.id) });
+  return toChatImage({ id, payload: encodeImage(id) });
 }
 
 export async function deleteImage(deleteHash: string): Promise<void> {

@@ -16,18 +16,6 @@ export function updateRoomMutes(permamuteList: Array<[number, string]>) {
   removed.forEach((id) => App.room.unmute(id));
 }
 
-function permaMuteAdd(id: number, name: string) {
-  const muted = new ListPreferenceMap(P.permaMuteList, true);
-  muted.addItem(id, name);
-  muted.destroy();
-}
-
-function permaMuteRemove(id: number) {
-  const muted = new ListPreferenceMap(P.permaMuteList, true);
-  muted.removeItem(id);
-  muted.destroy();
-}
-
 export function initPermaMute() {
   App.room.muted.push(...Preferences.get(P.permaMuteList).map((x) => x[0]));
   UserView.prototype.bottom = function permamute() {
@@ -89,16 +77,16 @@ export function initPermaMute() {
     );
   };
   UserView.prototype.permamute = function permamute() {
-    const { id, display_name: displayName } = this.state.user;
-    permaMuteAdd(id, displayName);
-    App.room.mute(id, displayName, "Permamuted by user");
+    const { id, display_name: name } = this.state.user;
+    ListPreferenceMap.addItem({ key: id, item: name }, P.permaMuteList);
+    App.room.mute(id, name, "Permamuted by user");
     // For blockreqs
     NotificationsReact.update();
     this.forceUpdate();
   };
   UserView.prototype.permaunmute = function permaunmute() {
     const { id } = this.state.user;
-    permaMuteRemove(id);
+    ListPreferenceMap.removeItem({ key: id }, P.permaMuteList);
     App.room.unmute(id);
     NotificationsReact.update();
     this.forceUpdate();

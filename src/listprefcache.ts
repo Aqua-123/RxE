@@ -265,4 +265,27 @@ export class ListPreferenceMap<
   protected loadFrom(data: Array<[Key, Item]>) {
     this.store = new Map(data);
   }
+
+  static just<K extends AllowedTypes, I extends AllowedTypes>(
+    callback: (cache: ListPreferenceMap<K, I>) => void,
+    preference: ListPreference<[K, I]>
+  ) {
+    const cache = new ListPreferenceMap(preference, true);
+    callback(cache);
+    cache.destroy();
+  }
+
+  static addItem<K extends AllowedTypes, I extends AllowedTypes>(
+    { key, item }: { key: K; item: I },
+    pref: ListPreference<[K, I]>
+  ) {
+    return ListPreferenceMap.just((cache) => cache.addItem(key, item), pref);
+  }
+
+  static removeItem<K extends AllowedTypes, I extends AllowedTypes>(
+    { key }: { key: K },
+    pref: ListPreference<[K, I]>
+  ) {
+    return ListPreferenceMap.just((cache) => cache.removeItem(key), pref);
+  }
 }
