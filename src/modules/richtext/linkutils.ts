@@ -38,9 +38,14 @@ export const desanitizeURL = (href: string) =>
 export const parseURL = (href: string) =>
   /^https?:\/\//.test(href) ? href : `https://${href}`;
 
-export const dot = /(?:%2E|\.\u200b?|(?:\s?\(?\s?(?:\.|dot)\s?\)?\s?))/.source;
+export const dot = regexpcc(
+  "(?:",
+  ["%2E", "dot", /\.\u200b?/.source, / ?\( ?(?:\.|dot) ?\) ?/.source].join("|"),
+  ")",
+  ""
+).source;
 export const urlProtocol = /(https?:\/\/)?/.source;
-const urlChar = /[-a-z0-9@:%_+[\].~#?&=]/.source;
+const urlChar = /[-a-z0-9@:%_+[\]~#?&=]/.source;
 export const urlFull = () =>
   regexpcc(
     urlProtocol,
