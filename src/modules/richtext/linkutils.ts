@@ -24,9 +24,7 @@ ${characters.map(characterDetail)}`
     : "";
 
 export function sanitizeURL(message: string) {
-  return message
-    .replace(/(\w)\.(\w)/g, "$1.\u200b$2")
-    .replace(/https?:\/\//, "");
+  return message.replace(/(\w)\.(\w)/g, "$1%2E$2").replace(/https?:\/\//, "");
 }
 
 export const desanitizeURL = (href: string) =>
