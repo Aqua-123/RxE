@@ -1,25 +1,15 @@
-/* eslint-disable camelcase */
 import { P, Preferences } from "~src/preferences";
 import {
-  computeEntropy,
   existing,
   getUserId,
-  isRepeating,
   printTransientMessage,
   stripBiDi,
   wrapMethod
 } from "~src/utils";
+import { getUserInfo, strategy } from "./strategies";
 
 const GREETERS = [21550262, 19422865];
 
-type SpamRating = {
-  [key: number]: {
-    score: number;
-    score2: number;
-    d: number;
-    p: string;
-  };
-};
 /*
 function colorRating(rating: SpamRating[number]) {
   if (rating.score >= 1 || rating.score2 >= 3) return "color:red";
@@ -28,10 +18,92 @@ function colorRating(rating: SpamRating[number]) {
 }
 */
 
-export function initAntiSpam() {
-  const spamRating: SpamRating = {};
-  const autoMuted: Record<string, true> = {};
+const ratings: Record<number, SpamRating> = {};
+const autoMuted: Record<string, true> = {};
 
+// todo: relocate
+function updateRoomMembers({ user, user_disconnected: userLeft }: MessageData) {
+  if (!("state" in RoomChannelMembersClient) || typeof user === "number")
+    return;
+  if (userLeft) {
+    printTransientMessage(`User ${user.display_name} left the chat.`);
+    return;
+  }
+  const id = getUserId(user);
+  const { members } = RoomChannelMembersClient.state;
+  if (!members.map(getUserId).includes(id))
+    printTransientMessage(`User ${user.display_name} joined the chat.`);
+  RoomChannelMembersClient.add_member(user);
+}
+function updateMutes(rating: SpamRating, user: EmeraldUser | number) {
+  const { id, displayName } = getUserInfo(user);
+  const { room } = App;
+
+  const score = rating.scoreStrikes;
+  const isGreeter = GREETERS.includes(id);
+  const isMuted = room.muted.includes(id);
+  const doMute =
+    !isGreeter && score >= 3 && !isMuted && Preferences.get(P.antiSpam);
+  const doUnmute = score < 1 && isMuted && autoMuted[id];
+
+  if (doMute) {
+    if (id === App.user.id) {
+      printTransientMessage(`AutoMute: You would have gotten muted`);
+      console.log("User would be muted here");
+      return;
+    }
+    autoMuted[id] = true;
+    room.mute(id, displayName, "spam");
+    printTransientMessage(`AutoMute: Muted user ${displayName}.`);
+  }
+  if (doUnmute) {
+    delete autoMuted[id];
+    room.unmute(id);
+    printTransientMessage(`AutoMute: Unmuted user ${displayName}.`);
+  }
+}
+
+function updateSpamRating(messageData: MessageData) {
+  const { messages, user } = messageData;
+  if (typeof messages === "undefined") return;
+  const id = getUserId(user);
+  const now = Date.now();
+
+  ratings[id] = ratings[id] ?? {
+    scoreLegacy: 1,
+    scoreStrikes: 0,
+    scoreV11: 1,
+    lastMessageTime: 0,
+    lastMessage: ""
+  };
+
+  const rating = ratings[id];
+
+  strategy.legacy(rating, messageData);
+  strategy.strikeBased(rating, messageData);
+  strategy.v11(rating, messageData);
+
+  rating.lastMessageTime = now;
+  rating.lastMessage = messages.join("");
+
+  updateMutes(rating, user);
+}
+
+function onMessage(messageData: MessageData) {
+  if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")
+    return;
+
+  const { user } = messageData;
+
+  if (typeof user !== "number")
+    // neutralize silly RTL nonsense
+    user.display_name = stripBiDi(user.display_name);
+
+  updateRoomMembers(messageData);
+  updateSpamRating(messageData);
+}
+
+export function initAntiSpam() {
   // anti suicide-bombing.
   const rcsJoin = RoomChannelSelect.prototype.join;
   RoomChannelSelect.prototype.join = function join(e) {
@@ -51,101 +123,6 @@ export function initAntiSpam() {
     }
     return rpSetState.call(this, state as any);
   };
-
-  function onMessage(e: MessageData) {
-    if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")
-      return;
-
-    // neutralize silly RTL nonsense
-    if (typeof e.user !== "number")
-      e.user.display_name = stripBiDi(e.user.display_name);
-
-    // since we're here, update user list more accurately
-    if ("state" in RoomChannelMembersClient && typeof e.user !== "number") {
-      if (e.user_disconnected) {
-        printTransientMessage(`User ${e.user.display_name} left the chat.`);
-      } else {
-        if (
-          !RoomChannelMembersClient.state.members.some(
-            (oldMember) => oldMember && oldMember.id === getUserId(e.user)
-          )
-        ) {
-          printTransientMessage(`User ${e.user.display_name} joined the chat.`);
-        }
-        RoomChannelMembersClient.add_member(e.user);
-      }
-    }
-
-    if (typeof e.messages === "undefined") return;
-    if (typeof e.user === "number") return;
-    const { id, display_name, created_at } = e.user;
-    if (App.user.id === id) return;
-    const message = e.messages.join("");
-    const now = Date.now();
-    const uppercase = message.split("").filter((x) => x.toLowerCase() !== x);
-    if (!spamRating[id]) {
-      spamRating[id] = {
-        score: 1,
-        score2: 0,
-        d: 0,
-        p: ""
-      };
-    }
-    const rating = spamRating[id];
-    // original anti-spam logic - effective, but prone to false positives
-    rating.score += (1e3 / (now - rating.d || now)) ** 0.2;
-    rating.score /= Math.max(
-      1 / Math.E,
-      Math.E - Math.log(10 + message.length + uppercase.length) / 4
-    );
-    // dumber anti-spam logic - 3 fast messages, you're out.
-    const delta = now - rating.d || 1500;
-    if (delta <= 1000) {
-      rating.score2 += 1;
-    } else if (delta > 2000) {
-      rating.score2 = Math.max(0, rating.score2 - Math.log10(delta));
-    }
-    // mean anti-new account additional penalty
-    const accountAge = Date.now() - +new Date(created_at);
-    if (accountAge < 10 * 60 * 1000) {
-      const longMessage = message.length > 200;
-      const lowEntropy = computeEntropy(message, /\s+/) < 2;
-      const repeating = isRepeating(message) > 3;
-      if ((lowEntropy || repeating) && longMessage) {
-        rating.score2 += 1;
-      }
-      const caps = message.toUpperCase() === message;
-      rating.score2 *= caps ? 3 : 2;
-    }
-
-    // whitelist greeters
-    if (GREETERS.includes(id)) {
-      rating.score2 = 0;
-    }
-
-    rating.d = now;
-    rating.p = message;
-    /*
-    console.log(
-      `%cspam s1=${rating.score.toFixed(2)} s2=${rating.score2.toFixed(
-        2
-      )} e=${computeEntropy(message).toFixed(2)} ${display_name}: ${message}`,
-      colorRating(rating)
-    );
-    */
-    if (rating.score2 >= 3 && !App.room.muted.includes(id)) {
-      if (Preferences.get(P.antiSpam)) {
-        autoMuted[id] = true;
-        App.room.mute(id, display_name, "spam");
-        printTransientMessage(`AutoMute: Muted user ${display_name}.`);
-      }
-    }
-    if (rating.score2 < 1 && App.room.muted.includes(id) && autoMuted[id]) {
-      delete autoMuted[id];
-      App.room.unmute(id);
-      printTransientMessage(`AutoMute: Unmuted user ${display_name}.`);
-    }
-  }
 
   function onRoomJoin() {
     document.querySelector(".wfaf")?.classList.remove("channel-unit-active"); // WART.

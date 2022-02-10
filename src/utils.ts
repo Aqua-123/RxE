@@ -410,10 +410,11 @@ export function divertEventListeners(
   return newTarget;
 }
 
-export function timeSince(date: Date) {
-  return +new Date() - +date;
+export function timeSince(date: Date | number) {
+  return +new Date() - +new Date(date);
 }
 
+export const MINUTE = 60e3;
 export const DAY = 24 * 3600e3;
 
 export function allStringMatches(
@@ -593,7 +594,7 @@ export const stripBiDi = (s: string) =>
   s.replace(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g, "");
 
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
-export function computeEntropy(msg: string, sep: RegExp | string = "") {
+export function textEntropy(msg: string, sep: RegExp | string = "") {
   const sorted = msg.split(sep).sort();
   const len = sorted.length;
   const unique = sorted.filter((c, i, a) => c !== a[i - 1]);
@@ -695,6 +696,8 @@ export function notNum<T>(mixed: T | number): T | undefined {
   return mixed;
 }
 
-export function getUserId(mixed: EmeraldUser | number): number {
+export function getUserId(mixed: EmeraldUser | number | null): number {
+  // this should ensure two aren't equal
+  if (mixed === null) return NaN;
   return typeof mixed === "number" ? mixed : mixed.id;
 }

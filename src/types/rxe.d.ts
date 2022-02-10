@@ -16,6 +16,14 @@ declare type RxEEventMap = {
   "user.message": RxERoomMessageEvent;
 };
 
+type SpamRating = {
+  scoreLegacy: number;
+  scoreStrikes: number;
+  scoreV11: number;
+  lastMessageTime: number;
+  lastMessage: string;
+};
+
 declare type RxE = {
   version(): string;
   addEventListener<K extends keyof RxEEventMap>(

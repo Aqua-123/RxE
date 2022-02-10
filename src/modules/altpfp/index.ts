@@ -128,7 +128,7 @@ function getDisplayPicture(user: EmeraldUser): string {
   if (imageCompressed) {
     const imageUnpacked = unpackImage(imageCompressed);
     if (imageUnpacked) {
-      console.log(`loaded custom image for user ${user.display_name}`);
+      // console.log(`loaded custom image for user ${user.display_name}`);
       return imageUnpacked;
     }
   }
