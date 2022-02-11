@@ -33,10 +33,11 @@ export function initMessages() {
   Message.prototype.render = function render() {
     if (!this.props.data.user)
       console.warn("this.props.data.user may be falsy despite declaration");
-    const user = (getRoomMember(getUserId(this.props.data.user)) ||
-      this.props.data.user) as EmeraldUser | null;
+    const user =
+      getRoomMember(getUserId(this.props.data.user)) ||
+      notNum(this.props.data.user);
     const flair = {
-      string: user?.display_name.trim() || "(no name)",
+      string: user?.display_name?.trim() || "(no name)",
       flair: user?.flair ?? { color: "" }
     };
     const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
