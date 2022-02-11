@@ -32,7 +32,7 @@ export function initLoadMore() {
         dataType: "json",
         success: (e2: any) => {
           for (let t = 0; t < e2.messages.length; t += 1) {
-            console.log(e2.messages[t]);
+            // console.log(e2.messages[t]);
             this.append(e2.messages[t]);
           }
           this.setState({

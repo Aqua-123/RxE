@@ -116,8 +116,8 @@ function unpackImage(compressed: string): string | null {
   return imageFormats[format as ImageFormatType].unpack(compressed.slice(1));
 }
 
-function getDisplayPicture(user: EmeraldUser): string {
-  const fallback = user.display_picture.includes("emeraldchat.com/uploads")
+export function getDisplayPicture(user: Partial<EmeraldUser>): string {
+  const fallback = !user?.display_picture?.includes("emeraldchat.com/uploads")
     ? "https://emeraldchat.com/avicons_strict/1.png"
     : user.display_picture;
   if (user.bio === undefined) {
@@ -355,10 +355,15 @@ export function init() {
   interceptUsers(RoomUserUnit, "body", (self) => [self.props.data]);
   interceptUsers(UserUnit, "body", (self) => [self.props.data]);
   interceptUsers(UserView, "top", (self) => [self.state.user]);
-  wrapMethod(Dashboard.prototype, "render", function render() {
-    // todo: this isn't available immediately
-    if (App.user.bio !== undefined)
-      this.state.user.display_picture = getDisplayPicture(App.user);
-    else console.warn("App.user.bio is undefined");
-  });
+  wrapMethod(
+    Dashboard.prototype,
+    "render",
+    function render() {
+      // todo: this isn't available immediately
+      if (App.user.bio !== undefined)
+        this.state.user.display_picture = getDisplayPicture(App.user);
+      else console.warn("App.user.bio is undefined");
+    },
+    true
+  );
 }

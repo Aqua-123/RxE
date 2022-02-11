@@ -36,7 +36,7 @@ export function initMessages() {
     const user = (getRoomMember(getUserId(this.props.data.user)) ||
       this.props.data.user) as EmeraldUser | null;
     const flair = {
-      string: user?.display_name || "Unknown name",
+      string: user?.display_name.trim() || "(no name)",
       flair: user?.flair ?? { color: "" }
     };
     const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);

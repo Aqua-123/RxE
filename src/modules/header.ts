@@ -1,15 +1,14 @@
 // #9. Decorate Header
 import U from "~src/userscript";
 import { crel } from "~src/utils";
+import { getDisplayPicture } from "./altpfp";
 
 export function decorateHeader() {
   // replace logo
   const logo = document.querySelector(".main-logo");
-  if (
-    logo instanceof HTMLImageElement &&
-    logo.src !== App.user.display_picture
-  ) {
-    logo.src = App.user.display_picture;
+  const displayPicture = getDisplayPicture(App.user);
+  if (logo instanceof HTMLImageElement && logo.src !== displayPicture) {
+    logo.src = displayPicture;
   }
   // set favicon
   if (!document.head.querySelector(`link[rel="icon"][href="${U.icon}"]`)) {
