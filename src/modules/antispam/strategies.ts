@@ -4,7 +4,8 @@ import {
   textEntropy,
   getUserId,
   isRepeating,
-  notNum
+  notNum,
+  DAY
 } from "~src/utils";
 
 export function getMessageMetrics(messages: string | string[]) {
@@ -72,7 +73,7 @@ export namespace strategy {
    * @experimental
    */
   export function v11(rating: SpamRating, data: MessageData) {
-    const { max, abs, exp } = Math;
+    const { max, abs } = Math;
     const { accountCreated } = getUserInfo(data.user);
     // const allMessages = RoomClient?.state.messages ?? [];
     const metrics = getMessageMetrics(data.messages);
@@ -80,9 +81,12 @@ export namespace strategy {
     const newMessage = metrics.message.trim();
     const { length } = newMessage;
 
-    const lengthFactor = exp(-length / 500);
-    const caseFactor = length ? length / (uppercase.length + length) : 1;
-    const acAgeFactor = timeSince(accountCreated || new Date()) ** 0.01;
+    const lengthFactor = length ? length ** -0.2 : 1;
+    const caseFactor = length
+      ? length / max(uppercase.length + length - 3, length)
+      : 1;
+    const acAgeFactor =
+      0.75 * (timeSince(accountCreated || new Date()) / DAY) ** 0.1;
     const value = entropy * caseFactor * lengthFactor * acAgeFactor;
 
     function valueAddedTo(messages: string[] | string) {
@@ -92,20 +96,7 @@ export namespace strategy {
         textEntropy(messageLower) - textEntropy(messageLower + newMessage);
       return abs(relativeAddedValue);
     }
-    /* const addedValues = allMessages
-      .slice(0, -20)
-      .map(({ messages, user }, messageIndex, { length: messagesTotal }) => {
-        const importance = getUserId(user) === getUserId(data.user) ? 1 : 0.5;
-        // weights add up to 1
-        const weight =
-          (messageIndex + 1) / (messagesTotal * (messagesTotal + 1));
-        const valueAdded = valueAddedTo(messages) ** importance * weight;
-        if (Number.isNaN(valueAdded))
-          console.log("NaN at", messages.join(""), importance, weight);
-        return valueAdded;
-      });
-    const addedValue = addedValues.length ? sum(addedValues) : value;
-    const worth = (addedValue + valueAddedTo(rating.lastMessage) * value) / 2; */
+
     const worth = (value + valueAddedTo(rating.lastMessage) * value) / 2;
     const delay = max(
       timeSince(rating.lastMessageTime || accountCreated || new Date()),
@@ -115,7 +106,11 @@ export namespace strategy {
     rating.scoreV11 += 1 - worth;
     rating.scoreV11 = max(0, rating.scoreV11);
     console.log(`${JSON.stringify(newMessage)} \
-has own value ${value.toFixed(5)}, \
+has entropy ${entropy.toFixed(5)}, \
+lengthFactor ${lengthFactor.toFixed(5)}, \
+caseFactor ${caseFactor.toFixed(5)}, \
+acAgeFactor ${acAgeFactor.toFixed(5)}, \
+own value ${value.toFixed(5)}, \
 worth ${worth.toFixed(5)},
 score ${rating.scoreV11.toFixed(5)}`);
   }
