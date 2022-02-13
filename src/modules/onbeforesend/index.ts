@@ -4,9 +4,7 @@ import { sanitizeURL } from "../richtext/linkutils";
 const commands = {
   all: {
     rxelink: () =>
-      RoomClient!.send(
-        `Link to RxE extension for Emerald: ${links.repo_minified}`
-      )
+      RoomClient!.send(`Link to RxE extension for Emerald: ${links.repo}`)
   } as Record<string, AnyFunction>,
   prefix: ".",
   process(message: string) {

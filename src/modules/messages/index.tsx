@@ -49,6 +49,10 @@ export function initMessages() {
         : null;
     const color = `hsl(${experience * 256}, 50%, 50%)`;
     const textShadow = "0.005em 0.005em #FFF5";
+    const contentClasses = ["room-component-message-text"];
+    // frick
+    // if (!user.friend)
+    contentClasses.push("ritsu-would-blur");
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">

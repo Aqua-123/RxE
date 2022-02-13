@@ -29,6 +29,7 @@ export default function Settings(props: SettingsProps) {
     highlightMentions,
     bigEmoji,
     hideImageFallback,
+    ignoreURLBlacklist,
     applySettings
   } = props;
 
@@ -111,6 +112,14 @@ export default function Settings(props: SettingsProps) {
         id="bigEmoji"
         value={bigEmoji}
         onChange={() => applySettings({ bigEmoji: !bigEmoji })}
+      />
+      <div className={`m1 ${styles.settingsSection}`}>{T.advancedTitle}</div>
+      <CheckboxSetting
+        id="ignoreURLBlacklist"
+        value={ignoreURLBlacklist}
+        onChange={() =>
+          applySettings({ ignoreURLBlacklist: !ignoreURLBlacklist })
+        }
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.mutelistTitle}</div>
       <ListSetting

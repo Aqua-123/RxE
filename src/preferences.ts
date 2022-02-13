@@ -51,7 +51,7 @@ export const P = {
   imgBlur: new BooleanPreference({
     key: "imgBlur",
     label: T.preferences.imgBlur.label,
-    default: false
+    default: true
   }),
   hidePfp: new BooleanPreference({
     key: "hidePfP",
@@ -150,6 +150,11 @@ export const P = {
     key: "imgurDeleteHashes",
     label: "imgurDeleteHashes",
     default: []
+  }),
+  ignoreURLBlacklist: new BooleanPreference({
+    key: "ignoreURLBlacklist",
+    label: T.preferences.ignoreURLBlacklist.label,
+    default: false
   })
 } as const;
 

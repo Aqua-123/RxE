@@ -9,10 +9,12 @@ import {
   urlOneSlash,
   urlTwoDots,
   urlCommonDomains,
-  urlEmeraldRequest,
+  urlBlacklist,
+  urlBlacklistShorteners,
   urlFull,
   desanitizeURL
 } from "./linkutils";
+import { P, Preferences } from "~src/preferences";
 
 class MessageAnchor extends React.Component<{ href: string }> {
   render() {
@@ -48,7 +50,7 @@ class MessageAnchor extends React.Component<{ href: string }> {
 }
 
 const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
-const extraFilters = () => [urlEmeraldRequest()];
+const extraFilters = () => [...urlBlacklist(), ...urlBlacklistShorteners()];
 
 export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
   return wrapPartitions(
@@ -56,11 +58,11 @@ export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
     urlFull(),
     (urlMatch) => {
       const url = desanitizeURL(urlMatch);
-      if (
-        extraTests().some((test) => test.test(url)) &&
-        extraFilters().every((test) => !test.test(url))
-      )
-        return <MessageAnchor href={url} />;
+      const matchesTests = extraTests().some((test) => test.test(url));
+      const passesFilters =
+        Preferences.get(P.ignoreURLBlacklist) ||
+        extraFilters().every((test) => !test.test(url));
+      if (matchesTests && passesFilters) return <MessageAnchor href={url} />;
       return urlMatch || null;
     },
     restWrapper

@@ -1,9 +1,9 @@
 html.imgBlur {
-  div > img[src*="uploads"] {
+  div.ritsu-would-blur > img {
     filter: blur(7px);
     transition: filter 1s ease;
   }
-  div:hover > img[src*="uploads"] {
+  div:hover.ritsu-would-blur > img {
     filter: blur(0px);
   }
 }

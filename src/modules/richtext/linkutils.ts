@@ -58,4 +58,19 @@ export const urlOneSlash = () => /\//g;
 export const urlTwoDots = () => /[^.]+?\.[^.]+?\.[^.]+?/g;
 export const urlCommonDomains = () =>
   /\.com|\.org|\.net|\.co\.uk|\.eu|\.us|\.gov|\.io/;
-export const urlEmeraldRequest = () => /emeraldchat/gi; // this is not foolproof
+export const urlBlacklist = () => [
+  /emeraldchat/gi,
+  /grabify/gi,
+  /ip-puller/gi,
+  /hackingvision/gi,
+  /iplogger/gi,
+  /bit\.ly/gi, // IP-logger in Premium version
+  /blasze/gi,
+  /ps3CFW/gi,
+  /powercut/gi,
+  /whatstheirip/gi,
+  /\.gift/gi
+];
+export const urlBlacklistShorteners = () => [
+  /(^|https?:\/\/)?\w{3}\.\w{2}(\/|$)/gi
+];

@@ -8,6 +8,7 @@ export default {
   imagesTitle: "Image Settings",
   messageTitle: "Message Settings",
   mutelistTitle: "Permanent Mutes",
+  advancedTitle: "Advanced Settings",
   preferences: {
     theme: {
       label: "Theme",
@@ -40,7 +41,7 @@ export default {
       label: "No images from low karma accounts"
     },
     imgBlur: {
-      label: "Blur all user images"
+      label: "Blur user images"
     },
     hidePfp: {
       label: "Hide profile pictures in chat"
@@ -81,6 +82,9 @@ export default {
     },
     hideImageFallback: {
       label: "Hide your images from non-RxE users"
+    },
+    ignoreURLBlacklist: {
+      label: "Ignore URL blacklist"
     }
   },
   hiddenChannels: "hidden channels",
