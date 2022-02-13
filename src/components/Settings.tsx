@@ -7,6 +7,7 @@ import styles from "./style.module.scss";
 import { updateRoomMutes } from "~src/modules/permamute";
 import RadioSetting from "./RadioSetting";
 import ListSetting from "./ListSetting";
+import TextSetting from "./TextfieldSetting";
 
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
@@ -30,6 +31,7 @@ export default function Settings(props: SettingsProps) {
     bigEmoji,
     hideImageFallback,
     ignoreURLBlacklist,
+    imgurAPIKey,
     applySettings
   } = props;
 
@@ -121,6 +123,14 @@ export default function Settings(props: SettingsProps) {
           applySettings({ ignoreURLBlacklist: !ignoreURLBlacklist })
         }
       />
+      <TextSetting
+        id="imgurAPIKey"
+        value={imgurAPIKey}
+        onChange={({ currentTarget }) => {
+          applySettings({ imgurAPIKey: currentTarget.value });
+        }}
+        placeholder={T.preferences.imgurAPIKey.placeholder}
+      />
       <div className={`m1 ${styles.settingsSection}`}>{T.mutelistTitle}</div>
       <ListSetting
         id="permaMuteList"
@@ -139,6 +149,7 @@ export default function Settings(props: SettingsProps) {
         onChange={(items: Array<[number, string]>) => {
           updateRoomMutes(items);
           applySettings({ permaMuteList: items });
+          NotificationsReact?.update();
         }}
       >
         No mutes active

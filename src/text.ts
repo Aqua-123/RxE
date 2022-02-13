@@ -85,6 +85,10 @@ export default {
     },
     ignoreURLBlacklist: {
       label: "Ignore URL blacklist"
+    },
+    imgurAPIKey: {
+      placeholder: "Imgur API Key",
+      label: "Leave blank for default"
     }
   },
   hiddenChannels: "hidden channels",

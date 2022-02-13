@@ -155,6 +155,12 @@ export const P = {
     key: "ignoreURLBlacklist",
     label: T.preferences.ignoreURLBlacklist.label,
     default: false
+  }),
+  imgurAPIKey: new StringPreference({
+    key: "imgurAPIKey",
+    label: T.preferences.imgurAPIKey.label,
+    default: "",
+    multiline: false
   })
 } as const;
 

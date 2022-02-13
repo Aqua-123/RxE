@@ -28,6 +28,7 @@ export function getSettings() {
     }),
     settings: {
       ...booleanSettings(P),
+      imgurAPIKey: Preferences.get(P.imgurAPIKey),
       blockReqs: Preferences.get(P.blockReqs),
       permaMuteList: Preferences.get(P.permaMuteList)
     }
@@ -49,7 +50,6 @@ export function applySettings() {
       document.documentElement.classList.toggle(key, obj[key]);
     }
   });
-  NotificationsReact?.update();
   initTheme();
 }
 
