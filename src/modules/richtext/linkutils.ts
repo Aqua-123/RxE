@@ -72,5 +72,5 @@ export const urlBlacklist = () => [
   /\.gift/gi
 ];
 export const urlBlacklistShorteners = () => [
-  /(^|https?:\/\/)?\w{3}\.\w{2}(\/|$)/gi
+  /(^|https?:\/\/)\w{3}\.\w{2}(\/|$)/gi
 ];
