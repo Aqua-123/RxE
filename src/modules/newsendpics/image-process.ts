@@ -4,7 +4,7 @@ import { sanitizeURL } from "../richtext/linkutils";
 import * as imgur from "./imgur";
 import { ratelimitInfo as ratelimit } from "./ratelimit";
 
-const rxeUrl = sanitizeURL(links.repo_minified);
+const rxeUrl = sanitizeURL(links.repo);
 
 const PAYLOAD_DESC = () =>
   imgur.HIDE_IMGUR_LINK() ? "Can't see it" : "See just a link";
