@@ -53,6 +53,7 @@ export function initMessages() {
     // frick
     // if (!user.friend)
     contentClasses.push("ritsu-would-blur");
+    const contentClassNames = contentClasses.join(" ");
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
@@ -83,7 +84,7 @@ export function initMessages() {
               )}
             </span>
           )}
-          <div className="room-component-message-text">{this.content()}</div>
+          <div className={contentClassName}>{this.content()}</div>
         </div>
       </div>
     );
