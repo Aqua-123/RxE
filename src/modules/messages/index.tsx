@@ -84,7 +84,7 @@ export function initMessages() {
               )}
             </span>
           )}
-          <div className={contentClassName}>{this.content()}</div>
+          <div className={contentClassNames}>{this.content()}</div>
         </div>
       </div>
     );
