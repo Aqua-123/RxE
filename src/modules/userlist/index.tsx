@@ -25,7 +25,7 @@ function lookup() {
       user: {
         karma: 100,
         id: 2
-      }
+      } as EmeraldUser
     });
     if (typeof UserViewReact === "undefined") return;
   }

@@ -8,7 +8,7 @@ type ListSettingProps<T> = {
   id: keyof typeof PA;
   value: readonly T[];
   onChange: (selection: T[]) => void;
-  renderItem: (t: T) => JSX.Element;
+  renderItem: (t: T) => JSXContent;
   removeItem: (t: T, list: T[]) => T[];
 };
 export default class ListSetting<T> extends React.Component<
@@ -40,6 +40,10 @@ export default class ListSetting<T> extends React.Component<
       <div>
         <span
           className="ui-button-text"
+          style={{
+            margin: "0",
+            padding: "0 10px"
+          }}
           {...onClickOrKeyUp(() => this.handleItemRemoval(item), {
             allowSpace: true
           })}
@@ -48,7 +52,14 @@ export default class ListSetting<T> extends React.Component<
         >
           ×
         </span>
-        <span>{renderItem(item)}</span>
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center"
+          }}
+        >
+          {renderItem(item)}
+        </span>
       </div>
     );
   }

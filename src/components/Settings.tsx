@@ -8,6 +8,7 @@ import { updateRoomMutes } from "~src/modules/permamute";
 import RadioSetting from "./RadioSetting";
 import ListSetting from "./ListSetting";
 import TextSetting from "./TextfieldSetting";
+import ReactDOM from "react-dom";
 
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
@@ -136,16 +137,22 @@ export default function Settings(props: SettingsProps) {
         id="permaMuteList"
         value={permaMuteList}
         removeItem={([id], items) => items.filter((item) => item[0] !== id)}
-        renderItem={([id, name]) => (
+        renderItem={([id, name]) => [
+          <span className="ritsu-permamutelist-user-name">{name}</span>,
           <span
-            onClick={(event) =>
-              UserViewGenerator.generate({ event, user: { id: id, karma: 0 } })
-            }
-            className="ritsu-permamutelist-user-name"
+            className="material-icons"
+            onClick={(event) => {
+              const userProfile = React.createElement(UserProfile, { id });
+              ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
+            }}
+            style={{
+              marginLeft: "0.5em",
+              cursor: "pointer"
+            }}
           >
-            {name}
+            account_circle
           </span>
-        )}
+        ]}
         onChange={(items: Array<[number, string]>) => {
           updateRoomMutes(items);
           applySettings({ permaMuteList: items });

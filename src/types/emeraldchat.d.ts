@@ -476,7 +476,7 @@ declare const DashboardClient: null | {
 declare const UserViewGenerator: {
   generate(e: {
     event: { clientX: number; clientY: number; preventDefault(): void };
-    user: { karma: number; id: number };
+    user: EmeraldUser;
   }): void;
 };
 
