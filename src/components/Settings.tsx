@@ -9,6 +9,7 @@ import RadioSetting from "./RadioSetting";
 import ListSetting from "./ListSetting";
 import TextSetting from "./TextfieldSetting";
 import ReactDOM from "react-dom";
+import RegExpSetting from "./RegExpSetting";
 
 type SettingsProps = SettingsDialogSettings & {
   applySettings(obj: Partial<SettingsDialogSettings>): void;
@@ -33,6 +34,7 @@ export default function Settings(props: SettingsProps) {
     hideImageFallback,
     ignoreURLBlacklist,
     imgurAPIKey,
+    muteRegexes,
     applySettings
   } = props;
 
@@ -131,6 +133,14 @@ export default function Settings(props: SettingsProps) {
           applySettings({ imgurAPIKey: currentTarget.value });
         }}
         placeholder={T.preferences.imgurAPIKey.placeholder}
+      />
+      <RegExpSetting
+        id="muteRegexes"
+        value={muteRegexes[0] ?? { source: "", flags: "" }}
+        onChange={({ source, flags }) => {
+          applySettings({ muteRegexes: [{ source, flags }] });
+        }}
+        flagsAllowed="i"
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.mutelistTitle}</div>
       <ListSetting

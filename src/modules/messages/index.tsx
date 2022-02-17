@@ -34,8 +34,22 @@ export function initMessages() {
     if (!this.props.data.user)
       console.warn("this.props.data.user may be falsy despite declaration");
     const user =
-      getRoomMember(getUserId(this.props.data.user)) ||
-      notNum(this.props.data.user);
+      (getRoomMember(getUserId(this.props.data.user)) ||
+        notNum(this.props.data.user)) ??
+      null;
+    let muted = false;
+    if (App.room.muted.includes(getUserId(user))) muted = true;
+    try {
+      const regexSource = Preferences.get(P.muteRegexes)[0];
+      if (regexSource && user?.display_name) {
+        const { source, flags } = regexSource;
+        const muteRegex = new RegExp(source, flags);
+        if (muteRegex.test(user.display_name) && !muteRegex.test(""))
+          muted = true;
+      }
+    } catch (_) {
+      /* Do nothing */
+    }
     const flair = {
       string: user?.display_name?.trim() || "(no name)",
       flair: user?.flair ?? { color: "" }
@@ -84,7 +98,9 @@ export function initMessages() {
               )}
             </span>
           )}
-          <div className={contentClassNames}>{this.content()}</div>
+          <div className={contentClassNames}>
+            {muted ? <i>Blocked message</i> : this.content()}
+          </div>
         </div>
       </div>
     );

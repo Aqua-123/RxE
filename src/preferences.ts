@@ -161,6 +161,11 @@ export const P = {
     label: T.preferences.imgurAPIKey.label,
     default: "",
     multiline: false
+  }),
+  muteRegexes: new ListPreference<{ source: string; flags: string }>({
+    key: "muteRegexes",
+    label: T.preferences.muteRegexes.label,
+    default: []
   })
 } as const;
 

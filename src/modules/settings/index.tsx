@@ -28,6 +28,7 @@ export function getSettings() {
     }),
     settings: {
       ...booleanSettings(P),
+      muteRegexes: Preferences.get(P.muteRegexes),
       imgurAPIKey: Preferences.get(P.imgurAPIKey),
       blockReqs: Preferences.get(P.blockReqs),
       permaMuteList: Preferences.get(P.permaMuteList)

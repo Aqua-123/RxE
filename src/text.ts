@@ -89,6 +89,9 @@ export default {
     imgurAPIKey: {
       placeholder: "Imgur API Key",
       label: "Leave blank for default"
+    },
+    muteRegexes: {
+      label: "Mute users matching"
     }
   },
   hiddenChannels: "hidden channels",
