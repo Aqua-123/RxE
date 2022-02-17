@@ -1,6 +1,10 @@
 import React from "react";
 import { onClickOrKeyUp } from "~src/utils";
-import { bioWithoutImage, extractBioImage, saveBio } from "../altpfp";
+import {
+  bioWithoutImage,
+  extractBioImage,
+  saveBio
+} from "~src/modules/altpfp/bio-image";
 import { wrapRich } from "./richtext";
 
 type BioImageProps = {

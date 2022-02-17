@@ -701,3 +701,10 @@ export function getUserId(mixed: EmeraldUser | number | null): number {
   if (mixed === null) return NaN;
   return typeof mixed === "number" ? mixed : mixed.id;
 }
+
+export async function readFile(file: File): Promise<string> {
+  const reader = new FileReader();
+  await expect(reader, "load", (fileReader) => fileReader.readAsDataURL(file));
+  if (!reader.result) throw new Error("Got no result reading file");
+  return reader.result.toString();
+}
