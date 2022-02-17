@@ -89,7 +89,9 @@ export function initMessages() {
             <span className="user-extra">
               <b>({karma})</b>
               {" / "}
-              <span style={{ color, textShadow }}>{timeago!}</span>
+              <span style={{ color, textShadow, whiteSpace: "nowrap" }}>
+                {timeago!}
+              </span>
               {user.master && !user.proxy && (
                 <b style={{ color: "#f00" }}> CALLAN </b>
               )}
