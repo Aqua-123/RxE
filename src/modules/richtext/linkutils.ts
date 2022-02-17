@@ -71,6 +71,9 @@ export const urlBlacklist = () => [
   /whatstheirip/gi,
   /\.gift/gi
 ];
+
 export const urlBlacklistShorteners = () => [
   /(^|https?:\/\/)\w{3}\.\w{2}(\/|$)/gi
 ];
+
+export const urlImageHosts = () => [/(^|https?:\/\/)ibb\.co(\/|$)/gi];

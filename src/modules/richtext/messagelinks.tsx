@@ -12,7 +12,8 @@ import {
   urlBlacklist,
   urlBlacklistShorteners,
   urlFull,
-  desanitizeURL
+  desanitizeURL,
+  urlImageHosts
 } from "./linkutils";
 import { P, Preferences } from "~src/preferences";
 
@@ -26,6 +27,7 @@ class MessageAnchor extends React.Component<{ href: string }> {
       const disableLink = unusualCharacters.length > 0;
       const confirmation =
         linkConfirmation(urlObj.host) + nonAsciiAlert(unusualCharacters);
+      if (urlObj.protocol.toLowerCase().startsWith("javascript")) return href;
       return (
         // we want this to be an actual anchor (with a disclaimer)
         // eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -49,22 +51,29 @@ class MessageAnchor extends React.Component<{ href: string }> {
   }
 }
 
-const extraTests = () => [urlOneSlash(), urlTwoDots(), urlCommonDomains()];
-const extraFilters = () => [...urlBlacklist(), ...urlBlacklistShorteners()];
+const passesTest = (getRE: () => RegExp[]) => (url: string) =>
+  getRE().some((test) => test.test(url));
+const likelyURL = passesTest(() => [
+  urlOneSlash(),
+  urlTwoDots(),
+  urlCommonDomains()
+]);
+const blacklisted = passesTest(() => [
+  ...urlBlacklist(),
+  ...urlBlacklistShorteners()
+]);
+const whitelisted = passesTest(() => [...urlImageHosts()]);
+
+const makeLink = (urlMatch: string) => {
+  const url = desanitizeURL(urlMatch);
+  const fallback = urlMatch || null;
+  if (!likelyURL(url)) return fallback;
+  const ignoreBlacklist = Preferences.get(P.ignoreURLBlacklist);
+  if (whitelisted(url) || !blacklisted(url) || ignoreBlacklist)
+    return <MessageAnchor href={url} />;
+  return fallback;
+};
 
 export function wrapLinks<T>(text: string, restWrapper: StringWrapper<T>) {
-  return wrapPartitions(
-    text,
-    urlFull(),
-    (urlMatch) => {
-      const url = desanitizeURL(urlMatch);
-      const matchesTests = extraTests().some((test) => test.test(url));
-      const passesFilters =
-        Preferences.get(P.ignoreURLBlacklist) ||
-        extraFilters().every((test) => !test.test(url));
-      if (matchesTests && passesFilters) return <MessageAnchor href={url} />;
-      return urlMatch || null;
-    },
-    restWrapper
-  );
+  return wrapPartitions(text, urlFull(), makeLink, restWrapper);
 }
