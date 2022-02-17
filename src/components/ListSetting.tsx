@@ -41,8 +41,10 @@ export default class ListSetting<T> extends React.Component<
         <span
           className="ui-button-text"
           style={{
-            margin: "0",
-            padding: "0 10px"
+            margin: "0 0.5em 0 0",
+            padding: "0 0.5em",
+            borderRadius: "0.25em",
+            backgroundColor: "#e00000"
           }}
           {...onClickOrKeyUp(() => this.handleItemRemoval(item), {
             allowSpace: true
