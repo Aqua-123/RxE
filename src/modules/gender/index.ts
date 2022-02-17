@@ -58,8 +58,9 @@ export function initGender() {
   const mRender = Message.prototype.render;
   Message.prototype.render = function render() {
     const div = mRender.apply(this);
-    div.props.children[0].props.children.props["data-gender"] =
-      notNum(this.props.data.user)?.gender ?? "";
+    if (div && typeof div === "object" && "props" in div)
+      div.props.children[0].props.children.props["data-gender"] =
+        notNum(this.props.data.user)?.gender ?? "";
     return div;
   };
 }

@@ -44,8 +44,8 @@ export function initMessages() {
       if (regexSource && user?.display_name) {
         const { source, flags } = regexSource;
         const muteRegex = new RegExp(source, flags);
-        if (muteRegex.test(user.display_name) && !muteRegex.test(""))
-          muted = true;
+        const emptyRegex = ["", "(?:)"].includes(source);
+        if (muteRegex.test(user.display_name) && !emptyRegex) muted = true;
       }
     } catch (_) {
       /* Do nothing */
