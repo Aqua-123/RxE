@@ -60,7 +60,7 @@ function unpackImage(compressed: string): string | null {
 
 export function getDisplayPicture(user: Partial<EmeraldUser>): string {
   const fallback = !user?.display_picture?.includes("emeraldchat.com/uploads")
-    ? "https://emeraldchat.com/avicons_strict/1.png"
+    ? `https://robohash.org/yay${user.id}.png?set=set4`
     : user.display_picture;
   if (user.bio === undefined) {
     console.warn("user.bio is undefined");
@@ -80,9 +80,7 @@ export function getDisplayPicture(user: Partial<EmeraldUser>): string {
 export function init() {
   loadCSS(css);
   loadCSS(`.room-component-message-avatar {
-  background-color: #3e4149;
   color: transparent;
-  background: url("/avicons_strict/1.png");
   }
 
   #ritsu-profile-picture-upload {

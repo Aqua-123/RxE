@@ -24,7 +24,7 @@ export function renderBrokenImages() {
           img.classList.contains("room-component-message-picture")
         )
           return;
-        img.src = `https://emeraldchat.com/avicons_strict/1.png`;
+        img.src = `https://robohash.org/${img.src}.png?set=set4`;
       };
     }
     if (img.complete && img.naturalHeight === 0) {
