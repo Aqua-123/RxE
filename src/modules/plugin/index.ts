@@ -49,7 +49,7 @@ export function initPluginAPI() {
     wrapMethod(App.room.client, "received", (e) => {
       dispatchEvent("room.received", e);
       if (e.user && e.user_disconnected) {
-        dispatchEvent("user.left", encodeURI);
+        dispatchEvent("user.left", e);
       }
       if (e.user && e.user_connected) {
         dispatchEvent("user.joined", e);
