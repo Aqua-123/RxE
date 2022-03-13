@@ -75,7 +75,6 @@ async function uploadPictureimgur(file: File | undefined, user: EmeraldUser) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     const url = await timeout(upload(file), 5000);
-    console.log(url);
     await trySave(url.url, user, true);
     // const url = await timeout(readFile(file), 5000);
   } catch (_) {
@@ -134,7 +133,6 @@ const imguruploadHandler =
     const { currentTarget: input } = ev;
     const file = input.files?.[0];
     try {
-      console.log(user);
       uploadPictureimgur(file, user);
     } catch (reason) {
       alert(`Image loading failed: ${reason}`);
