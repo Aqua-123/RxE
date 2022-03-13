@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { clamp, getImageData, hexToRGB, toNearestStep } from "~src/utils";
 import { bitsRegroup, rgbToU8, u8toRGB } from "~src/bitutils";
 import { DIGIT_SIZE } from "./format0/config";

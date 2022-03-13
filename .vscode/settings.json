@@ -13,6 +13,6 @@
   },
   "python.formatting.provider": "black",
   "files.watcherExclude": {
-    "**/lib**": true,
+    "**/lib/**": true
   }
 }

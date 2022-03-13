@@ -1,12 +1,12 @@
 // import avicons1 from 'static/assets/avicons_strict_1.png';
 import browserWindow from "~src/browserWindow";
 import {
-  wrapMethod,
+  existing,
   expect,
-  timeout,
   loadCSS,
   notNum,
-  existing
+  timeout,
+  wrapMethod
 } from "~src/utils";
 import { extractBioImage } from "./bio-image";
 import * as format0 from "./format0/index";
@@ -14,7 +14,7 @@ import { interceptUsers } from "./interceptUser";
 import css from "./styles.scss";
 import { profilePicture } from "./uploadPicture";
 
-type ImageFormatType = "0";
+type ImageFormatType = "0" | "h";
 
 interface ImageFormat {
   unpack(compressed: string): string | null;
@@ -22,7 +22,8 @@ interface ImageFormat {
 }
 
 const imageFormats: Record<ImageFormatType, ImageFormat> = {
-  "0": format0
+  "0": format0,
+  "h": format0
 };
 
 export async function compressImage(
@@ -55,6 +56,10 @@ function unpackImage(compressed: string): string | null {
     );
     return null;
   }
+  if (format === "h") {
+    return compressed;
+  }
+
   return imageFormats[format as ImageFormatType].unpack(compressed.slice(1));
 }
 

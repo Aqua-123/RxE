@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 import React, { ChangeEvent, DragEvent } from "react";
 import ReactDOM from "react-dom";
 import { P, Preferences } from "~src/preferences";
@@ -10,6 +11,7 @@ import {
 import { saveBio, replaceBioImage } from "./bio-image";
 import { interpolation } from "./interpolation";
 import { compressImage } from "./index";
+import { upload } from "../newsendpics/imgur";
 
 const noFile = () => alert("No file uploaded.");
 const notImage = () =>
@@ -18,20 +20,25 @@ const timedOut = () => alert("Could not load image.");
 
 const FORMAT_DEFAULT = "0";
 
-async function trySave(imageURL: string, user: EmeraldUser) {
-  const sizes = [128, 96, 64, 48];
-  const toSize = (size: number) => ({
-    interpolator: interpolation.none,
-    width: size,
-    height: size
-  });
-  const image = await firstSuccessAsync<string>(
-    sizes.map(
-      (size) => () => compressImage(imageURL, FORMAT_DEFAULT, toSize(size))
-    )
-  );
-  console.log(`compressed: ${image.length} chars`);
-  await saveBio(user, replaceBioImage(user.bio, image));
+async function trySave(imageURL: string, user: EmeraldUser, isimgur: boolean) {
+  console.log(`[rxe-pfp:imgur${imageURL}]`);
+  if (isimgur) {
+    await saveBio(user, `[rxe-pfp:imgur${imageURL}]`);
+  } else {
+    const sizes = [128, 96, 64, 48];
+    const toSize = (size: number) => ({
+      interpolator: interpolation.none,
+      width: size,
+      height: size
+    });
+    const image = await firstSuccessAsync<string>(
+      sizes.map(
+        (size) => () => compressImage(imageURL, FORMAT_DEFAULT, toSize(size))
+      )
+    );
+    console.log(`compressed: ${image.length} chars`);
+    await saveBio(user, replaceBioImage(user.bio, image));
+  }
 }
 
 async function uploadPicture(file: File | undefined, user: EmeraldUser) {
@@ -47,7 +54,30 @@ async function uploadPicture(file: File | undefined, user: EmeraldUser) {
 
   try {
     const url = await timeout(readFile(file), 5000);
-    await trySave(url, user);
+    await trySave(url, user, false);
+  } catch (_) {
+    timedOut();
+  }
+}
+
+async function uploadPictureimgur(file: File | undefined, user: EmeraldUser) {
+  if (!file) {
+    noFile();
+    return;
+  }
+
+  if (!file.type.startsWith("image")) {
+    notImage();
+    return;
+  }
+
+  try {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    const url = await timeout(upload(file), 5000);
+    console.log(url);
+    await trySave(url.url, user, true);
+    // const url = await timeout(readFile(file), 5000);
   } catch (_) {
     timedOut();
   }
@@ -99,6 +129,18 @@ const openUserPicture = (user: EmeraldUser) => () => {
   );
 };
 
+const imguruploadHandler =
+  (user: EmeraldUser) => (ev: ChangeEvent<HTMLInputElement>) => {
+    const { currentTarget: input } = ev;
+    const file = input.files?.[0];
+    try {
+      console.log(user);
+      uploadPictureimgur(file, user);
+    } catch (reason) {
+      alert(`Image loading failed: ${reason}`);
+    }
+  };
+
 export function profilePicture(this: UserProfile) {
   const { user, current_user: currentUser } = this.state.data;
   const onDrop = onDropHandler(user);
@@ -107,6 +149,7 @@ export function profilePicture(this: UserProfile) {
     // const dragNDrop =
     // React.createElement('span', { onDrop }, 'DRAG &', React.createElement('br'), 'DROP')
     const dragNDrop = null;
+    // TODO: make new upload button pretty
     return (
       <span onDrop={onDrop}>
         <img
@@ -145,6 +188,21 @@ export function profilePicture(this: UserProfile) {
           >
             palette
           </span>
+        </label>
+        <label
+          htmlFor="ritsu-profile-picture-imgur-upload"
+          className="btn"
+          style={{ fontSize: "12px" }}
+        >
+          <input
+            id="ritsu-profile-picture-imgur-upload"
+            title="Upload using imgur"
+            type="file"
+            onDrop={onDrop}
+            onChange={imguruploadHandler(user)}
+            hidden
+          />
+          Imgur Upload
         </label>
       </span>
     );
