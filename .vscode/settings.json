@@ -14,5 +14,9 @@
   "python.formatting.provider": "black",
   "files.watcherExclude": {
     "**/lib/**": true
+  },
+  "files.Exclude": {
+    "**/lib/**": true,
+    "**/node_modules/**": true
   }
 }
