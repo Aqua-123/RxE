@@ -1,5 +1,12 @@
 import { log } from "~userscripter";
-import { memoize, imageFromData, PassableError } from "~src/utils";
+import {
+  memoize,
+  imageFromData,
+  PassableError,
+  readFile,
+  loadImage,
+  timeout
+} from "~src/utils";
 import Tape from "~src/tape";
 import {
   ImageReader,
@@ -39,7 +46,9 @@ export const unpack = memoize((compressed) => {
   return TokenWriter.writeImage(tokens, metadata);
 });
 
-export async function compress(image: Image, options: SamplingOptions) {
+export async function compress(file: File, options: SamplingOptions) {
+  const url = await timeout(readFile(file), 5000, "Could not read file");
+  const image = await timeout(loadImage(url), 5000, "Could not load image");
   const { pixels, metadata } = ImageReader.readImage(image, options);
   const { width, height } = metadata.size;
   if (LOG_SAMPLED_IMAGE)

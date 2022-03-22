@@ -1,26 +1,17 @@
 export const BIO_IMAGE = () =>
   /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
-export const BIO_IMAGE_IMGUR = () =>
-  /\[?rxe-pfp:?imgur([A-Za-z0-9+.:/=\u{E0020}-\u{E005F}]+)\]?/gu;
+
 const makeBioImage = (compressed: string) => `[rxe-pfp:${compressed}]`;
-const makeBioImageimgur = (compressed: string) =>
-  `[rxe-pfp:imgur${compressed}]`;
 
 export function extractBioImage(bio: string): string | null {
-  const extracted =
+  return (
     Array.from(bio.matchAll(BIO_IMAGE()))
       .map((match) => match[1])
-      .slice(-1)[0] ?? null;
-  if (extracted === "imgurhttps") {
-    return (
-      Array.from(bio.matchAll(BIO_IMAGE_IMGUR()))
-        .map((match) => match[1])
-        .slice(-1)[0] ?? null
-    );
-  }
-  return extracted;
+      .slice(-1)[0] ?? null
+  );
 }
 
+// todo: change behaviour so multiple formats are compatible
 export function bioWithoutImage(bio: string): string {
   const lastIndex = Array.from(bio.matchAll(BIO_IMAGE()))
     .map((match) => match.index)
@@ -29,17 +20,13 @@ export function bioWithoutImage(bio: string): string {
   // intended behaviour if undefined
   return bio.slice(0, lastIndex);
 }
+
 export function replaceBioImage(bio: string, compressed: string) {
   const rawBio = bioWithoutImage(bio);
-  const result =
-    rawBio +
-    (rawBio[rawBio.length - 1] === "\n" ? "" : "\n") +
-    makeBioImage(compressed);
-  if (result) return result;
   return (
     rawBio +
     (rawBio[rawBio.length - 1] === "\n" ? "" : "\n") +
-    makeBioImageimgur(compressed)
+    makeBioImage(compressed)
   );
 }
 

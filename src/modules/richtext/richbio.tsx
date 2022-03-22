@@ -6,6 +6,7 @@ import {
   saveBio
 } from "~src/modules/altpfp/bio-image";
 import { wrapRich } from "./richtext";
+import { formatName } from "../altpfp/formats";
 
 type BioImageProps = {
   raw: string;
@@ -35,7 +36,7 @@ function BioImage({ raw, onRemove }: BioImageProps) {
       }}
       title={raw}
     >
-      Profile picture ({raw.length} chars)
+      Profile picture ({formatName(raw[0])}, {raw.length} chars)
       {!!remove && [" ", <b {...onClickOrKeyUp(remove)}>×</b>]}
     </div>
   );

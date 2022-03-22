@@ -1,7 +1,7 @@
 // #9. Decorate Header
 import U from "~src/userscript";
 import { crel } from "~src/utils";
-import { getDisplayPicture } from "./altpfp";
+import { getDisplayPicture } from "./altpfp/interceptUser";
 
 export function decorateHeader() {
   // replace logo

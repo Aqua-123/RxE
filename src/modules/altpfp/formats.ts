@@ -1,0 +1,54 @@
+import * as format0 from "./format0/index";
+import formatImgur from "./formatImgur";
+
+export const FORMATS: Record<string, ImageFormatType> = {
+  FORMAT0: "0",
+  IMGUR: "i"
+};
+
+export function formatName(format: string): string {
+  switch (format) {
+    case FORMATS.FORMAT0:
+      return "format0";
+    case FORMATS.IMGUR:
+      return "imgur";
+    default:
+      return "unknown";
+  }
+}
+
+export const imageFormats: Record<ImageFormatType, ImageFormat> = {
+  "0": format0,
+  "i": formatImgur
+};
+
+export async function compressImage(
+  image: File,
+  format: ImageFormatType,
+  options: SamplingOptions
+) {
+  if (!(format in imageFormats))
+    throw new Error(`Format '${format}' not implemented`);
+  // Timer would include image loading now
+  // console.time("image-compression");
+  const compressed = imageFormats[format]
+    .compress(image, options)
+    .then((data) => format + data);
+  // console.timeEnd("image-compression");
+  return compressed;
+}
+
+export function unpackImage(compressed: string): string | null {
+  const format = compressed[0];
+  if (!(format in imageFormats)) {
+    console.error(
+      `could not unpack image: ${compressed} (unknown format '${format}')`
+    );
+    return null;
+  }
+  if (format === "h") {
+    return compressed;
+  }
+
+  return imageFormats[format as ImageFormatType].unpack(compressed.slice(1));
+}

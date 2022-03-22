@@ -1,5 +1,25 @@
 import { wrapMethod } from "~src/utils";
-import { getDisplayPicture } from "./index";
+import { extractBioImage } from "./bio-image";
+import { unpackImage } from "./formats";
+
+export function getDisplayPicture(user: Partial<EmeraldUser>): string {
+  const fallback = !user?.display_picture?.includes("emeraldchat.com/uploads")
+    ? `https://robohash.org/yay${user.id}.png?set=set4`
+    : user.display_picture;
+  if (user.bio === undefined) {
+    console.warn("user.bio is undefined");
+    return fallback;
+  }
+  const imageCompressed = extractBioImage(user.bio);
+  if (imageCompressed) {
+    const imageUnpacked = unpackImage(imageCompressed);
+    if (imageUnpacked) {
+      // console.log(`loaded custom image for user ${user.display_name}`);
+      return imageUnpacked;
+    }
+  }
+  return fallback;
+}
 
 function necessaryUserProps(user: any): boolean {
   return (

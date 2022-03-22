@@ -45,7 +45,7 @@ export function decodeImage(encoded: string): RitsuChatImage | null {
 }
 
 export async function upload(image: File): Promise<RitsuChatImage> {
-  return imgur.upload(image);
+  return imgur.uploadChatImage(image);
 }
 
 export const uploadInfo = { ratelimit, destination: imgur.destinationInfo };

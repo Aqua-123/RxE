@@ -21,7 +21,7 @@ const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(\\S*)`);
 const IMGUR_URL_REGEXP = () =>
   new RegExp(`i${dot}imgur${dot}com/([a-z0-9]+)${dot}\\w+`, "i");
 
-const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
+export const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
 
 const headers = () => ({
   Authorization: `Client-ID ${
@@ -43,7 +43,7 @@ function encodeImage(id: string): string {
   return sanitizeURL(imgurPNG(id));
 }
 
-export async function upload(image: File): Promise<RitsuChatImage> {
+export async function upload(image: File): Promise<ImgurImage> {
   const payload = new FormData();
   payload.append("image", image);
   const response = await fetch(IMGUR_ENDPOINT, {
@@ -56,7 +56,14 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   const { id, deletehash: hash } = data;
   ListPreferenceMap.addItem({ key: id, item: hash }, P.imgurDeleteHashes);
   recordUpload();
-  return toChatImage({ id, payload: encodeImage(id) });
+  return {
+    id,
+    payload: encodeImage(id)
+  };
+}
+
+export async function uploadChatImage(image: File): Promise<RitsuChatImage> {
+  return toChatImage(await upload(image));
 }
 
 export async function deleteImage(deleteHash: string): Promise<void> {
