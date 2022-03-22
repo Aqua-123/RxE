@@ -91,10 +91,14 @@ export function printTransientMessage(msg: string) {
 export const sleep = (ms = 0) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-export function timeout<T>(promise: Promise<T>, ms: number) {
+export function timeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  message = "Timed out"
+) {
   return Promise.race([
     promise,
-    sleep(ms).then(() => Promise.reject(new Error("Timed out")))
+    sleep(ms).then(() => Promise.reject(new Error(message)))
   ]);
 }
 
@@ -707,4 +711,12 @@ export async function readFile(file: File): Promise<string> {
   await expect(reader, "load", (fileReader) => fileReader.readAsDataURL(file));
   if (!reader.result) throw new Error("Got no result reading file");
   return reader.result.toString();
+}
+
+export async function loadImage(url: string): Promise<Image> {
+  const image = new Image();
+  await expect(image, "load", (img) => {
+    img.src = url;
+  });
+  return image;
 }
