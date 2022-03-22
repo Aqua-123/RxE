@@ -4,6 +4,17 @@ declare type RGB = [number, number, number];
 
 // type RGBA = [number, number, number, number];
 
+type ImageFormatType = "0" | "i";
+interface ImageFormat {
+  /**
+   * Unpacks an image.
+   * @param compressed String representation of image.
+   * @returns URL to image or null in case of failure.
+   */
+  unpack(compressed: string): string | null;
+  compress(image: File, options: SamplingOptions): Promise<string>;
+}
+
 declare type ImageAccessor = (x: number, y: number) => RGB | null;
 
 declare type ImageInterpolator = (

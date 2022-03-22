@@ -32,20 +32,20 @@ declare type ImgurResponse = {
 };
 
 declare type ImgurImage = {
-  // Imgur image ID.
+  /** Imgur image ID. */
   id: string;
 
-  // Encoded reference to image, as found in message or created.
+  /** Encoded reference to image, as found in message or created. */
   payload: string;
 };
 
 declare type RitsuChatImage = {
-  // Link to image resource.
+  /** Link to image resource. */
   url: string;
 
-  // Encoded reference to image, as found in message or created.
+  /** Encoded reference to image, as found in message or created. */
   payload: string;
 
-  // First version supporting format used, for placeholder info.
+  /** First version supporting format used, for placeholder info. */
   version: string;
 };
