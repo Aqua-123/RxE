@@ -15,7 +15,7 @@
   "files.watcherExclude": {
     "**/lib/**": true
   },
-  "files.Exclude": {
+  "files.exclude": {
     "**/lib/**": true,
     "**/node_modules/**": true
   }
