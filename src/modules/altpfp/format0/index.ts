@@ -16,12 +16,15 @@ import {
 } from "./tokenizer";
 import TokenReader from "./tokenReader";
 import browserWindow from "~src/browserWindow";
+import { interpolation, sampleImage } from "../interpolation";
 
 const MAX_SIZE_COMPRESSED = 7500;
 
 const LOG_TOKEN_LIST_UNPACKED = false;
 const LOG_TOKEN_LIST_COMPRESSED = false;
-const LOG_STATISTICS = true;
+const LOG_STATISTICS = false;
+const LOG_READ_IMAGE = false;
+const LOG_FULLY_SAMPLED_IMAGE = true;
 const LOG_SAMPLED_IMAGE = false;
 const LOG_TOKENIZED_IMAGE = false;
 const LOG_SERIALIZED_IMAGE = false;
@@ -49,6 +52,19 @@ export const unpack = memoize((compressed) => {
 export async function compress(file: File, options: SamplingOptions) {
   const url = await timeout(readFile(file), 5000, "Could not read file");
   const image = await timeout(loadImage(url), 5000, "Could not load image");
+  if (LOG_READ_IMAGE) browserWindow.open(image.src);
+  if (LOG_FULLY_SAMPLED_IMAGE)
+    browserWindow.open(
+      imageFromData(
+        sampleImage(image, {
+          interpolator: interpolation.none,
+          width: image.width,
+          height: image.height
+        }),
+        image.width,
+        image.height
+      )
+    );
   const { pixels, metadata } = ImageReader.readImage(image, options);
   const { width, height } = metadata.size;
   if (LOG_SAMPLED_IMAGE)
