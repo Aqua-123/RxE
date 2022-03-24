@@ -46,9 +46,5 @@ export function unpackImage(compressed: string): string | null {
     );
     return null;
   }
-  if (format === "h") {
-    return compressed;
-  }
-
   return imageFormats[format as ImageFormatType].unpack(compressed.slice(1));
 }
