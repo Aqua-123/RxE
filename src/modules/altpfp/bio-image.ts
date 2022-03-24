@@ -38,7 +38,6 @@ export async function saveBio(user: EmeraldUser, bio: string) {
       flair: { color: user.flair.color },
       gender: user.gender
     };
-    console.log(bio);
     $.ajax({
       type: "GET",
       url: `/update_profile?${$.param(params)}`,
