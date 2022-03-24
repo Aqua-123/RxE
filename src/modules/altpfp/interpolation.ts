@@ -109,7 +109,6 @@ export function sampleImage(
         [0, 0]
       );
       // todo: add more details to message
-      // eslint-disable-next-line no-console
       if (rgb === null) console.warn(`Interpolation failed at ${x}, ${y}`);
       sampledImage[y * width + x] = rgb ?? [0, 0, 0];
     }
