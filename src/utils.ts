@@ -701,7 +701,7 @@ export function notNum<T>(mixed: T | number): T | undefined {
 }
 
 export function getUserId(mixed: EmeraldUser | number | null): number {
-  // this should ensure two aren't equal
+  // this should ensure two non-existent users aren't equal
   if (mixed === null) return NaN;
   return typeof mixed === "number" ? mixed : mixed.id;
 }
