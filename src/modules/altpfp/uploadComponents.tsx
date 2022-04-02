@@ -72,7 +72,7 @@ export function profilePicture(this: UserProfile) {
         <input
           id="ritsu-profile-picture-upload"
           type="file"
-          onChange={uploadHandler(user, FORMATS.FORMAT0)}
+          onChange={uploadHandler(user, FORMATS.IMGUR)}
           onDrop={onDrop}
         />
         <label
@@ -99,21 +99,6 @@ export function profilePicture(this: UserProfile) {
           >
             palette
           </span>
-        </label>
-        <label
-          htmlFor="ritsu-profile-picture-imgur-upload"
-          className="btn"
-          style={{ fontSize: "12px" }}
-        >
-          <input
-            id="ritsu-profile-picture-imgur-upload"
-            title="Upload using imgur"
-            type="file"
-            onDrop={onDrop}
-            onChange={uploadHandler(user, FORMATS.IMGUR)}
-            hidden
-          />
-          Imgur Upload
         </label>
       </span>
     );
