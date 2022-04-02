@@ -90,15 +90,6 @@ export function profilePicture(this: UserProfile) {
           >
             cloud_upload
           </span>
-          <span
-            className="material-icons"
-            title="Customize how your picture gets uploaded"
-            style={{ fontSize: "36px" }}
-            onDrop={onDrop}
-            {...onClickOrKeyUp(customizeUpload)}
-          >
-            palette
-          </span>
         </label>
       </span>
     );
