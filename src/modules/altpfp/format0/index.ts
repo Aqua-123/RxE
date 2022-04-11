@@ -84,3 +84,7 @@ export async function compress(file: File, options: SamplingOptions) {
   assertLengthLimit(compressed);
   return compressed;
 }
+
+export function parse(fluff: string) {
+  return fluff;
+}

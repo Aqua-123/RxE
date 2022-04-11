@@ -26,7 +26,7 @@ export async function compressImage(
   image: File,
   format: ImageFormatType,
   options: SamplingOptions
-) {
+): Promise<string> {
   if (!(format in imageFormats))
     throw new Error(`Format '${format}' not implemented`);
   // Timer would include image loading now
@@ -36,6 +36,17 @@ export async function compressImage(
     .then((data) => format + data);
   // console.timeEnd("image-compression");
   return compressed;
+}
+
+export function parseImage(
+  fluff: string,
+  format: ImageFormatType
+): string | null {
+  if (!(format in imageFormats))
+    throw new Error(`Format '${format}' not implemented`);
+  const compressed = imageFormats[format].parse(fluff);
+  if (compressed === null) return null;
+  return format + compressed;
 }
 
 export function unpackImage(compressed: string): string | null {

@@ -13,6 +13,11 @@ interface ImageFormat {
    */
   unpack(compressed: string): string | null;
   compress(image: File, options: SamplingOptions): Promise<string>;
+  /**
+   * Extracts the compressed image representation from an expanded form.
+   * @param fluff Implementation-specific representation.
+   */
+  parse(fluff: string): string | null;
 }
 
 declare type ImageAccessor = (x: number, y: number) => RGB | null;

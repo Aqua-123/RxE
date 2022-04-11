@@ -52,3 +52,7 @@ export async function saveBio(user: EmeraldUser, bio: string) {
     } as JQueryAjaxSettings); // old jQuery moment
   });
 }
+
+export async function setBioImage(user: EmeraldUser, compressed: string) {
+  await saveBio(user, replaceBioImage(user.bio, compressed));
+}

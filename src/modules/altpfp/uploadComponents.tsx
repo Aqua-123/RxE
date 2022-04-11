@@ -1,9 +1,9 @@
 import React, { ChangeEvent, DragEvent } from "react";
 import ReactDOM from "react-dom";
-import { P, Preferences } from "~src/preferences";
 import { DRAGNDROP_FORMAT, uploadPicture } from "./uploadPicture";
-import { FORMATS } from "./formats";
+import { FORMATS, parseImage } from "./formats";
 import { onClickOrKeyUp } from "~src/utils";
+import { setBioImage } from "./bio-image";
 
 const onDropHandler = (user: EmeraldUser) => (ev: DragEvent) => {
   ev.preventDefault();
@@ -27,6 +27,17 @@ const uploadHandler =
       alert(`Image loading failed: ${reason}`);
     }
   };
+
+const fromURLHandler = (user: EmeraldUser, format: ImageFormatType) => () => {
+  const url = prompt("Paste URL:", "");
+  if (url === null) return;
+  const parsed = parseImage(url, format);
+  if (parsed === null) {
+    alert("Invalid URL");
+    return;
+  }
+  setBioImage(user, parsed);
+};
 
 const openUserPicture = (user: EmeraldUser) => () => {
   ReactDOM.render(
@@ -74,6 +85,16 @@ export function profilePicture(this: UserProfile) {
             cloud_upload
           </span>
         </label>
+        <input
+          id="ritsu-profile-picture-use-existing"
+          style={{ fontSize: "12px" }}
+          className="btn"
+          title="Upload using imgur"
+          onDrop={onDrop}
+          type="button"
+          value="Add from Imgur"
+          onClick={fromURLHandler(user, FORMATS.IMGUR)}
+        />
       </span>
     );
   }

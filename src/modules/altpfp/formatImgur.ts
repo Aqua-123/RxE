@@ -1,4 +1,4 @@
-import { imgurPNG, upload } from "../newsendpics/imgur";
+import { idFromURL, imgurPNG, upload } from "../newsendpics/imgur";
 
 export const formatImgur: ImageFormat = {
   unpack(compressed) {
@@ -7,6 +7,9 @@ export const formatImgur: ImageFormat = {
   async compress(image) {
     const imgurImage = await upload(image);
     return imgurImage.id;
+  },
+  parse(fluff) {
+    return idFromURL(fluff);
   }
 };
 

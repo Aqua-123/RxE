@@ -18,8 +18,7 @@ const IMGUR_HEADER_ENCODED = encode("rxe-imgur:");
 // this is not identical to concatenating and then encoding.
 const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(\\S*)`);
 // hint: don't add the global flag if you want capture groups, silly
-const IMGUR_URL_REGEXP = () =>
-  new RegExp(`i${dot}imgur${dot}com/([a-z0-9]+)${dot}\\w+`, "i");
+const IMGUR_URL_REGEXP = () => new RegExp(`imgur${dot}com/([a-z0-9]+)`, "i");
 
 export const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
 
@@ -74,9 +73,14 @@ export async function deleteImage(deleteHash: string): Promise<void> {
   if (!response.ok) throw new Error(response.statusText);
 }
 
+export function idFromURL(text: string): string | null {
+  const url = text.match(IMGUR_URL_REGEXP());
+  return url ? url[1] : null;
+}
+
 export function imageFromURL(
   text: string,
-  reencode = false
+  reencode = true
 ): RitsuChatImage | null {
   const url = text.match(IMGUR_URL_REGEXP());
   return (
@@ -89,7 +93,7 @@ export function imageFromURL(
 }
 
 export function decodeImage(encoded: string): RitsuChatImage | null {
-  const image = imageFromURL(encoded);
+  const image = imageFromURL(encoded, false);
   if (image) return image;
   const payload = encoded.match(IMGUR_ENCODED_REGEXP())?.[1];
   if (payload === undefined) return null;

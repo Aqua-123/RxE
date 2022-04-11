@@ -1,6 +1,6 @@
 /* eslint-disable no-alert */
 import { firstSuccessAsync } from "~src/utils";
-import { saveBio, replaceBioImage } from "./bio-image";
+import { setBioImage } from "./bio-image";
 import { interpolation } from "./interpolation";
 import { FORMATS, compressImage } from "./formats";
 
@@ -26,7 +26,7 @@ async function trySave(
     sizes.map((size) => () => compressImage(image, format, toSize(size)))
   );
   console.log(`compressed: ${compressed.length} chars`);
-  await saveBio(user, replaceBioImage(user.bio, compressed));
+  await setBioImage(user, compressed);
 }
 
 export async function uploadPicture(
