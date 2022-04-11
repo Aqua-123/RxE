@@ -263,19 +263,30 @@ export function applyOverrides() {
     if (acTarget.matches(".notification-button, .notification-button *"))
       return;
     const notification = this.props.data;
-    const user =
+
+    const sender = notification.data.sender ?? notification.data.user;
+
+    // No unit means no post to open the profile for.
+    // Just show a UserView.
+    if (
+      !("unit" in notification.data) ||
       notification.tier === "friend_request"
-        ? notification.data.sender
-        : notification.data.sender ?? notification.data.unit?.author;
-    if (user && !("unit" in notification.data)) {
-      return UserViewGenerator.generate({ event, user });
+    ) {
+      if (!sender)
+        console.error("Could not get notification user for UserView.");
+      else UserViewGenerator.generate({ event, user: sender });
+      return;
     }
+
+    // Tell app UI code which post to highlight.
     if ("unit" in notification.data) App.params = notification.data.unit;
+
     const id =
-      notification.tier === "friend_request"
-        ? notification.data.sender?.id
-        : notification.sender_id ?? notification.data.sender?.id;
-    console.warn("Could not get user from notification");
+      notification.data.unit?.post.author_id ??
+      notification.data.unit?.comment.author_id ??
+      notification.data.sender.id;
+
+    // Reload or open UserProfile.
     if (UserProfileReact) return UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
