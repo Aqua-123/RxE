@@ -16,23 +16,6 @@ const onDropHandler = (user: EmeraldUser) => (ev: DragEvent) => {
   }
 };
 
-const customizeUpload = (ev: {
-  stopPropagation: () => void;
-  preventDefault: () => void;
-}) => {
-  ev.stopPropagation();
-  ev.preventDefault();
-  const colour = prompt(
-    "Background colour for partially transparent pictures:",
-    Preferences.get(P.altpfpBackground)
-  );
-  if (colour === null) return;
-  const matches = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(colour);
-  if (!matches)
-    alert("Sorry, try looking up the hex code for your colour online.");
-  else Preferences.set(P.altpfpBackground, colour);
-};
-
 const uploadHandler =
   (user: EmeraldUser, format: ImageFormatType) =>
   (ev: ChangeEvent<HTMLInputElement>) => {
