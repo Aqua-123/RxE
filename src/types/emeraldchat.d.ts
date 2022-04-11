@@ -277,6 +277,16 @@ declare type EmeraldUser = {
   delta: number;
 };
 
+declare type ProfileData = {
+  friend: boolean;
+  // NOTE: This is our own field
+  actualFriend: boolean;
+  user: EmeraldUser;
+  current_user: EmeraldUser;
+  friend_request_sent: boolean;
+  wall_id: number;
+};
+
 declare type EmeraldPicture = {
   url: string;
 };
@@ -522,13 +532,7 @@ declare class FriendsMenu extends React.Component<
 declare class UserProfile extends React.Component<
   any,
   {
-    data: {
-      friend: boolean;
-      // NOTE: This is our own field
-      actualFriend: boolean;
-      user: EmeraldUser;
-      current_user: EmeraldUser;
-    };
+    data: ProfileData;
     compact_bio: boolean;
   }
 > {
@@ -569,8 +573,26 @@ declare class __Comment extends React.Component<
   }
 > {}
 
+declare class Microposts extends React.Component<
+  {
+    data: ProfileData;
+  },
+  {
+    initialized: boolean;
+    // microposts
+    data: number[];
+  }
+> {
+  micropost_input(event: React.KeyboardEvent<HTMLInputElement>): void;
+}
+
 declare class Micropost extends React.Component<
-  any,
+  {
+    key: number;
+    data: {
+      id: number;
+    };
+  },
   {
     compact: boolean;
     reply: boolean;
