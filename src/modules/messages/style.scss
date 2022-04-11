@@ -17,6 +17,10 @@
   max-width: 100%;
 }
 
+.jumbo-message:not(.ritsu-message-hidden > *) {
+  font-size: 5em;
+}
+
 .user-extra {
   padding: 0 0.5em;
 }

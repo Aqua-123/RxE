@@ -67,6 +67,7 @@ export function initMessages() {
     // frick
     // if (!user.friend)
     contentClasses.push("ritsu-would-blur");
+    if (muted) contentClasses.push("ritsu-message-hidden");
     const contentClassNames = contentClasses.join(" ");
     return (
       <div className="room-component-message-container" data-id={user?.id}>
@@ -131,30 +132,44 @@ export function initMessages() {
  * leftover <div> that don't go away.
  */
 export function decorateMessages() {
-  const messages = document.querySelectorAll(
+  const messageBlocks = document.querySelectorAll(
     ".room-component-message-container"
   );
-  const msgs = RoomClient?.state?.messages;
-  if (msgs?.length) {
-    for (let i = 0; i < msgs.length; i += 1) {
-      const msgElt = messages[i];
-      const { messages: lines } = msgs[i];
-      const divs = msgElt?.querySelector(
+  const messageBlocksState = RoomClient?.state?.messages;
+  if (messageBlocksState?.length) {
+    for (let i = 0; i < messageBlocksState.length; i += 1) {
+      const messageBlock = messageBlocks[i]?.querySelector(
         ".room-component-message-text"
-      )?.childNodes;
-      while (divs && divs.length > lines.length) {
-        divs[0].remove();
+      );
+
+      if (
+        !messageBlock ||
+        messageBlock.classList.contains("ritsu-message-hidden")
+      )
+        // eslint-disable-next-line no-continue
+        continue;
+
+      const { messages } = messageBlocksState[i];
+      const messageLines = messageBlock.childNodes;
+
+      // Remove extra messages.
+      while (messageLines && messageLines.length > messages.length) {
+        messageLines[0].remove();
       }
-      if (divs) {
-        if (
-          Preferences.get(P.bigEmoji) &&
-          lines.length === 1 &&
-          /^\p{Extended_Pictographic}{1,5}$/u.test(lines[0])
-        ) {
-          (divs[0] as HTMLElement).setAttribute("style", "font-size: 5em");
-        } else {
-          (divs[0] as HTMLElement).removeAttribute("style");
-        }
+
+      // If we removed all of them, don't bother decorating.
+      // eslint-disable-next-line no-continue
+      if (!messageLines) continue;
+
+      // Mark as jumbo emoji in limited circumstances.
+      if (
+        Preferences.get(P.bigEmoji) &&
+        messages.length === 1 &&
+        /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
+      ) {
+        (messageLines[0] as HTMLElement).classList.add("jumbo-message");
+      } else {
+        (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
       }
     }
   }
