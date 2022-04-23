@@ -1,11 +1,16 @@
-import { wrapMethod } from "~src/utils";
+import { P, Preferences } from "~src/preferences";
+import { getUserId, wrapMethod } from "~src/utils";
 import { extractBioImage } from "./bio-image";
 import { unpackImage } from "./formats";
 
 export function getDisplayPicture(user: Partial<EmeraldUser>): string {
-  const fallback = !user?.display_picture?.includes("emeraldchat.com/uploads")
-    ? `https://robohash.org/yay${user.id}.png?set=set4`
-    : user.display_picture;
+  const lowKarma = (user._karma ?? user.karma ?? 0) < 10;
+  const fallback =
+    !user?.display_picture?.includes("emeraldchat.com/uploads") || lowKarma
+      ? `https://robohash.org/yay${user.id}.png?set=set4`
+      : user.display_picture;
+  const isSelf = getUserId(App.user) === getUserId(user as EmeraldUser);
+  if (lowKarma && !isSelf && Preferences.get(P.imgProtect)) return fallback;
   if (user.bio === undefined) {
     console.warn("user.bio is undefined");
     return fallback;

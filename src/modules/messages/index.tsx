@@ -9,6 +9,7 @@ import {
   notNum,
   getUserId
 } from "~src/utils";
+import { wrapLinks } from "~src/modules/richtext/messagelinks";
 import css from "./style.scss";
 
 function getRoomMember(id: number) {
@@ -22,9 +23,12 @@ export function initMessages() {
   loadCSS(css);
   Message.prototype.content = function content() {
     const { picture, messages, user } = this.props.data;
-    if (picture && (notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10))
-      return [];
-    if (picture) return <MessagePicture picture={picture} />;
+    const isSelf = getUserId(this.props.data.user) === getUserId(App.user);
+    const imgProtect = Preferences.get(P.imgProtect);
+    const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
+    const pictureBlocked = !isSelf && lowKarma && imgProtect;
+    if (picture && !pictureBlocked) return <MessagePicture picture={picture} />;
+    if (picture) return [<div>(Image blocked) {wrapLinks(picture.url, rest => rest)}</div>]
     return messages.map((text) => (
       <div key={JSON.stringify(text)}>{this.process(text)}</div>
     ));
@@ -37,6 +41,7 @@ export function initMessages() {
       (getRoomMember(getUserId(this.props.data.user)) ||
         notNum(this.props.data.user)) ??
       null;
+    const isSelf = getUserId(this.props.data.user) === getUserId(App.user);
     let muted = false;
     if (App.room.muted.includes(getUserId(user))) muted = true;
     try {
@@ -54,7 +59,9 @@ export function initMessages() {
       string: user?.display_name?.trim() || "(no name)",
       flair: user?.flair ?? { color: "" }
     };
-    const karma = formatSignedAmount(user?._karma ?? user?.karma ?? 0);
+    const karmaNumeric = user?._karma ?? user?.karma ?? 0;
+    const karmaLow = karmaNumeric < 10;
+    const karma = formatSignedAmount(karmaNumeric);
     const experience = user ? userExperience(user) : 0;
     const createdAt = user?.created_at && new Date(user?.created_at);
     const timeago =
@@ -64,16 +71,19 @@ export function initMessages() {
     const color = `hsl(${experience * 256}, 50%, 50%)`;
     const textShadow = "0.005em 0.005em #FFF5";
     const contentClasses = ["room-component-message-text"];
-    // frick
-    // if (!user.friend)
-    contentClasses.push("ritsu-would-blur");
+    const picture = this.props.data.picture;
+    if (picture) contentClasses.push("ritsu-would-blur-heavy");
     if (muted) contentClasses.push("ritsu-message-hidden");
-    const contentClassNames = contentClasses.join(" ");
+    const safeDisplayPic = user?.display_picture?.startsWith("https://robohash.org/") ||
+      user?.display_picture?.startsWith("https://emeraldchat.com/avicons_strict/") ||
+      isSelf;
+    const displayPicClasses = ["room-component-message-avatar"];
+    if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
           <img
-            className="room-component-message-avatar"
+            className={displayPicClasses.join(" ")}
             alt="User display avatar"
             src={user?.display_picture}
             onMouseDown={(event) =>
@@ -88,7 +98,14 @@ export function initMessages() {
           <Badge badge={user?.badge ?? null} />
           {Preferences.get(P.showInfo) && !!user && (
             <span className="user-extra">
-              <b>({karma})</b>
+              {karmaLow && isSelf ? (
+                <b title="Your profile picture and images might not be visible to others due to low karma.">
+                  (<span style={{ color: "#f66" }}>{karma}</span>)
+                </b>
+              ) : (
+                <b>({karma})</b>
+              )}
+
               {" / "}
               <span style={{ color, textShadow, whiteSpace: "nowrap" }}>
                 {timeago!}
@@ -101,7 +118,7 @@ export function initMessages() {
               )}
             </span>
           )}
-          <div className={contentClassNames}>
+          <div className={contentClasses.join(" ")}>
             {muted ? <i>Blocked message</i> : this.content()}
           </div>
         </div>
