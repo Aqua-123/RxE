@@ -571,7 +571,11 @@ declare class __Comment extends React.Component<
     reply: boolean;
     sub_comments: unknown[];
   }
-> {}
+> {
+  content(): JSX.Element | null;
+  more(): void;
+  youtube_process(text: string): JSX.Element;
+}
 
 declare class Microposts extends React.Component<
   {
