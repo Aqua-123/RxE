@@ -72,7 +72,7 @@ function updateSpamRating(messageData: MessageData) {
   ratings[id] = ratings[id] ?? {
     scoreLegacy: 1,
     scoreStrikes: 0,
-    scoreV11: 1,
+    scoreExperimental: 1,
     lastMessageTime: 0,
     lastMessage: ""
   };
@@ -81,7 +81,7 @@ function updateSpamRating(messageData: MessageData) {
 
   strategy.legacy(rating, messageData);
   strategy.strikeBased(rating, messageData);
-  strategy.v11(rating, messageData);
+  strategy.experimental(rating, messageData);
 
   rating.lastMessageTime = now;
   rating.lastMessage = messages.join("");

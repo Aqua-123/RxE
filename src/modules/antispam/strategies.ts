@@ -8,6 +8,8 @@ import {
   DAY
 } from "~src/utils";
 
+const LOG_EXPERIMENTAL = false;
+
 export function getMessageMetrics(messages: string | string[]) {
   const message = messages instanceof Array ? messages.join("") : messages;
   return {
@@ -72,7 +74,7 @@ export namespace strategy {
   /**
    * @experimental
    */
-  export function v11(rating: SpamRating, data: MessageData) {
+  export function experimental(rating: SpamRating, data: MessageData) {
     const { max, abs } = Math;
     const { accountCreated } = getUserInfo(data.user);
     // const allMessages = RoomClient?.state.messages ?? [];
@@ -102,9 +104,10 @@ export namespace strategy {
       timeSince(rating.lastMessageTime || accountCreated || new Date()),
       500
     );
-    rating.scoreV11 /= delay / 2e3;
-    rating.scoreV11 += 1 - worth;
-    rating.scoreV11 = max(0, rating.scoreV11);
+    rating.scoreExperimental /= delay / 2e3;
+    rating.scoreExperimental += 1 - worth;
+    rating.scoreExperimental = max(0, rating.scoreExperimental);
+    if (LOG_EXPERIMENTAL)
     console.log(`${JSON.stringify(newMessage)} \
 has entropy ${entropy.toFixed(5)}, \
 lengthFactor ${lengthFactor.toFixed(5)}, \
@@ -112,6 +115,6 @@ caseFactor ${caseFactor.toFixed(5)}, \
 acAgeFactor ${acAgeFactor.toFixed(5)}, \
 own value ${value.toFixed(5)}, \
 worth ${worth.toFixed(5)},
-score ${rating.scoreV11.toFixed(5)}`);
+score ${rating.scoreExperimental.toFixed(5)}`);
   }
 }

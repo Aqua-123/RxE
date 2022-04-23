@@ -19,7 +19,7 @@ declare type RxEEventMap = {
 type SpamRating = {
   scoreLegacy: number;
   scoreStrikes: number;
-  scoreV11: number;
+  scoreExperimental: number;
   lastMessageTime: number;
   lastMessage: string;
 };
