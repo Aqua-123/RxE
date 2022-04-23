@@ -11,10 +11,7 @@ function postContent(text: string, compact: boolean, more: () => void) {
       <span>
         {wrapRich(compacted)}
         {" ..."}
-        <span
-          className="user-micropost-text-button"
-          {...onClickOrKeyUp(more)}
-        >
+        <span className="user-micropost-text-button" {...onClickOrKeyUp(more)}>
           {" More"}
         </span>
       </span>
@@ -36,13 +33,13 @@ export function init() {
   };
 
   (Comment.prototype as any as __Comment).content = function content() {
-    const { comment_data, compact } = this.state;
-    if (!comment_data) return null;
-    const { content: text } = comment_data.comment;
+    const { comment_data: commentData, compact } = this.state;
+    if (!commentData) return null;
+    const { content: text } = commentData.comment;
     return (
       <div style={{ width: "100%" }}>
         {postContent(text, compact, () => this.more())}
       </div>
     );
-  }
+  };
 }

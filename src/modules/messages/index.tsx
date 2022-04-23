@@ -28,7 +28,10 @@ export function initMessages() {
     const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
     const pictureBlocked = !isSelf && lowKarma && imgProtect;
     if (picture && !pictureBlocked) return <MessagePicture picture={picture} />;
-    if (picture) return [<div>(Image blocked) {wrapLinks(picture.url, rest => rest)}</div>]
+    if (picture)
+      return [
+        <div>(Image blocked) {wrapLinks(picture.url, (rest) => rest)}</div>
+      ];
     return messages.map((text) => (
       <div key={JSON.stringify(text)}>{this.process(text)}</div>
     ));
@@ -71,11 +74,14 @@ export function initMessages() {
     const color = `hsl(${experience * 256}, 50%, 50%)`;
     const textShadow = "0.005em 0.005em #FFF5";
     const contentClasses = ["room-component-message-text"];
-    const picture = this.props.data.picture;
+    const { picture } = this.props.data;
     if (picture) contentClasses.push("ritsu-would-blur-heavy");
     if (muted) contentClasses.push("ritsu-message-hidden");
-    const safeDisplayPic = user?.display_picture?.startsWith("https://robohash.org/") ||
-      user?.display_picture?.startsWith("https://emeraldchat.com/avicons_strict/") ||
+    const safeDisplayPic =
+      user?.display_picture?.startsWith("https://robohash.org/") ||
+      user?.display_picture?.startsWith(
+        "https://emeraldchat.com/avicons_strict/"
+      ) ||
       isSelf;
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");

@@ -108,7 +108,7 @@ export namespace strategy {
     rating.scoreExperimental += 1 - worth;
     rating.scoreExperimental = max(0, rating.scoreExperimental);
     if (LOG_EXPERIMENTAL)
-    console.log(`${JSON.stringify(newMessage)} \
+      console.log(`${JSON.stringify(newMessage)} \
 has entropy ${entropy.toFixed(5)}, \
 lengthFactor ${lengthFactor.toFixed(5)}, \
 caseFactor ${caseFactor.toFixed(5)}, \
