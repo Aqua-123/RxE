@@ -28,7 +28,7 @@ export function picture({ url }: RitsuChatImage) {
 
 export function display(
   { url }: RitsuChatImage,
-  user: EmeraldUser | number = App.user
+  user: EmeraldUser = App.user
 ): MessageData {
   return {
     user,

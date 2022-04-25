@@ -6,3 +6,4 @@ dist/
 .userscripter-temp
 web-ext-artifacts
 TODO.txt
+.vscode/

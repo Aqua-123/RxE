@@ -42,7 +42,7 @@ declare interface AppInterface {
       speak(e: { message?: string; picture?: EmeraldPicture }): void;
       typing(): void;
     };
-    join(id: string | null): void;
+    join(id: string | number | null): void;
     mute(id: number, name?: string, reason?: string): void;
     unmute(id: number): void;
     leave(Id: string | null): void;
@@ -86,7 +86,7 @@ declare class ModPanel extends React.Component {}
 declare type MessageData = {
   messages: string[];
   picture?: null | EmeraldPicture;
-  user: EmeraldUser | number;
+  user: EmeraldUser;
   user_connected?: true;
   user_disconnected?: true;
   typing?: true;
@@ -366,6 +366,7 @@ declare class Room extends React.Component {
   print(elt?: JSX.Element): void;
   print_append(elt?: JSX.Element): void;
   append(e: MessageData, doTyping?: boolean): void; // NOTE: doTyping is our own field
+  prepend(e: MessageData): void; // NOTE: doTyping is our own field
   trim_messages(): void;
   room_input(): JSX.Element;
   scroll(e?: { lock?: boolean }): void;
@@ -379,6 +380,7 @@ declare class Room extends React.Component {
   send(message: string): void;
   process?: (message: string) => string | null;
   updated(): void;
+  clear_print(): void;
   voice_connect(e: ChannelJsonResponse): void;
   voice_disconnect(): void;
   expand(e: boolean): void;
