@@ -49,7 +49,7 @@ export function initLoadMore() {
         url: `/default_private_messages?id=${roomObj.id}`,
         dataType: "json",
         success: (resp: any) => {
-          resp.message.forEach((message: String) => this.append(message));
+          resp.messages.forEach((message: String) => this.append(message));
           this.setState({
             messages_count: resp.messages_count
           });
