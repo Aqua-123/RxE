@@ -22,10 +22,16 @@ export function initLoadMore() {
   // 20 from it seems to do the trick
   // although response is still weirdly reversed to have to
   // take care of it
+
+  function fixLoadedCount(count: number) {
+    if (count + 20 <= RoomClient!.state.messages_count) return -count - 20;
+    return -RoomClient!.state.messages_count;
+  }
   Room.prototype.load_messages = function loadyboi(loaded) {
+    const newLoaded = fixLoadedCount(loaded);
     $.ajax({
       type: "GET",
-      url: `/room_load_more?loaded=${-loaded - 20}&id=${this.state.id}`,
+      url: `/room_load_more?loaded=${newLoaded}&id=${this.state.id}`,
       dataType: "json",
       success(resp: []) {
         const rev = resp.reverse();
