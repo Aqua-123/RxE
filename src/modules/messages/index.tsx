@@ -134,17 +134,12 @@ export function initMessages() {
   Room.prototype.received = function received(e) {
     if (getUserId(e.user) !== App.user.id && e.messages) {
       App.room.play_sound("/sfx/simple_alert.wav");
-      this.append(e, true);
+      this.append(e);
       if (PushNotifications.idle()) {
-        PushNotifications.send(notNum(e.user)?.display_name ?? "", {
-          icon: notNum(e.user)?.display_picture ?? "",
+        PushNotifications.send(e.user.display_name ?? "", {
+          icon: e.user.display_picture ?? "",
           body: e.messages[0]
         });
-      }
-    } else if (e.typing) {
-      if (getUserId(e.user) !== App.user.id) {
-        this.setState({ typing: notNum(e.user)?.display_name });
-        setTimeout(() => this.stop_typing(), 1e4);
       }
     }
   };
@@ -263,7 +258,7 @@ export function betterMessageRendering() {
     );
   };
 
-  Room.prototype.append = function append(e, doTyping) {
+  Room.prototype.append = function append(e) {
     // For some reason, pictures we send don't render for ourselves initially.
     // Setting e.messages to [""] fixes that, although I don't know why yet.
     if (e.messages.length === 0) e.messages.push("");
@@ -285,10 +280,12 @@ export function betterMessageRendering() {
       lastMessage.messages.push(e.messages[0]);
     } else messages.push(e);
     // inline typing check here.
+    // this is uselsss since objects with typing attributed never reach here
+    /*
     let { typing } = this.state;
     if (doTyping) {
       if (e.typing) {
-        if (getUserId(e.user) !== App.user.id) {
+        if (e.user.id !== App.user.id) {
           typing = notNum(e.user)?.display_name || "";
           setTimeout(() => this.stop_typing(), 1e4);
         }
@@ -297,9 +294,9 @@ export function betterMessageRendering() {
         App.room.typing = null;
       }
     }
+    */
     this.setState({
-      messages,
-      typing
+      messages
     });
   };
 }

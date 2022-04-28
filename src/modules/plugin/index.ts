@@ -36,6 +36,11 @@ function dispatchEvent(name: string, object: Record<string, any>) {
   return defaultPrevented;
 }
 
+function fixTyping(obj: MessageData) {
+  if (obj.typing) {
+    RoomClient?.start_typing(obj.user);
+  } else RoomClient?.stop_typing();
+}
 export function initPluginAPI() {
   const RxE = {
     version,
@@ -54,9 +59,12 @@ export function initPluginAPI() {
       if (e.user && e.user_connected) {
         dispatchEvent("user.joined", e);
       }
+      // this has been disabling
+      // the info thingy typing i swear
       if (e.messages && e.messages.length) {
         dispatchEvent("user.message", e);
       }
+      fixTyping(e);
     });
   });
   wrapMethod(App.room, "leave", (room) => {

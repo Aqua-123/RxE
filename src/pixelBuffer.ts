@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable max-classes-per-file */
 
 import { representColour } from "~src/utils";
