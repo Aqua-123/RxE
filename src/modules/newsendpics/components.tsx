@@ -32,7 +32,6 @@ const initCSS = () =>
 
 export function initComponents() {
   initCSS();
-
   Room.prototype.room_input = function roomInput() {
     return (
       <div className="room-component-input">
