@@ -118,9 +118,6 @@ export function multiLineOverride() {
       )
     );
   };
-  // Still being very buggy and annoying with the microposts
-  // Although now that im css god, yeehawwwww :D
-  /*
   Micropost.prototype.write_comment = function writeComment() {
     return this.state.reply
       ? React.createElement(
@@ -129,7 +126,7 @@ export function multiLineOverride() {
             className: "animated zoomIn user-comment-input-background"
           },
           React.createElement("textarea", {
-            className: "comment-input",
+            className: "user-comment-input",
             onKeyDown: this.comment_input.bind(this),
             id: "comment-input",
             placeholder: "Comment..."
@@ -152,5 +149,5 @@ export function multiLineOverride() {
             })
           )
         : null;
-    }; */
+    };
 }

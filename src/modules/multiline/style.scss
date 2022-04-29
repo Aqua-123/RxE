@@ -11,11 +11,17 @@
 }
 
 .user-comment-input-background {
-  height: auto + 20px;
+  height: 75px;
+}
+
+.user-comment-input {
+  resize: none;
+  height: 75px;
+  line-height: normal;
 }
 .user-micropost-input {
   max-height: 133px;
-  min-width: 30px;
+  min-height: 35px;
 }
 
 .user-microposts {
