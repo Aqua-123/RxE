@@ -7,3 +7,4 @@ dist/
 web-ext-artifacts
 TODO.txt
 .vscode/
+data/

@@ -33,6 +33,7 @@ import { until } from "./utils";
 import { initPermaMute } from "./modules/permamute";
 import { initLoadMore } from "./modules/fixloadmore";
 import { initSendPics } from "./modules/newsendpics";
+import { multiLineOverride } from "./modules/multiline";
 import * as altpfp from "./modules/altpfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/highlightmentions/index";
@@ -92,7 +93,7 @@ async function init() {
   initUserList();
   initPermaMute();
   initSendPics();
-
+  multiLineOverride();
   altpfp.init();
   highlightMentions.init();
   richText.init();

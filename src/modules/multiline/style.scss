@@ -1,0 +1,24 @@
+.user-profile-bottom {
+  width: 100%;
+  height: 100%;
+  overflow: clip;
+  max-height: 480px;
+}
+
+.user-profile-menu {
+  max-height: 700px;
+  height: 700px;
+}
+
+.user-comment-input-background {
+  height: auto + 20px;
+}
+.user-micropost-input {
+  max-height: 133px;
+  min-width: 30px;
+}
+
+.user-microposts {
+  height: auto;
+  max-height: 420px;
+}

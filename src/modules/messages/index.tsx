@@ -258,18 +258,6 @@ export function betterMessageRendering() {
     );
   };
 
-  // Allowing shift + enter to move to new line
-  Room.prototype.input = function input(keyinp) {
-    const value = String($(keyinp.target).val());
-    if (keyinp.key === "Enter" && !keyinp.shiftKey) {
-      this.send(value);
-      $(keyinp.target).val("");
-      keyinp.preventDefault();
-      return;
-    }
-    App.room.client.typing();
-  };
-
   Room.prototype.append = function append(e) {
     // For some reason, pictures we send don't render for ourselves initially.
     // Setting e.messages to [""] fixes that, although I don't know why yet.

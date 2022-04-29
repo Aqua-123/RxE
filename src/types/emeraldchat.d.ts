@@ -577,6 +577,8 @@ declare class __Comment extends React.Component<
   content(): JSX.Element | null;
   more(): void;
   youtube_process(text: string): JSX.Element;
+  write_comment(): void;
+  comment_input(): JSX.Element;
 }
 
 declare class Microposts extends React.Component<
@@ -586,7 +588,9 @@ declare class Microposts extends React.Component<
   {
     initialized: boolean;
     // microposts
-    data: number[];
+    data: {
+      microposts: number[];
+    };
   }
 > {
   micropost_input(event: React.KeyboardEvent<HTMLInputElement>): void;
@@ -597,11 +601,14 @@ declare class Micropost extends React.Component<
     key: number;
     data: {
       id: number;
+      wall_id?: number;
     };
   },
   {
     compact: boolean;
     reply: boolean;
+    deleted: boolean;
+    error: boolean;
     data?: {
       comments: number[];
       liked: boolean;
@@ -616,11 +623,21 @@ declare class Micropost extends React.Component<
       muted: boolean;
       picture: unknown;
     };
+    comment_data: {
+      comment: WallComment;
+      user: EmeraldUser;
+      liked: boolean;
+      likes_count: number;
+    };
   }
 > {
+  show_comment_input: Function;
+  write_comment: Function;
   content(): JSX.Element | null;
   more(): void;
   youtube_process(text: string): JSX.Element;
+  comment_input(event: React.KeyboardEvent<HTMLInputElement>): void;
+  // micropost_input(event: React.KeyboardEvent<HTMLInputElement>): void;
 }
 
 declare type FlairProps = {
@@ -645,3 +662,43 @@ declare class Badge extends React.Component<
 > {
   badges: DetailedUserBadge[];
 }
+
+declare type EmeraldComment = {
+  comment: {
+    id: number;
+    content: string;
+    micropost_id: number;
+    user_id?: number;
+    author_id: number;
+    created_at: string;
+    updated_at: string;
+  };
+};
+
+declare type EmeraldMicropost = {
+  micropost: {
+    id: number;
+    content: string;
+    user_id: number;
+    wall_id: number;
+    created_at: string;
+    updated_at: string;
+    author_id: number;
+    muted: boolean;
+    picture_id: number;
+    reference_id: number;
+    pinned: boolean;
+  };
+};
+
+declare class LikeButton extends React.Component<{
+  data: { liked: boolean; value: number; id: number; class?: string };
+}> {}
+
+declare class CommentSettings extends React.Component<{
+  parent: Micropost;
+}> {}
+
+declare class BR extends React.Component<{
+  children: React.ReactNode;
+}> {}
