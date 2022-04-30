@@ -24,6 +24,9 @@ const commands = {
     const email = message.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi);
     if (email) return true;
     return false;
+  },
+  processMail(message: string) {
+    return message.replace(/\./gi, ".\u200b");
   }
 };
 
@@ -40,7 +43,7 @@ export function init() {
   };
   Room.prototype.process = function process(messageRaw) {
     if (commands.process(messageRaw)) return null;
-    if (commands.checkMail(messageRaw)) return messageRaw;
+    if (commands.checkMail(messageRaw)) return commands.processMail(messageRaw);
     const message = sanitizeURL(messageRaw);
     return message;
   };

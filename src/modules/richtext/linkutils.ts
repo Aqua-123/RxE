@@ -40,18 +40,41 @@ export const parseURL = (href: string) =>
 
 export const dot = regexpcc(
   "(?:",
-  ["%2E", "dot", /\.\u200b?/.source, / ?\( ?(?:\.|dot) ?\) ?/.source].join("|"),
+  ["%2E", "dot", /\./.source, / ?\( ?(?:\.|dot) ?\) ?/.source].join("|"),
   ")",
   ""
 ).source;
 export const urlProtocol = /(https?:\/\/)?/.source;
 const urlChar = /[-a-z0-9@:%_+[\]~#?&=]/.source;
 
+// const dot2 = /(\.|(%2E))\u200b?/;
 // https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
+/*
 export const validateEmail = (email: string) =>
   email.match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    regexpcc(
+      `^(([^<>()[]${dot2},;:s@"]+(${dot2}`,
+      `[^<>()[]${dot2},;:s@"]+)*)|(".+"))@`,
+      `(([[0-9]{1,3}${dot2}[0-9]{1,3}${dot2}`,
+      `[0-9]{1,3}${dot2}[0-9]{1,3}])|(([a-zA-Z-0-9]+`,
+      `${dot2})+[a-zA-Z]{2,}))$`,
+      "gi"
+    )
   );
+
+console.log(
+  regexpcc(
+    `^(([^<>()[]${dot2},;:s@"]+(${dot2}`,
+    `[^<>()[]${dot2},;:s@"]+)*)|(".+"))@`,
+    `(([[0-9]{1,3}${dot2}[0-9]{1,3}${dot2}`,
+    `[0-9]{1,3}${dot2}[0-9]{1,3}])|(([a-zA-Z-0-9]+`,
+    `${dot2})+[a-zA-Z]{2,}))$`,
+    "gi"
+  )
+);
+*/
+export const validateEmail = (email: string) =>
+  email.match(/^[^\s@]+@[^\s@]+(\.|(%2E))\u200b?[^\s@]+$/gi);
 
 export const urlFull = () =>
   regexpcc(

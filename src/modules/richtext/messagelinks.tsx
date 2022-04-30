@@ -13,7 +13,8 @@ import {
   urlBlacklistShorteners,
   urlFull,
   desanitizeURL,
-  urlImageHosts
+  urlImageHosts,
+  validateEmail
 } from "./linkutils";
 import { P, Preferences } from "~src/preferences";
 
@@ -68,6 +69,7 @@ const makeLink = (urlMatch: string) => {
   const url = desanitizeURL(urlMatch);
   const fallback = urlMatch || null;
   if (!likelyURL(url)) return fallback;
+  if (validateEmail(url)) return url;
   const ignoreBlacklist = Preferences.get(P.ignoreURLBlacklist);
   if (whitelisted(url) || !blacklisted(url) || ignoreBlacklist)
     return <MessageAnchor href={url} />;
