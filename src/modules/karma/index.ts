@@ -3,7 +3,8 @@ import { crel, loadCSS } from "~src/utils";
 import trackKarma from "./style.scss";
 
 const KARMA_TRACKING_INTERVAL = 60 * 1000;
-
+// for debug perposes
+// const KARMA_TRACKING_INTERVAL = 10 * 1000;
 let currentKarma: number | null = null;
 
 function updateKarma(karma: number) {
@@ -123,8 +124,10 @@ function updateUserRoomCount() {
                 newMembers.push(member);
               }
             });
+            console.log("yay i updated wohoo");
             RoomChannelMembersClient.setState({
-              members: newMembers
+              members: newMembers,
+              overide_members: newMembers
             });
             // check if our karma is in there already
             const self = currentChannel.members.find(

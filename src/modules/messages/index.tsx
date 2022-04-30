@@ -204,6 +204,21 @@ export function betterMessageRendering() {
   // trying to select text in the chat breaks whenever a new message appears.
   // 3 forced layout and repaints happen per messages.
 
+  function overrideName(e: MessageData) {
+    const override = RoomChannelMembersClient.state.overide_members;
+    if (!override) return e;
+    override.forEach((member) => {
+      if (
+        member?.id === e.user.id &&
+        member?.display_name &&
+        e.user.display_name
+      ) {
+        e.user.display_name = member?.display_name;
+        e.user.karma = member?.karma;
+      }
+    });
+    return e;
+  }
   Room.prototype.room_messages = function roomMessages(
     className = "room-component-messages"
   ) {
@@ -251,7 +266,9 @@ export function betterMessageRendering() {
           if (!data.key) {
             data.key = makeKey();
           }
-          return <Message data={data} key={data.key} />;
+          // Prevent updated user name from resetting on leaving
+          const newData = overrideName(data);
+          return <Message data={newData} key={newData.key} />;
         })}
         {this.state.print_append}
       </div>

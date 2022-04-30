@@ -123,6 +123,11 @@ export function initUserList() {
     rcmSetState.call(this, stateNew);
   };
 
+  Room.prototype.disconnected = function disconnected(e) {
+    if (this.state.mode === "channel")
+      RoomChannelMembersClient.remove_member(e.user);
+  };
+
   /*
   // Taking reference from previous version of this code cause above one went shwoop my head :)
   RoomChannelMembers.prototype.setState = function setState(e) {

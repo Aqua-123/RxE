@@ -385,6 +385,7 @@ declare class Room extends React.Component {
   voice_connect(e: ChannelJsonResponse): void;
   voice_disconnect(): void;
   expand(e: boolean): void;
+  disconnected(e: AppInterface): void;
 }
 
 declare type EmeraldChannel = {
@@ -428,7 +429,7 @@ declare const RoomChannelSelectClient: RoomChannelSelect;
 
 declare class RoomChannelMembers extends React.Component<
   any,
-  { members: (EmeraldUser | null)[] }
+  { members: (EmeraldUser | null)[]; overide_members: (EmeraldUser | null)[] }
 > {
   add_member(e: EmeraldUser): void;
   remove_member(e: EmeraldUser): void;
