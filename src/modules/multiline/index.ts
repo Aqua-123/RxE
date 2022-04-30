@@ -5,87 +5,111 @@ import { loadCSS } from "~src/utils";
 export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
-  Room.prototype.input = function input(keyinp) {
-    const value = String($(keyinp.target).val());
-    if (keyinp.key === "Enter" && !keyinp.shiftKey) {
-      this.send(value);
-      this.state.last_message = value;
-      $(keyinp.target).val("");
-      keyinp.preventDefault();
-      return;
+  Room.prototype.input = function input(event) {
+    const inputElement = $(event.target);
+
+    const text = `${inputElement.val()}`;
+
+    const actionSend = event.key === "Enter" && !event.shiftKey;
+    const actionRecall = event.key === "ArrowUp" && this.state.last_message;
+
+    if (actionSend) {
+      this.send(text);
+      this.setState({ last_message: text });
+      inputElement.val("");
+    } else if (actionRecall) {
+      inputElement.val(this.state.last_message!);
     }
-    // ALlowing up arrow to have last sent message in the textarea
-    if (keyinp.key === "ArrowUp" && this.state.last_message) {
-      $(keyinp.target).val(this.state.last_message);
-      keyinp.preventDefault();
-    }
-    App.room.client.typing();
+
+    if (actionSend || actionRecall) event.preventDefault();
+
+    if (!actionSend) App.room.client.typing();
   };
 
-  Micropost.prototype.comment_input = function commentInput(e) {
-    const text = String($(e.target).val());
-    if (e.key === "Enter" && !e.shiftKey) {
-      this.setState({
-        data: this.state.data,
-        reply: !1,
-        compact: this.state.compact
-      });
-      $(e.target).val("");
-      e.preventDefault();
-      $(e.target).trigger("blur");
-      const micropostId = this.state.data?.micropost.id;
-      $.ajax({
-        type: "GET",
-        url: `/comments_create?id=${micropostId}&content=${encodeURIComponent(
-          text
-        )}`,
-        dataType: "json",
-        success: function process(this: any, commentObj: EmeraldComment) {
-          const { data } = this.state;
-          data?.comments.unshift(commentObj.comment.id);
-          const state = {
-            data,
-            compact: this.state.compact,
-            reply: !1
-          };
-          this.setState(state);
-        }.bind(this)
-      });
-    }
+  function prependComment(this: Micropost, commentData: EmeraldComment) {
+    const { data } = this.state;
+
+    if (typeof data === "undefined") return;
+
+    data.comments.unshift(commentData.comment.id);
+
+    this.setState({
+      data,
+      compact: this.state.compact,
+      reply: true
+    });
+  }
+
+  Micropost.prototype.comment_input = function commentInput(event) {
+    if (event.key !== "Enter" || event.shiftKey) return;
+
+    const inputElement = $(event.target);
+    const text = `${inputElement.val()}`;
+
+    this.setState({
+      data: this.state.data,
+      reply: false,
+      compact: this.state.compact
+    });
+
+    inputElement.val("");
+    event.preventDefault();
+    inputElement.trigger("blur");
+    const micropostId = this.state.data?.micropost.id;
+    if (typeof micropostId === "undefined") return;
+
+    $.ajax({
+      type: "GET",
+      url: `/comments_create?id=${micropostId}&content=${encodeURIComponent(
+        text
+      )}`,
+      dataType: "json",
+      success: prependComment.bind(this)
+    });
   };
 
-  Microposts.prototype.micropost_input = function micropostInput(e) {
-    const text = String($(e.target).val());
-    (<HTMLInputElement>e.target).style.height = "inherit";
-    (<HTMLInputElement>e.target).style.height = `${
-      (<HTMLInputElement>e.target).scrollHeight
-    }px`;
-    if (e.key === "Enter" && !e.shiftKey) {
+  function prependMicropost(this: Microposts, post: EmeraldMicropost) {
+    this.setState({
+      data: {
+        microposts: [post.micropost.id, ...this.state.data.microposts]
+      }
+    });
+  }
+
+  Microposts.prototype.micropost_input = function micropostInput(event) {
+    const inputElement = event.target;
+    if (!(inputElement instanceof HTMLInputElement)) return;
+
+    const inputElementJQ = $(event.target);
+    const text = `${inputElementJQ.val()}`;
+
+    // ? Sorry what is this
+    inputElement.style.height = "inherit";
+    inputElement.style.height = `${inputElement.scrollHeight}px`;
+
+    if (event.key !== "Enter" || event.shiftKey) return;
+
+    /* LEGACY */
+    /*
       const t = $("#micropost-picture-hatch").attr("data-micropost-picture");
       const n = () =>
         t !== undefined ? ($("#micropost-picture-hatch").html(""), t) : "";
-      $(e.target).val("");
-      $(e.target).trigger("blur");
-      e.preventDefault();
-      const wallId = this.props.data.wall_id;
-      $.ajax({
-        type: "GET",
-        url: `/microposts_create?id=${wallId}&content=${encodeURIComponent(
-          text
-        )}&picture=${n()}`,
-        dataType: "json",
-        success: function process(this: any, post: EmeraldMicropost) {
-          let arr = [];
-          arr.push(post.micropost.id);
-          arr = arr.concat(this.state.data.microposts);
-          this.setState({
-            data: {
-              microposts: arr
-            }
-          });
-        }.bind(this)
-      });
-    }
+    */
+
+    inputElementJQ.val("");
+    inputElementJQ.trigger("blur");
+    event.preventDefault();
+
+    const wallId = this.props.data.wall_id;
+
+    $.ajax({
+      type: "GET",
+      url: `/microposts_create?id=${wallId}&content=${encodeURIComponent(
+        text
+      )}`,
+      dataType: "json",
+      success: prependMicropost.bind(this)
+    });
   };
 
   Microposts.prototype.render = function render() {
@@ -124,6 +148,7 @@ export function multiLineOverride() {
       )
     );
   };
+
   Micropost.prototype.write_comment = function writeComment() {
     return this.state.reply
       ? React.createElement(
@@ -140,6 +165,7 @@ export function multiLineOverride() {
         )
       : null;
   };
+
   (Comment.prototype as any as __Comment).write_comment =
     function writeComment() {
       return this.state.reply

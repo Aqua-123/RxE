@@ -131,16 +131,17 @@ export function initMessages() {
       </div>
     );
   };
-  Room.prototype.received = function received(e) {
-    if (getUserId(e.user) !== App.user.id && e.messages) {
-      App.room.play_sound("/sfx/simple_alert.wav");
-      this.append(e);
-      if (PushNotifications.idle()) {
-        PushNotifications.send(notNum(e.user)?.display_name ?? "", {
-          icon: notNum(e.user)?.display_picture ?? "",
-          body: e.messages[0]
-        });
-      }
+  Room.prototype.received = function received(messageData) {
+    if (getUserId(messageData.user) === App.user.id || !messageData.messages)
+      return;
+
+    App.room.play_sound("/sfx/simple_alert.wav");
+    this.append(messageData);
+    if (PushNotifications.idle()) {
+      PushNotifications.send(notNum(messageData.user)?.display_name ?? "", {
+        icon: notNum(messageData.user)?.display_picture ?? "",
+        body: messageData.messages[0]
+      });
     }
   };
 }
