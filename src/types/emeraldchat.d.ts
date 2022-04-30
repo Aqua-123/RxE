@@ -359,6 +359,7 @@ declare class Room extends React.Component {
     print: JSX.Element | null;
     print_append: JSX.Element | null;
     typing: string | null;
+    last_message: string | null;
   };
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;

@@ -147,10 +147,12 @@ export function applyOverrides() {
                 RoomClient?.scroll();
               }.bind(this)
             }),
-            App.room.join("channel" + e.channel.id),
-            setTimeout(function () {
-              RoomClient?.scroll();
-            }, 0),
+            App.room.join("channel" + e.channel.id);
+          // reset last message state on channel change
+          RoomClient!.state.last_message = null;
+          setTimeout(function () {
+            RoomClient?.scroll();
+          }, 0),
             "voice" == e.channel.channel_type && this.voice_connect(e);
         }.bind(this)),
         RoomClient?.updated(),

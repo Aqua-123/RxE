@@ -42,6 +42,8 @@ export function initLoadMore() {
   Room.prototype.switch = function fixmessageCount(this: any, roomObj: any) {
     this.clear_print();
     App.room.join(roomObj.id);
+    // clear last message on changing room
+    this.state.last_message = null;
     this.setState({
       id: roomObj.id,
       messages: [],

@@ -9,9 +9,15 @@ export function multiLineOverride() {
     const value = String($(keyinp.target).val());
     if (keyinp.key === "Enter" && !keyinp.shiftKey) {
       this.send(value);
+      this.state.last_message = value;
       $(keyinp.target).val("");
       keyinp.preventDefault();
       return;
+    }
+    // ALlowing up arrow to have last sent message in the textarea
+    if (keyinp.key === "ArrowUp" && this.state.last_message) {
+      $(keyinp.target).val(this.state.last_message);
+      keyinp.preventDefault();
     }
     App.room.client.typing();
   };
