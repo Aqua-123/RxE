@@ -136,8 +136,8 @@ export function initMessages() {
       App.room.play_sound("/sfx/simple_alert.wav");
       this.append(e);
       if (PushNotifications.idle()) {
-        PushNotifications.send(e.user.display_name ?? "", {
-          icon: e.user.display_picture ?? "",
+        PushNotifications.send(notNum(e.user)?.display_name ?? "", {
+          icon: notNum(e.user)?.display_picture ?? "",
           body: e.messages[0]
         });
       }
