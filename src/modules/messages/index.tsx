@@ -205,7 +205,7 @@ export function betterMessageRendering() {
   // 3 forced layout and repaints happen per messages.
 
   function overrideName(e: MessageData) {
-    const override = RoomChannelMembersClient.state.overide_members;
+    const override = RoomChannelMembersClient?.state?.overide_members;
     if (!override) return e;
     override.forEach((member) => {
       if (

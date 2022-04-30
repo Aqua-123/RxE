@@ -19,6 +19,11 @@ const commands = {
       (candidate) => candidate === argv0
     );
     return commandName ? commands.all[commandName] : undefined;
+  },
+  checkMail(message: string) {
+    const email = message.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi);
+    if (email) return true;
+    return false;
   }
 };
 
@@ -35,6 +40,7 @@ export function init() {
   };
   Room.prototype.process = function process(messageRaw) {
     if (commands.process(messageRaw)) return null;
+    if (commands.checkMail(messageRaw)) return messageRaw;
     const message = sanitizeURL(messageRaw);
     return message;
   };
