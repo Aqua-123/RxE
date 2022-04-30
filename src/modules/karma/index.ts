@@ -124,7 +124,6 @@ function updateUserRoomCount() {
                 newMembers.push(member);
               }
             });
-            console.log("yay i updated wohoo");
             RoomChannelMembersClient.setState({
               members: newMembers,
               overide_members: newMembers
