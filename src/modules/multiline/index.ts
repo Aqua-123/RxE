@@ -83,10 +83,6 @@ export function multiLineOverride() {
     const inputElementJQ = $(event.target);
     const text = `${inputElementJQ.val()}`;
 
-    // ? Sorry what is this
-    inputElement.style.height = "inherit";
-    inputElement.style.height = `${inputElement.scrollHeight}px`;
-
     if (event.key !== "Enter" || event.shiftKey) return;
 
     /* LEGACY */

@@ -61,16 +61,6 @@ export const validateEmail = (email: string) =>
       "gi"
     )
   );
-
-console.log(
-  regexpcc(
-    `^(([^<>()[]${dot2},;:s@"]+(${dot2}`,
-    `[^<>()[]${dot2},;:s@"]+)*)|(".+"))@`,
-    `(([[0-9]{1,3}${dot2}[0-9]{1,3}${dot2}`,
-    `[0-9]{1,3}${dot2}[0-9]{1,3}])|(([a-zA-Z-0-9]+`,
-    `${dot2})+[a-zA-Z]{2,}))$`,
-    "gi"
-  )
 );
 */
 export const validateEmail = (email: string) =>

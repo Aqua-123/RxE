@@ -112,6 +112,22 @@ function updateChannelSelectUsers(
   });
 }
 
+// Ideally prevents persistent state from being lost
+// when new data is fetched.
+function updatePersistentState(newMembers: EmeraldUser[]) {
+  // update only members with ids not in the persistent state
+  if (!RoomChannelMembersClient.state.members) return;
+  const persistentMembers = RoomChannelMembersClient.state.members_persistent;
+  if (!persistentMembers) return;
+  let newPersistentMembers = newMembers.filter(
+    (member) => !persistentMembers.find((m) => m?.id === member.id)
+  );
+  if (!newPersistentMembers) newPersistentMembers = [];
+  RoomChannelMembersClient.setState({
+    members_persistent: [...persistentMembers, ...newPersistentMembers]
+  });
+}
+
 /** Returns a boolean indicating whether the current user was updated. */
 function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
   if (!App.room?.id?.startsWith?.("channel")) return false;
@@ -135,12 +151,9 @@ function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
       newMembers.push(oldMember);
     }
   });
-
+  updatePersistentState(newMembers);
   RoomChannelMembersClient.setState({
-    members: newMembers,
-    // TODO: Is there any meaning to this assignment?
-    // Every update to members will be reflected here after a state change
-    members_persistent: newMembers
+    members: newMembers
   });
   // check if our karma is in there already
   const self = currentChannel.members.find(
