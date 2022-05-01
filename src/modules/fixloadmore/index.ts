@@ -51,20 +51,21 @@ export function initLoadMore() {
       typing: null,
       mode: roomObj.mode || "default"
     });
-    if (roomObj.mode === "private") {
-      $.ajax({
-        type: "GET",
-        url: `/default_private_messages?id=${roomObj.id}`,
-        dataType: "json",
-        success: (resp: any) => {
-          resp.messages.forEach((message: String) => this.append(message));
-          this.setState({
-            messages_count: resp.messages_count
-          });
-          this.scroll();
-        }
-      });
-      this.setState({ left_panel: !0, right_panel: !0 });
-    }
+    if (roomObj.mode !== "private") return;
+    $.ajax({
+      type: "GET",
+      url: `/default_private_messages?id=${roomObj.id}`,
+      dataType: "json",
+      success: (resp: PrivateMessage) => {
+        resp.messages.forEach((message: PrivateMessageArray) =>
+          this.append(message)
+        );
+        this.setState({
+          messages_count: resp.messages_count
+        });
+        this.scroll();
+      }
+    });
+    this.setState({ left_panel: !0, right_panel: !0 });
   };
 }

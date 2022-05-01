@@ -429,7 +429,10 @@ declare const RoomChannelSelectClient: RoomChannelSelect;
 
 declare class RoomChannelMembers extends React.Component<
   any,
-  { members: (EmeraldUser | null)[]; members_persistent: (EmeraldUser | null)[] }
+  {
+    members: (EmeraldUser | null)[];
+    members_persistent: (EmeraldUser | null)[];
+  }
 > {
   add_member(e: EmeraldUser): void;
   remove_member(e: EmeraldUser): void;
@@ -691,6 +694,16 @@ declare type EmeraldMicropost = {
     reference_id: number;
     pinned: boolean;
   };
+};
+
+declare type PrivateMessageArray = {
+  user: EmeraldUser;
+  picture: string | null;
+  messages: string[];
+};
+declare type PrivateMessage = {
+  messages: PrivateMessageArray[];
+  messages_count: number;
 };
 
 declare class LikeButton extends React.Component<{
