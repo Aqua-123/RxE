@@ -78,13 +78,12 @@ export function multiLineOverride() {
 
   Microposts.prototype.micropost_input = function micropostInput(event) {
     const inputElement = event.target;
-    if (!(inputElement instanceof HTMLInputElement)) return;
+    if (inputElement instanceof HTMLInputElement) return;
 
     const inputElementJQ = $(event.target);
     const text = `${inputElementJQ.val()}`;
 
     if (event.key !== "Enter" || event.shiftKey) return;
-
     /* LEGACY */
     /*
       const t = $("#micropost-picture-hatch").attr("data-micropost-picture");
