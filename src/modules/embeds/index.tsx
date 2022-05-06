@@ -17,8 +17,8 @@ function embedMessages(className: string, noImage: boolean) {
       const childies = Array.from(message.children);
       if (childies.some((child) => child.classList.contains("embed"))) return;
       const messageboi = message as HTMLElement;
-      const text = desanitizeURL(messageboi.innerText);
       const oldInnerHTML = messageboi.innerHTML;
+      const text = desanitizeURL(oldInnerHTML);
 
       if (!isYoutube(text) && !isUrlImageHost(text) && !isSpotify(text)) return;
       // preventing image embeds in posts cause that will be yucky
