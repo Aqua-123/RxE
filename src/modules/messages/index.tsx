@@ -9,7 +9,7 @@ import {
   notNum,
   getUserId
 } from "~src/utils";
-import { maybeEmbed } from "../richtext/linkutils";
+import { maybeEmbed } from "../embeds/utils";
 import { wrapLinks } from "~src/modules/richtext/messagelinks";
 import css from "./style.scss";
 

@@ -41,7 +41,7 @@ import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
 // import { trimMessages } from "./modules/trimmessages";
-import { createEmbeds } from "./modules/richtext/embeds";
+import { createEmbeds } from "./modules/embeds";
 
 async function init() {
   const featureSet = `(${[

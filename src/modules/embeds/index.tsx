@@ -1,15 +1,11 @@
-import {
-  isUrlImageHost,
-  isYoutube,
-  returnInnerHtml,
-  desanitizeURL
-} from "./linkutils";
+import { isUrlImageHost, isYoutube, returnInnerHtml, isSpotify } from "./utils";
+import { desanitizeURL } from "../richtext/linkutils";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 
-export function createEmbeds() {
-  loadCSS(css);
-  const messageList = document.querySelectorAll(".room-component-message-text");
+// room-component-message-text
+function embedMessages(className: string, noImage: boolean) {
+  const messageList = document.querySelectorAll(`.${className}`);
   const newLineHtml = "<br>";
   // get child divs
   if (!messageList.length) return;
@@ -24,8 +20,9 @@ export function createEmbeds() {
       const text = desanitizeURL(messageboi.innerText);
       const oldInnerHTML = messageboi.innerHTML;
 
-      if (!isYoutube(text) && !isUrlImageHost(text)) return;
-
+      if (!isYoutube(text) && !isUrlImageHost(text) && !isSpotify(text)) return;
+      // preventing image embeds in posts cause that will be yucky
+      if (!isSpotify(text) && noImage) return;
       const embed = document.createElement("div");
       embed.classList.add("embed");
       messageboi.innerHTML = "";
@@ -33,4 +30,11 @@ export function createEmbeds() {
       messageboi.appendChild(embed);
     });
   });
+}
+
+export function createEmbeds() {
+  loadCSS(css);
+  embedMessages("user-comment-right", true);
+  embedMessages("user-micropost-right", true);
+  embedMessages("room-component-message-text", false);
 }
