@@ -9,6 +9,7 @@ import {
   notNum,
   getUserId
 } from "~src/utils";
+import { maybeEmbed } from "../richtext/linkutils";
 import { wrapLinks } from "~src/modules/richtext/messagelinks";
 import css from "./style.scss";
 
@@ -179,6 +180,7 @@ export function decorateMessages() {
       // If we removed all of them, don't bother decorating.
       // eslint-disable-next-line no-continue
       if (!messageLines) continue;
+      if (!(messageLines[0] as HTMLElement).classList) return;
 
       // Mark as jumbo emoji in limited circumstances.
       if (
@@ -286,6 +288,8 @@ export function betterMessageRendering() {
     const { messages } = this.state;
     if (messages.length > max) messages.shift();
     const lastMessage = messages[messages.length - 1];
+    // check if div of previous message is has the class "embed"
+    // if so, append to that div
     if (
       lastMessage &&
       getUserId(lastMessage.user) === getUserId(e.user) &&
@@ -296,6 +300,7 @@ export function betterMessageRendering() {
       const n = lastMessage.messages;
       const r = n[n.length - 1];
       if (e.messages[0] === r) return;
+      if (maybeEmbed(r)) messages.push(e);
       lastMessage.messages.push(e.messages[0]);
     } else messages.push(e);
     // inline typing check here.

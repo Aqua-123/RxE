@@ -8,3 +8,4 @@ web-ext-artifacts
 TODO.txt
 .vscode/
 data/
+src/modules/trimmessages/index.tsx
