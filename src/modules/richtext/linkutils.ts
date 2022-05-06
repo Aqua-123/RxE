@@ -116,6 +116,8 @@ export const youtubeID = (url: string) => {
   if (match) return match[6];
   return null;
 };
+
+/*
 export const isSpotify = (url: string) => {
   const regex =
     /^(?:spotify:|https:\/\/[a-z]+\.spotify\.com\/(track\/|user\/(.*)\/playlist\/))(.*)$/;
@@ -126,40 +128,24 @@ export const isTwitch = (url: string) => {
   const regex = /^(https?:\/\/)?(www\.)?(twitch\.tv\/)/;
   return regex.test(url);
 };
+*/
 
 export function returnInnerHtml(url: string) {
-  // TODO: Cleanup and dump in the css file
   if (isYoutube(url) && youtubeID(url)) {
-    // create embed for youtube instead of iframe 6th capture group
-    const id = youtubeID(url);
     return `<div class="embed-responsive embed-responsive-16by9 embed">
-      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/${id}" allowfullscreen></iframe>
+      <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/${youtubeID(
+        url
+      )}" allowfullscreen></iframe>
     </div>`;
   }
   if (isUrlImageHost(url)) {
     return `<img src="${url}" class="img-fluid embed">`;
   }
-  // create spotify player embed using iframe and spotify api
-  /*
-  if (isSpotify(url)) {
-    const id = `${url.split("/")[3]}/${url.split("/")[4]}`;
-    return `<iframe class="embed spotify" src="https://open.spotify.com/embed/${id}" allowfullscreen></iframe>`;
-  }
-  // twitch embed
-  if (isTwitch(url)) {
-    return `<iframe src="${url}" width="100%" height="100%" frameborder="0" scrolling="no" allowfullscreen="true"></iframe>`;
-  }
-  */
   return "";
 }
 
 export function maybeEmbed(text: string) {
-  if (
-    isYoutube(text) ||
-    // isSpotify(text) ||
-    // isTwitch(text) ||
-    isUrlImageHost(text)
-  ) {
+  if (isYoutube(text) || isUrlImageHost(text)) {
     return true;
   }
   return false;
