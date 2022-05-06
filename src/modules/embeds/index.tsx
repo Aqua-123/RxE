@@ -17,16 +17,14 @@ function embedMessages(className: string, noImage: boolean) {
       const childies = Array.from(message.children);
       if (childies.some((child) => child.classList.contains("embed"))) return;
       const messageboi = message as HTMLElement;
-      const oldInnerHTML = messageboi.innerHTML;
-      const text = desanitizeURL(oldInnerHTML);
-
+      const text = desanitizeURL(messageboi.innerText);
       if (!isYoutube(text) && !isUrlImageHost(text) && !isSpotify(text)) return;
       // preventing image embeds in posts cause that will be yucky
       if (!isSpotify(text) && noImage) return;
       const embed = document.createElement("div");
       embed.classList.add("embed");
       messageboi.innerHTML = "";
-      embed.innerHTML = oldInnerHTML + newLineHtml + returnInnerHtml(text);
+      embed.innerHTML = newLineHtml + returnInnerHtml(text);
       messageboi.appendChild(embed);
     });
   });

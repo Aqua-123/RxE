@@ -34,10 +34,10 @@ const imageDivString = (url: string) =>
 
 const spotifyDivString = (url: string, height: number) =>
   `<div class="ritsu-spotify-embed spotify embed">
-  <iframe src="https://open.spotify.com/embed/${spotifyID(url)}
-  ?utm_source=generator" height="${height} !important" frameBorder="0" allowfullscreen="" 
-  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-  </iframe></div>`;
+  <iframe src="https://open.spotify.com/embed/${spotifyID(
+    url
+  )}?utm_source=generator" height="${height} !important" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+  </div>`;
 
 const spotifyDivHeight = (url: string) => {
   if (url.includes("playlist")) return 380;
