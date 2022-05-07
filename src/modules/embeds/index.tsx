@@ -2,9 +2,12 @@ import { isUrlImageHost, isYoutube, returnInnerHtml, isSpotify } from "./utils";
 import { desanitizeURL } from "../richtext/linkutils";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
+import { P, Preferences } from "~src/preferences";
 
 // room-component-message-text
 function embedMessages(className: string, noImage: boolean) {
+  const allowEmbeds = Preferences.get(P.toggleEmbeds);
+  if (!allowEmbeds) return;
   const messageList = document.querySelectorAll(`.${className}`);
   const newLineHtml = "<br>";
   // get child divs

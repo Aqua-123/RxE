@@ -136,6 +136,11 @@ export const P = {
     label: T.preferences.bigEmoji.label,
     default: true
   }),
+  toggleEmbeds: new BooleanPreference({
+    key: "toggleEmbeds",
+    label: T.preferences.toggleEmbeds.label,
+    default: true
+  }),
   imgurLastUploadTimes: new ListPreference<number>({
     key: "imgurLastUploadTimes",
     label: "imgurLastUploadTimes",

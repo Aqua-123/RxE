@@ -92,6 +92,9 @@ export default {
     },
     muteRegexes: {
       label: "Mute users matching"
+    },
+    toggleEmbeds: {
+      label: "Toggle embeds"
     }
   },
   hiddenChannels: "hidden channels",

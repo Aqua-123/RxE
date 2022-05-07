@@ -1,10 +1,21 @@
 import React from "react";
 import { crel, existing, formatSignedAmount, loadCSS } from "~src/utils";
 import trackKarma from "./style.scss";
+import browserWindow from "~src/browserWindow";
 
 const KARMA_TRACKING_INTERVAL = 60 * 1000;
 
 let currentKarma: number | null = null;
+
+// preventive measure for people crashing gcs
+function attemptKick(data: any) {
+  if (data.status !== 500) return;
+  if (App.room) {
+    const roomId = App.room.id;
+    App.room.leave(roomId);
+  }
+  browserWindow.location.href = "/";
+}
 
 function showKarmaChange(change: number) {
   const elt = crel("div", {
@@ -46,7 +57,8 @@ function refreshKarma() {
     dataType: "json",
     success: (e) => {
       updateKarma(e.user.karma);
-    }
+    },
+    error: (e) => attemptKick(e)
   });
 }
 
@@ -197,7 +209,8 @@ function refreshChannelInfo() {
     type: "GET",
     url: "channels_default",
     dataType: "json",
-    success: updateChannelInfo
+    success: updateChannelInfo,
+    error: attemptKick
   });
 }
 

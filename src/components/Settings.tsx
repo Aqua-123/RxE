@@ -35,7 +35,8 @@ export default function Settings(props: SettingsProps) {
     ignoreURLBlacklist,
     imgurAPIKey,
     muteRegexes,
-    applySettings
+    applySettings,
+    toggleEmbeds
   } = props;
 
   return (
@@ -117,6 +118,11 @@ export default function Settings(props: SettingsProps) {
         id="bigEmoji"
         value={bigEmoji}
         onChange={() => applySettings({ bigEmoji: !bigEmoji })}
+      />
+      <CheckboxSetting
+        id="toggleEmbeds"
+        value={toggleEmbeds}
+        onChange={() => applySettings({ toggleEmbeds: !toggleEmbeds })}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.advancedTitle}</div>
       <CheckboxSetting

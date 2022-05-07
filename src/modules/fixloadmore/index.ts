@@ -2,17 +2,19 @@ export function initLoadMore() {
   Room.prototype.prepend = function prependboi(messageObj) {
     this.trim_messages();
     const currentState = this.state.messages;
+    const lastElement = currentState[currentState.length - 1];
+    const firstElement = currentState[0];
     if (
-      currentState[0] &&
-      currentState[0].user.id === messageObj.user.id &&
-      !currentState[currentState.length - 1].picture &&
+      firstElement &&
+      firstElement.user.id === messageObj.user.id &&
+      !lastElement.picture &&
       !messageObj.picture &&
-      currentState[0].messages.length < 16
+      firstElement.messages.length < 16
     ) {
-      const n = currentState[currentState.length - 1].messages;
-      const r = n[n.length - 1];
-      if (messageObj.messages[0] === r) return;
-      currentState[0].messages.unshift(messageObj.messages[0]);
+      const messagesArray = lastElement.messages;
+      const lastEle = messagesArray[messagesArray.length - 1];
+      if (messageObj.messages[0] === lastEle) return;
+      firstElement.messages.unshift(messageObj.messages[0]);
     } else currentState.unshift(messageObj);
     this.setState({
       messages: currentState
