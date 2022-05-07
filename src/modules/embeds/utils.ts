@@ -9,8 +9,11 @@ const regexSpotify =
 const regexYoutube =
   /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/;
 
+const regexImgbb = /(^|https?:\/\/)ibb\.co(\/|$)/gi;
+
 export const isYoutube = (url: string) => regexYoutube.test(url);
 export const isSpotify = (url: string) => regexSpotify.test(url);
+export const isImgBb = (url: string) => regexImgbb.test(url);
 
 export const youtubeID = (url: string) => {
   const match = regexYoutube.exec(url);
@@ -29,6 +32,13 @@ const youtubeDivString = (url: string) =>
   src="https://www.youtube.com/embed/${youtubeID(url)}"
   allowfullscreen></iframe></div>`;
 
+// putting imbb images in an iframe since using them as image is not supported
+const imgbbDivString = (url: string) =>
+  `<div class="ritsu-image-embed embed"> <iframe class="embed-responsive-item"
+  src="${url}"
+  frameborder="0"
+  allowfullscreen></iframe></div>`;
+
 const imageDivString = (url: string) =>
   `<img src="${url}" class="img-fluid embed">`;
 
@@ -45,6 +55,7 @@ const spotifyDivHeight = (url: string) => {
 };
 
 export function returnInnerHtml(url: string) {
+  if (isImgBb(url)) return imgbbDivString(url);
   if (isYoutube(url) && youtubeID(url)) return youtubeDivString(url);
   if (isUrlImageHost(url)) return imageDivString(url);
   if (isSpotify(url) && spotifyID(url))

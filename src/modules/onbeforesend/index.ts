@@ -1,5 +1,6 @@
 import { links } from "~src/meta";
 import { sanitizeURL } from "../richtext/linkutils";
+import { emotes, processEmotes } from "../emotes/imdex";
 
 const commands = {
   all: {
@@ -27,6 +28,15 @@ const commands = {
   },
   processMail(message: string) {
     return message.replace(/\./gi, ".\u200b");
+  },
+  // match if emote is present
+  // if so, replace with emote
+  checkEmotes(message: string) {
+    const emote = Object.getOwnPropertyNames(emotes).find((candidate) =>
+      message.includes(candidate)
+    );
+    if (emote) return true;
+    return false;
   }
 };
 
@@ -42,9 +52,13 @@ export function init() {
     this.scroll();
   };
   Room.prototype.process = function process(messageRaw) {
-    if (commands.process(messageRaw)) return null;
-    if (commands.checkMail(messageRaw)) return commands.processMail(messageRaw);
-    const message = sanitizeURL(messageRaw);
+    let processedMessage = messageRaw;
+    if (commands.checkEmotes(messageRaw))
+      processedMessage = processEmotes(messageRaw);
+    if (commands.process(processedMessage)) return null;
+    if (commands.checkMail(processedMessage))
+      return commands.processMail(processedMessage);
+    const message = sanitizeURL(processedMessage);
     return message;
   };
 }

@@ -10,7 +10,7 @@ export function removeAds() {
   if (Preferences.get(P.adBlocker)) {
     document
       .querySelectorAll(
-        'iframe:not([src*="captcha"]):not([src*="youtube"]):not([src*="about:blank"]):not([src*="open.spotify.com"])'
+        'iframe:not([src*="captcha"]):not([src*="youtube"]):not([src*="about:blank"]):not([src*="open.spotify.com"]):not([src*="i.redd.it"]):not([src*="ibb.co"])'
       )
       .forEach((iframe) => {
         iframe.remove();
