@@ -1,6 +1,5 @@
 /* eslint-disable react/no-find-dom-node */
-/* eslint-disable */
-import React, { MouseEvent, ReactInstance } from "react";
+import React, { MouseEvent } from "react";
 import ReactDOM from "react-dom";
 import { Preferences } from "~src/preferences";
 import { PX } from "~src/x/preferences";
@@ -85,7 +84,7 @@ export function applyOverrides() {
   $(window)
     .off("resize")
     .on("resize", () => {
-      var e = document.getElementById("messages");
+      const e = document.getElementById("messages");
       if (e) e.scrollTop = e.scrollHeight;
     });
 
@@ -102,7 +101,6 @@ export function applyOverrides() {
       }
     }
   }
-
   function menuClose(this: React.Component) {
     $(".ui-bg").removeClass("animated fadeIn");
     $(".ui-bg").addClass("animated fadeOut");
@@ -122,67 +120,74 @@ export function applyOverrides() {
   };
 
   RoomChannelSelect.prototype.join = function (this: Room, e) {
-    console.log("joined strangers", e),
-      e.members.length >= 10000000 ||
-        (App.webrtc.client && this.voice_disconnect(),
-        this.expand(!1),
-        RoomClient?.setState({
-          messages: []
-        }),
-        (Room.prototype.updated = function (this: Room) {
-          this.setState({
-            current_channel: e.channel
-          }),
-            $.ajax({
-              type: "GET",
-              url: "channel_json?id=" + e.channel.id,
-              dataType: "json",
-              success: function (e: ChannelJsonResponse) {
-                console.log("loading chat", e),
-                  RoomChannelMembersClient.setState({
-                    members: e.members
-                  });
-                for (var t = 0; t < e.messages.length; t++)
-                  RoomClient?.append(e.messages[t]);
-                RoomClient?.scroll();
-              }.bind(this)
-            }),
-            App.room.join("channel" + e.channel.id);
-          // reset last message state on channel change
-          RoomClient!.state.last_message = null;
-          setTimeout(function () {
-            RoomClient?.scroll();
-          }, 0),
-            "voice" == e.channel.channel_type && this.voice_connect(e);
-        }.bind(this)),
-        RoomClient?.updated(),
-        (Room.prototype.updated = function () {}));
+    console.log("joined strangers", e);
+    if (App.webrtc.client) this.voice_disconnect();
+    this.expand(!1);
+    RoomClient?.setState({
+      messages: []
+    });
+    // eslint-disable-next-line no-shadow
+    Room.prototype.updated = function rpUpdated(this: Room) {
+      this.setState({
+        current_channel: e.channel
+      });
+      $.ajax({
+        type: "GET",
+        url: `channel_json?id=${e.channel.id}`,
+        dataType: "json",
+        success(channelresp: ChannelJsonResponse) {
+          const { messages } = channelresp;
+          RoomChannelMembersClient.setState({
+            members: channelresp.members
+          });
+          messages.forEach((message) => {
+            RoomClient?.append(message);
+          });
+          RoomClient?.scroll();
+        }
+      });
+      App.room.join(`channel${e.channel.id}`);
+      // reset last message state on channel change
+      RoomClient!.state.last_message = null;
+      setTimeout(() => {
+        RoomClient?.scroll();
+      }, 0);
+      if (e.channel.channel_type === "voice") this.voice_connect(e);
+    }.bind(this);
+    RoomClient?.updated();
+    Room.prototype.updated = function doNothing() {};
   };
 
-  //fixing friends list crashing due to deleted accounts
-  FriendsMenu.prototype.componentDidMount = function () {
+  // fixing friends list crashing due to deleted accounts
+  FriendsMenu.prototype.componentDidMount = function cdMount() {
     $.ajax({
       type: "GET",
       url: "/friends_json",
       dataType: "json",
-      success: function (this: FriendsMenu, e: any) {
-        console.log(e);
-        var obj = e.friends;
-        e.friends = obj.filter((x: []) => x !== null);
+      success: function mountFriends(this: FriendsMenu, e: FriendsJson) {
+        const obj = e.friends;
+        e.friends = obj.filter((x: EmeraldUser) => x !== null);
         this.setState(e);
       }.bind(this)
     });
   };
-  FriendsMenu.prototype.load_friends = function (this: FriendsMenu) {
+  FriendsMenu.prototype.load_friends = function moreFriends() {
     $.ajax({
       type: "GET",
-      url: "/load_friends_json?offset=" + this.state.friends.length,
+      url: `/load_friends_json?offset=${this.state.friends.length}`,
       dataType: "json",
-      success: function (this: any, e: []) {
-        var list = e.filter((x) => x !== null);
-        var state = {
+      success: function loadFriends(
+        this: FriendsMenu,
+        friendsList: EmeraldUser[]
+      ) {
+        if (friendsList.length === 0) return;
+        const list = friendsList.filter((x) => x !== null);
+        const filtered = list.filter(
+          (x) => !this.state.friends.find((y) => y === x)
+        );
+        const state = {
           search: [],
-          friends: this.state.friends.concat(list),
+          friends: this.state.friends.concat(filtered),
           count: this.state.count
         };
         this.setState(state);
@@ -233,7 +238,7 @@ export function applyOverrides() {
       type: "GET",
       url: `/profile_json?id=${this.props.id}`,
       dataType: "json",
-      success: (e) => {
+      success: (e: ProfileData) => {
         this.setState({
           data: e
         });
@@ -257,10 +262,9 @@ export function applyOverrides() {
   };
 
   NotificationUnit.prototype.action = function action(event: _MouseEvent) {
-    const node = ReactDOM.findDOMNode(this) as Element;
     const { target } = event;
     if (!(target instanceof Node)) return;
-    let acTarget = target instanceof Element ? target : target.parentElement;
+    const acTarget = target instanceof Element ? target : target.parentElement;
     if (!acTarget) return;
     if (acTarget.matches(".notification-button, .notification-button *"))
       return;
@@ -289,7 +293,7 @@ export function applyOverrides() {
       notification.data.sender.id;
 
     // Reload or open UserProfile.
-    if (UserProfileReact) return UserProfileReact.load(id);
+    if (UserProfileReact) UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
   };
@@ -345,7 +349,7 @@ export function applyOverrides() {
       {
         className: "user-flair",
         style: flair ?? { color: "" },
-        onClick: onClick
+        onClick
       },
       name
     );

@@ -1,6 +1,6 @@
 import { links } from "~src/meta";
 import { sanitizeURL } from "../richtext/linkutils";
-import { emotes, processEmotes } from "../emotes/imdex";
+import { emotes, processEmotes } from "../emotes";
 
 const commands = {
   all: {

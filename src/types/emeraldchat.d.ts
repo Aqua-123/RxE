@@ -530,12 +530,18 @@ declare class Picture extends React.Component<{ data: { src: string } }> {
 declare class FriendsMenu extends React.Component<
   any,
   {
-    friends: [];
+    friends: EmeraldUser[];
+    count: number;
   }
 > {
   componentDidMount(): void;
   load_friends(): void;
 }
+
+declare type FriendsJson = {
+  friends: EmeraldUser[];
+  count: number;
+};
 declare class UserProfile extends React.Component<
   any,
   {
