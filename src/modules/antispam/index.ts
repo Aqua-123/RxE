@@ -8,8 +8,14 @@ import {
 } from "~src/utils";
 import { getUserInfo, strategy } from "./strategies";
 
-const GREETERS = [21550262, 19422865];
-
+export const GREETERS = [
+  19364487, // Tessa
+  19422865, // Twilight Sparkle 📚🔍🌟
+  11427049, // Thea ✰
+  16008266, // Lumi
+  21550262, // Blue
+  21541886 // Eva
+];
 /*
 function colorRating(rating: SpamRating[number]) {
   if (rating.score >= 1 || rating.score2 >= 3) return "color:red";
