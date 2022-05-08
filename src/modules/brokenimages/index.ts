@@ -17,6 +17,8 @@ export function renderBrokenImages() {
   Array.from(document.images).forEach((img) => {
     if (!img.onerror) {
       img.onerror = async () => {
+        if (img.src.startsWith("https://robohash.org/yay"))
+          img.src = "https://emeraldchat.com/avicons_strict/1.png";
         if (
           img.src.startsWith("https://robohash.org/") ||
           img.src.includes("/avicons_strict/") ||
@@ -24,7 +26,7 @@ export function renderBrokenImages() {
           img.classList.contains("room-component-message-picture")
         )
           return;
-        img.src = `https://robohash.org/${img.src}.png?set=set4`;
+        img.src = `https://robohash.org/yay${img.src}.png?set=set4`;
       };
     }
     if (img.complete && img.naturalHeight === 0) {
