@@ -97,6 +97,6 @@ export const urlBlacklistShorteners = () => [
 ];
 
 export const urlImageHosts = () => [
-  /(^|https?:\/\/)ibb\.co(\/|$)/gi,
+  /(^|https?:\/\/)(i\.)?ibb\.co(\/|$)/gi,
   /(^|https?:\/\/)i\.redd\.it(\/|$)/gi
 ];
