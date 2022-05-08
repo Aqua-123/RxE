@@ -1,3 +1,5 @@
+import { updatePicToAlbum } from "../newalbum";
+
 export const BIO_IMAGE = () =>
   /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
 
@@ -44,6 +46,7 @@ export async function saveBio(user: EmeraldUser, bio: string) {
       dataType: "json",
       success() {
         UserProfileReact?.load(user.id);
+        updatePicToAlbum(bio);
         resolve();
       },
       error() {

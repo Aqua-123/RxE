@@ -28,16 +28,17 @@ const uploadHandler =
     }
   };
 
-const fromURLHandler = (user: EmeraldUser, format: ImageFormatType) => () => {
-  const url = prompt("Paste URL:", "");
-  if (url === null) return;
-  const parsed = parseImage(url, format);
-  if (parsed === null) {
-    alert("Invalid URL");
-    return;
-  }
-  setBioImage(user, parsed);
-};
+export const fromURLHandler =
+  (user: EmeraldUser, format: ImageFormatType) => () => {
+    const url = prompt("Paste URL:", "");
+    if (url === null) return;
+    const parsed = parseImage(url, format);
+    if (parsed === null) {
+      alert("Invalid URL");
+      return;
+    }
+    setBioImage(user, parsed);
+  };
 
 const openUserPicture = (user: EmeraldUser) => () => {
   ReactDOM.render(

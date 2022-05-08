@@ -146,6 +146,11 @@ export const P = {
     label: "imgurLastUploadTimes",
     default: []
   }),
+  imgurPfpAlbum: new ListPreference<string>({
+    key: "imgurPfpAlbum",
+    label: "imgurPfpAlbum",
+    default: []
+  }),
   hideImageFallback: new BooleanPreference({
     key: "hideImageFallback",
     label: T.preferences.hideImageFallback.label,

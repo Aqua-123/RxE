@@ -336,6 +336,10 @@ declare class PictureAlbum extends React.Component<
 > {
   load_pictures(): void;
   load_more_button(): JSX.Element | null;
+  pictures(): JSX.Element[];
+  picture_settings(t: EmeraldPictureDetailed): JSX.Element | null;
+  set_display_picture(t: EmeraldPictureDetailed): void;
+  delete_picture(t: EmeraldPictureDetailed): void;
 }
 
 declare class PictureUpload extends React.Component<
