@@ -551,6 +551,7 @@ declare class UserProfile extends React.Component<
   {
     data: ProfileData;
     compact_bio: boolean;
+    tab: "feed" | "info" | "pictures";
   }
 > {
   profile_buttons: Function;
@@ -563,6 +564,8 @@ declare class UserProfile extends React.Component<
   bottom(): JSX.Element;
   bio(): JSX.Element;
   bio_expand(): void;
+  tabs(): JSX.Element;
+  switch_tab(tab_name: string): void;
 }
 
 declare let UserProfileReact: null | UserProfile;

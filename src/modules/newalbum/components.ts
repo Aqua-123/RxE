@@ -1,3 +1,4 @@
+import React from "react";
 import { parseImage, FORMATS } from "../altpfp/formats";
 import { setBioImage } from "../altpfp/bio-image";
 import { P, Preferences } from "~src/preferences";
@@ -25,5 +26,64 @@ export function albumFunctionality() {
     Preferences.set(P.imgurPfpAlbum, newalbum);
     MenuReactMicro.close();
     UserProfileReact?.load(user.id);
+  };
+
+  UserProfile.prototype.tabs = function tabs() {
+    const stateUserId = this.state.data.user.id;
+    const { id } = App.user;
+    let feed = React.createElement(
+      "div",
+      {
+        onMouseDown: this.switch_tab.bind(this, "feed"),
+        className: "user-profile-tab"
+      },
+      "Feed"
+    );
+    let info = React.createElement(
+      "div",
+      {
+        onMouseDown: this.switch_tab.bind(this, "info"),
+        className: "user-profile-tab"
+      },
+      "Info"
+    );
+    let pictures = React.createElement(
+      "div",
+      {
+        onMouseDown: this.switch_tab.bind(this, "pictures"),
+        className: "user-profile-tab"
+      },
+      "Pictures"
+    );
+    if (this.state.tab === "feed")
+      feed = React.createElement(
+        "div",
+        {
+          onMouseDown: this.switch_tab.bind(this, "feed"),
+          className: "user-profile-tab user-profile-tab-active"
+        },
+        "Feed"
+      );
+    else if (this.state.tab === "info")
+      info = React.createElement(
+        "div",
+        {
+          onMouseDown: this.switch_tab.bind(this, "info"),
+          className: "user-profile-tab user-profile-tab-active"
+        },
+        "Info"
+      );
+    else if (this.state.tab === "pictures")
+      pictures = React.createElement(
+        "div",
+        {
+          onMouseDown: this.switch_tab.bind(this, "tab"),
+          className: "user-profile-tab user-profile-tab-active"
+        },
+        "Pictures"
+      );
+    if (id === stateUserId)
+      return React.createElement("div", null, feed, info, pictures);
+    return React.createElement("div", null, feed, info);
   };
 }
