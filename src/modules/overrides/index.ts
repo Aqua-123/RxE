@@ -118,6 +118,7 @@ export function applyOverrides() {
       UserProfileReact = null;
     });
   };
+
   function appendyboi(channelresp: ChannelJsonResponse) {
     const { messages } = channelresp;
     RoomChannelMembersClient.setState({
@@ -126,9 +127,8 @@ export function applyOverrides() {
     messages.forEach((message) => {
       RoomClient?.append(message);
     });
-
-    RoomClient?.scroll();
   }
+
   function rpUpdated(this: Room, e: ChannelJsonResponse) {
     const { channel } = e;
     this.setState({
@@ -147,6 +147,7 @@ export function applyOverrides() {
     RoomClient!.state.last_message = null;
     RoomClient?.scroll();
   }
+
   RoomChannelSelect.prototype.join = function rpJoin(this: Room, e) {
     if (App.webrtc.client) this.voice_disconnect();
     this.expand(!1);
@@ -172,6 +173,7 @@ export function applyOverrides() {
       }.bind(this)
     });
   };
+
   FriendsMenu.prototype.load_friends = function moreFriends() {
     $.ajax({
       type: "GET",
@@ -182,13 +184,11 @@ export function applyOverrides() {
         friendsList: EmeraldUser[]
       ) {
         if (friendsList.length === 0) return;
-        const list = friendsList.filter((x) => x !== null);
-        const filtered = list.filter(
-          (x) => !this.state.friends.find((y) => y === x)
-        );
+        let list = friendsList.filter((x) => x !== null);
+        list = list.filter((x) => !this.state.friends.find((y) => y === x));
         const state = {
           search: [],
-          friends: this.state.friends.concat(filtered),
+          friends: this.state.friends.concat(list),
           count: this.state.count
         };
         this.setState(state);
