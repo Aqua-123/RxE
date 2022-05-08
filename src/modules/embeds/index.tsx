@@ -1,4 +1,4 @@
-import { isUrlImageHost, isYoutube, returnInnerHtml, isSpotify } from "./utils";
+import { isYoutube, returnInnerHtml, isSpotify } from "./utils";
 import { desanitizeURL } from "../richtext/linkutils";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
@@ -21,7 +21,7 @@ function embedMessages(className: string, noImage: boolean) {
       if (childies.some((child) => child.classList.contains("embed"))) return;
       const messageboi = message as HTMLElement;
       const text = desanitizeURL(messageboi.innerText);
-      if (!isYoutube(text) && !isUrlImageHost(text) && !isSpotify(text)) return;
+      if (!isYoutube(text) && !isSpotify(text)) return;
       // preventing image embeds in posts cause that will be yucky
       if (!isSpotify(text) && noImage) return;
       const embed = document.createElement("div");

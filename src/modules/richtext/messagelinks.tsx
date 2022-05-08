@@ -13,7 +13,7 @@ import {
   urlBlacklistShorteners,
   urlFull,
   desanitizeURL,
-  urlImageHosts,
+  urlImageHostWhitelist,
   validateEmail
 } from "./linkutils";
 import { P, Preferences } from "~src/preferences";
@@ -63,7 +63,7 @@ const blacklisted = passesTest(() => [
   ...urlBlacklist(),
   ...urlBlacklistShorteners()
 ]);
-const whitelisted = passesTest(() => [...urlImageHosts()]);
+const whitelisted = passesTest(() => [...urlImageHostWhitelist()]);
 
 const makeLink = (urlMatch: string) => {
   const url = desanitizeURL(urlMatch);

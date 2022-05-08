@@ -20,7 +20,7 @@ export function emit(image: RitsuChatImage): string {
   return payload;
 }
 
-export function picture({ url }: RitsuChatImage) {
+export function picture({ url }: { url: string }): JSXSingleton {
   return React.createElement(MessagePicture, {
     picture: { url }
   });

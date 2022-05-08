@@ -96,7 +96,20 @@ export const urlBlacklistShorteners = () => [
   /(^|https?:\/\/)\w{3}\.\w{2}(\/|$)/gi
 ];
 
-export const urlImageHosts = () => [
-  /(^|https?:\/\/)(i\.)?ibb\.co(\/|$)/gi,
-  /(^|https?:\/\/)i\.redd\.it(\/|$)/gi
+export const urlImageHostWhitelist = () => [
+  /(^|https?:\/\/)(i\.)?ibb\.co(\/|$)/gi
 ];
+
+export const urlImageDirectLinks = () => [
+  /\bi\.ibb\.co\/[a-z0-9]+\/[^\s.]+\.[a-z0-9]+\b/gi,
+  /\bi\.redd\.it\/[a-z0-9]+\.[a-z0-9]+\b/gi,
+  /\bi\.imgur\.com\/[a-z0-9]+\.[a-z0-9]+\b/gi
+];
+
+export const urlImageDirectLinkAny = () =>
+  regexpcc(
+    ...urlImageDirectLinks()
+      .map((re) => `(${re.source})`)
+      .join("|"),
+    "gi"
+  );

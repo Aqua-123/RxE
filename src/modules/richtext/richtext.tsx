@@ -1,15 +1,30 @@
 import React from "react";
 import { wrapPartitions } from "~src/utils";
 import { decodeImage, picture } from "../newsendpics/image-process";
+import { urlImageDirectLinkAny } from "./linkutils";
 import { wrapLinks } from "./messagelinks";
 
 type Wrap = StringWrapper<JSXSingleton>;
 
 const id = (rest: string) => rest;
 
-export function processImage(text: string, restWrapper: Wrap = id) {
+export function processImage(
+  text: string,
+  restWrapper: Wrap = id
+): JSXContent | null {
+  if (urlImageDirectLinkAny().test(text)) {
+    return wrapPartitions(
+      text,
+      urlImageDirectLinkAny(),
+      (url) => picture({ url: `https://${url}` }),
+      restWrapper
+    );
+  }
+
+  // Downside: text alongside base imgur.com pictures is not displayed
   const image = decodeImage(text);
   if (image !== null) return picture(image);
+
   return restWrapper(text);
 }
 

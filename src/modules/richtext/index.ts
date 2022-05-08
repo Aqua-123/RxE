@@ -3,6 +3,7 @@ import * as richBio from "./richbio";
 import * as richPost from "./richpost";
 import { loadCSS } from "~src/utils";
 import { processImage, wrapRich } from "./richtext";
+import { desanitizeURL } from "./linkutils";
 
 export function init() {
   // my backtick key wasn't working
@@ -16,7 +17,9 @@ export function init() {
     const processOld = mpProcess.bind(this);
     if (text.includes("youtu.be") || text.includes("youtube.com"))
       return processOld(text);
-    return processImage(text, (nonImage) => wrapRich(nonImage, processOld));
+    return processImage(desanitizeURL(text), (nonImage) =>
+      wrapRich(nonImage, processOld)
+    );
   };
   richBio.init();
   richPost.init();
