@@ -94,7 +94,7 @@ export default {
       label: "Mute users matching"
     },
     toggleEmbeds: {
-      label: "Toggle embeds"
+      label: "Show embeds"
     },
     largerText: {
       label: "Larger text in chat"
