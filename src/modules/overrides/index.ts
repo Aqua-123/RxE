@@ -118,43 +118,44 @@ export function applyOverrides() {
       UserProfileReact = null;
     });
   };
+  function appendyboi(channelresp: ChannelJsonResponse) {
+    const { messages } = channelresp;
+    RoomChannelMembersClient.setState({
+      members: channelresp.members
+    });
+    messages.forEach((message) => {
+      RoomClient?.append(message);
+    });
 
-  RoomChannelSelect.prototype.join = function (this: Room, e) {
-    console.log("joined strangers", e);
+    RoomClient?.scroll();
+  }
+  function rpUpdated(this: Room, e: ChannelJsonResponse) {
+    const { channel } = e;
+    this.setState({
+      current_channel: channel
+    });
+    if (channel.channel_type === "voice") this.voice_connect(e);
+    $.ajax({
+      type: "GET",
+      url: `channel_json?id=${channel.id}`,
+      dataType: "json",
+      success(channelresp) {
+        appendyboi(channelresp);
+      }
+    });
+    App.room.join(`channel${channel.id}`);
+    RoomClient!.state.last_message = null;
+    RoomClient?.scroll();
+  }
+  RoomChannelSelect.prototype.join = function rpJoin(this: Room, e) {
     if (App.webrtc.client) this.voice_disconnect();
     this.expand(!1);
     RoomClient?.setState({
       messages: []
     });
     // eslint-disable-next-line no-shadow
-    Room.prototype.updated = function rpUpdated(this: Room) {
-      this.setState({
-        current_channel: e.channel
-      });
-      $.ajax({
-        type: "GET",
-        url: `channel_json?id=${e.channel.id}`,
-        dataType: "json",
-        success(channelresp: ChannelJsonResponse) {
-          const { messages } = channelresp;
-          RoomChannelMembersClient.setState({
-            members: channelresp.members
-          });
-          messages.forEach((message) => {
-            RoomClient?.append(message);
-          });
-          RoomClient?.scroll();
-        }
-      });
-      App.room.join(`channel${e.channel.id}`);
-      // reset last message state on channel change
-      RoomClient!.state.last_message = null;
-      setTimeout(() => {
-        RoomClient?.scroll();
-      }, 0);
-      if (e.channel.channel_type === "voice") this.voice_connect(e);
-    }.bind(this);
-    RoomClient?.updated();
+    Room.prototype.updated = rpUpdated.bind(this);
+    RoomClient?.updated(e);
     Room.prototype.updated = function doNothing() {};
   };
 

@@ -380,7 +380,7 @@ declare class Room extends React.Component {
   stop_typing(): void;
   send(message: string): void;
   process?: (message: string) => string | null;
-  updated(): void;
+  updated(e: ChannelJsonResponse): void;
   clear_print(): void;
   voice_connect(e: ChannelJsonResponse): void;
   voice_disconnect(): void;
