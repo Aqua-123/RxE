@@ -27,7 +27,10 @@ function lookup() {
         id: 2
       } as EmeraldUser
     });
-    $(".user-profile-micro").remove();
+    const element = document.getElementsByClassName("user-profile-micro")[0];
+    if (element) {
+      element.parentNode?.removeChild(element);
+    }
     if (typeof UserViewReact === "undefined") return;
   }
   /* eslint-disable-next-line no-alert */
