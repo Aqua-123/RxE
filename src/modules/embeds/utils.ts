@@ -22,7 +22,7 @@ export const spotifyID = (url: string) => {
 const youtubeDivString = (url: string) =>
   `<div class="ritsu-youtube-embed embed"> <iframe class="embed-responsive-item" 
   src="https://www.youtube.com/embed/${youtubeID(url)}"
-  allowfullscreen></iframe></div>`;
+  frameborder="0" allowfullscreen></iframe></div>`;
 
 const spotifyDivString = (url: string, height: number) =>
   `<div class="ritsu-spotify-embed spotify embed"><iframe 
@@ -47,3 +47,7 @@ export function maybeEmbed(text: string) {
   if (isYoutube(text) || isSpotify(text)) return true;
   return false;
 }
+
+// test urls
+// https://www.youtube.com/watch?v=dQw4w9WgXcQ
+// https://open.spotify.com/track/5GxUKIEkMXXZo1Tif0IzfC?si=e085dc40e60e4d2a

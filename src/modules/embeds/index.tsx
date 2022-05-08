@@ -5,7 +5,7 @@ import { loadCSS } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 
 // room-component-message-text
-function embedMessages(className: string, noImage: boolean) {
+function embedMessages(className: string) {
   const allowEmbeds = Preferences.get(P.toggleEmbeds);
   if (!allowEmbeds) return;
   const messageList = document.querySelectorAll(`.${className}`);
@@ -22,8 +22,6 @@ function embedMessages(className: string, noImage: boolean) {
       const messageboi = message as HTMLElement;
       const text = desanitizeURL(messageboi.innerText);
       if (!isYoutube(text) && !isSpotify(text)) return;
-      // preventing image embeds in posts cause that will be yucky
-      if (!isSpotify(text) && noImage) return;
       const embed = document.createElement("div");
       embed.classList.add("embed");
       messageboi.innerHTML = "";
@@ -35,7 +33,7 @@ function embedMessages(className: string, noImage: boolean) {
 
 export function createEmbeds() {
   loadCSS(css);
-  embedMessages("user-comment-right", true);
-  embedMessages("user-micropost-right", true);
-  embedMessages("room-component-message-text", false);
+  embedMessages("user-comment-right");
+  embedMessages("user-micropost-right");
+  embedMessages("room-component-message-text");
 }
