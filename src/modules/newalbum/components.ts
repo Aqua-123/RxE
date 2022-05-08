@@ -3,6 +3,31 @@ import { parseImage, FORMATS } from "../altpfp/formats";
 import { setBioImage } from "../altpfp/bio-image";
 import { P, Preferences } from "~src/preferences";
 
+const profileTabs = {
+  feed: { name: "Feed" },
+  info: { name: "Info" },
+  pictures: { name: "Pictures" }
+};
+
+function tabElement(tab: keyof typeof profileTabs, active: boolean) {
+  return React.createElement(
+    "div",
+    {
+      onMouseDown: UserProfileReact?.switch_tab.bind(UserProfileReact, tab),
+      className: active
+        ? "user-profile-tab user-profile-tab-active"
+        : "user-profile-tab"
+    },
+    profileTabs[tab].name
+  );
+}
+
+function tabElements(...tabs: Array<keyof typeof profileTabs>) {
+  return tabs.map((tabName) =>
+    tabElement(tabName, UserProfileReact?.state.tab === tabName)
+  );
+}
+
 export function albumFunctionality() {
   PictureAlbum.prototype.set_display_picture = function sdp(picture) {
     const { url } = picture;
@@ -28,40 +53,14 @@ export function albumFunctionality() {
   };
 
   UserProfile.prototype.tabs = function tabs() {
-    const stateUserId = this.state.data.user.id;
-    const { id } = App.user;
-    const feed = React.createElement(
-      "div",
-      {
-        onMouseDown: this.switch_tab.bind(this, "feed"),
-        className: "user-profile-tab"
-      },
-      "Feed"
-    );
-    const info = React.createElement(
-      "div",
-      {
-        onMouseDown: this.switch_tab.bind(this, "info"),
-        className: "user-profile-tab"
-      },
-      "Info"
-    );
-    const pictures = React.createElement(
-      "div",
-      {
-        onMouseDown: this.switch_tab.bind(this, "pictures"),
-        className: "user-profile-tab"
-      },
-      "Pictures"
-    );
-    if (this.state.tab === "feed")
-      feed.props.className += " user-profile-tab-active";
-    else if (this.state.tab === "info")
-      info.props.className += " user-profile-tab-active";
-    else if (this.state.tab === "pictures")
-      pictures.props.className += " user-profile-tab-active";
-    if (id === stateUserId)
-      return React.createElement("div", null, feed, info, pictures);
-    return React.createElement("div", null, feed, info);
+    const shownUserId = this.state.data.user.id;
+
+    if (shownUserId === App.user.id)
+      return React.createElement(
+        "div",
+        null,
+        ...tabElements("feed", "info", "pictures")
+      );
+    return React.createElement("div", null, ...tabElements("feed", "info"));
   };
 }

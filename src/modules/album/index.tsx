@@ -32,8 +32,6 @@ export function initPictureAlbum() {
     });
   };
 
-  // TODO: Pref check this -- not sure auto-load is what everyone wants
-
   PictureAlbum.prototype.load_more_button = function loadMoreButton() {
     if (this.state.pictures_count > this.state.pictures.length) {
       return <Spinner />;
