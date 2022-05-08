@@ -95,6 +95,9 @@ export default {
     },
     toggleEmbeds: {
       label: "Toggle embeds"
+    },
+    largerText: {
+      label: "Larger text in chat"
     }
   },
   hiddenChannels: "hidden channels",

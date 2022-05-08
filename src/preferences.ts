@@ -141,6 +141,11 @@ export const P = {
     label: T.preferences.toggleEmbeds.label,
     default: true
   }),
+  largerText: new BooleanPreference({
+    key: "largerText",
+    label: T.preferences.largerText.label,
+    default: false
+  }),
   imgurLastUploadTimes: new ListPreference<number>({
     key: "imgurLastUploadTimes",
     label: "imgurLastUploadTimes",

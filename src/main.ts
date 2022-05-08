@@ -1,3 +1,4 @@
+import { biggerTextSize } from "src/modules/richtext/richtext";
 import U from "~src/userscript";
 import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
@@ -104,6 +105,7 @@ async function init() {
   // start our script's rendering loop
   render([
     // trimMessages,
+    biggerTextSize,
     createEmbeds,
     reorderMenu,
     injectRitsuMenu,

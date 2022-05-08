@@ -36,7 +36,8 @@ export default function Settings(props: SettingsProps) {
     imgurAPIKey,
     muteRegexes,
     applySettings,
-    toggleEmbeds
+    toggleEmbeds,
+    largerText
   } = props;
 
   return (
@@ -123,6 +124,11 @@ export default function Settings(props: SettingsProps) {
         id="toggleEmbeds"
         value={toggleEmbeds}
         onChange={() => applySettings({ toggleEmbeds: !toggleEmbeds })}
+      />
+      <CheckboxSetting
+        id="largerText"
+        value={largerText}
+        onChange={() => applySettings({ largerText: !largerText })}
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.advancedTitle}</div>
       <CheckboxSetting
