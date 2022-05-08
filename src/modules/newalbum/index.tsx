@@ -8,6 +8,7 @@ import { albumFunctionality } from "./components";
 export function initPictureAlbum() {
   albumFunctionality();
   const paRender = PictureAlbum.prototype.render;
+
   PictureAlbum.prototype.componentDidMount = function Component() {
     const pAlbum = Preferences.get(P.imgurPfpAlbum);
     if (!this.state.album) {

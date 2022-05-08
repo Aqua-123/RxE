@@ -11,7 +11,6 @@ export function albumFunctionality() {
     if (!parsed) return;
     setBioImage(user, parsed);
     MenuReactMicro.close();
-    this.forceUpdate();
     UserProfileReact?.load(user.id);
   };
 
@@ -31,7 +30,7 @@ export function albumFunctionality() {
   UserProfile.prototype.tabs = function tabs() {
     const stateUserId = this.state.data.user.id;
     const { id } = App.user;
-    let feed = React.createElement(
+    const feed = React.createElement(
       "div",
       {
         onMouseDown: this.switch_tab.bind(this, "feed"),
@@ -39,7 +38,7 @@ export function albumFunctionality() {
       },
       "Feed"
     );
-    let info = React.createElement(
+    const info = React.createElement(
       "div",
       {
         onMouseDown: this.switch_tab.bind(this, "info"),
@@ -47,7 +46,7 @@ export function albumFunctionality() {
       },
       "Info"
     );
-    let pictures = React.createElement(
+    const pictures = React.createElement(
       "div",
       {
         onMouseDown: this.switch_tab.bind(this, "pictures"),
@@ -56,32 +55,11 @@ export function albumFunctionality() {
       "Pictures"
     );
     if (this.state.tab === "feed")
-      feed = React.createElement(
-        "div",
-        {
-          onMouseDown: this.switch_tab.bind(this, "feed"),
-          className: "user-profile-tab user-profile-tab-active"
-        },
-        "Feed"
-      );
+      feed.props.className += " user-profile-tab-active";
     else if (this.state.tab === "info")
-      info = React.createElement(
-        "div",
-        {
-          onMouseDown: this.switch_tab.bind(this, "info"),
-          className: "user-profile-tab user-profile-tab-active"
-        },
-        "Info"
-      );
+      info.props.className += " user-profile-tab-active";
     else if (this.state.tab === "pictures")
-      pictures = React.createElement(
-        "div",
-        {
-          onMouseDown: this.switch_tab.bind(this, "tab"),
-          className: "user-profile-tab user-profile-tab-active"
-        },
-        "Pictures"
-      );
+      pictures.props.className += " user-profile-tab-active";
     if (id === stateUserId)
       return React.createElement("div", null, feed, info, pictures);
     return React.createElement("div", null, feed, info);
