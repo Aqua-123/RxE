@@ -566,6 +566,9 @@ declare class UserProfile extends React.Component<
   bio_expand(): void;
   tabs(): JSX.Element;
   switch_tab(tab_name: string): void;
+  online_icon(): JSX.Element;
+  profile_settings(): JSX.Element;
+  clear_spams(): JSX.Element;
 }
 
 declare let UserProfileReact: null | UserProfile;
