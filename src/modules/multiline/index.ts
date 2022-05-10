@@ -6,7 +6,7 @@ export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
   Room.prototype.input = function input(event) {
-    const inputElement = $(event.target);
+    const inputElement = $(event.target) as JQuery<HTMLTextAreaElement>;
 
     const text = `${inputElement.val()}`;
 
@@ -20,7 +20,10 @@ export function multiLineOverride() {
     } else if (actionRecall) {
       inputElement.val(this.state.last_message!);
     }
-
+    const textArea = inputElement.get(0) as HTMLTextAreaElement;
+    textArea.style.height = `${textArea.scrollHeight}px`;
+    // scroll if change in height
+    RoomClient?.scroll();
     if (actionSend || actionRecall) event.preventDefault();
 
     if (!actionSend) App.room.client.typing();

@@ -28,3 +28,19 @@
   height: auto;
   max-height: 420px;
 }
+
+.room-component-input-textarea {
+  bottom: 0;
+  max-height: 133px;
+}
+
+.room-component-input {
+  bottom: 0;
+  // reduce 2px from auto height
+  // take height of input textarea and add 7 px to it
+  height: auto;
+  max-height: 133px;
+  min-height: 35px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
