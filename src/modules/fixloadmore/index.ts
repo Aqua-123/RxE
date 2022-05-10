@@ -43,10 +43,11 @@ export function initLoadMore() {
   };
   Room.prototype.switch = function fixmessageCount(this: any, roomObj: any) {
     this.clear_print();
-    App.room.join(roomObj.id);
+    const { id } = roomObj;
+    App.room.join(id);
     this.state.last_message = null;
     this.setState({
-      id: roomObj.id,
+      id,
       messages: [],
       messages_count: 0,
       typing: null,
@@ -55,7 +56,7 @@ export function initLoadMore() {
     if (roomObj.mode !== "private") return;
     $.ajax({
       type: "GET",
-      url: `/default_private_messages?id=${roomObj.id}`,
+      url: `/default_private_messages?id=${id}`,
       dataType: "json",
       success: (resp: PrivateMessage) => {
         resp.messages.forEach((message: PrivateMessageArray) =>

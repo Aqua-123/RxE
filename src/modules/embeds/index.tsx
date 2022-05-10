@@ -4,21 +4,18 @@ import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 
-// room-component-message-text
 function embedMessages(className: string) {
-  const allowEmbeds = Preferences.get(P.toggleEmbeds);
-  if (!allowEmbeds) return;
-  const messageList = document.querySelectorAll(`.${className}`);
   const newLineHtml = "<br>";
-  // get child divs
-  if (!messageList.length) return;
+  const allowEmbeds = Preferences.get(P.toggleEmbeds);
+  const messageList = document.querySelectorAll(`.${className}`);
+  if (!allowEmbeds || !messageList) return;
   messageList.forEach((element) => {
     const childs = Array.from(element.children);
-    if (!childs.length) return;
+    if (!childs) return;
     childs.forEach((message) => {
       // check if embed already created
-      const childies = Array.from(message.children);
-      if (childies.some((child) => child.classList.contains("embed"))) return;
+      const children = Array.from(message.children);
+      if (children.some((child) => child.classList.contains("embed"))) return;
       const messageboi = message as HTMLElement;
       const text = desanitizeURL(messageboi.innerText);
       if (!isYoutube(text) && !isSpotify(text)) return;

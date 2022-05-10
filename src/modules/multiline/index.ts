@@ -2,6 +2,13 @@ import React from "react";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 
+const shouldSend = (
+  event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+) => {
+  if (event.key !== "Enter" || event.shiftKey) return false;
+  return true;
+};
+
 export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
@@ -9,11 +16,9 @@ export function multiLineOverride() {
     const inputElement = $(event.target) as JQuery<HTMLTextAreaElement>;
 
     const text = `${inputElement.val()}`;
-
-    const actionSend = event.key === "Enter" && !event.shiftKey;
     const actionRecall = event.key === "ArrowUp" && this.state.last_message;
 
-    if (actionSend) {
+    if (shouldSend(event)) {
       this.send(text);
       this.setState({ last_message: text });
       inputElement.val("");
@@ -23,9 +28,8 @@ export function multiLineOverride() {
     const textArea = inputElement.get(0) as HTMLTextAreaElement;
     textArea.style.height = `${textArea.scrollHeight}px`;
     RoomClient?.scroll();
-    if (actionSend || actionRecall) event.preventDefault();
-
-    if (!actionSend) App.room.client.typing();
+    if (shouldSend(event) || actionRecall) event.preventDefault();
+    if (!shouldSend(event)) App.room.client.typing();
   };
 
   function prependComment(this: Micropost, commentData: EmeraldComment) {
@@ -43,7 +47,7 @@ export function multiLineOverride() {
   }
 
   Micropost.prototype.comment_input = function commentInput(event) {
-    if (event.key !== "Enter" || event.shiftKey) return;
+    if (!shouldSend(event)) return;
 
     const inputElement = $(event.target);
     const text = `${inputElement.val()}`;
@@ -85,7 +89,7 @@ export function multiLineOverride() {
     const inputElementJQ = $(event.target);
     const text = `${inputElementJQ.val()}`;
 
-    if (event.key !== "Enter" || event.shiftKey) return;
+    if (!shouldSend(event)) return;
     /* LEGACY */
     /*
       const t = $("#micropost-picture-hatch").attr("data-micropost-picture");
