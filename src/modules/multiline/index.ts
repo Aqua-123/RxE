@@ -22,7 +22,6 @@ export function multiLineOverride() {
     }
     const textArea = inputElement.get(0) as HTMLTextAreaElement;
     textArea.style.height = `${textArea.scrollHeight}px`;
-    // scroll if change in height
     RoomClient?.scroll();
     if (actionSend || actionRecall) event.preventDefault();
 
