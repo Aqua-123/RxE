@@ -54,6 +54,7 @@ export function initPictureAlbum() {
 }
 
 export function updatePicToAlbum(picString: string) {
+  const { id } = App.user;
   let url = extractBioImage(picString);
   const test = picString.match(IMGUR_URL_REGEXP());
   if (!url && !test) return;
@@ -63,5 +64,5 @@ export function updatePicToAlbum(picString: string) {
   if (!album) return;
   if (album.includes(url)) return;
   Preferences.set(P.imgurPfpAlbum, [...album, url]);
-  UserProfileReact?.load(user.id);
+  UserProfileReact?.load(id);
 }
