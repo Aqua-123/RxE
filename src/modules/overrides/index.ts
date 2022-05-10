@@ -254,7 +254,7 @@ export function applyOverrides() {
     if (inputUser.id === App.user.id) return;
     // get name from RoomChannelMembers persistent state
     let name: string | undefined;
-    name = RoomChannelMembersClient.state.members_persistent.find(
+    name = RoomChannelMembersClient.state.members.find(
       (user) => user?.id === inputUser.id
     )?.display_name;
     if (!name) name = inputUser.display_name;
