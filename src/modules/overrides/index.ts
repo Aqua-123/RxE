@@ -175,15 +175,26 @@ export function applyOverrides() {
   };
 
   FriendsMenu.prototype.load_friends = function moreFriends() {
+    let undefinedCount: number;
+    if (!this.state.undefined) undefinedCount = 0;
+    else undefinedCount = this.state.undefined;
     $.ajax({
       type: "GET",
-      url: `/load_friends_json?offset=${this.state.friends.length}`,
+      url: `/load_friends_json?offset=${
+        this.state.friends.length + undefinedCount
+      }`,
       dataType: "json",
       success: function loadFriends(
         this: FriendsMenu,
         friendsList: EmeraldUser[]
       ) {
         if (friendsList.length === 0) return;
+        const undefinedList = friendsList.filter(
+          (x: EmeraldUser) => x === null
+        );
+        this.setState({
+          undefined: undefinedCount + undefinedList.length
+        });
         let list = friendsList.filter((x) => x !== null);
         list = list.filter((x) => !this.state.friends.find((y) => y === x));
         const state = {

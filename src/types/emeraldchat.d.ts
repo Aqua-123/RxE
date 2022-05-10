@@ -538,6 +538,7 @@ declare class FriendsMenu extends React.Component<
   {
     friends: EmeraldUser[];
     count: number;
+    undefined?: number; // custom field
   }
 > {
   componentDidMount(): void;
