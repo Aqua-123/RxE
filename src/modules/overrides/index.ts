@@ -167,9 +167,16 @@ export function applyOverrides() {
       url: "/friends_json",
       dataType: "json",
       success: function mountFriends(this: FriendsMenu, e: FriendsJson) {
-        const obj = e.friends;
-        e.friends = obj.filter((x: EmeraldUser) => x !== null);
+        const { friends } = e;
+        e.friends = friends.filter((x: EmeraldUser) => x !== null);
         this.setState(e);
+        let undefinedCount: number;
+        if (!this.state.undefined) undefinedCount = 0;
+        else undefinedCount = this.state.undefined;
+        const undefinedList = friends.filter((x: EmeraldUser) => x === null);
+        this.setState({
+          undefined: undefinedCount + undefinedList.length
+        });
       }.bind(this)
     });
   };
