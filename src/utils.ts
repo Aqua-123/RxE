@@ -721,7 +721,7 @@ export async function loadImage(url: string): Promise<Image> {
   return image;
 }
 
-export function chunkArray(myArray: string[], chunkSize: number) {
+export function chunkArray(myArray: any[], chunkSize: number) {
   let index = 0;
   const arrayLength = myArray.length;
   const tempArray = [];

@@ -568,7 +568,6 @@ declare class UserProfile extends React.Component<
   switch_tab(tab_name: string): void;
   online_icon(): JSX.Element;
   profile_settings(): JSX.Element;
-  clear_spams(): JSX.Element;
 }
 
 declare let UserProfileReact: null | UserProfile;
@@ -733,3 +732,27 @@ declare class CommentSettings extends React.Component<{
 declare class BR extends React.Component<{
   children: React.ReactNode;
 }> {}
+
+declare type UserWall = {
+  id: number;
+  user_id: number;
+  app_id: number;
+  party_id: number;
+  picture_id: number;
+  created_at: string;
+  updated_at: string;
+};
+declare type MicropostJson = {
+  comments: [];
+  liked: boolean;
+  likes: [];
+  comments_count: 0;
+  likes_count: 1;
+  micropost: WallPost;
+  wall: UserWall;
+  author: EmeraldUser;
+  current_user: EmeraldUser;
+  subscribed: boolean;
+  muted: boolean;
+  picture: boolean;
+};

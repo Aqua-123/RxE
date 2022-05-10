@@ -14,6 +14,7 @@ type AppWindow = Window & {
   App: typeof App;
   RxE: any; // ! FIXME,
   Comment: typeof __Comment;
+  typing_timer: ReturnType<typeof setTimeout>;
 };
 
 const browserWindow: AppWindow = <any>(

@@ -250,6 +250,21 @@ export function applyOverrides() {
     });
   };
 
+  Room.prototype.start_typing = function startTyping(inputUser) {
+    if (inputUser.id === App.user.id) return;
+    // get name from RoomChannelMembers persistent state
+    let name: string | undefined;
+    name = RoomChannelMembersClient.state.members_persistent.find(
+      (user) => user?.id === inputUser.id
+    )?.display_name;
+    if (!name) name = inputUser.display_name;
+    this.setState({
+      typing: name
+    });
+    window.typing_timer = setTimeout(() => {
+      this.stop_typing();
+    }, 1e4);
+  };
   // non-hack: "Sign up to continue" only shows once at start
   App.temp.check = () => {};
 

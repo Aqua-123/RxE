@@ -44,6 +44,7 @@ import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
 // import { trimMessages } from "./modules/trimmessages";
 import { createEmbeds } from "./modules/embeds";
+// import { profileUtility } from "./modules/improvedprofile";
 
 async function init() {
   const featureSet = `(${[
@@ -102,6 +103,7 @@ async function init() {
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
+  // profileUtility();
   // start our script's rendering loop
   render([
     // trimMessages,
