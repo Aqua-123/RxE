@@ -63,4 +63,5 @@ export function updatePicToAlbum(picString: string) {
   if (!album) return;
   if (album.includes(url)) return;
   Preferences.set(P.imgurPfpAlbum, [...album, url]);
+  UserProfileReact?.load(user.id);
 }
