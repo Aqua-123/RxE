@@ -12,6 +12,11 @@ const profileTabs = {
   pictures: { name: "Pictures" }
 };
 
+export function closeAndReload() {
+  const { id } = App.user;
+  MenuReactMicro.close();
+  UserProfileReact?.load(id);
+}
 function tabElement(tab: keyof typeof profileTabs, active: boolean) {
   return React.createElement(
     "div",
@@ -38,26 +43,20 @@ export function albumFunctionality() {
     const parsed = parseImage(url, FORMATS.IMGUR);
     if (!parsed) return;
     setBioImage(user, parsed);
-    MenuReactMicro.close();
-    UserProfileReact?.load(user.id);
+    closeAndReload();
   };
 
   PictureAlbum.prototype.delete_picture = function deletePic(picture) {
-    const { user } = App;
     const url = parseImage(picture.url, FORMATS.IMGUR);
-    const album = Preferences.get(P.imgurPfpAlbum);
-    if (url === null) return;
-    if (!album.includes(url)) return;
-    const newalbum = [...album];
-    newalbum.splice(newalbum.indexOf(url), 1);
-    Preferences.set(P.imgurPfpAlbum, newalbum);
-    MenuReactMicro.close();
-    UserProfileReact?.load(user.id);
+    const album = [...Preferences.get(P.imgurPfpAlbum)];
+    if (!url || !album.includes(url)) return;
+    album.splice(album.indexOf(url), 1);
+    Preferences.set(P.imgurPfpAlbum, album);
+    closeAndReload();
   };
 
   UserProfile.prototype.tabs = function tabs() {
     const shownUserId = this.state.data.user.id;
-
     if (shownUserId === App.user.id)
       return React.createElement(
         "div",
@@ -69,11 +68,9 @@ export function albumFunctionality() {
 
   PictureAlbum.prototype.add_to_album = function addToAlbum() {
     PictureUploader.onUploaded = function onUploaded(picture) {
-      const { id } = App.user;
       const { url } = picture;
       updatePicToAlbum(url);
-      MenuReactMicro.close();
-      UserProfileReact?.load(id);
+      closeAndReload();
     };
   };
   PictureAlbum.prototype.upload_picture = function uploadPicture() {
