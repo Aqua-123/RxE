@@ -4,6 +4,7 @@ import { initComponents, uploadForm } from "./components";
 import { upload, decodeImage, display, emit } from "./image-process";
 import { imageFromURL } from "./imgur";
 import { canUpload } from "./ratelimit";
+import { updatePicToAlbum } from "../newalbum";
 
 export function initSendPics() {
   initComponents();
@@ -32,11 +33,12 @@ export function initSendPics() {
       ".picture-upload-button"
     ) as HTMLInputElement;
     const imageFile = fileInput.files?.[0];
-    if (imageFile === undefined || RoomClient === null) return;
+    if (imageFile === undefined) return;
     try {
       const image = await upload(imageFile);
       this.close();
-      RoomClient.sendRitsuPicture?.(image);
+      if (UserProfileReact) updatePicToAlbum(image.url);
+      else if (RoomClient) RoomClient.sendRitsuPicture?.(image);
     } catch (error) {
       this.setState({
         failureReason: error instanceof Error ? error.message : `${error}`

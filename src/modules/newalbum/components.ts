@@ -1,4 +1,7 @@
 import React from "react";
+import ReactDOM from "react-dom";
+import { updatePicToAlbum } from "src/modules/newalbum";
+import { uploadForm } from "src/modules/newsendpics/components";
 import { parseImage, FORMATS } from "../altpfp/formats";
 import { setBioImage } from "../altpfp/bio-image";
 import { P, Preferences } from "~src/preferences";
@@ -62,5 +65,18 @@ export function albumFunctionality() {
         ...tabElements("feed", "info", "pictures")
       );
     return React.createElement("div", null, ...tabElements("feed", "info"));
+  };
+
+  PictureAlbum.prototype.add_to_album = function addToAlbum() {
+    PictureUploader.onUploaded = function onUploaded(picture) {
+      const { id } = App.user;
+      const { url } = picture;
+      updatePicToAlbum(url);
+      MenuReactMicro.close();
+      UserProfileReact?.load(id);
+    };
+  };
+  PictureAlbum.prototype.upload_picture = function uploadPicture() {
+    ReactDOM.render(uploadForm(), document.getElementById("ui-hatch-2"));
   };
 }

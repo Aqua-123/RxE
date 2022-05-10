@@ -18,11 +18,12 @@ const IMGUR_HEADER_ENCODED = encode("rxe-imgur:");
 // this is not identical to concatenating and then encoding.
 const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(\\S*)`);
 // hint: don't add the global flag if you want capture groups, silly
-const IMGUR_URL_REGEXP = () => new RegExp(`imgur${dot}com/([a-z0-9]+)`, "i");
+export const IMGUR_URL_REGEXP = () =>
+  new RegExp(`imgur${dot}com/([a-z0-9]+)`, "i");
 
 export const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
 
-const headers = () => ({
+export const headers = () => ({
   Authorization: `Client-ID ${
     Preferences.get(P.imgurAPIKey) || "b8f69bdcc4d1373"
   }`
