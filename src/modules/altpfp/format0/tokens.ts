@@ -5,7 +5,7 @@ import {
   allOf,
   validColour,
   colourClosestMatch,
-  groups,
+  groupBy,
   mapValues,
   choosePairs,
   colourDifference,
@@ -272,7 +272,7 @@ export class PaletteSpecifier extends ImageToken {
     if (!section) return null;
     const encoded = allOf(section.split("").map(b64toU8));
     if (!encoded) return null;
-    const grouped = groups(
+    const grouped = groupBy(
       encoded,
       PaletteSpecifier.colourSpace.digits
     ) as PaletteColourRepr[];

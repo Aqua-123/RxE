@@ -30,7 +30,7 @@ declare type EventAction = {
   action: "clear_notifications" | "clear_messages" | string;
 };
 
-declare type karmaData = {
+declare type KarmaRangeFlair = {
   range: [number, number];
   rank: string;
   style: { color: string; background: string };
@@ -57,7 +57,7 @@ declare interface AppInterface {
   };
   karma: {
     awards: {};
-    data: karmaData[];
+    data: KarmaRangeFlair[];
     get(id: number): number;
   };
   events: {
@@ -548,7 +548,7 @@ declare class FriendsMenu extends React.Component<
   {
     friends: EmeraldUser[];
     count: number;
-    undefined?: number; // custom field
+    skippedMissing?: number; // custom field
   }
 > {
   componentDidMount(): void;
@@ -559,6 +559,7 @@ declare type FriendsJson = {
   friends: EmeraldUser[];
   count: number;
 };
+
 declare class UserProfile extends React.Component<
   any,
   {
@@ -756,6 +757,7 @@ declare type UserWall = {
   created_at: string;
   updated_at: string;
 };
+
 declare type MicropostJson = {
   comments: [];
   liked: boolean;

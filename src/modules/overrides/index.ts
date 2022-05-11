@@ -170,25 +170,25 @@ export function applyOverrides() {
         const { friends } = e;
         e.friends = friends.filter((x: EmeraldUser) => x !== null);
         this.setState(e);
-        let undefinedCount: number;
-        if (!this.state.undefined) undefinedCount = 0;
-        else undefinedCount = this.state.undefined;
-        const undefinedList = friends.filter((x: EmeraldUser) => x === null);
+        let skippedMissing: number;
+        if (!this.state.skippedMissing) skippedMissing = 0;
+        else skippedMissing = this.state.skippedMissing;
+        const skippedFriends = friends.filter((x: EmeraldUser) => x === null);
         this.setState({
-          undefined: undefinedCount + undefinedList.length
+          skippedMissing: skippedMissing + skippedFriends.length
         });
       }.bind(this)
     });
   };
 
   FriendsMenu.prototype.load_friends = function moreFriends() {
-    let undefinedCount: number;
-    if (!this.state.undefined) undefinedCount = 0;
-    else undefinedCount = this.state.undefined;
+    let skippedMissing: number;
+    if (!this.state.skippedMissing) skippedMissing = 0;
+    else skippedMissing = this.state.skippedMissing;
     $.ajax({
       type: "GET",
       url: `/load_friends_json?offset=${
-        this.state.friends.length + undefinedCount
+        this.state.friends.length + skippedMissing
       }`,
       dataType: "json",
       success: function loadFriends(
@@ -196,11 +196,11 @@ export function applyOverrides() {
         friendsList: EmeraldUser[]
       ) {
         if (friendsList.length === 0) return;
-        const undefinedList = friendsList.filter(
+        const skippedFriends = friendsList.filter(
           (x: EmeraldUser) => x === null
         );
         this.setState({
-          undefined: undefinedCount + undefinedList.length
+          skippedMissing: skippedMissing + skippedFriends.length
         });
         let list = friendsList.filter((x) => x !== null);
         list = list.filter((x) => !this.state.friends.find((y) => y === x));
@@ -286,7 +286,7 @@ export function applyOverrides() {
   // non-hack: "Sign up to continue" only shows once at start
   App.temp.check = () => {};
   // increase the lower limit of karma
-  App.karma.data[0].range[1] = -9999999999999;
+  App.karma.data[0].range[1] = -Infinity;
 
   // Allow more messages in group chat. (make configurable?)
   // const rTrim = Room.prototype.trim_messages;

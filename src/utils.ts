@@ -49,22 +49,17 @@ export function wrapMethod<T, K extends FunctionKeys<T>>(
   );
 }
 
-export function groups<T>(array: T[], groupSize: number): T[][] {
-  if (array.length === 0) return [];
-  const groupsAll: T[][] = [[]];
-  array.forEach((item) => {
-    let last = groupsAll[groupsAll.length - 1];
-    if (last.length === groupSize) {
-      last = [];
-      groupsAll.push(last);
-    }
-    last.push(item);
-  });
-  return groupsAll;
+export function groupBy<T>(array: T[], groupSize: number): T[][] {
+  const groups: T[][] = [];
+  for (let index = 0; index < array.length; index += groupSize) {
+    const group = array.slice(index, index + groupSize);
+    groups.push(group);
+  }
+  return groups;
 }
 
 export function stringGroups(str: string, groupSize: number): string[] {
-  return groups(str.split(""), groupSize).map((group) => group.join(""));
+  return groupBy(str.split(""), groupSize).map((group) => group.join(""));
 }
 
 export function clamp(num: number, atLeast: number, atMost: number) {
@@ -719,15 +714,4 @@ export async function loadImage(url: string): Promise<Image> {
     img.src = url;
   });
   return image;
-}
-
-export function chunkArray(myArray: any[], chunkSize: number) {
-  let index = 0;
-  const arrayLength = myArray.length;
-  const tempArray = [];
-  for (index = 0; index < arrayLength; index += chunkSize) {
-    const myChunk = myArray.slice(index, index + chunkSize);
-    tempArray.push(myChunk);
-  }
-  return tempArray;
 }
