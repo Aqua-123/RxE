@@ -9,7 +9,7 @@ import { P, Preferences } from "~src/preferences";
 const profileTabs = {
   feed: { name: "Feed" },
   info: { name: "Info" },
-  pictures: { name: "Pictures" }
+  pictures: { name: "My Album" }
 };
 
 export function closeAndReload() {
