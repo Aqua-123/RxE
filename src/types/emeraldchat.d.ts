@@ -30,6 +30,11 @@ declare type EventAction = {
   action: "clear_notifications" | "clear_messages" | string;
 };
 
+declare type karmaData = {
+  range: [number, number];
+  rank: string;
+  style: { color: string; background: string };
+};
 declare interface AppInterface {
   user: EmeraldUser;
   room: {
@@ -49,6 +54,11 @@ declare interface AppInterface {
     muted: number[];
     play_sound(url: string): void;
     typing: number | null;
+  };
+  karma: {
+    awards: {};
+    data: karmaData[];
+    get(id: number): number;
   };
   events: {
     connected: () => void;
@@ -617,6 +627,7 @@ declare class Microposts extends React.Component<
   }
 > {
   micropost_input(event: React.KeyboardEvent<HTMLInputElement>): void;
+  scroll_bottom(): void;
 }
 
 declare class Micropost extends React.Component<

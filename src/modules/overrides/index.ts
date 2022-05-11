@@ -285,6 +285,8 @@ export function applyOverrides() {
   };
   // non-hack: "Sign up to continue" only shows once at start
   App.temp.check = () => {};
+  // increase the lower limit of karma
+  App.karma.data[0].range[1] = -9999999999999;
 
   // Allow more messages in group chat. (make configurable?)
   // const rTrim = Room.prototype.trim_messages;
