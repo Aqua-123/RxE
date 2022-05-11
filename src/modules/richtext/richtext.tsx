@@ -1,5 +1,4 @@
 import React from "react";
-import { P, Preferences } from "~src/preferences";
 import { wrapPartitions } from "~src/utils";
 import { decodeImage, picture } from "../newsendpics/image-process";
 import { urlImageDirectLinkAny } from "./linkutils";
@@ -52,14 +51,4 @@ export function wrapRich(text: string, restWrapper: Wrap = id): JSXContent {
   return wrapLineBreaks(text, (line) =>
     wrapMaterialIcons(line, (nonIcon) => wrapLinks(nonIcon, restWrapper))
   );
-}
-
-// accessibility
-export function biggerTextSize() {
-  if (!Preferences.get(P.largerText)) return;
-  const text = document.querySelectorAll(".room-component-message-text");
-  text.forEach((t) => {
-    const element = t as HTMLElement;
-    element.style.fontSize = "1.3rem";
-  });
 }

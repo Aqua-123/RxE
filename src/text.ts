@@ -97,7 +97,7 @@ export default {
       label: "Show embeds"
     },
     largerText: {
-      label: "Larger text in chat"
+      label: "Increase text size"
     }
   },
   hiddenChannels: "hidden channels",

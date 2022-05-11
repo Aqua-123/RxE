@@ -10,7 +10,8 @@ export function init() {
   loadCSS(
     "a.ritsu-message-anchor { text-decoration: underline; }\n" +
       ".material-icons-inline { font-size: inherit }\n" +
-      ".material-icons { user-select: none; }"
+      ".material-icons { user-select: none; }\n" +
+      "html.largerText .room-component-message-text { font-size: 1.3rem; }"
   );
   const mpProcess = Message.prototype.process;
   Message.prototype.process = function process(text: string) {
