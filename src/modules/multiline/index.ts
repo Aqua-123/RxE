@@ -13,23 +13,23 @@ export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
   Room.prototype.input = function input(event) {
-    const inputElement = $(event.target) as JQuery<HTMLTextAreaElement>;
+    const textarea = $(event.target) as JQuery<HTMLTextAreaElement>;
 
-    const text = `${inputElement.val()}`;
+    const text = `${textarea.val()}`;
     const actionRecall = event.key === "ArrowUp" && this.state.last_message;
 
     if (shouldSend(event)) {
       this.send(text);
       this.setState({ last_message: text });
-      inputElement.val("");
+      textarea.val("");
+      textarea.css("height", "34px");
     } else if (actionRecall) {
-      inputElement.val(this.state.last_message!);
+      textarea.val(this.state.last_message!);
     }
-    const textArea = inputElement.get(0) as HTMLTextAreaElement;
-    textArea.style.height = `${textArea.scrollHeight}px`;
-    // reset size if empty
-    if (text === "") {
-      textArea.style.height = "34px";
+
+    // reset size if no newlines
+    if (!text.includes("\n")) {
+      textarea.css("height", "34px");
     }
     RoomClient?.scroll();
     if (shouldSend(event) || actionRecall) event.preventDefault();
