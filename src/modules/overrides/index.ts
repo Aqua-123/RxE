@@ -296,7 +296,10 @@ export function applyOverrides() {
     if (messages.length > max) messages.shift();
     this.setState({ messages });
   };
-
+  const isPostedOnSelf = (content: string) => {
+    const regex = /posted on your profile.*/g;
+    return regex.test(content);
+  };
   NotificationUnit.prototype.action = function action(event: _MouseEvent) {
     const { target } = event;
     if (!(target instanceof Node)) return;
@@ -306,10 +309,12 @@ export function applyOverrides() {
       return;
     const notification = this.props.data;
 
-    const sender = notification.data.sender ?? notification.data.user;
-
+    let sender = notification.data.sender ?? notification.data.user;
     // No unit means no post to open the profile for.
     // Just show a UserView.
+    if (isPostedOnSelf(notification.data.content)) {
+      sender = App.user;
+    }
     if (
       !("unit" in notification.data) ||
       notification.tier === "friend_request"
@@ -323,11 +328,14 @@ export function applyOverrides() {
     // Tell app UI code which post to highlight.
     if ("unit" in notification.data) App.params = notification.data.unit;
 
-    const id =
+    let id =
       notification.data.unit?.post.author_id ??
       notification.data.unit?.comment.author_id ??
       notification.data.sender.id;
 
+    if (isPostedOnSelf(notification.data.content)) {
+      id = notification.data.user.id;
+    }
     // Reload or open UserProfile.
     if (UserProfileReact) UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
