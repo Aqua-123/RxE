@@ -35,9 +35,10 @@ export default function Settings(props: SettingsProps) {
     ignoreURLBlacklist,
     imgurAPIKey,
     muteRegexes,
-    applySettings,
     toggleEmbeds,
-    largerText
+    largerText,
+    showAnimatedImages,
+    applySettings
   } = props;
 
   return (
@@ -66,14 +67,9 @@ export default function Settings(props: SettingsProps) {
       />
       <div className={`m1 ${styles.settingsSection}`}>{T.imagesTitle}</div>
       <CheckboxSetting
-        id="hidePfp"
-        value={hidePfp}
-        onChange={() => applySettings({ hidePfp: !hidePfp })}
-      />
-      <CheckboxSetting
-        id="imgControl"
-        value={imgControl}
-        onChange={() => applySettings({ imgControl: !imgControl })}
+        id="imgBlur"
+        value={imgBlur}
+        onChange={() => applySettings({ imgBlur: !imgBlur })}
       />
       <CheckboxSetting
         id="imgProtect"
@@ -81,9 +77,21 @@ export default function Settings(props: SettingsProps) {
         onChange={() => applySettings({ imgProtect: !imgProtect })}
       />
       <CheckboxSetting
-        id="imgBlur"
-        value={imgBlur}
-        onChange={() => applySettings({ imgBlur: !imgBlur })}
+        id="hidePfp"
+        value={hidePfp}
+        onChange={() => applySettings({ hidePfp: !hidePfp })}
+      />
+      <CheckboxSetting
+        id="showAnimatedImages"
+        value={showAnimatedImages}
+        onChange={() =>
+          applySettings({ showAnimatedImages: !showAnimatedImages })
+        }
+      />
+      <CheckboxSetting
+        id="imgControl"
+        value={imgControl}
+        onChange={() => applySettings({ imgControl: !imgControl })}
       />
       <CheckboxSetting
         id="hideImageFallback"

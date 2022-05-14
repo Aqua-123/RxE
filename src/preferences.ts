@@ -181,6 +181,11 @@ export const P = {
     key: "muteRegexes",
     label: T.preferences.muteRegexes.label,
     default: []
+  }),
+  showAnimatedImages: new BooleanPreference({
+    key: "showAnimatedImages",
+    label: T.preferences.showAnimatedImages.label,
+    default: false
   })
 } as const;
 

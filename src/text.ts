@@ -38,7 +38,7 @@ export default {
       label: "Block and favorite images"
     },
     imgProtect: {
-      label: "No images from low karma accounts"
+      label: "Hide images from low karma accounts"
     },
     imgBlur: {
       label: "Blur user images"
@@ -98,6 +98,9 @@ export default {
     },
     largerText: {
       label: "Increase text size"
+    },
+    showAnimatedImages: {
+      label: "Show GIFs"
     }
   },
   hiddenChannels: "hidden channels",

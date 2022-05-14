@@ -1,3 +1,5 @@
+import { getImageType } from "~src/bitutils";
+import { P, Preferences } from "~src/preferences";
 import tickSVG from "./tick.svg";
 
 // 1. replace /badges/tick.svg broken images with a data: tickSVG URI
@@ -31,6 +33,19 @@ export function renderBrokenImages() {
     }
     if (img.complete && img.naturalHeight === 0) {
       img.onerror("");
+    }
+    if (
+      !Preferences.get(P.showAnimatedImages) &&
+      img.src.startsWith("https://i.imgur.com/") &&
+      !img.classList.contains("ritsu-image-static")
+    ) {
+      const url = img.src;
+      img.src = "https://emeraldchat.com/avicons_strict/1.png";
+      getImageType(url).then((type) => {
+        if (type === "image/gif") return;
+        img.classList.add("ritsu-image-static");
+        img.src = url;
+      });
     }
   });
 }
