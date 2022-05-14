@@ -37,11 +37,14 @@ export function renderBrokenImages() {
     if (
       !Preferences.get(P.showAnimatedImages) &&
       img.src.startsWith("https://i.imgur.com/") &&
-      !img.classList.contains("ritsu-image-static")
+      !img.classList.contains("ritsu-image-static") &&
+      !img.classList.contains("zoomIn")
     ) {
       const url = img.src;
       img.src = "https://emeraldchat.com/avicons_strict/1.png";
+      if (img.classList.contains("ritsu-image-static")) return;
       getImageType(url).then((type) => {
+        if (img.classList.contains("ritsu-image-static")) return;
         if (type === "image/gif") return;
         img.classList.add("ritsu-image-static");
         img.src = url;
