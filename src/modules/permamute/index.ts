@@ -76,20 +76,36 @@ export function initPermaMute() {
       )
     );
   };
+  function updateEverything() {
+    NotificationsReact.update();
+    UserViewReact?.forceUpdate();
+    RoomClient?.forceUpdate();
+  }
   UserView.prototype.permamute = function permamute() {
     const { id, display_name: name } = this.state.user;
     ListPreferenceMap.addItem({ key: id, item: name }, P.permaMuteList);
     App.room.mute(id, name, "Permamuted by user");
-    // For blockreqs
-    NotificationsReact.update();
-    this.forceUpdate();
+    updateEverything();
   };
   UserView.prototype.permaunmute = function permaunmute() {
     const { id } = this.state.user;
     ListPreferenceMap.removeItem({ key: id }, P.permaMuteList);
     App.room.unmute(id);
-    NotificationsReact.update();
-    this.forceUpdate();
+    updateEverything();
+  };
+  UserView.prototype.mute = function mute() {
+    App.room.mute(this.state.user.id);
+    this.setState({
+      muted: !0
+    });
+    updateEverything();
+  };
+  UserView.prototype.unmute = function unmute() {
+    App.room.unmute(this.state.user.id);
+    this.setState({
+      muted: !1
+    });
+    updateEverything();
   };
   // TODO: belongs in a more general file
   UserView.prototype.exit_click = function exitClick(e) {
