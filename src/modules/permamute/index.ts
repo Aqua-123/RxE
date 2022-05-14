@@ -2,7 +2,7 @@ import React from "react";
 import { ListPreferenceMap } from "~src/listprefcache";
 import { P, Preferences } from "~src/preferences";
 import { setDiff } from "~src/utils";
-
+import { clearRating } from "../antispam";
 /**
  * Updates mutes about to be saved.
  */
@@ -92,6 +92,7 @@ export function initPermaMute() {
     ListPreferenceMap.removeItem({ key: id }, P.permaMuteList);
     App.room.unmute(id);
     updateEverything();
+    clearRating(id);
   };
   UserView.prototype.mute = function mute() {
     App.room.mute(this.state.user.id);
@@ -101,11 +102,13 @@ export function initPermaMute() {
     updateEverything();
   };
   UserView.prototype.unmute = function unmute() {
-    App.room.unmute(this.state.user.id);
+    const { id } = this.state.user;
+    App.room.unmute(id);
     this.setState({
       muted: !1
     });
     updateEverything();
+    clearRating(id);
   };
   // TODO: belongs in a more general file
   UserView.prototype.exit_click = function exitClick(e) {

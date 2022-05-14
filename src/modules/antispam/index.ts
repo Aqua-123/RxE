@@ -95,6 +95,11 @@ function updateSpamRating(messageData: MessageData) {
   updateMutes(rating, user);
 }
 
+export function clearRating(user: number | EmeraldUser) {
+  const id = getUserId(user);
+  delete ratings[id];
+}
+
 function onMessage(messageData: MessageData) {
   if (RoomClient?.state.id == null || RoomClient?.state.mode === "private")
     return;
