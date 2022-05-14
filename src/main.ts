@@ -41,7 +41,6 @@ import * as highlightMentions from "./modules/highlightmentions/index";
 import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
-// import { trimMessages } from "./modules/trimmessages";
 import { createEmbeds } from "./modules/embeds";
 // import { profileUtility } from "./modules/improvedprofile";
 
@@ -105,7 +104,6 @@ async function init() {
   // profileUtility();
   // start our script's rendering loop
   render([
-    // trimMessages,
     createEmbeds,
     reorderMenu,
     injectRitsuMenu,

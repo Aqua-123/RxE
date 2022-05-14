@@ -35,7 +35,12 @@ html.imgBlur .ritsu-would-blur-heavy {
   transition: filter 0.3s;
 }
 
-html.imgBlur .ritsu-would-blur:hover, 
+html.imgBlur .ritsu-would-blur:hover,
 html.imgBlur .ritsu-would-blur-heavy:hover {
   filter: blur(0px);
+}
+
+.room-component-message-text {
+  max-height: 8em;
+  overflow: auto !important;
 }
