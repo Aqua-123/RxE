@@ -76,6 +76,7 @@ export function initMessages() {
     const textShadow = "0.005em 0.005em #FFF5";
     const contentClasses = ["room-component-message-text"];
     const { picture } = this.props.data;
+    // check if any of the children have a div
     if (picture) contentClasses.push("ritsu-would-blur-heavy");
     if (muted) contentClasses.push("ritsu-message-hidden");
     const safeDisplayPic =
@@ -323,4 +324,22 @@ export function betterMessageRendering() {
       messages
     });
   };
+}
+
+export function markTextOnly() {
+  const textOnly = document.querySelectorAll(".room-component-message-text");
+  textOnly.forEach((child) => {
+    const children = child.childNodes;
+    children.forEach((e) => {
+      const element = e as HTMLElement;
+      if (
+        element.children.length !== 0 ||
+        element.classList.contains("text-only") ||
+        !element.textContent ||
+        maybeEmbed(element.textContent)
+      )
+        return;
+      element.classList.add("text-only");
+    });
+  });
 }

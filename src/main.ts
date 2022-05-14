@@ -18,7 +18,8 @@ import { initKarmaTracker } from "./modules/karma";
 import {
   betterMessageRendering,
   decorateMessages,
-  initMessages
+  initMessages,
+  markTextOnly
 } from "./modules/messages";
 import { initNetwork } from "./modules/network";
 import { applyOverrides } from "./modules/overrides";
@@ -41,6 +42,7 @@ import * as highlightMentions from "./modules/highlightmentions/index";
 import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
+
 import { createEmbeds } from "./modules/embeds";
 // import { profileUtility } from "./modules/improvedprofile";
 
@@ -104,6 +106,7 @@ async function init() {
   // profileUtility();
   // start our script's rendering loop
   render([
+    markTextOnly,
     createEmbeds,
     reorderMenu,
     injectRitsuMenu,
