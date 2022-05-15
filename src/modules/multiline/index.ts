@@ -12,7 +12,7 @@ const shouldSend = (
 export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
-  Room.prototype.input = async function input(event) {
+  Room.prototype.input = function input(event) {
     const textarea = $(event.target) as JQuery<HTMLTextAreaElement>;
 
     const text = `${textarea.val()}`;
