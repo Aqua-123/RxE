@@ -47,22 +47,6 @@ export const dot = regexpcc(
 export const urlProtocol = /(https?:\/\/)?/.source;
 const urlChar = /[-a-z0-9@:%_+[\]~#?&=]/.source;
 
-// const dot2 = /(\.|(%2E))\u200b?/;
-// https://stackoverflow.com/questions/46155/how-can-i-validate-an-email-address-in-javascript
-/*
-export const validateEmail = (email: string) =>
-  email.match(
-    regexpcc(
-      `^(([^<>()[]${dot2},;:s@"]+(${dot2}`,
-      `[^<>()[]${dot2},;:s@"]+)*)|(".+"))@`,
-      `(([[0-9]{1,3}${dot2}[0-9]{1,3}${dot2}`,
-      `[0-9]{1,3}${dot2}[0-9]{1,3}])|(([a-zA-Z-0-9]+`,
-      `${dot2})+[a-zA-Z]{2,}))$`,
-      "gi"
-    )
-  );
-);
-*/
 export const validateEmail = (email: string) =>
   email.match(/^[^\s@]+@[^\s@]+(\.|(%2E))\u200b?[^\s@]+$/gi);
 

@@ -12,7 +12,7 @@ const shouldSend = (
 export function multiLineOverride() {
   // Allowing shift + enter to move to new line
   loadCSS(css);
-  Room.prototype.input = function input(event) {
+  Room.prototype.input = async function input(event) {
     const textarea = $(event.target) as JQuery<HTMLTextAreaElement>;
 
     const text = `${textarea.val()}`;
@@ -31,6 +31,7 @@ export function multiLineOverride() {
     if (!text.includes("\n")) {
       textarea.css("height", "34px");
     }
+
     RoomClient?.scroll();
     if (shouldSend(event) || actionRecall) event.preventDefault();
     if (!shouldSend(event)) App.room.client.typing();
@@ -153,8 +154,7 @@ export function multiLineOverride() {
       )
     );
   };
-
-  Micropost.prototype.write_comment = function writeComment() {
+  function writeComment(this: any) {
     return this.state.reply
       ? React.createElement(
           "div",
@@ -169,22 +169,7 @@ export function multiLineOverride() {
           })
         )
       : null;
-  };
-
-  (Comment.prototype as any as __Comment).write_comment =
-    function writeComment() {
-      return this.state.reply
-        ? React.createElement(
-            "div",
-            {
-              className: "animated zoomIn user-comment-input-background"
-            },
-            React.createElement("textarea", {
-              className: "user-comment-input",
-              onKeyDown: this.comment_input.bind(this),
-              placeholder: "Commment..."
-            })
-          )
-        : null;
-    };
+  }
+  Micropost.prototype.write_comment = writeComment;
+  (Comment.prototype as any as __Comment).write_comment = writeComment;
 }

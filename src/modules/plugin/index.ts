@@ -59,8 +59,6 @@ export function initPluginAPI() {
       if (e.user && e.user_connected) {
         dispatchEvent("user.joined", e);
       }
-      // this has been disabling
-      // the info thingy typing i swear
       if (e.messages && e.messages.length) {
         dispatchEvent("user.message", e);
       }

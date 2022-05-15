@@ -13,7 +13,6 @@ import * as SITE from "./src/site";
 import U from "./src/userscript";
 
 const PORT = 9001;
-
 const config: webpack.Configuration = {
   ...createWebpackConfig({
     buildConfig: {
@@ -44,10 +43,15 @@ const config: webpack.Configuration = {
         res.send(`
 <style type="text/css">
 a.btn {
-  display: inline-block; border: 1px outset #aaa; background: #eee; border-radius: 5px;
-  padding: .5em;font-weight: 600;color: #b821bd;text-decoration: none;
+  display: inline-block; border: 1px outset #aaa; background: #111112; border-radius: 5px;
+  padding: .5em;font-weight: 600;color: #AAABB0;text-decoration: none;
+}
+a.eme-redirect {
+  margin-top: -5.6em;
+  padding: 0.7em
 }
 svg { width:48px;height:48px;vertical-align:middle }
+body { background: #020303; color: #AAABB0; }
 </style>
 <h1>${U.name} Dev Server</h1>
 <h3>Feature flags enabled: 
@@ -59,14 +63,16 @@ svg { width:48px;height:48px;vertical-align:middle }
 src="${U.icon}" valign="middle">
 Install UserScript</a>
 <a href='https://www.${U.hostname}/${U.path}' 
-target="_blank" class="btn">
+valign="middle"
+target="_blank" class="btn eme-redirect">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490.7 490.7">
 <path d="M245 0a245 245 0 100 491 245 245 0 000-491z" fill="#009688"/>
 <path d="M290 105a50 50 0 00-68 0 48 48 0 000 68l19 19H117a53 53 0 000 107h124l-19 19a48 48 0 0068 68l118-118c13-13 13-33 0-45L290 105z" fill="#fafafa"/>
 </svg>
 Open ${U.sitename}</a>
 <iframe src="/${U.id}.meta.js" 
-style="border:0;width:100%;height:250px"></iframe>
+style="border:0;width:100%;height:300px"
+onload="(this.contentDocument.body.style.color='#fafafa')"></iframe>
       `)
       )
   }

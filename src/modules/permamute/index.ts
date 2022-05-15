@@ -27,9 +27,7 @@ export function initPermaMute() {
 
     return React.createElement(
       "div",
-      {
-        className: "user-profile-micro-bottom"
-      },
+      { className: "user-profile-micro-bottom" },
       React.createElement(
         "div",
         {

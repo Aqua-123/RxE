@@ -5,15 +5,23 @@ import css from "./style.scss";
 export function initAdBlocker() {
   loadCSS(css);
 }
+// list for exceptions for source
+const exceptions = [
+  "captcha",
+  "youtube",
+  "about:blank",
+  "open.spotify.com",
+  "i.redd.it",
+  "ibb.co"
+];
 
 export function removeAds() {
-  if (Preferences.get(P.adBlocker)) {
-    document
-      .querySelectorAll(
-        'iframe:not([src*="captcha"]):not([src*="youtube"]):not([src*="about:blank"]):not([src*="open.spotify.com"]):not([src*="i.redd.it"]):not([src*="ibb.co"])'
-      )
-      .forEach((iframe) => {
-        iframe.remove();
-      });
-  }
+  if (!Preferences.get(P.adBlocker)) return;
+  const iframes = Array.from(document.querySelectorAll("iframe"));
+  iframes.forEach((iframe) => {
+    const { src } = iframe;
+    if (src && !exceptions.some((e) => src.includes(e))) {
+      iframe.remove();
+    }
+  });
 }

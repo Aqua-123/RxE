@@ -20,26 +20,17 @@ function postContent(text: string, compact: boolean, more: () => void) {
   return wrapRich(text, Micropost.prototype.youtube_process);
 }
 
+function content(this: any) {
+  const { data, compact } = this.state;
+  if (!data) return null;
+  const { content: text } = data.micropost;
+  return (
+    <div style={{ width: "100%" }}>
+      {postContent(text, compact, () => this.more())}
+    </div>
+  );
+}
 export function init() {
-  Micropost.prototype.content = function content() {
-    const { data, compact } = this.state;
-    if (!data) return null;
-    const { content: text } = data.micropost;
-    return (
-      <div style={{ width: "100%" }}>
-        {postContent(text, compact, () => this.more())}
-      </div>
-    );
-  };
-
-  (Comment.prototype as any as __Comment).content = function content() {
-    const { comment_data: commentData, compact } = this.state;
-    if (!commentData) return null;
-    const { content: text } = commentData.comment;
-    return (
-      <div style={{ width: "100%" }}>
-        {postContent(text, compact, () => this.more())}
-      </div>
-    );
-  };
+  Micropost.prototype.content = content;
+  (Comment.prototype as any as __Comment).content = content;
 }

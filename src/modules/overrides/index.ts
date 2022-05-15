@@ -182,9 +182,8 @@ export function applyOverrides() {
   };
 
   FriendsMenu.prototype.load_friends = function moreFriends() {
-    let skippedMissing: number;
-    if (!this.state.skippedMissing) skippedMissing = 0;
-    else skippedMissing = this.state.skippedMissing;
+    let skippedMissing: number = 0;
+    if (this.state.skippedMissing) skippedMissing = this.state.skippedMissing;
     $.ajax({
       type: "GET",
       url: `/load_friends_json?offset=${
