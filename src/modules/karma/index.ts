@@ -3,7 +3,7 @@ import { crel, existing, formatSignedAmount, loadCSS } from "~src/utils";
 import trackKarma from "./style.scss";
 import browserWindow from "~src/browserWindow";
 
-const KARMA_TRACKING_INTERVAL = 60 * 100;
+const KARMA_TRACKING_INTERVAL = 60 * 1000;
 
 let currentKarma: number | null = null;
 
