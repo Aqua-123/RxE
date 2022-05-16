@@ -84,7 +84,6 @@ async function init() {
   initPicturesBlur();
   initHideProfilePictures();
   initPictureAlbum();
-  // initSendPictures();
   // karma tracker
   initKarmaTracker();
   // anti-spam
@@ -93,6 +92,7 @@ async function init() {
   initGender();
   // improve message rendering performance/behavior
   betterMessageRendering();
+  // fix load more
   initLoadMore();
 
   initUserList();
@@ -103,7 +103,6 @@ async function init() {
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
-  // profileUtility();
   // start our script's rendering loop
   render([
     markTextOnly,

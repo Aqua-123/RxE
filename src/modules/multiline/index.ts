@@ -4,7 +4,7 @@ import { loadCSS } from "~src/utils";
 import { upload } from "../newsendpics/image-process";
 
 const shouldSend = (
-  event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
 ) => {
   if (event.key !== "Enter" || event.shiftKey) return false;
   return true;
@@ -17,10 +17,10 @@ async function processPaste(item: DataTransferItem) {
   const url = await upload(file);
   if (RoomClient) RoomClient.sendRitsuPicture?.(url);
 }
-async function onPaste(event: ClipboardEvent) {
+function onPaste(event: ClipboardEvent) {
   if (!event.clipboardData) return;
   const { items } = event.clipboardData;
-  await Array.from(items).forEach((item) => {
+  Array.from(items).forEach((item) => {
     processPaste(item);
   });
 }
