@@ -95,6 +95,14 @@ function wrapLineBreaks(text: string, restWrapper: Wrap = id): JSXContent {
 }
 
 function makeMarkdown(text: string): string {
+  if (text.startsWith("[[") && text.endsWith("]]"))
+    return decorateText("squaredFull", text.slice(2, -2));
+  if (text.startsWith("((") && text.endsWith("))"))
+    return decorateText("circled", text.slice(2, -2));
+  if (text.startsWith("{{") && text.endsWith("}}"))
+    return decorateText("medieval", text.slice(2, -2));
+  if (text.endsWith("))") || text.endsWith("]]") || text.endsWith("}}"))
+    return text;
   if (text.startsWith("***"))
     return decorateText("boldItalic", text.slice(3, -3));
   if (text.startsWith("**")) return decorateText("bold", text.slice(2, -2));
@@ -102,6 +110,10 @@ function makeMarkdown(text: string): string {
   if (text.startsWith("__"))
     return decorateText("underline", text.slice(2, -2));
   if (text.startsWith("_")) return decorateText("italic", text.slice(2, -2));
+  if (text.startsWith("`")) return decorateText("monospace", text.slice(1, -1));
+  if (text.startsWith("^^"))
+    return decorateText("superscript", text.slice(2, -2));
+  if (text.startsWith(",,")) return decorateText("hooked", text.slice(2, -2));
   return text;
 }
 
@@ -111,7 +123,7 @@ export function wrapMarkdown(
 ): string {
   return wrapPartitions<string, string>(
     text,
-    /(?<=\s|^)(\*{1,3}|_{1,2}|~~)\S(?:.*?\S)?\1(?=\s|$)/g,
+    /(?<=\s|^)(\*{1,3}|_{1,2}|~~|`|\^\^|,,|\[{2}|\({2}|\{{2})\S(?:.*?\S)?(?:\1|\]{2}|\){2}|\}{2})(?=\s|$)/g,
     makeMarkdown,
     restWrapper
   ).join("");
