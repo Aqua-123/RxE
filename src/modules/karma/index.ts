@@ -3,7 +3,7 @@ import { crel, existing, formatSignedAmount, loadCSS } from "~src/utils";
 import trackKarma from "./style.scss";
 import browserWindow from "~src/browserWindow";
 
-const KARMA_TRACKING_INTERVAL = 60 * 1000;
+const KARMA_TRACKING_INTERVAL = 60 * 100;
 
 let currentKarma: number | null = null;
 
@@ -34,9 +34,7 @@ function updateKarma(karma: number) {
   if (currentKarma !== null) {
     showKarmaChange(karma - currentKarma);
   }
-
   currentKarma = karma;
-
   const karmaTracker = document.querySelector(".karma-tracker");
   if (!karmaTracker) return;
 
@@ -128,16 +126,12 @@ function updateChannelSelectUsers(
 // when new data is fetched.
 function updatePersistentState(newMembers: EmeraldUser[]) {
   // update only members with ids not in the persistent state
-  if (!RoomChannelMembersClient.state.members) return;
-  const persistentMembers = RoomChannelMembersClient.state.members_persistent;
-  if (!persistentMembers) return;
-  let newPersistentMembers = newMembers.filter(
+  let persistentMembers = RoomChannelMembersClient.state.members_persistent;
+  if (!persistentMembers) persistentMembers = [];
+  const newPersistentMembers = newMembers.filter(
     (member) => !persistentMembers.find((m) => m?.id === member.id)
   );
-  if (!newPersistentMembers) newPersistentMembers = [];
-  RoomChannelMembersClient.setState({
-    members_persistent: [...persistentMembers, ...newPersistentMembers]
-  });
+  return [...persistentMembers, ...newPersistentMembers];
 }
 
 /** Returns a boolean indicating whether the current user was updated. */
@@ -163,9 +157,10 @@ function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
       newMembers.push(oldMember);
     }
   });
-  updatePersistentState(newMembers);
+  const persistentState = updatePersistentState(newMembers);
   RoomChannelMembersClient.setState({
-    members: newMembers
+    members: newMembers,
+    members_persistent: persistentState
   });
   // check if our karma is in there already
   const self = currentChannel.members.find(
