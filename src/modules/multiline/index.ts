@@ -41,6 +41,8 @@ export function multiLineOverride() {
       textarea.val(this.state.last_message!);
     }
 
+    const textArea = textarea.get(0) as HTMLTextAreaElement;
+    textArea.style.height = `${textArea.scrollHeight}px`;
     // reset size if no newlines
     if (!text.includes("\n")) {
       textarea.css("height", "34px");
