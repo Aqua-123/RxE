@@ -31,6 +31,9 @@ export function init() {
   interceptUsers(Micropost, "render", (self) => [self.state.data?.author]);
   interceptUsers(MNU, "image", (self) => [self.props.data.data.sender]);
   interceptUsers(Message, "render", (self) => [notNum(self.props.data.user)]);
+  interceptUsers(NotificationUnit, "render", (self) => [
+    notNum(self.props.data.data.sender)
+  ]);
   interceptUsers(RoomUserUnit, "body", (self) => [self.props.data]);
   interceptUsers(UserUnit, "body", (self) => [self.props.data]);
   interceptUsers(UserView, "top", (self) => [self.state.user]);
