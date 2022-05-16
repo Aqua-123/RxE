@@ -40,14 +40,15 @@ export function multiLineOverride() {
     } else if (actionRecall) {
       textarea.val(this.state.last_message!);
     }
+    // if all text is backspaced and there is no text, then reset the height
+    if (text.length === 0 || !text.includes("\n")) {
+      textarea.css("height", "34px");
+    }
     // Dynamically changes the height of the textarea
     // ps dont remove it straw :)
     const textArea = textarea.get(0) as HTMLTextAreaElement;
     textArea.style.height = `${textArea.scrollHeight}px`;
-    // reset size if no newlines
-    if (!text.includes("\n")) {
-      textarea.css("height", "34px");
-    }
+
     document.onpaste = onPaste;
     RoomClient?.scroll();
     if (shouldSend(event) || actionRecall) event.preventDefault();
