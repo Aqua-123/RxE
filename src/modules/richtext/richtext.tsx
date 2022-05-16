@@ -111,7 +111,7 @@ export function wrapMarkdown(
 ): string {
   return wrapPartitions<string, string>(
     text,
-    /(\*{1,3}|_{1,2}|~~)\S(?:.*?\S)?\1/g,
+    /(?<=\s|^)(\*{1,3}|_{1,2}|~~)\S(?:.*?\S)?\1(?=\s|$)/g,
     makeMarkdown,
     restWrapper
   ).join("");
