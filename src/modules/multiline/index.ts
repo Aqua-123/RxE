@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { upload } from "../newsendpics/image-process";
