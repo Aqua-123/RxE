@@ -15,8 +15,8 @@ export function initPictureAlbum() {
     }
     const pictures = pAlbum.map((pic) => {
       let url;
+      url = imgurPNG(pic.substring(1));
       if (pic.length === 7) url = imgurPNG(pic);
-      else url = imgurPNG(pic.substring(1));
       return { url } as EmeraldPictureDetailed;
     });
     this.setState({ pictures, loaded: true });
@@ -42,14 +42,12 @@ export function initPictureAlbum() {
 }
 
 export function updatePicToAlbum(picString: string) {
-  const { id } = App.user;
   let url = extractBioImage(picString);
   const test = picString.match(IMGUR_URL_REGEXP());
-  if (!url && !test) return;
-  if (!url && test) url = `i${test[1]}`;
+  if (url?.length !== 7 && test) url = `i${test[1]}`;
   if (!url) return;
   const album = Preferences.get(P.imgurPfpAlbum);
   if (!album || album.includes(url)) return;
   Preferences.set(P.imgurPfpAlbum, [...album, url]);
-  UserProfileReact?.load(id);
+  UserProfileReact?.load(App.user.id);
 }

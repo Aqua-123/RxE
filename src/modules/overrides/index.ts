@@ -299,6 +299,11 @@ export function applyOverrides() {
     const regex = /posted on your profile.*/g;
     return regex.test(content);
   };
+  const likedComment = (content: string) => {
+    const regex = /liked your comment.*/g;
+    return regex.test(content);
+  };
+
   NotificationUnit.prototype.action = function action(event: _MouseEvent) {
     const { target } = event;
     if (!(target instanceof Node)) return;
@@ -309,10 +314,11 @@ export function applyOverrides() {
     const notification = this.props.data;
 
     let sender = notification.data.sender ?? notification.data.user;
+    const { content } = notification.data;
     // No unit means no post to open the profile for.
     // Just show a UserView.
-    if (isPostedOnSelf(notification.data.content)) {
-      sender = App.user;
+    if (isPostedOnSelf(content) || likedComment(content)) {
+      sender = notification.data.user;
     }
     if (
       !("unit" in notification.data) ||
@@ -332,7 +338,7 @@ export function applyOverrides() {
       notification.data.unit?.comment.author_id ??
       notification.data.sender.id;
 
-    if (isPostedOnSelf(notification.data.content)) {
+    if (isPostedOnSelf(content) || likedComment(content)) {
       id = notification.data.user.id;
     }
     // Reload or open UserProfile.

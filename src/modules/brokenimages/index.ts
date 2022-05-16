@@ -22,9 +22,8 @@ export function renderBrokenImages() {
         if (img.src.startsWith("https://robohash.org/yay"))
           img.src = "https://emeraldchat.com/avicons_strict/1.png";
         if (
-          img.src.startsWith("https://robohash.org/") ||
+          img.src.startsWith("https://robohash.org/" || "data:image") ||
           img.src.includes("/avicons_strict/") ||
-          img.src.startsWith("data:image") ||
           img.classList.contains("room-component-message-picture")
         )
           return;
@@ -37,8 +36,7 @@ export function renderBrokenImages() {
     if (
       !Preferences.get(P.showAnimatedImages) &&
       img.src.startsWith("https://i.imgur.com/") &&
-      !img.classList.contains("ritsu-image-static") &&
-      !img.classList.contains("zoomIn")
+      !img.classList.contains("ritsu-image-static" && "zoomIn")
     ) {
       const url = img.src;
       img.src = "https://emeraldchat.com/avicons_strict/1.png";

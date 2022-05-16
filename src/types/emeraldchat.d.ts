@@ -624,7 +624,7 @@ declare class Microposts extends React.Component<
     // microposts
     data: {
       microposts: number[];
-    };
+    } | null;
   }
 > {
   micropost_input(event: React.KeyboardEvent<HTMLInputElement>): void;

@@ -69,7 +69,7 @@ export function multiLineOverride() {
     if (!shouldSend(event)) return;
 
     const inputElement = $(event.target);
-    const text = `${inputElement.val()}`;
+    const text = encodeURIComponent(`${inputElement.val()}`);
 
     this.setState({
       data: this.state.data,
@@ -85,19 +85,18 @@ export function multiLineOverride() {
 
     $.ajax({
       type: "GET",
-      url: `/comments_create?id=${micropostId}&content=${encodeURIComponent(
-        text
-      )}`,
+      url: `/comments_create?id=${micropostId}&content=${text}`,
       dataType: "json",
       success: prependComment.bind(this)
     });
   };
 
   function prependMicropost(this: Microposts, post: EmeraldMicropost) {
+    const { data } = this.state;
+    const newState = [post.micropost.id];
+    if (data) newState.push(...data.microposts);
     this.setState({
-      data: {
-        microposts: [post.micropost.id, ...this.state.data.microposts]
-      }
+      data: { microposts: newState }
     });
   }
 
@@ -133,18 +132,25 @@ export function multiLineOverride() {
   };
 
   Microposts.prototype.render = function render() {
-    let e: number[] = [];
-    if (this.state.data) e = this.state.data.microposts;
+    const { data } = this.state;
+    let microposts: number[] = [];
+    if (data) microposts = data.microposts;
+    const micropostElement = React.createElement(
+      "div",
+      { className: "user-microposts" },
+      microposts.map((id) =>
+        React.createElement(Micropost, {
+          key: id,
+          data: { id }
+        })
+      )
+    );
     return React.createElement(
       "span",
-      {
-        key: this.props.data.wall_id
-      },
+      { key: this.props.data.wall_id },
       React.createElement(
         "div",
-        {
-          className: "user-micropost-input-background"
-        },
+        { className: "user-micropost-input-background" },
         React.createElement("textarea", {
           className: "user-micropost-input",
           onKeyDown: this.micropost_input.bind(this),
@@ -152,37 +158,21 @@ export function multiLineOverride() {
           placeholder: "Say Something..."
         })
       ),
-      React.createElement(
-        "div",
-        {
-          className: "user-microposts"
-        },
-        e.map((f) =>
-          React.createElement(Micropost, {
-            key: f,
-            data: {
-              id: f
-            }
-          })
-        )
-      )
+      micropostElement
     );
   };
   function writeComment(this: any) {
-    return this.state.reply
-      ? React.createElement(
-          "div",
-          {
-            className: "animated zoomIn user-comment-input-background"
-          },
-          React.createElement("textarea", {
-            className: "user-comment-input",
-            onKeyDown: this.comment_input.bind(this),
-            id: "comment-input",
-            placeholder: "Comment..."
-          })
-        )
-      : null;
+    if (!this.state.reply) return null;
+    return React.createElement(
+      "div",
+      { className: "animated zoomIn user-comment-input-background" },
+      React.createElement("textarea", {
+        className: "user-comment-input",
+        onKeyDown: this.comment_input.bind(this),
+        id: "comment-input",
+        placeholder: "Comment..."
+      })
+    );
   }
   Micropost.prototype.write_comment = writeComment;
   (Comment.prototype as any as __Comment).write_comment = writeComment;

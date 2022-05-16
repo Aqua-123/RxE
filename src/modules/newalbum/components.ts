@@ -38,11 +38,9 @@ function tabElements(...tabs: Array<keyof typeof profileTabs>) {
 
 export function albumFunctionality() {
   PictureAlbum.prototype.set_display_picture = function sdp(picture) {
-    const { url } = picture;
-    const { user } = App;
-    const parsed = parseImage(url, FORMATS.IMGUR);
+    const parsed = parseImage(picture.url, FORMATS.IMGUR);
     if (!parsed) return;
-    setBioImage(user, parsed);
+    setBioImage(App.user, parsed);
     closeAndReload();
   };
 
@@ -57,13 +55,9 @@ export function albumFunctionality() {
 
   UserProfile.prototype.tabs = function tabs() {
     const shownUserId = this.state.data.user.id;
-    if (shownUserId === App.user.id)
-      return React.createElement(
-        "div",
-        null,
-        ...tabElements("feed", "info", "pictures")
-      );
-    return React.createElement("div", null, ...tabElements("feed", "info"));
+    const tablist = ["feed", "info"] as Array<keyof typeof profileTabs>;
+    if (shownUserId === App.user.id) tablist.push("pictures");
+    return React.createElement("div", null, ...tabElements(...tablist));
   };
 
   PictureAlbum.prototype.add_to_album = function addToAlbum() {

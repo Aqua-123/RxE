@@ -55,7 +55,6 @@ export function profilePicture(this: UserProfile) {
     // const dragNDrop =
     // React.createElement('span', { onDrop }, 'DRAG &', React.createElement('br'), 'DROP')
     const dragNDrop = null;
-    // TODO: make new upload button pretty
     return (
       <span onDrop={onDrop}>
         <img
@@ -78,9 +77,7 @@ export function profilePicture(this: UserProfile) {
           {dragNDrop}
           <span
             className="material-icons"
-            style={{
-              fontSize: "36px"
-            }}
+            style={{ fontSize: "36px" }}
             title="Upload a profile picture"
           >
             cloud_upload

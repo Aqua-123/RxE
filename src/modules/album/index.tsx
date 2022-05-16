@@ -45,9 +45,9 @@ export function initPictureAlbum() {
       state &&
       "pictures" in state &&
       this.state.pictures?.length !== state?.pictures?.length
-    ) {
+    )
       setTimeout(() => this.load_pictures());
-    }
+
     paSetState.call(this, state as any);
   };
 }

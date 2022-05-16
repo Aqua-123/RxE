@@ -126,8 +126,8 @@ function updateChannelSelectUsers(
 // when new data is fetched.
 function updatePersistentState(newMembers: EmeraldUser[]) {
   // update only members with ids not in the persistent state
-  let persistentMembers = RoomChannelMembersClient.state.members_persistent;
-  if (!persistentMembers) persistentMembers = [];
+  const persistentMembers =
+    RoomChannelMembersClient.state.members_persistent || [];
   const newPersistentMembers = newMembers.filter(
     (member) => !persistentMembers.find((m) => m?.id === member.id)
   );
@@ -170,7 +170,6 @@ function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
     updateKarma(self.karma);
     return true;
   }
-
   return false;
 }
 
