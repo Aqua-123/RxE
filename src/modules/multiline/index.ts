@@ -1,6 +1,8 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
+import { upload } from "../newsendpics/image-process";
 
 const shouldSend = (
   event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -9,8 +11,21 @@ const shouldSend = (
   return true;
 };
 
+async function processPaste(item: DataTransferItem) {
+  if (item.kind !== "file") return;
+  const file = item.getAsFile();
+  if (!file) return;
+  const url = await upload(file);
+  if (RoomClient) RoomClient.sendRitsuPicture?.(url);
+}
+async function onPaste(event: ClipboardEvent) {
+  if (!event.clipboardData) return;
+  const { items } = event.clipboardData;
+  await Array.from(items).forEach((item) => {
+    processPaste(item);
+  });
+}
 export function multiLineOverride() {
-  // Allowing shift + enter to move to new line
   loadCSS(css);
   Room.prototype.input = function input(event) {
     const textarea = $(event.target) as JQuery<HTMLTextAreaElement>;
@@ -31,7 +46,7 @@ export function multiLineOverride() {
     if (!text.includes("\n")) {
       textarea.css("height", "34px");
     }
-
+    document.onpaste = onPaste;
     RoomClient?.scroll();
     if (shouldSend(event) || actionRecall) event.preventDefault();
     if (!shouldSend(event)) App.room.client.typing();
