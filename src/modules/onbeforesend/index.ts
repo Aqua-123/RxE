@@ -1,5 +1,6 @@
 import { links } from "~src/meta";
 import { sanitizeURL } from "../richtext/linkutils";
+import { wrapMarkdown } from "../richtext/richtext";
 
 const emotes = {
   shrug: "¯\\_(ツ)_/¯",
@@ -68,6 +69,6 @@ export function init() {
   Room.prototype.process = function process(message) {
     if (commands.process(message)) return null;
     if (commands.checkMail(message)) return commands.processMail(message);
-    return sanitizeURL(message);
+    return wrapMarkdown(sanitizeURL(message));
   };
 }
