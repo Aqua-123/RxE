@@ -14,15 +14,14 @@ export function initSendPics() {
     ReactDOM.render(uploadForm(), document.getElementById("ui-hatch-2"));
     // compatibility with fav pictures
     PictureUploader.onUploaded = function onUploaded(picture) {
-      if (RoomClient === null) return;
+      if (!RoomClient) return;
       const image = imageFromURL(picture.url, true);
       if (image) RoomClient.sendRitsuPicture?.(image);
     };
   };
 
   Room.prototype.sendRitsuPicture = function sendRitsuPicture(image) {
-    if (RoomClient === null) return;
-    RoomClient.append(display(image));
+    this.append(display(image));
     App.room.client.speak({ message: emit(image) });
     this.scroll();
   };
@@ -33,7 +32,7 @@ export function initSendPics() {
       ".picture-upload-button"
     ) as HTMLInputElement;
     const imageFile = fileInput.files?.[0];
-    if (imageFile === undefined) return;
+    if (!imageFile) return;
     try {
       const image = await upload(imageFile);
       this.close();
@@ -50,9 +49,9 @@ export function initSendPics() {
   Room.prototype.received = function received(message) {
     const receivedOld = rReceived.bind(this);
     const text = message.messages?.[0] as string | undefined;
-    if (text === undefined) return;
+    if (!text) return;
     const image = decodeImage(text);
-    if (image === null) {
+    if (!image) {
       receivedOld(message);
       return;
     }

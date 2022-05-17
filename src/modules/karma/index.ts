@@ -10,10 +10,7 @@ let currentKarma: number | null = null;
 // preventive measure for people crashing gcs
 function attemptKick(data: any) {
   if (data.status !== 500) return;
-  if (App.room) {
-    const roomId = App.room.id;
-    App.room.leave(roomId);
-  }
+  if (App.room) App.room.leave(App.room.id);
   browserWindow.location.href = "/";
 }
 
@@ -53,9 +50,7 @@ function refreshKarma() {
     type: "GET",
     url: `/profile_json?id=${id}`,
     dataType: "json",
-    success: (e) => {
-      updateKarma(e.user.karma);
-    },
+    success: (e: ProileJson) => updateKarma(e.user.karma),
     error: (e) => attemptKick(e)
   });
 }
@@ -112,12 +107,11 @@ function updateChannelSelectUsers(
     const newChannel = channels.find(
       ({ channel }) => channel.id === oldChannel.channel.id
     );
-
     if (!newChannel) return oldChannel;
-
+    const { members } = newChannel;
     return {
       ...oldChannel,
-      members: newChannel.members
+      members
     };
   });
 }

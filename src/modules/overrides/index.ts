@@ -410,18 +410,14 @@ export function applyOverrides() {
       : [React.createElement(Spinner)];
     return React.createElement(
       "div",
-      {
-        className: "ui-menu-container"
-      },
+      { className: "ui-menu-container" },
       React.createElement("div", {
         onMouseDown: this.close.bind(this),
         className: "animated fadeIn ui-bg"
       }),
       React.createElement(
         "div",
-        {
-          className: "animated zoomIn user-profile-menu"
-        },
+        { className: "animated zoomIn user-profile-menu" },
         ...content
       )
     );

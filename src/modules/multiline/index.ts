@@ -13,7 +13,9 @@ const shouldSend = (
 async function processPaste(item: DataTransferItem) {
   if (item.kind !== "file") return;
   const file = item.getAsFile();
-  if (!file) return;
+  // eslint-disable-next-line no-alert
+  if (!file || !confirm("Are you sure you want to upload this image in chat?"))
+    return;
   const url = await upload(file);
   if (RoomClient) RoomClient.sendRitsuPicture?.(url);
 }
@@ -149,19 +151,20 @@ export function multiLineOverride() {
         })
       )
     );
+    const inputElement = React.createElement(
+      "div",
+      { className: "user-micropost-input-background" },
+      React.createElement("textarea", {
+        className: "user-micropost-input",
+        onKeyDown: this.micropost_input.bind(this),
+        id: "micropost-input",
+        placeholder: "Say Something..."
+      })
+    );
     return React.createElement(
       "span",
       { key: this.props.data.wall_id },
-      React.createElement(
-        "div",
-        { className: "user-micropost-input-background" },
-        React.createElement("textarea", {
-          className: "user-micropost-input",
-          onKeyDown: this.micropost_input.bind(this),
-          id: "micropost-input",
-          placeholder: "Say Something..."
-        })
-      ),
+      inputElement,
       micropostElement
     );
   };

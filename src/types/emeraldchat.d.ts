@@ -297,6 +297,16 @@ declare type ProfileData = {
   wall_id: number;
 };
 
+declare type ProileJson = {
+  user: EmeraldUser;
+  friend_request_sent: boolean;
+  friend: boolean;
+  current_user: EmeraldUser;
+  subscribed: boolean;
+  room_id: number;
+  wall_id: number;
+};
+
 declare type EmeraldPicture = {
   url: string;
 };

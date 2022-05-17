@@ -37,9 +37,8 @@ const commands = {
     return commandName ? commands.all[commandName] : undefined;
   },
   checkMail(message: string) {
-    const email = message.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi);
-    if (email) return true;
-    return false;
+    const email = /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi;
+    return email.test(message);
   },
   processMail(message: string) {
     return message.replace(/\./gi, ".\u200b");

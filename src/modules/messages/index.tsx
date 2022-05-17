@@ -157,42 +157,41 @@ export function decorateMessages() {
     ".room-component-message-container"
   );
   const messageBlocksState = RoomClient?.state?.messages;
-  if (messageBlocksState?.length) {
-    for (let i = 0; i < messageBlocksState.length; i += 1) {
-      const messageBlock = messageBlocks[i]?.querySelector(
-        ".room-component-message-text"
-      );
+  if (!messageBlocksState?.length) return;
+  for (let i = 0; i < messageBlocksState.length; i += 1) {
+    const messageBlock = messageBlocks[i]?.querySelector(
+      ".room-component-message-text"
+    );
 
-      if (
-        !messageBlock ||
-        messageBlock.classList.contains("ritsu-message-hidden")
-      )
-        // eslint-disable-next-line no-continue
-        continue;
-
-      const { messages } = messageBlocksState[i];
-      const messageLines = messageBlock.childNodes;
-
-      // Remove extra messages.
-      while (messageLines && messageLines.length > messages.length) {
-        messageLines[0].remove();
-      }
-
-      // If we removed all of them, don't bother decorating.
+    if (
+      !messageBlock ||
+      messageBlock.classList.contains("ritsu-message-hidden")
+    )
       // eslint-disable-next-line no-continue
-      if (!messageLines) continue;
-      if (!(messageLines[0] as HTMLElement).classList) return;
+      continue;
 
-      // Mark as jumbo emoji in limited circumstances.
-      if (
-        Preferences.get(P.bigEmoji) &&
-        messages.length === 1 &&
-        /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
-      ) {
-        (messageLines[0] as HTMLElement).classList.add("jumbo-message");
-      } else {
-        (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
-      }
+    const { messages } = messageBlocksState[i];
+    const messageLines = messageBlock.childNodes;
+
+    // Remove extra messages.
+    while (messageLines && messageLines.length > messages.length) {
+      messageLines[0].remove();
+    }
+
+    // If we removed all of them, don't bother decorating.
+    // eslint-disable-next-line no-continue
+    if (!messageLines) continue;
+    if (!(messageLines[0] as HTMLElement).classList) return;
+
+    // Mark as jumbo emoji in limited circumstances.
+    if (
+      Preferences.get(P.bigEmoji) &&
+      messages.length === 1 &&
+      /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
+    ) {
+      (messageLines[0] as HTMLElement).classList.add("jumbo-message");
+    } else {
+      (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
     }
   }
 }
@@ -212,14 +211,7 @@ export function betterMessageRendering() {
     const override = RoomChannelMembersClient?.state?.members_persistent;
     if (!override) return e;
     override.forEach((member) => {
-      if (
-        member?.id === e.user.id &&
-        member?.display_name &&
-        e.user.display_name
-      ) {
-        e.user.display_name = member?.display_name;
-        e.user.karma = member?.karma;
-      }
+      if (member?.id === e.user.id) e.user = member;
     });
     return e;
   }
@@ -230,9 +222,9 @@ export function betterMessageRendering() {
     let loadMore = null;
     let emptyMessage: JSX.Element | "" = "";
     let r = 0;
-    for (let a = 0; a < this.state.messages.length; a += 1) {
-      r += this.state.messages[a].messages.length;
-    }
+    this.state.messages.forEach((e) => {
+      r += e.messages.length;
+    });
     if (this.state.messages_count > r && this.state.messages.length > 0) {
       loadMore = (
         <div
@@ -289,8 +281,6 @@ export function betterMessageRendering() {
     const { messages } = this.state;
     if (messages.length > max) messages.shift();
     const lastMessage = messages[messages.length - 1];
-    // check if div of previous message is has the class "embed"
-    // if so, append to that div
     if (
       lastMessage &&
       getUserId(lastMessage.user) === getUserId(e.user) &&
@@ -304,22 +294,6 @@ export function betterMessageRendering() {
       if (maybeEmbed(r)) messages.push(e);
       lastMessage.messages.push(e.messages[0]);
     } else messages.push(e);
-    // inline typing check here.
-    // this is uselsss since objects with typing attributed never reach here
-    /*
-    let { typing } = this.state;
-    if (doTyping) {
-      if (e.typing) {
-        if (e.user.id !== App.user.id) {
-          typing = notNum(e.user)?.display_name || "";
-          setTimeout(() => this.stop_typing(), 1e4);
-        }
-      } else {
-        typing = null;
-        App.room.typing = null;
-      }
-    }
-    */
     this.setState({
       messages
     });

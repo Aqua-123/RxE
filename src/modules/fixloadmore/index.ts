@@ -68,6 +68,5 @@ export function initLoadMore() {
         this.scroll();
       }
     });
-    this.setState({ left_panel: !0, right_panel: !0 });
   };
 }
