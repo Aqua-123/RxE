@@ -307,10 +307,10 @@ export function markTextOnly() {
     children.forEach((e) => {
       const element = e as HTMLElement;
       if (
-        element.children.length !== 0 ||
         element.classList.contains("text-only") ||
-        !element.textContent ||
-        maybeEmbed(element.textContent)
+        element.querySelector(
+          ".room-component-message-picture-container" || ".embed"
+        )
       )
         return;
       element.classList.add("text-only");
