@@ -1,15 +1,16 @@
 import React from "react";
-import { createHackSetting, HacksProps } from "./SettingsUtils";
+import { createHackSetting, HacksProps, createDiv } from "./SettingsUtils";
 import styles from "./style.module.scss";
+import T from "~src/text";
 
 export default function Hacks(props: HacksProps) {
-  return React.cloneElement(
-    <div className={styles.hacks}>
-      {createHackSetting("superTemp", props)}
-      {createHackSetting("enableModUI", props)}
-      {createHackSetting("universalFriend", props)}
-      {createHackSetting("antiBan", props)}
-    </div>,
-    { className: styles.hacks }
+  return React.createElement(
+    "div",
+    { className: styles.settings },
+    createDiv(styles.settingsSection, T.hacksTitle),
+    createHackSetting("superTemp", props),
+    createHackSetting("enableModUI", props),
+    createHackSetting("universalFriend", props),
+    createHackSetting("antiBan", props)
   );
 }
