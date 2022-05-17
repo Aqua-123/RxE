@@ -15,6 +15,7 @@ export default function Settings(props: SettingsProps) {
   return React.createElement(
     "div",
     { className: styles.settings },
+    createDiv(styles.settingsSection, T.generalTitle),
     createCheckBox("adBlocker", props),
     createCheckBox("trackKarma", props),
     createCheckBox("fancyColors", props),
