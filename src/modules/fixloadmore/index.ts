@@ -59,9 +59,7 @@ export function initLoadMore() {
       url: `/default_private_messages?id=${id}`,
       dataType: "json",
       success: (resp: PrivateMessage) => {
-        resp.messages.forEach((message: PrivateMessageArray) =>
-          this.append(message)
-        );
+        resp.messages.forEach((message) => this.append(message));
         this.setState({
           messages_count: resp.messages_count
         });
