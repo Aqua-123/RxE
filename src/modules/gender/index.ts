@@ -4,10 +4,12 @@ import css from "./style.scss";
 
 function genderIntercept(this: any, element: () => JSX.Element) {
   let gender;
+  const img = element.apply(this);
+  if (!this.props.data) return img;
   if (this.props.data.data) gender = this.props.data.data.sender.gender;
   if (this.props.data.gender) gender = this.props.data.gender;
-  const img = element.apply(this);
-  img.props["data-gender"] = gender;
+  if (img.props.children) img.props.children[0].props["data-gender"] = gender;
+  else img.props["data-gender"] = gender;
   return img;
 }
 export function initGender() {
@@ -37,20 +39,12 @@ export function initGender() {
 
   const fuBody = FriendUnit.prototype.body;
   FriendUnit.prototype.body = function body() {
-    const div = fuBody.apply(this);
-    div.props.children[0].props["data-gender"] = this.props.data.gender;
-    return div;
+    return genderIntercept.call(this, fuBody);
   };
 
   const ruuBody = RoomUserUnit.prototype.body;
   RoomUserUnit.prototype.body = function body() {
-    const div = ruuBody.apply(this);
-    const { children } = div.props;
-    const img = children[0];
-    if (img?.type === "img") {
-      img.props["data-gender"] = this.props.data.gender;
-    }
-    return div;
+    return genderIntercept.call(this, ruuBody);
   };
 
   const mRender = Message.prototype.render;
