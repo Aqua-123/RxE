@@ -2,7 +2,7 @@ import { P, Preferences } from "~src/preferences";
 import { loadCSS, notNum } from "~src/utils";
 import css from "./style.scss";
 
-function applyer(this: any, element: () => JSX.Element) {
+function genderIntercept(this: any, element: () => JSX.Element) {
   let gender;
   if (this.props.data.data) gender = this.props.data.data.sender.gender;
   if (this.props.data.gender) gender = this.props.data.gender;
@@ -17,22 +17,22 @@ export function initGender() {
 
   const mnuImage = MessageNotificationUnit.prototype.image;
   MessageNotificationUnit.prototype.image = function image() {
-    return applyer.call(this, mnuImage);
+    return genderIntercept.call(this, mnuImage);
   };
 
   const nuImage = NotificationUnit.prototype.image;
   NotificationUnit.prototype.image = function image() {
-    return applyer.call(this, nuImage);
+    return genderIntercept.call(this, nuImage);
   };
 
   const suBody = SearchUnit.prototype.body;
   SearchUnit.prototype.body = function body() {
-    return applyer.call(this, suBody);
+    return genderIntercept.call(this, suBody);
   };
 
   const uuBody = UserUnit.prototype.body;
   UserUnit.prototype.body = function body() {
-    return applyer.call(this, uuBody);
+    return genderIntercept.call(this, uuBody);
   };
 
   const fuBody = FriendUnit.prototype.body;
@@ -44,13 +44,11 @@ export function initGender() {
 
   const ruuBody = RoomUserUnit.prototype.body;
   RoomUserUnit.prototype.body = function body() {
-    // todo: this doesn't work
     const div = ruuBody.apply(this);
     const { children } = div.props;
-    const childProps = children[0]?.props;
-    const image = childProps?.children?.[0];
-    if (image?.type === "img") {
-      image.props["data-gender"] = this.props.data.gender;
+    const img = children[0];
+    if (img?.type === "img") {
+      img.props["data-gender"] = this.props.data.gender;
     }
     return div;
   };
