@@ -108,10 +108,4 @@ export function initPermaMute() {
     updateEverything();
     clearRating(id);
   };
-  // TODO: belongs in a more general file
-  UserView.prototype.exit_click = function exitClick(e) {
-    if (!(e.target instanceof HTMLElement)) return;
-    if (!e.target.matches(".user-profile-micro, .user-profile-micro *"))
-      this.close();
-  };
 }

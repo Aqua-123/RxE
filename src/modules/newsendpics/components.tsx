@@ -3,6 +3,7 @@ import { IMGUR_ENDPOINT } from "./imgur";
 import { canUpload, nextUpload } from "./ratelimit";
 import { uploadInfo } from "./image-process";
 import { loadCSS } from "~src/utils";
+import css from "./style.scss";
 
 export const uploadForm = () => (
   <MenuMicro>
@@ -10,28 +11,8 @@ export const uploadForm = () => (
   </MenuMicro>
 );
 
-const initCSS = () =>
-  loadCSS(`.picture-upload-info {
-  font-size: 14px;
-  font-weight: 400;
-  color: "#adb6c7";
-}
-
-.picture-upload-info div {
-  margin-bottom: 1em;
-}
-
-.picture-upload-error {
-  color: red;
-  font-weight: bold;
-}
-
-.picture-upload-error-reason {
-  font-weight: initial;
-}`);
-
 export function initComponents() {
-  initCSS();
+  loadCSS(css);
   Room.prototype.room_input = function roomInput() {
     return (
       <div className="room-component-input">

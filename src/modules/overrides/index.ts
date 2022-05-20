@@ -28,8 +28,8 @@ function hackOverrides() {
 
   let userProxy = new Proxy<EmeraldUser>(user, proxyHandler);
   Object.defineProperty(App, "user", {
-    set: (e) => {
-      user = e;
+    set: (resp) => {
+      user = resp;
       userProxy = new Proxy(user, proxyHandler);
     },
     get: () => userProxy
@@ -84,8 +84,8 @@ export function applyOverrides() {
   $(window)
     .off("resize")
     .on("resize", () => {
-      const e = document.getElementById("messages");
-      if (e) e.scrollTop = e.scrollHeight;
+      const resp = document.getElementById("messages");
+      if (resp) resp.scrollTop = resp.scrollHeight;
     });
 
   /**
@@ -101,19 +101,21 @@ export function applyOverrides() {
       }
     }
   }
+  // standard function to close things
+  function closeStuff(this: React.Component, component: string[]) {
+    $(component[0]).removeClass("animated fadeIn");
+    $(component[0]).removeClass("animated fadeOut");
+    $(component[1]).addClass("animated zoomOut");
+    setTimeout(unmountComponent.bind(null, this), 150);
+  }
+
   function menuClose(this: React.Component) {
-    $(".ui-bg").removeClass("animated fadeIn");
-    $(".ui-bg").addClass("animated fadeOut");
-    $(".ui-menu").addClass("animated zoomOut");
-    setTimeout(unmountComponent.bind(null, this), 250);
+    closeStuff.call(this, [".ui-bg", ".ui-menu"]);
   }
 
   Menu.prototype.close = menuClose;
   UserProfile.prototype.close = function upClose() {
-    $(".ui-bg").removeClass("animated fadeIn");
-    $(".ui-bg").addClass("animated fadeOut");
-    $(".user-profile-menu").addClass("animated zoomOut");
-    setTimeout(unmountComponent.bind(null, this), 250);
+    closeStuff.call(this, [".ui-bg", ".user-profile-menu"]);
     setTimeout(() => {
       UserProfileReact = null;
     });
@@ -129,12 +131,12 @@ export function applyOverrides() {
     });
   }
 
-  function rpUpdated(this: Room, e: ChannelJsonResponse) {
-    const { channel } = e;
+  function rpUpdated(this: Room, resp: ChannelJsonResponse) {
+    const { channel } = resp;
     this.setState({
       current_channel: channel
     });
-    if (channel.channel_type === "voice") this.voice_connect(e);
+    if (channel.channel_type === "voice") this.voice_connect(resp);
     $.ajax({
       type: "GET",
       url: `channel_json?id=${channel.id}`,
@@ -148,7 +150,10 @@ export function applyOverrides() {
     RoomClient?.scroll();
   }
 
-  RoomChannelSelect.prototype.join = function rpJoin(this: Room, e) {
+  RoomChannelSelect.prototype.join = function rpJoin(
+    this: Room,
+    channelResponse
+  ) {
     if (App.webrtc.client) this.voice_disconnect();
     this.expand(!1);
     RoomClient?.setState({
@@ -156,7 +161,7 @@ export function applyOverrides() {
     });
     // eslint-disable-next-line no-shadow
     Room.prototype.updated = rpUpdated.bind(this);
-    RoomClient?.updated(e);
+    RoomClient?.updated(channelResponse);
     Room.prototype.updated = function doNothing() {};
   };
 
@@ -166,10 +171,10 @@ export function applyOverrides() {
       type: "GET",
       url: "/friends_json",
       dataType: "json",
-      success: function mountFriends(this: FriendsMenu, e: FriendsJson) {
-        const { friends } = e;
-        e.friends = friends.filter((x: EmeraldUser) => x !== null);
-        this.setState(e);
+      success: function mountFriends(this: FriendsMenu, resp: FriendsJson) {
+        const { friends } = resp;
+        resp.friends = friends.filter((x: EmeraldUser) => x !== null);
+        this.setState(resp);
         let skippedMissing: number;
         if (!this.state.skippedMissing) skippedMissing = 0;
         else skippedMissing = this.state.skippedMissing;
@@ -201,11 +206,10 @@ export function applyOverrides() {
         this.setState({
           skippedMissing: skippedMissing + skippedFriends.length
         });
-        let list = friendsList.filter((x) => x !== null);
-        list = list.filter((x) => !this.state.friends.find((y) => y === x));
+        const list = friendsList.filter((x) => x !== null);
         const state = {
           search: [],
-          friends: this.state.friends.concat(list),
+          friends: [...this.state.friends, ...list],
           count: this.state.count
         };
         this.setState(state);
@@ -214,10 +218,7 @@ export function applyOverrides() {
   };
 
   function menuMicroClose(this: React.Component) {
-    $("#menu-micro-bg").removeClass("animated fadeIn");
-    $("#menu-micro-bg").addClass("animated fadeOut");
-    $("#menu-micro").addClass("animated zoomOut");
-    setTimeout(unmountComponent.bind(null, this), 250);
+    closeStuff.call(this, ["#menu-micro-bg", "#menu-micro"]);
   }
   MenuMicro.prototype.close = menuMicroClose;
   MenuMicroStatic.prototype.close = menuMicroClose;
@@ -242,23 +243,28 @@ export function applyOverrides() {
     unmountComponent(this);
   };
 
-  function popupClose(this: React.Component, e: MouseEvent) {
+  function popupClose(this: React.Component, resp: MouseEvent) {
     unmountComponent(this);
     // todo: this doesn't work oof
-    e.nativeEvent.stopImmediatePropagation();
+    resp.nativeEvent.stopImmediatePropagation();
   }
 
   Popup.prototype.close = popupClose;
   Picture.prototype.close = popupClose;
+  UserView.prototype.exit_click = function exitClick(resp) {
+    if (!(resp.target instanceof HTMLElement)) return;
+    if (!resp.target.matches(".user-profile-micro, .user-profile-micro *"))
+      this.close();
+  };
 
   UserProfile.prototype.componentDidMount = function profileMount() {
     $.ajax({
       type: "GET",
       url: `/profile_json?id=${this.props.id}`,
       dataType: "json",
-      success: (e: ProfileData) => {
+      success: (resp: ProfileData) => {
         this.setState({
-          data: e
+          data: resp
         });
       },
       error: () => {

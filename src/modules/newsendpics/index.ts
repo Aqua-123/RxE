@@ -8,8 +8,6 @@ import { updatePicToAlbum } from "../newalbum";
 
 export function initSendPics() {
   initComponents();
-
-  // eslint-disable-next-line camelcase
   Room.prototype.upload_picture = function uploadPicture() {
     ReactDOM.render(uploadForm(), document.getElementById("ui-hatch-2"));
     // compatibility with fav pictures
