@@ -14,6 +14,7 @@ type BioImageProps = {
 };
 
 const confirmRemoval = () =>
+  // eslint-disable-next-line no-alert
   confirm("Are you sure you want to remove your profile picture?");
 
 function BioImage({ raw, onRemove }: BioImageProps) {

@@ -93,8 +93,8 @@ export function createRegexSetting(
   );
 }
 
-export function createDiv(className: string, title: string | undefined) {
-  return <div className={`m1 ${className}`}>{title}</div>;
+export function createDiv(className: string, content: string | undefined) {
+  return <div className={`m1 ${className}`}>{content}</div>;
 }
 
 // TODO: create a standard function for this

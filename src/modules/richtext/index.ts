@@ -1,18 +1,12 @@
-/* eslint-disable prettier/prettier */
 import * as richBio from "./richbio";
 import * as richPost from "./richpost";
 import { loadCSS } from "~src/utils";
 import { processImage, wrapRich } from "./richtext";
 import { desanitizeURL } from "./linkutils";
+import css from "./style.scss";
 
 export function init() {
-  // my backtick key wasn't working
-  loadCSS(
-    "a.ritsu-message-anchor { text-decoration: underline; }\n" +
-      ".material-icons-inline { font-size: inherit }\n" +
-      ".material-icons { user-select: none; }\n" +
-      "html.largerText .room-component-message-text { font-size: 1.3rem; }"
-  );
+  loadCSS(css);
   const mpProcess = Message.prototype.process;
   Message.prototype.process = function process(text: string) {
     const processOld = mpProcess.bind(this);

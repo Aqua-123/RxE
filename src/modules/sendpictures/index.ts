@@ -20,9 +20,7 @@ export function initSendPictures() {
   Room.prototype.room_input = function roomInput() {
     return React.createElement(
       "div",
-      {
-        className: "room-component-input"
-      },
+      { className: "room-component-input" },
       React.createElement("textarea", {
         className: "room-component-input-textarea",
         onMouseDown: this.scroll,

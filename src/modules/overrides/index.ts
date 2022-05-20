@@ -175,9 +175,9 @@ export function applyOverrides() {
         const { friends } = resp;
         resp.friends = friends.filter((x: EmeraldUser) => x !== null);
         this.setState(resp);
-        let skippedMissing: number;
-        if (!this.state.skippedMissing) skippedMissing = 0;
-        else skippedMissing = this.state.skippedMissing;
+        const skippedMissing = this.state.skippedMissing
+          ? this.state.skippedMissing
+          : 0;
         const skippedFriends = friends.filter((x: EmeraldUser) => x === null);
         this.setState({
           skippedMissing: skippedMissing + skippedFriends.length

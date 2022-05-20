@@ -4,13 +4,13 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.3
 
-
 /// <reference types="jquery"/>
 
 interface TimeagoSetings {
-    refreshMillis?: number | undefined;
-    allowFuture?: boolean | undefined;
-    strings?: {
+  refreshMillis?: number | undefined;
+  allowFuture?: boolean | undefined;
+  strings?:
+    | {
         prefixAgo?: string | undefined;
         prefixFromNow?: string | undefined;
         suffixAgo?: string | undefined;
@@ -31,34 +31,34 @@ interface TimeagoSetings {
 
         wordSeparator?: string | undefined;
         numbers?: any[] | undefined;
-    } | undefined;
+      }
+    | undefined;
 }
 
 interface TimeagoStatic {
-    (timestamp: Date): string;
-    (timestamp: number): string;
-    (timestamp: string): string;
-    (timestamp: Element): string;
-    (timestamp: JQuery): string;
-    settings: TimeagoSetings;
-    inWords(distanceMillis: Date): string;
-    inWords(distanceMillis: number): string;
-    parse(iso8601: string): Date;
-    datetime(element: Element): Date;
-    datetime(element: JQuery): Date;
-    isTime(element: Element): boolean;
-    isTime(element: JQuery): boolean;
+  (timestamp: Date): string;
+  (timestamp: number): string;
+  (timestamp: string): string;
+  (timestamp: Element): string;
+  (timestamp: JQuery): string;
+  settings: TimeagoSetings;
+  inWords(distanceMillis: Date): string;
+  inWords(distanceMillis: number): string;
+  parse(iso8601: string): Date;
+  datetime(element: Element): Date;
+  datetime(element: JQuery): Date;
+  isTime(element: Element): boolean;
+  isTime(element: JQuery): boolean;
 }
 
 interface Timeago {
-    (): JQuery;
+  (): JQuery;
 }
 
 interface JQueryStatic {
-    timeago: TimeagoStatic;
+  timeago: TimeagoStatic;
 }
 
 interface JQuery {
-    timeago: Timeago;
+  timeago: Timeago;
 }
-
