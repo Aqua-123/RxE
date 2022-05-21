@@ -125,6 +125,8 @@ function updatePersistentState(newMembers: EmeraldUser[]) {
   const newPersistentMembers = newMembers.filter(
     (member) => !persistentMembers.find((m) => m?.id === member.id)
   );
+
+  // TODO: Impose limit to prevent memory leak
   return [...persistentMembers, ...newPersistentMembers];
 }
 

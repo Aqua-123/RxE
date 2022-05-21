@@ -3,7 +3,6 @@ import React from "react";
 import { P, Preferences } from "~src/preferences";
 import {
   accountAgeScaled as userExperience,
-  existing,
   formatSignedAmount,
   loadCSS,
   notNum,
@@ -15,9 +14,9 @@ import css from "./style.scss";
 
 function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
-  return existing(RoomChannelMembersClient.state.members).find(
-    (user) => user.id === id
-  );
+  const { members, members_persistent: membersPersistent } =
+    RoomChannelMembersClient.state;
+  return (members || membersPersistent).find((user) => user?.id === id);
 }
 
 export function initMessages() {
