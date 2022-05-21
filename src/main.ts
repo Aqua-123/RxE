@@ -42,7 +42,6 @@ import * as highlightMentions from "./modules/highlightmentions/index";
 import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
-
 import { createEmbeds } from "./modules/embeds";
 // import { profileUtility } from "./modules/improvedprofile";
 

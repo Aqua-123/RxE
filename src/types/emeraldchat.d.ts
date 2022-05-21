@@ -668,6 +668,20 @@ declare class Micropost extends React.Component<
       muted: boolean;
       picture: unknown;
     };
+    micropost_data: {
+      comments: number[];
+      liked: boolean;
+      likes: unknown[];
+      comments_count: number;
+      likes_count: number;
+      micropost: WallPost;
+      wall: WallComment; // Wall
+      author: EmeraldUser;
+      current_user: EmeraldUser;
+      subscribed: boolean;
+      muted: boolean;
+      picture: unknown;
+    };
     comment_data: {
       comment: WallComment;
       user: EmeraldUser;
@@ -752,7 +766,9 @@ declare class LikeButton extends React.Component<{
 
 declare class CommentSettings extends React.Component<{
   parent: Micropost;
-}> {}
+}> {
+  authorized(): boolean;
+}
 
 declare class BR extends React.Component<{
   children: React.ReactNode;

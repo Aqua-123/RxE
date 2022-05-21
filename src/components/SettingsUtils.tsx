@@ -43,12 +43,12 @@ export function createHackSetting(setting: hackList, props: HacksProps) {
 
 export function createRadio(setting: settingsList, props: SettingsProps) {
   const { applySettings } = props;
-  const value = props[setting] as boolean;
+  const value = props[setting];
   return (
     <RadioSetting
       id={setting}
       value={value}
-      onChange={() => applySettings({ [setting]: !value })}
+      onChange={(newSetting) => applySettings({ [setting]: newSetting })}
       inline={false}
     />
   );
