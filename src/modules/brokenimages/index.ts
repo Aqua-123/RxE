@@ -1,9 +1,81 @@
 import { getImageType } from "~src/bitutils";
 import { P, Preferences } from "~src/preferences";
+import { urlImageDirectLinkAny } from "../richtext/linkutils";
 import tickSVG from "./tick.svg";
 
 // 1. replace /badges/tick.svg broken images with a data: tickSVG URI
 // 2. do something cool with other broken images somehow.
+
+const isStaticImage: Record<string, boolean> = {};
+
+const ROBOHASH = "https://robohash.org/";
+const GEM_AVICON = "https://emeraldchat.com/avicons_strict/1.png";
+const DATA_IMAGE = "data:image";
+const IS_AVICON = (src: string) => src.includes("/avicons_strict/");
+const IS_MESSAGE_PIC = (img: Image) =>
+  img.classList.contains("room-component-message-picture");
+const ROBOHASH_CAT_FALLBACK = (s: string) =>
+  `https://robohash.org/yay${s}.png?set=set4`;
+
+// eslint-disable-next-line no-shadow
+enum FallbackLevel {
+  RobohashFallback,
+  AviconFallback,
+  NoFallbackAvailable
+}
+
+function fallbackLevel(img: Image): FallbackLevel {
+  if (IS_MESSAGE_PIC(img)) return FallbackLevel.NoFallbackAvailable;
+
+  if (img.src.startsWith(ROBOHASH) || img.src.startsWith(DATA_IMAGE)) {
+    return FallbackLevel.AviconFallback;
+  }
+
+  if (IS_AVICON(img.src)) {
+    return FallbackLevel.NoFallbackAvailable;
+  }
+
+  return FallbackLevel.RobohashFallback;
+}
+
+function useImageFallback(img: HTMLImageElement) {
+  if (img.onerror) return;
+
+  img.onerror = async () => {
+    switch (fallbackLevel(img)) {
+      case FallbackLevel.RobohashFallback:
+        img.src = ROBOHASH_CAT_FALLBACK(img.src);
+        break;
+      case FallbackLevel.AviconFallback:
+        img.src = GEM_AVICON;
+        break;
+      default:
+        break;
+    }
+  };
+}
+
+function applyAnimationRestriction(img: Image, srcOriginal?: string) {
+  if (isStaticImage[img.src] === true) {
+    if (srcOriginal) img.src = srcOriginal;
+    return true;
+  }
+  img.src = "https://emeraldchat.com/avicons_strict/1.png";
+  if (isStaticImage[img.src] === false) return true;
+  return false;
+}
+
+function restrictAnimation(img: Image) {
+  if (img.classList.contains("zoomIn")) return;
+  if (!urlImageDirectLinkAny().test(img.src)) return;
+  const { src: srcOriginal } = img;
+  if (applyAnimationRestriction(img)) return;
+
+  getImageType(srcOriginal).then((type) => {
+    isStaticImage[srcOriginal] = type !== "image/gif";
+    applyAnimationRestriction(img, srcOriginal);
+  });
+}
 
 export function renderBrokenImages() {
   // todo: overwrite Badge() -> this.badges.gold instead
@@ -17,34 +89,14 @@ export function renderBrokenImages() {
   });
 
   Array.from(document.images).forEach((img) => {
-    if (!img.onerror) {
-      img.onerror = async () => {
-        if (img.src.startsWith("https://robohash.org/yay"))
-          img.src = "https://emeraldchat.com/avicons_strict/1.png";
-        if (
-          img.src.startsWith("https://robohash.org/" || "data:image") ||
-          img.src.includes("/avicons_strict/") ||
-          img.classList.contains("room-component-message-picture")
-        )
-          return;
-        img.src = `https://robohash.org/yay${img.src}.png?set=set4`;
-      };
-    }
+    useImageFallback(img);
+
     if (img.complete && img.naturalHeight === 0) {
-      img.onerror("");
+      img.onerror?.("");
     }
-    if (
-      !Preferences.get(P.showAnimatedImages) &&
-      img.src.startsWith("https://i.imgur.com/") &&
-      !img.classList.contains("ritsu-image-static" && "zoomIn")
-    ) {
-      const url = img.src;
-      img.src = "https://emeraldchat.com/avicons_strict/1.png";
-      getImageType(url).then((type) => {
-        if (type === "image/gif") return;
-        img.classList.add("ritsu-image-static");
-        img.src = url;
-      });
+
+    if (Preferences.get(P.showAnimatedImages)) {
+      restrictAnimation(img);
     }
   });
 }
