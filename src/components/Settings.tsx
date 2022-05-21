@@ -3,46 +3,55 @@ import T from "~src/text";
 import styles from "./style.module.scss";
 import {
   SettingsProps,
-  createCheckBox,
-  createRadio,
-  createDiv,
-  createTextField,
-  createRegexSetting,
-  createMuteList
-} from "./SettingsUtils";
+  checkboxPreference,
+  radioPreference,
+  settingsSection,
+  textPreference,
+  mutelist
+} from "./SettingsComponents";
+import RegExpSetting from "./RegExpSetting";
 
 export default function Settings(props: SettingsProps) {
-  return React.createElement(
-    "div",
-    { className: styles.settings },
-    createDiv(styles.settingsSection, T.generalTitle),
-    createCheckBox("adBlocker", props),
-    createCheckBox("trackKarma", props),
-    createCheckBox("fancyColors", props),
-    createRadio("blockReqs", props),
-    createDiv(styles.settingsSection, T.imagesTitle),
-    createCheckBox("imgBlur", props),
-    createCheckBox("imgProtect", props),
-    createCheckBox("hidePfp", props),
-    createCheckBox("showAnimatedImages", props),
-    createCheckBox("imgControl", props),
-    createCheckBox("hideImageFallback", props),
-    createDiv(styles.settingsSection, T.messageTitle),
-    createCheckBox("antiSpam", props),
-    createCheckBox("showGender", props),
-    createCheckBox("showInfo", props),
-    createCheckBox("highlightMentions", props),
-    createCheckBox("bigEmoji", props),
-    createCheckBox("toggleEmbeds", props),
-    createCheckBox("largerText", props),
-    createDiv(styles.settingsSection, T.advancedTitle),
-    createCheckBox("ignoreURLBlacklist", props),
-    createTextField(
-      "imgurAPIKey",
-      props,
-      T.preferences.imgurAPIKey.placeholder
-    ),
-    createRegexSetting("muteRegexes", props, "i"),
-    createMuteList(props)
+  const { muteRegexes, applySettings } = props;
+
+  return (
+    <div className={styles.settings}>
+      {settingsSection(styles.settingsSection, T.generalTitle)}
+      {checkboxPreference("adBlocker", props)}
+      {checkboxPreference("trackKarma", props)}
+      {checkboxPreference("fancyColors", props)}
+      {radioPreference("blockReqs", props)}
+      {settingsSection(styles.settingsSection, T.imagesTitle)}
+      {checkboxPreference("imgBlur", props)}
+      {checkboxPreference("imgProtect", props)}
+      {checkboxPreference("hidePfp", props)}
+      {checkboxPreference("showAnimatedImages", props)}
+      {checkboxPreference("imgControl", props)}
+      {checkboxPreference("hideImageFallback", props)}
+      {settingsSection(styles.settingsSection, T.messageTitle)}
+      {checkboxPreference("antiSpam", props)}
+      {checkboxPreference("showGender", props)}
+      {checkboxPreference("showInfo", props)}
+      {checkboxPreference("highlightMentions", props)}
+      {checkboxPreference("bigEmoji", props)}
+      {checkboxPreference("toggleEmbeds", props)}
+      {checkboxPreference("largerText", props)}
+      {settingsSection(styles.settingsSection, T.advancedTitle)}
+      {checkboxPreference("ignoreURLBlacklist", props)}
+      {textPreference(
+        "imgurAPIKey",
+        props,
+        T.preferences.imgurAPIKey.placeholder
+      )}
+      <RegExpSetting
+        id="muteRegexes"
+        value={muteRegexes[0] ?? { source: "", flags: "" }}
+        onChange={({ source, flags }) =>
+          applySettings({ muteRegexes: [{ source, flags }] })
+        }
+        flagsAllowed="i"
+      />
+      {mutelist(props)}
+    </div>
   );
 }

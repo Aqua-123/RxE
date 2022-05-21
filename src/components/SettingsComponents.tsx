@@ -4,7 +4,6 @@ import { SettingsDialogSettings, SettingsDialogHacks } from "./SettingsDialog";
 import CheckboxSetting from "./CheckboxSetting";
 import RadioSetting from "./RadioSetting";
 import TextSetting from "./TextfieldSetting";
-import RegExpSetting from "./RegExpSetting";
 import { updateRoomMutes } from "~src/modules/permamute";
 import ListSetting from "./ListSetting";
 
@@ -15,52 +14,42 @@ export type HacksProps = SettingsDialogHacks & {
   applyHacks(obj: Partial<SettingsDialogHacks>): void;
 };
 
-type settingsList = keyof SettingsDialogSettings;
-type hackList = keyof SettingsDialogHacks;
-export function createCheckBox(setting: settingsList, props: SettingsProps) {
-  const { applySettings } = props;
-  const value = props[setting] as boolean;
+type Setting = keyof SettingsDialogSettings;
+
+export function checkboxPreference<Props extends SettingsProps | HacksProps>(
+  setting: KeysOfType<Props, boolean> & string,
+  props: Props
+) {
+  const { [setting]: value } = props;
+  const applySettings =
+    "applySettings" in props ? props.applySettings : props.applyHacks;
   return (
     <CheckboxSetting
       id={setting}
-      value={value}
+      value={value as boolean}
       onChange={() => applySettings({ [setting]: !value })}
     />
   );
 }
 
-export function createHackSetting(setting: hackList, props: HacksProps) {
-  const { applyHacks } = props;
-  const value = props[setting];
-  return (
-    <CheckboxSetting
-      id={setting}
-      value={value}
-      onChange={() => applyHacks({ [setting]: !value })}
-    />
-  );
-}
-
-export function createRadio(setting: settingsList, props: SettingsProps) {
-  const { applySettings } = props;
-  const value = props[setting];
+export function radioPreference(setting: Setting, props: SettingsProps) {
+  const { applySettings, [setting]: value } = props;
   return (
     <RadioSetting
       id={setting}
       value={value}
-      onChange={(newSetting) => applySettings({ [setting]: newSetting })}
+      onChange={(newValue) => applySettings({ [setting]: newValue })}
       inline={false}
     />
   );
 }
 
-export function createTextField(
-  setting: settingsList,
+export function textPreference(
+  setting: KeysOfType<SettingsProps, string>,
   props: SettingsProps,
   placeholder: string
 ) {
-  const { applySettings } = props;
-  const value = props[setting] as string;
+  const { applySettings, [setting]: value } = props;
   return (
     <TextSetting
       id={setting}
@@ -71,29 +60,10 @@ export function createTextField(
   );
 }
 
-export function createRegexSetting(
-  setting: settingsList,
-  props: SettingsProps,
-  flagsAllowed: string
+export function settingsSection(
+  className: string,
+  content: string | undefined
 ) {
-  const { applySettings } = props;
-  const value = props[setting] as {
-    source: string;
-    flags: string;
-  }[];
-  return (
-    <RegExpSetting
-      id={setting}
-      value={value[0] ?? { source: "", flags: "" }}
-      onChange={({ source, flags }) =>
-        applySettings({ [setting]: [{ source, flags }] })
-      }
-      flagsAllowed={flagsAllowed}
-    />
-  );
-}
-
-export function createDiv(className: string, content: string | undefined) {
   return <div className={`m1 ${className}`}>{content}</div>;
 }
 
@@ -102,7 +72,8 @@ function createUserProfile(id: number) {
   const userProfile = React.createElement(UserProfile, { id });
   ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
 }
-export function createMuteList(props: SettingsProps) {
+
+export function mutelist(props: SettingsProps) {
   const { applySettings, permaMuteList } = props;
   return (
     <ListSetting
