@@ -68,6 +68,6 @@ export function init() {
   Room.prototype.process = function process(message) {
     if (commands.process(message)) return null;
     if (commands.checkMail(message)) return commands.processMail(message);
-    return wrapMarkdown(sanitizeURL(message));
+    return sanitizeURL(wrapMarkdown(message));
   };
 }
