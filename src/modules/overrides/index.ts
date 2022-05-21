@@ -106,7 +106,7 @@ export function applyOverrides() {
     $(component[0]).removeClass("animated fadeIn");
     $(component[0]).removeClass("animated fadeOut");
     $(component[1]).addClass("animated zoomOut");
-    setTimeout(unmountComponent.bind(null, this), 150);
+    setTimeout(unmountComponent.bind(null, this), 70);
   }
 
   function menuClose(this: React.Component) {
@@ -160,9 +160,9 @@ export function applyOverrides() {
       messages: []
     });
     // eslint-disable-next-line no-shadow
-    Room.prototype.updated = rpUpdated.bind(this);
-    RoomClient?.updated(channelResponse);
-    Room.prototype.updated = function doNothing() {};
+    this.updated = rpUpdated.bind(this);
+    this.updated(channelResponse);
+    this.updated = function doNothing() {};
   };
 
   // fixing friends list crashing due to deleted accounts
