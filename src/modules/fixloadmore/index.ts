@@ -2,7 +2,7 @@ export function initLoadMore() {
   // using any because we wanna use .at() which apparetly is a lot faster than using [length - 1]
   function prepend(this: Room, messageArray: any[]) {
     RoomClient?.trim_messages();
-    const currentState = RoomClient?.state.messages;
+    const currentState = RoomClient?.state.messages as any[];
     if (!currentState) return;
     messageArray.forEach((messageObj) => {
       const lastElement = currentState.at(-1);
