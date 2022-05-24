@@ -1,25 +1,29 @@
 export function initLoadMore() {
-  Room.prototype.prepend = function prependboi(messageObj) {
-    this.trim_messages();
-    const currentState = this.state.messages;
-    const lastElement = currentState[currentState.length - 1];
-    const firstElement = currentState[0];
-    if (
-      firstElement &&
-      firstElement.user.id === messageObj.user.id &&
-      !lastElement.picture &&
-      !messageObj.picture &&
-      firstElement.messages.length < 16
-    ) {
-      const messagesArray = lastElement.messages;
-      const lastEle = messagesArray[messagesArray.length - 1];
-      if (messageObj.messages[0] === lastEle) return;
-      firstElement.messages.unshift(messageObj.messages[0]);
-    } else currentState.unshift(messageObj);
-    this.setState({
+  function prepend(this: Room, messageArray: MessageData[]) {
+    RoomClient?.trim_messages();
+    const currentState = RoomClient?.state.messages;
+    if (!currentState) return;
+    messageArray.forEach((messageObj) => {
+      const lastElement = currentState.at(-1);
+      if (!lastElement) return;
+      const firstElement = currentState[0];
+      if (
+        firstElement &&
+        firstElement.user.id === messageObj.user.id &&
+        !lastElement.picture &&
+        !messageObj.picture &&
+        firstElement.messages.length < 16
+      ) {
+        const messagesArray = lastElement.messages;
+        const lastEle = messagesArray.at(-1);
+        if (messageObj.messages[0] === lastEle) return;
+        firstElement.messages.unshift(messageObj.messages[0]);
+      } else currentState.unshift(messageObj);
+    });
+    RoomClient?.setState({
       messages: currentState
     });
-  };
+  }
   // sending a negetive value for the loaded length and subtracting
   // 20 from it seems to do the trick
   // although response is still weirdly reversed to have to
@@ -37,7 +41,7 @@ export function initLoadMore() {
       dataType: "json",
       success(resp: []) {
         const rev = resp.reverse();
-        rev.forEach((message) => RoomClient?.prepend(message));
+        prepend.bind(this)(rev);
       }
     });
   };
