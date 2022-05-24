@@ -20,5 +20,6 @@
     "**/data/**": true,
     "**/yarn.lock/**": true,
     "**/node_modules/**": true
-  }
+  },
+  "editor.fontFamily": "'MonoLisa', 'monospace', monospace, 'fira code'"
 }
