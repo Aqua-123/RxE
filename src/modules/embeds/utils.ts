@@ -21,12 +21,14 @@ export const spotifyID = (url: string) => {
 
 const youtubeDivString = (url: string) =>
   `<div class="ritsu-youtube-embed embed"> <iframe class="embed-responsive-item" 
+  loading="lazy"
   src="https://www.youtube.com/embed/${youtubeID(url)}"
   frameborder="0" allowfullscreen></iframe></div>`;
 
 const spotifyDivString = (url: string, height: number) =>
   `<div class="ritsu-spotify-embed spotify embed"><iframe 
   src="https://open.spotify.com/embed/${spotifyID(url)}?utm_source=generator"
+  loading="lazy"
   height="${height} !important" frameBorder="0" allowfullscreen="" 
   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
   </iframe></div>`;
@@ -40,7 +42,7 @@ export function returnInnerHtml(url: string) {
   if (isYoutube(url) && youtubeID(url)) return youtubeDivString(url);
   if (isSpotify(url) && spotifyID(url))
     return spotifyDivString(url, spotifyDivHeight(url));
-  return "";
+  return null;
 }
 
 export function maybeEmbed(text: string) {

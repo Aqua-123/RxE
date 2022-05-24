@@ -10,20 +10,16 @@ function embedMessages(className: string) {
   const messageList = document.querySelectorAll(`.${className}`);
   if (!allowEmbeds || !messageList) return;
   messageList.forEach((element) => {
-    const childs = Array.from(element.children);
+    const childs = Array.from(element.children) as HTMLElement[];
     if (!childs) return;
     childs.forEach((message) => {
-      // check if embed already created
-      const children = Array.from(message.children);
-      if (children.some((child) => child.classList.contains("embed"))) return;
-      const messageboi = message as HTMLElement;
-      const text = desanitizeURL(messageboi.innerText);
+      if (message.querySelectorAll(".embed").length) return;
+      const text = desanitizeURL(message.innerText);
       if (!isYoutube(text) && !isSpotify(text)) return;
       const embed = document.createElement("div");
       embed.classList.add("embed");
-      messageboi.innerHTML = "";
       embed.innerHTML = newLineHtml + returnInnerHtml(text);
-      messageboi.appendChild(embed);
+      message.appendChild(embed);
     });
   });
 }
