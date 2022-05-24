@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from "react";
 import { ListPreference, Preference } from "ts-preferences";
 import { PA } from "~src/preferences";
