@@ -307,7 +307,8 @@ export function markTextOnly() {
       const element = e as HTMLElement;
       if (
         element.classList.contains("text-only") ||
-        element.querySelector(".room-component-message-picture" || ".embed")
+        element.querySelector(".room-component-message-picture") ||
+        element.querySelector(".embed")
       )
         return;
       element.classList.add("text-only");
