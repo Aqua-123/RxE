@@ -1,31 +1,40 @@
+import { getUserId } from "~src/utils";
 import { fasterAppend } from "../messages";
 
 export function initLoadMore() {
-  function prepend(this: Room, messageArray: MessageData[]) {
+  function prepend(this: Room, newMessages: MessageData[]) {
     RoomClient?.trim_messages();
-    const currentState = RoomClient?.state.messages;
-    if (!currentState) return;
-    messageArray.forEach((messageObj) => {
-      // @ts-ignore
-      const lastElement = currentState.at(-1);
-      if (!lastElement) return;
-      const firstElement = currentState[0];
-      if (
-        firstElement &&
-        firstElement.user.id === messageObj.user.id &&
-        !lastElement.picture &&
-        !messageObj.picture &&
-        firstElement.messages.length < 16
-      ) {
-        const messagesArray = lastElement.messages;
-        // @ts-ignore
-        const lastEle = messagesArray.at(-1);
-        if (messageObj.messages[0] === lastEle) return;
-        firstElement.messages.unshift(messageObj.messages[0]);
-      } else currentState.unshift(messageObj);
+    const messagesStored = RoomClient?.state.messages;
+    if (!messagesStored) return;
+    newMessages.forEach((newMessage /* singleton */) => {
+      if (messagesStored.length === 0) messagesStored.unshift(newMessage);
+
+      const followingMessageBlk = messagesStored[0];
+
+      const messageFromSameUser =
+        getUserId(followingMessageBlk.user) === getUserId(newMessage.user);
+
+      const picturePreventsAppending =
+        followingMessageBlk.picture || newMessage.picture;
+
+      const oldBlockTooLong = followingMessageBlk.messages.length >= 16;
+
+      if (!messageFromSameUser || picturePreventsAppending || oldBlockTooLong) {
+        messagesStored.unshift(newMessage);
+        return;
+      }
+
+      const messageText = newMessage.messages[0];
+
+      const duplicateMessage = followingMessageBlk.messages[0] === messageText;
+
+      if (!duplicateMessage) {
+        followingMessageBlk.messages.unshift(newMessage.messages[0]);
+      }
     });
+
     RoomClient?.setState({
-      messages: currentState
+      messages: messagesStored
     });
   }
   // sending a negetive value for the loaded length and subtracting
@@ -45,7 +54,7 @@ export function initLoadMore() {
       dataType: "json",
       success(resp: []) {
         const rev = resp.reverse();
-        prepend.bind(this)(rev);
+        prepend.call(this, rev);
       }
     });
   };
