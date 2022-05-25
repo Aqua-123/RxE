@@ -51,7 +51,7 @@ export const P = {
   imgBlur: new BooleanPreference({
     key: "imgBlur",
     label: T.preferences.imgBlur.label,
-    default: true
+    default: false
   }),
   hidePfp: new BooleanPreference({
     key: "hidePfP",
@@ -185,7 +185,7 @@ export const P = {
   showAnimatedImages: new BooleanPreference({
     key: "showAnimatedImages",
     label: T.preferences.showAnimatedImages.label,
-    default: false
+    default: true
   })
 } as const;
 
