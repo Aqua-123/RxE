@@ -64,7 +64,9 @@ export function processImage(
       text,
       urlImageDirectLinkAny(),
       (url) => picture({ url: `https://${url}` }),
-      restWrapper
+      // Discard surrounding text to get rid of image placeholder text.
+      // TODO: Mark placeholder with invis disappearing markup.
+      () => ""
     );
   }
 
