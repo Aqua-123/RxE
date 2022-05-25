@@ -28,7 +28,7 @@ function showKarmaChange(change: number) {
 
 function updateKarma(karma: number) {
   if (karma === currentKarma) return;
-  if (currentKarma) showKarmaChange(karma - currentKarma);
+  if (currentKarma !== null) showKarmaChange(karma - currentKarma);
   currentKarma = karma;
   const karmaTracker = document.querySelector(".karma-tracker");
   if (!karmaTracker) return;
