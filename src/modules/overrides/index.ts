@@ -5,6 +5,7 @@ import { Preferences } from "~src/preferences";
 import { PX } from "~src/x/preferences";
 import window from "~src/browserWindow";
 import { Spinner } from "~src/components/Spinner";
+import { fasterAppend } from "../messages";
 
 function hackOverrides() {
   if (!FEATURES.HACKS) return;
@@ -428,6 +429,49 @@ export function applyOverrides() {
       )
     );
   };
-
+  const stateObj = {
+    match: "text",
+    match_video: "video",
+    match_voice: "voice",
+    channel: "",
+    private: ""
+  };
+  Room.prototype.componentDidMount = function componentDidMount() {
+    this.clear_print();
+    const { mode } = this.state;
+    const action = stateObj[mode];
+    if (action) {
+      this.setState({
+        print: React.createElement(MatchMenu, {
+          data: { queue: action }
+        })
+      });
+    } else if (mode === "channel") {
+      this.setState({
+        right_panel: true,
+        left_panel: true,
+        print: ""
+      });
+    } else if (mode === "private") {
+      this.setState({
+        right_panel: true,
+        left_panel: true
+      });
+      $.ajax({
+        type: "GET",
+        url: `/default_private_messages?id=${this.props.data.id}`,
+        dataType: "json",
+        success: function join(this: Room, e: any) {
+          App.room.join(this.props.data.id);
+          fasterAppend.call(this, e.messages);
+          this.setState({
+            messages_count: e.messages_count,
+            id: this.props.data.id
+          });
+          this.scroll();
+        }.bind(this)
+      });
+    }
+  };
   if (FEATURES.HACKS) hackOverrides();
 }

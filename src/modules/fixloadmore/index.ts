@@ -1,3 +1,5 @@
+import { fasterAppend } from "../messages";
+
 export function initLoadMore() {
   function prepend(this: Room, messageArray: MessageData[]) {
     RoomClient?.trim_messages();
@@ -65,7 +67,7 @@ export function initLoadMore() {
       url: `/default_private_messages?id=${id}`,
       dataType: "json",
       success: (resp: PrivateMessage) => {
-        resp.messages.forEach((message) => this.append(message));
+        fasterAppend.call(this, resp.messages);
         this.setState({
           messages_count: resp.messages_count
         });

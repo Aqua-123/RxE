@@ -366,9 +366,7 @@ declare class PictureAlbum extends React.Component<
 
 declare class PictureUpload extends React.Component<
   {},
-  {
-    failureReason?: string;
-  }
+  { failureReason?: string }
 > {
   uploadImage?(): void; // custom
   body(): void;
@@ -376,17 +374,21 @@ declare class PictureUpload extends React.Component<
 }
 declare const RoomClient: null | Room;
 
-declare class Room extends React.Component {
+declare class Room extends React.Component<// add props
+{
+  data: { id: number };
+}> {
   state: {
     messages_count: number;
     messages: MessageData[];
     id: null | number | string;
-    mode: "private" | "channel";
+    mode: "private" | "channel" | "match" | "match_video" | "match_voice";
     print: JSX.Element | null;
     print_append: JSX.Element | null;
     typing: string | null;
     last_message: string | null;
   };
+  componentDidMount(): void;
   switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
   send_picture(picture: EmeraldPicture): void;
   sendRitsuPicture?(id: RitsuChatImage): void; // custom
@@ -414,6 +416,13 @@ declare class Room extends React.Component {
   disconnected(e: AppInterface): void;
 }
 
+declare class MatchMenu extends React.Component<{
+  data: {
+    queue: string;
+  };
+}> {
+  body(): JSX.Element;
+}
 declare type EmeraldChannel = {
   capacity: number;
   channel_type: "text" | "voice";
@@ -756,7 +765,7 @@ declare type PrivateMessageArray = {
   messages: string[];
 };
 declare type PrivateMessage = {
-  messages: PrivateMessageArray[];
+  messages: MessageData[];
   messages_count: number;
 };
 

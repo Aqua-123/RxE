@@ -41,10 +41,8 @@ export function init() {
     Dashboard.prototype,
     "render",
     function render() {
-      // todo: this isn't available immediately
-      if (App.user.bio !== undefined)
+      if (App.user.bio)
         this.state.user.display_picture = getDisplayPicture(App.user);
-      else console.warn("App.user.bio is undefined");
     },
     true
   );

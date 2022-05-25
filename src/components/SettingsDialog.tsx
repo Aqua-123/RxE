@@ -51,14 +51,13 @@ export default class SettingsDialog extends React.Component<
   };
 
   applyHacks_ = (obj: SettingsDialogHacks) => {
-    if (FEATURES.HACKS) {
-      const { hacks_ } = this.state;
-      const newHacks = { ...hacks_, ...obj };
-      const keys = Object.keys(obj);
-      keys.forEach((key) => Preferences.set(PX?.[key]!, obj[key]));
-      applySettings();
-      this.setState({ hacks_: newHacks, needsReload: true });
-    }
+    if (!FEATURES.HACKS) return;
+    const { hacks_ } = this.state;
+    const newHacks = { ...hacks_, ...obj };
+    const keys = Object.keys(obj);
+    keys.forEach((key) => Preferences.set(PX?.[key]!, obj[key]));
+    applySettings();
+    this.setState({ hacks_: newHacks, needsReload: true });
   };
 
   render() {

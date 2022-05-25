@@ -19,6 +19,33 @@ function getRoomMember(id: number) {
   return (members || membersPersistent).find((user) => user?.id === id);
 }
 
+// try using this instead of regular this.append
+export function fasterAppend(this: Room, messageArr: MessageData[]) {
+  const max = this.state.mode === "channel" ? 50 : 5000;
+  const { messages } = this.state;
+  messageArr.forEach((element) => {
+    if (element.messages.length === 0) element.messages.push("");
+    if (messages.length > max) messages.shift();
+    const lastMessage = messages[messages.length - 1];
+    if (
+      lastMessage &&
+      getUserId(lastMessage.user) === getUserId(element.user) &&
+      !lastMessage.picture &&
+      !element.picture &&
+      lastMessage.messages.length < 16
+    ) {
+      const n = lastMessage.messages;
+      const r = n[n.length - 1];
+      if (element.messages[0] === r) return;
+      if (maybeEmbed(r)) messages.push(element);
+      lastMessage.messages.push(element.messages[0]);
+    } else messages.push(element);
+  });
+  this.setState({
+    messages
+  });
+}
+
 export function initMessages() {
   loadCSS(css);
   Message.prototype.content = function content() {
@@ -272,33 +299,9 @@ export function betterMessageRendering() {
   };
 
   Room.prototype.append = function append(e) {
-    // For some reason, pictures we send don't render for ourselves initially.
-    // Setting e.messages to [""] fixes that, although I don't know why yet.
-    if (e.messages.length === 0) e.messages.push("");
-    // inline trim_message and append here to avoid extra .setState()/renders
-    const max = this.state.mode === "channel" ? 50 : 5000; // original= 50: 5000
-    const { messages } = this.state;
-    if (messages.length > max) messages.shift();
-    const lastMessage = messages[messages.length - 1];
-    if (
-      lastMessage &&
-      getUserId(lastMessage.user) === getUserId(e.user) &&
-      !lastMessage.picture &&
-      !e.picture &&
-      lastMessage.messages.length < 16
-    ) {
-      const n = lastMessage.messages;
-      const r = n[n.length - 1];
-      if (e.messages[0] === r) return;
-      if (maybeEmbed(r)) messages.push(e);
-      lastMessage.messages.push(e.messages[0]);
-    } else messages.push(e);
-    this.setState({
-      messages
-    });
+    fasterAppend.call(this, [e]);
   };
 }
-
 export function markTextOnly() {
   const textOnly = document.querySelectorAll(".room-component-message-text");
   textOnly.forEach((child) => {

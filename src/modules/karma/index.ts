@@ -28,13 +28,10 @@ function showKarmaChange(change: number) {
 
 function updateKarma(karma: number) {
   if (karma === currentKarma) return;
-  if (currentKarma !== null) {
-    showKarmaChange(karma - currentKarma);
-  }
+  if (currentKarma) showKarmaChange(karma - currentKarma);
   currentKarma = karma;
   const karmaTracker = document.querySelector(".karma-tracker");
   if (!karmaTracker) return;
-
   karmaTracker.textContent = karma ? `Karma: ${karma}` : "";
 }
 
@@ -147,11 +144,8 @@ function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
   // Replace or add new members
   existing(currentChannel.members).forEach((oldMember) => {
     const newPosition = newMembers.findIndex(({ id }) => id === oldMember.id);
-    if (newPosition > -1) {
-      newMembers[newPosition] = oldMember;
-    } else {
-      newMembers.push(oldMember);
-    }
+    if (newPosition > -1) newMembers[newPosition] = oldMember;
+    else newMembers.push(oldMember);
   });
   const persistentState = updatePersistentState(newMembers);
   RoomChannelMembersClient.setState({

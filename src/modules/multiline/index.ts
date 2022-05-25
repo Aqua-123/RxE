@@ -98,11 +98,10 @@ export function multiLineOverride() {
   };
 
   function prependMicropost(this: Microposts, post: EmeraldMicropost) {
-    const { data } = this.state;
-    const newState = [post.micropost.id];
-    if (data) newState.push(...data.microposts);
+    let { data } = this.state;
+    if (!data) data = { microposts: [] };
     this.setState({
-      data: { microposts: newState }
+      data: { microposts: [post.micropost.id, ...data.microposts] }
     });
   }
 
