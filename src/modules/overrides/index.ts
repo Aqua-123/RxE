@@ -122,16 +122,6 @@ export function applyOverrides() {
     });
   };
 
-  function appendyboi(channelresp: ChannelJsonResponse) {
-    const { messages } = channelresp;
-    RoomChannelMembersClient.setState({
-      members: channelresp.members
-    });
-    messages.forEach((message) => {
-      RoomClient?.append(message);
-    });
-  }
-
   function rpUpdated(this: Room, resp: ChannelJsonResponse) {
     const { channel } = resp;
     this.setState({
@@ -143,7 +133,12 @@ export function applyOverrides() {
       url: `channel_json?id=${channel.id}`,
       dataType: "json",
       success(channelresp) {
-        appendyboi(channelresp);
+        const { messages } = channelresp;
+        RoomChannelMembersClient.setState({
+          members: channelresp.members
+        });
+        if (RoomClient) fasterAppend.call(RoomClient, messages);
+        RoomClient?.scroll();
       }
     });
     App.room.join(`channel${channel.id}`);
