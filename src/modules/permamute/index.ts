@@ -94,17 +94,13 @@ export function initPermaMute() {
   };
   UserView.prototype.mute = function mute() {
     App.room.mute(this.state.user.id);
-    this.setState({
-      muted: !0
-    });
+    this.setState({ muted: !0 });
     updateEverything();
   };
   UserView.prototype.unmute = function unmute() {
     const { id } = this.state.user;
     App.room.unmute(id);
-    this.setState({
-      muted: !1
-    });
+    this.setState({ muted: !1 });
     updateEverything();
     clearRating(id);
   };

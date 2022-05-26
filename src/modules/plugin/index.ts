@@ -17,9 +17,7 @@ function addEventListener(name: string, fn: Function) {
 function removeEventListener(name: string, fn: Function) {
   if (!listeners[name]) listeners[name] = [];
   const i = listeners[name].indexOf(fn);
-  if (i > -1) {
-    listeners[name].splice(i, 1);
-  }
+  if (i > -1) listeners[name].splice(i, 1);
 }
 
 function dispatchEvent(name: string, object: Record<string, any>) {

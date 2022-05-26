@@ -7,13 +7,6 @@ import { profilePicture } from "./uploadComponents";
 
 export function init() {
   loadCSS(css);
-  loadCSS(`.room-component-message-avatar {
-  color: transparent;
-  }
-
-  #ritsu-profile-picture-upload {
-    display: none;
-  }`);
   UserProfile.prototype.profile_picture = profilePicture;
   const { Comment } = browserWindow;
   const MNU = MessageNotificationUnit;

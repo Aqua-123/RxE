@@ -16,14 +16,9 @@ export function getDisplayPicture(user: Partial<EmeraldUser>): string {
     return fallback;
   }
   const imageCompressed = extractBioImage(user.bio);
-  if (imageCompressed) {
-    const imageUnpacked = unpackImage(imageCompressed);
-    if (imageUnpacked) {
-      // console.log(`loaded custom image for user ${user.display_name}`);
-      return imageUnpacked;
-    }
-  }
-  return fallback;
+  if (!imageCompressed) return fallback;
+  const imageUnpacked = unpackImage(imageCompressed);
+  return imageUnpacked || fallback;
 }
 
 function necessaryUserProps(user: any): boolean {

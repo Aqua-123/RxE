@@ -49,9 +49,7 @@ export async function saveBio(user: EmeraldUser, bio: string) {
         updatePicToAlbum(bio);
         resolve();
       },
-      error() {
-        reject();
-      }
+      error: () => reject()
     } as JQueryAjaxSettings); // old jQuery moment
   });
 }

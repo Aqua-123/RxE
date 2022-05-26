@@ -51,58 +51,57 @@ export function profilePicture(this: UserProfile) {
   const { user, current_user: currentUser } = this.state.data;
   const onDrop = onDropHandler(user);
   const { display_picture: displayPicture } = user;
-  if (user.id === currentUser.id) {
-    // const dragNDrop =
-    // React.createElement('span', { onDrop }, 'DRAG &', React.createElement('br'), 'DROP')
-    const dragNDrop = null;
+  if (user.id !== currentUser.id) {
     return (
-      <span onDrop={onDrop}>
-        <img
-          alt="User avatar"
-          className="user-profile-avatar"
-          src={displayPicture}
-          onDrop={onDrop}
-        />
-        <input
-          id="ritsu-profile-picture-upload"
-          type="file"
-          onChange={uploadHandler(user, FORMATS.IMGUR)}
-          onDrop={onDrop}
-        />
-        <label
-          className="user-profile-picture-hover"
-          htmlFor="ritsu-profile-picture-upload"
-          onDrop={onDrop}
-        >
-          {dragNDrop}
-          <span
-            className="material-icons"
-            style={{ fontSize: "36px" }}
-            title="Upload a profile picture"
-          >
-            cloud_upload
-          </span>
-        </label>
-        <input
-          id="ritsu-profile-picture-use-existing"
-          style={{ fontSize: "12px" }}
-          className="btn"
-          title="Upload using imgur"
-          onDrop={onDrop}
-          type="button"
-          value="Add from Imgur"
-          onClick={fromURLHandler(user, FORMATS.IMGUR)}
-        />
-      </span>
+      <img
+        className="user-profile-avatar"
+        alt="User avatar"
+        src={displayPicture}
+        {...onClickOrKeyUp(openUserPicture(user))}
+      />
     );
   }
-
+  // const dragNDrop =
+  // React.createElement('span', { onDrop }, 'DRAG &', React.createElement('br'), 'DROP')
+  const dragNDrop = null;
   return (
-    <img
-      className="user-profile-avatar"
-      alt="User avatar"
-      src={displayPicture}
-      {...onClickOrKeyUp(openUserPicture(user))}
-    />
+    <span onDrop={onDrop}>
+      <img
+        alt="User avatar"
+        className="user-profile-avatar"
+        src={displayPicture}
+        onDrop={onDrop}
+      />
+      <input
+        id="ritsu-profile-picture-upload"
+        type="file"
+        onChange={uploadHandler(user, FORMATS.IMGUR)}
+        onDrop={onDrop}
+      />
+      <label
+        className="user-profile-picture-hover"
+        htmlFor="ritsu-profile-picture-upload"
+        onDrop={onDrop}
+      >
+        {dragNDrop}
+        <span
+          className="material-icons"
+          style={{ fontSize: "36px" }}
+          title="Upload a profile picture"
+        >
+          cloud_upload
+        </span>
+      </label>
+      <input
+        id="ritsu-profile-picture-use-existing"
+        style={{ fontSize: "12px" }}
+        className="btn"
+        title="Upload using imgur"
+        onDrop={onDrop}
+        type="button"
+        value="Add from Imgur"
+        onClick={fromURLHandler(user, FORMATS.IMGUR)}
+      />
+    </span>
   );
 }
