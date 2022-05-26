@@ -95,12 +95,10 @@ export function applyOverrides() {
    * not something that happens on every click.
    */
   function unmountComponent(c: React.Component) {
-    if ((c as any).updater.isMounted(c)) {
-      const node = ReactDOM.findDOMNode(c);
-      if (node) {
-        ReactDOM.unmountComponentAtNode(node.parentNode as Element);
-      }
-    }
+    if (!(c as any).updater.isMounted(c)) return;
+    const node = ReactDOM.findDOMNode(c);
+    if (!node) return;
+    ReactDOM.unmountComponentAtNode(node.parentNode as Element);
   }
   // standard function to close things
   function closeStuff(this: React.Component, component: string[]) {
@@ -124,9 +122,7 @@ export function applyOverrides() {
 
   function rpUpdated(this: Room, resp: ChannelJsonResponse) {
     const { channel } = resp;
-    this.setState({
-      current_channel: channel
-    });
+    this.setState({ current_channel: channel });
     if (channel.channel_type === "voice") this.voice_connect(resp);
     $.ajax({
       type: "GET",
@@ -152,9 +148,7 @@ export function applyOverrides() {
   ) {
     if (App.webrtc.client) this.voice_disconnect();
     this.expand(!1);
-    RoomClient?.setState({
-      messages: []
-    });
+    this.setState({ messages: [] });
     // eslint-disable-next-line no-shadow
     this.updated = rpUpdated.bind(this);
     this.updated(channelResponse);
@@ -169,41 +163,33 @@ export function applyOverrides() {
       dataType: "json",
       success: function mountFriends(this: FriendsMenu, resp: FriendsJson) {
         const { friends } = resp;
-        resp.friends = friends.filter((x: EmeraldUser) => x !== null);
-        this.setState(resp);
-        const skippedMissing = this.state.skippedMissing
-          ? this.state.skippedMissing
-          : 0;
-        const skippedFriends = friends.filter((x: EmeraldUser) => x === null);
+        resp.friends = friends.filter((x) => x !== null);
+        const skippedMissing = this.state.skippedMissing || 0;
+        const skippedFriends = friends.filter((x) => x === null);
         this.setState({
+          friends: resp.friends,
+          count: resp.count,
           skippedMissing: skippedMissing + skippedFriends.length
         });
       }.bind(this)
     });
   };
-
   FriendsMenu.prototype.load_friends = function moreFriends() {
-    let skippedMissing: number = 0;
-    if (this.state.skippedMissing) skippedMissing = this.state.skippedMissing;
+    const skippedMissing = this.state.skippedMissing || 0;
+    const correctedCount = this.state.friends.length + skippedMissing;
     $.ajax({
       type: "GET",
-      url: `/load_friends_json?offset=${
-        this.state.friends.length + skippedMissing
-      }`,
+      url: `/load_friends_json?offset=${correctedCount}`,
       dataType: "json",
       success: function loadFriends(
         this: FriendsMenu,
         friendsList: EmeraldUser[]
       ) {
         if (friendsList.length === 0) return;
-        const skippedFriends = friendsList.filter(
-          (x: EmeraldUser) => x === null
-        );
-        this.setState({
-          skippedMissing: skippedMissing + skippedFriends.length
-        });
-        const list = friendsList.filter((x) => x !== null);
+        const skippedFriends = friendsList.filter((x) => x === null);
+        const list = friendsList.filter((x) => !skippedFriends.includes(x));
         const state = {
+          skippedMissing: skippedMissing + skippedFriends.length,
           search: [],
           friends: [...this.state.friends, ...list],
           count: this.state.count
@@ -258,14 +244,8 @@ export function applyOverrides() {
       type: "GET",
       url: `/profile_json?id=${this.props.id}`,
       dataType: "json",
-      success: (resp: ProfileData) => {
-        this.setState({
-          data: resp
-        });
-      },
-      error: () => {
-        this.close();
-      }
+      success: (resp: ProfileData) => this.setState({ data: resp }),
+      error: () => this.close()
     });
   };
 
@@ -277,9 +257,7 @@ export function applyOverrides() {
       (user) => user?.id === inputUser.id
     )?.display_name;
     if (!name) name = inputUser.display_name;
-    this.setState({
-      typing: name
-    });
+    this.setState({ typing: name });
     window.typing_timer = setTimeout(() => {
       this.stop_typing();
     }, 1e4);
@@ -437,9 +415,7 @@ export function applyOverrides() {
     const action = stateObj[mode];
     if (action) {
       this.setState({
-        print: React.createElement(MatchMenu, {
-          data: { queue: action }
-        })
+        print: React.createElement(MatchMenu, { data: { queue: action } })
       });
     } else if (mode === "channel") {
       this.setState({

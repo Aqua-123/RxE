@@ -122,9 +122,12 @@ function updatePersistentState(newMembers: EmeraldUser[]) {
   const newPersistentMembers = newMembers.filter(
     (member) => !persistentMembers.find((m) => m?.id === member.id)
   );
-
-  // TODO: Impose limit to prevent memory leak
-  return [...persistentMembers, ...newPersistentMembers];
+  const newState = [...persistentMembers, ...newPersistentMembers];
+  // Remove old members from persistent state if too large
+  if (newState.length > 100) {
+    newState.splice(0, newState.length - 100);
+  }
+  return newState;
 }
 
 /** Returns a boolean indicating whether the current user was updated. */

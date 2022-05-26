@@ -234,11 +234,11 @@ export function betterMessageRendering() {
 
   function overrideName(e: MessageData) {
     const override = RoomChannelMembersClient?.state?.members_persistent;
-    if (!override) return e;
+    if (!override) return e.user;
     override.forEach((member) => {
       if (member?.id === e.user.id) e.user = member;
     });
-    return e;
+    return e.user;
   }
 
   Room.prototype.room_messages = function roomMessages(
@@ -285,12 +285,9 @@ export function betterMessageRendering() {
         {emptyMessage}
         {loadMore}
         {this.state.messages.map((data) => {
-          if (!data.key) {
-            data.key = makeKey();
-          }
-          // Prevent updated user name from resetting on leaving
-          const newData = overrideName(data);
-          return <Message data={newData} key={newData.key} />;
+          data.user = overrideName(data);
+          if (!data.key) data.key = makeKey();
+          return <Message data={data} key={data.key} />;
         })}
         {this.state.print_append}
       </div>

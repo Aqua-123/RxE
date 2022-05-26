@@ -572,6 +572,7 @@ declare class FriendsMenu extends React.Component<
 > {
   componentDidMount(): void;
   load_friends(): void;
+  scroll(): void;
 }
 
 declare type FriendsJson = {
