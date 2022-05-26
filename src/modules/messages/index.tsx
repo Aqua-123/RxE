@@ -41,9 +41,9 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
       lastMessage.messages.push(element.messages[0]);
     } else messages.push(element);
   });
-  this.setState({
-    messages
-  });
+  // prevent using this.setState if only one message was added
+  if (messageArr.length === 1) this.state.messages = messages;
+  else this.setState({ messages });
 }
 
 export function initMessages() {
@@ -206,8 +206,7 @@ export function decorateMessages() {
 
     // If we removed all of them, don't bother decorating.
     // eslint-disable-next-line no-continue
-    if (!messageLines) continue;
-    if (!(messageLines[0] as HTMLElement).classList) return;
+    if (!messageLines || !(messageLines[0] as HTMLElement).classList) return;
 
     // Mark as jumbo emoji in limited circumstances.
     if (
