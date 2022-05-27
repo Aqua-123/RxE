@@ -4,9 +4,8 @@ export function initAudio() {
     if (
       target instanceof HTMLElement &&
       target.classList.contains("mute-button")
-    ) {
+    )
       Cookies.set("muted", MuteButtonClient.state.muted ? "t" : "");
-    }
   });
 
   // if no setting found, start with audio ping on every message disabled

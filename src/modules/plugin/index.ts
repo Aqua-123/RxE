@@ -35,9 +35,8 @@ function dispatchEvent(name: string, object: Record<string, any>) {
 }
 
 function fixTyping(obj: MessageData) {
-  if (obj.typing) {
-    RoomClient?.start_typing(obj.user);
-  } else RoomClient?.stop_typing();
+  if (obj.typing) RoomClient?.start_typing(obj.user);
+  else RoomClient?.stop_typing();
 }
 export function initPluginAPI() {
   const RxE = {
@@ -51,15 +50,9 @@ export function initPluginAPI() {
     dispatchEvent("room.join", { room });
     wrapMethod(App.room.client, "received", (e) => {
       dispatchEvent("room.received", e);
-      if (e.user && e.user_disconnected) {
-        dispatchEvent("user.left", e);
-      }
-      if (e.user && e.user_connected) {
-        dispatchEvent("user.joined", e);
-      }
-      if (e.messages && e.messages.length) {
-        dispatchEvent("user.message", e);
-      }
+      if (e.user && e.user_disconnected) dispatchEvent("user.left", e);
+      if (e.user && e.user_connected) dispatchEvent("user.joined", e);
+      if (e.messages && e.messages.length) dispatchEvent("user.message", e);
       fixTyping(e);
     });
   });

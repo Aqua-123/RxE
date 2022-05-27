@@ -24,9 +24,8 @@ export function decorateHeader() {
   // set title
   const displayName = App.user.display_name ?? "(...)";
   const title = `${displayName} - ${U.shortName} ${U.version}`;
-  if (document.title !== title) {
-    document.title = title;
-  }
+  if (document.title !== title) document.title = title;
+
   // add karma placeholder
   const karmaTracker = document.querySelector(".karma-tracker");
   if (!karmaTracker) {
@@ -48,12 +47,15 @@ export function decorateHeader() {
   }
   // add fullscreen button
   const iconsHolder = document.querySelector(".navigation-notification-icons");
+  // check if using mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (
     document.fullscreenEnabled &&
     iconsHolder?.children &&
     !Array.from(iconsHolder?.children).some((child) =>
       child?.textContent?.includes("full")
-    )
+    ) &&
+    !isMobile
   ) {
     const fullscreenIcon = crel("span", {
       className: "material-icons navigation-notification-unit",
