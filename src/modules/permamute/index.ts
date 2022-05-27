@@ -24,7 +24,6 @@ export function initPermaMute() {
     const permamuted = Preferences.get(P.permaMuteList)
       .map((x) => x[0])
       .includes(id);
-
     return React.createElement(
       "div",
       { className: "user-profile-micro-bottom" },
@@ -94,13 +93,13 @@ export function initPermaMute() {
   };
   UserView.prototype.mute = function mute() {
     App.room.mute(this.state.user.id);
-    this.setState({ muted: !0 });
+    this.setState({ muted: true });
     updateEverything();
   };
   UserView.prototype.unmute = function unmute() {
     const { id } = this.state.user;
     App.room.unmute(id);
-    this.setState({ muted: !1 });
+    this.setState({ muted: false });
     updateEverything();
     clearRating(id);
   };

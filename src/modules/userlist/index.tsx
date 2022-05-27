@@ -59,45 +59,51 @@ export function initUserList() {
         </div>
       );
     }
+    const lookupBtn = (
+      <button
+        className="material-icons navigation-notification-unit lookup-button"
+        onClick={lookup}
+        type="button"
+      >
+        face
+      </button>
+    );
+    const sortUsers = (
+      <div className="navigation-dropdown-content">
+        <div>{T.preferences.userSort.label}</div>
+        {(["name.asc", "name.desc", "age.asc", "age.desc"] as const).map(
+          (key) => (
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+            <li
+              className={Preferences.get(P.userSort) === key ? "selected" : ""}
+              onClick={() => applySort(key)}
+            >
+              {T.preferences.userSort[key]}
+            </li>
+          )
+        )}
+      </div>
+    );
+    const userList = existing(members).map((e) =>
+      React.createElement(UserUnit, {
+        key: e.id,
+        data: e
+      })
+    );
+
     return (
       <div className="room-component-module">
         <div className="room-user-label">
-          <button
-            className="material-icons navigation-notification-unit lookup-button"
-            onClick={lookup}
-            type="button"
-          >
-            face
-          </button>
+          {lookupBtn}
           {`online \u2014 ${members.length}`}
           <div className="navigation-dropdown sort-button">
             <span className="material-icons navigation-notification-unit">
               arrow_drop_down
             </span>
-            <div className="navigation-dropdown-content">
-              <div>{T.preferences.userSort.label}</div>
-              {(["name.asc", "name.desc", "age.asc", "age.desc"] as const).map(
-                (key) => (
-                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-                  <li
-                    className={
-                      Preferences.get(P.userSort) === key ? "selected" : ""
-                    }
-                    onClick={() => applySort(key)}
-                  >
-                    {T.preferences.userSort[key]}
-                  </li>
-                )
-              )}
-            </div>
+            {sortUsers}
           </div>
         </div>
-        {existing(members).map((e) =>
-          React.createElement(UserUnit, {
-            key: e.id,
-            data: e
-          })
-        )}
+        {userList}
       </div>
     );
   };

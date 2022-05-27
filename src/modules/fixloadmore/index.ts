@@ -28,34 +28,29 @@ export function initLoadMore() {
 
       const duplicateMessage = followingMessageBlk.messages[0] === messageText;
 
-      if (!duplicateMessage) {
-        followingMessageBlk.messages.unshift(newMessage.messages[0]);
-      }
+      if (duplicateMessage) return;
+      followingMessageBlk.messages.unshift(newMessage.messages[0]);
     });
 
-    RoomClient?.setState({
-      messages: messagesStored
-    });
+    RoomClient?.setState({ messages: messagesStored });
   }
   // sending a negetive value for the loaded length and subtracting
   // 20 from it seems to do the trick
   // although response is still weirdly reversed to have to
   // take care of it
 
-  function fixLoadedCount(count: number) {
-    if (count + 20 <= RoomClient!.state.messages_count) return -count - 20;
-    return -RoomClient!.state.messages_count;
-  }
+  const fixLoadedCount = (count: number) =>
+    count + 20 <= RoomClient!.state.messages_count
+      ? -count - 20
+      : -RoomClient!.state.messages_count;
+
   Room.prototype.load_messages = function loadyboi(loaded) {
     const newLoaded = fixLoadedCount(loaded);
     $.ajax({
       type: "GET",
       url: `/room_load_more?loaded=${newLoaded}&id=${this.state.id}`,
       dataType: "json",
-      success(resp: []) {
-        const rev = resp.reverse();
-        prepend.call(this, rev);
-      }
+      success: (resp: []) => prepend.call(this, resp.reverse())
     });
   };
   Room.prototype.switch = function fixmessageCount(this: any, roomObj: any) {
@@ -77,9 +72,7 @@ export function initLoadMore() {
       dataType: "json",
       success: (resp: PrivateMessage) => {
         fasterAppend.call(this, resp.messages);
-        this.setState({
-          messages_count: resp.messages_count
-        });
+        this.setState({ messages_count: resp.messages_count });
         this.scroll();
       }
     });

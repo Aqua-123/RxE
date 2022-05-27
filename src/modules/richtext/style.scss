@@ -10,3 +10,18 @@ a.ritsu-message-anchor {
 html.largerText .room-component-message-text {
   font-size: 1.3rem;
 }
+.bio-image {
+  padding: 0.3em;
+  margin: 0.5em;
+  background-color: var(--ritsu-hair-color);
+  color: black;
+  display: inline-block;
+  user-select: none;
+  border-radius: 0.3em;
+  font-size: 0.8em;
+}
+.bio-expand {
+  color: #00abf3;
+  font-weight: bold;
+  cursor: pointer;
+}

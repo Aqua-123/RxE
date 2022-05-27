@@ -40,16 +40,12 @@ export type SettingsType = Required<ReturnType<typeof getSettings>>;
 
 export function applySettings() {
   const settings = getSettings();
-  let obj: Record<string, any>;
-  if (FEATURES.HACKS) {
-    obj = { ...settings.settings, ...settings.hacks_ };
-  } else {
-    obj = settings.settings;
-  }
+  const obj = FEATURES.HACKS
+    ? { ...settings.settings, ...settings.hacks_ }
+    : (settings.settings as Record<string, any>);
   Object.keys(obj).forEach((key) => {
-    if (typeof obj[key] === "boolean") {
-      document.documentElement.classList.toggle(key, obj[key]);
-    }
+    if (typeof obj[key] !== "boolean") return;
+    document.documentElement.classList.toggle(key, obj[key]);
   });
   initTheme();
 }
@@ -63,18 +59,17 @@ export function injectRitsuMenu() {
   const dropdownContent = document.querySelector(
     ".navigation-dropdown-content"
   );
-  if (!ritsuMenu && dropdownContent) {
-    /* i give up
+  if (ritsuMenu || !dropdownContent) return;
+  /* i give up
     const settingsButton = dropdownContent.parentElement?.children[0]
     if (settingsButton instanceof HTMLElement)
       settingsButton.style.color = "var(--ritsu-menu-fg-color)";
       */
-    dropdownContent.prepend(
-      crel("li", {
-        className: "navigation-dropdown-ritsu",
-        textContent: "Ritsu Menu",
-        onmousedown: openSettings
-      })
-    );
-  }
+  dropdownContent.prepend(
+    crel("li", {
+      className: "navigation-dropdown-ritsu",
+      textContent: "Ritsu Menu",
+      onmousedown: openSettings
+    })
+  );
 }

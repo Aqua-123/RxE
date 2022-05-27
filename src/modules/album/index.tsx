@@ -25,9 +25,7 @@ export function initPictureAlbum() {
         response: { pictures: EmeraldPictureDetailed[] }
       ) {
         const pictures = this.state.pictures.concat(response.pictures);
-        this.setState({
-          pictures
-        });
+        this.setState({ pictures });
       }.bind(this)
     });
   };

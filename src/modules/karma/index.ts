@@ -76,9 +76,8 @@ function karmaOverrides() {
 
   // Set karma delta values based on a change from the previous state.
   RoomChannelMembers.prototype.setState = function setState(newState) {
-    if (newState && "members" in newState) {
+    if (newState && "members" in newState)
       computeUserDeltas(this.state.members, newState.members);
-    }
     rcmSetState.call(this, newState as any);
   };
 
@@ -87,12 +86,8 @@ function karmaOverrides() {
   UserUnit.prototype.body = function body() {
     const userUnit = uuBody.call(this);
     const user = this.props.data;
-    if (user.delta < 0) {
-      userUnit.props.className += " down";
-    }
-    if (user.delta > 0) {
-      userUnit.props.className += " up";
-    }
+    if (user.delta < 0) userUnit.props.className += " down";
+    if (user.delta > 0) userUnit.props.className += " up";
     return userUnit;
   };
 }
@@ -106,10 +101,7 @@ function updateChannelSelectUsers(
     );
     if (!newChannel) return oldChannel;
     const { members } = newChannel;
-    return {
-      ...oldChannel,
-      members
-    };
+    return { ...oldChannel, members };
   });
 }
 

@@ -33,10 +33,7 @@ const spotifyDivString = (url: string, height: number) =>
   allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
   </iframe></div>`;
 
-const spotifyDivHeight = (url: string) => {
-  if (url.includes("playlist")) return 380;
-  return 80;
-};
+const spotifyDivHeight = (url: string) => (url.includes("playlist") ? 380 : 80);
 
 export function returnInnerHtml(url: string) {
   if (isYoutube(url) && youtubeID(url)) return youtubeDivString(url);
@@ -45,10 +42,8 @@ export function returnInnerHtml(url: string) {
   return null;
 }
 
-export function maybeEmbed(text: string) {
-  if (isYoutube(text) || isSpotify(text)) return true;
-  return false;
-}
+export const maybeEmbed = (text: string) =>
+  !!(isYoutube(text) || isSpotify(text));
 
 // test urls
 // https://www.youtube.com/watch?v=dQw4w9WgXcQ

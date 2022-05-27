@@ -24,19 +24,7 @@ function BioImage({ raw, onRemove }: BioImageProps) {
       if (confirmRemoval()) onRemove();
     });
   return (
-    <div
-      style={{
-        padding: "0.3em",
-        margin: "0.5em",
-        backgroundColor: "var(--ritsu-hair-color)",
-        color: "black",
-        display: "inline-block",
-        userSelect: "none",
-        borderRadius: "0.3em",
-        fontSize: "0.8em"
-      }}
-      title={raw}
-    >
+    <div title={raw} className="bio-image">
       Profile picture ({formatName(raw[0])}, {raw.length} chars)
       {!!remove && [" ", <b {...onClickOrKeyUp(remove)}>×</b>]}
     </div>
@@ -71,11 +59,7 @@ export function init() {
             role="button"
             tabIndex={0}
             onMouseDown={() => this.bio_expand()}
-            style={{
-              color: "#00abf3",
-              fontWeight: "bold",
-              cursor: "pointer"
-            }}
+            className="bio-expand"
           >
             Show More
           </span>

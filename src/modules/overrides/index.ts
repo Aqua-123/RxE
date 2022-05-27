@@ -131,9 +131,7 @@ export function applyOverrides() {
       dataType: "json",
       success(channelresp) {
         const { messages } = channelresp;
-        RoomChannelMembersClient.setState({
-          members: channelresp.members
-        });
+        RoomChannelMembersClient.setState({ members: channelresp.members });
         if (RoomClient) fasterAppend.call(RoomClient, messages);
         RoomClient?.scroll();
       }

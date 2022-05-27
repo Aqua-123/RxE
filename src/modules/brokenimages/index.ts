@@ -27,13 +27,10 @@ enum FallbackLevel {
 function fallbackLevel(img: Image): FallbackLevel {
   if (IS_MESSAGE_PIC(img)) return FallbackLevel.NoFallbackAvailable;
 
-  if (img.src.startsWith(ROBOHASH) || img.src.startsWith(DATA_IMAGE)) {
+  if (img.src.startsWith(ROBOHASH) || img.src.startsWith(DATA_IMAGE))
     return FallbackLevel.AviconFallback;
-  }
 
-  if (IS_AVICON(img.src)) {
-    return FallbackLevel.NoFallbackAvailable;
-  }
+  if (IS_AVICON(img.src)) return FallbackLevel.NoFallbackAvailable;
 
   return FallbackLevel.RobohashFallback;
 }
@@ -90,13 +87,7 @@ export function renderBrokenImages() {
 
   Array.from(document.images).forEach((img) => {
     useImageFallback(img);
-
-    if (img.complete && img.naturalHeight === 0) {
-      img.onerror?.("");
-    }
-
-    if (Preferences.get(P.showAnimatedImages)) {
-      restrictAnimation(img);
-    }
+    if (img.complete && img.naturalHeight === 0) img.onerror?.("");
+    if (Preferences.get(P.showAnimatedImages)) restrictAnimation(img);
   });
 }

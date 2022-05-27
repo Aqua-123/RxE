@@ -39,13 +39,10 @@ export function multiLineOverride() {
       this.setState({ last_message: text });
       textarea.val("");
       textarea.css("height", "34px");
-    } else if (actionRecall) {
-      textarea.val(this.state.last_message!);
-    }
-    // if all text is backspaced and there is no text, then reset the height
-    if (text.length === 0 || !text.includes("\n")) {
+    } else if (actionRecall) textarea.val(this.state.last_message!);
+
+    if (text.length === 0 || !text.includes("\n"))
       textarea.css("height", "34px");
-    }
     // Dynamically changes the height of the textarea
     // ps dont remove it straw :)
     const textArea = textarea.get(0) as HTMLTextAreaElement;
@@ -109,7 +106,7 @@ export function multiLineOverride() {
     if (inputElement instanceof HTMLInputElement) return;
 
     const inputElementJQ = $(event.target);
-    const text = `${inputElementJQ.val()}`;
+    const text = encodeURIComponent(`${inputElementJQ.val()}`);
 
     if (!shouldSend(event)) return;
     /* LEGACY */
@@ -127,9 +124,7 @@ export function multiLineOverride() {
 
     $.ajax({
       type: "GET",
-      url: `/microposts_create?id=${wallId}&content=${encodeURIComponent(
-        text
-      )}`,
+      url: `/microposts_create?id=${wallId}&content=${text}`,
       dataType: "json",
       success: prependMicropost.bind(this)
     });

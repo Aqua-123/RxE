@@ -8,8 +8,7 @@ export function initPictureAlbum() {
   PictureAlbum.prototype.componentDidMount = function Component() {
     const pAlbum = Preferences.get(P.imgurPfpAlbum);
     const pictures = pAlbum.map((pic) => {
-      let url = imgurPNG(pic.substring(1));
-      if (pic.length === 7) url = imgurPNG(pic);
+      const url = pic.length === 7 ? imgurPNG(pic) : imgurPNG(pic.substring(1));
       return { url } as EmeraldPictureDetailed;
     });
     this.setState({ pictures, loaded: true });

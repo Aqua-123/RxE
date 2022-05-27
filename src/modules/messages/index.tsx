@@ -102,7 +102,6 @@ export function initMessages() {
     const textShadow = "0.005em 0.005em #FFF5";
     const contentClasses = ["room-component-message-text"];
     const { picture } = this.props.data;
-    // check if any of the children have a div
     if (picture) contentClasses.push("ritsu-would-blur-heavy");
     if (muted) contentClasses.push("ritsu-message-hidden");
     const safeDisplayPic =

@@ -4,7 +4,7 @@ import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 
-function embedMessages(className: string) {
+function embedElements(className: string) {
   const newLineHtml = "<br>";
   const allowEmbeds = Preferences.get(P.toggleEmbeds);
   const messageList = document.querySelectorAll(`.${className}`);
@@ -26,7 +26,7 @@ function embedMessages(className: string) {
 
 export function createEmbeds() {
   loadCSS(css);
-  embedMessages("user-comment-right");
-  embedMessages("user-micropost-right");
-  embedMessages("room-component-message-text");
+  embedElements("user-comment-right");
+  embedElements("user-micropost-right");
+  embedElements("room-component-message-text");
 }
