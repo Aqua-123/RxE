@@ -46,9 +46,8 @@ export function migrateSettings() {
   if (savedPicsToMigrate instanceof Array) {
     const savedPictures = [...Preferences.get(P.savedPictures)];
     savedPicsToMigrate.forEach((url) => {
-      if (!savedPictures.includes(url)) {
-        savedPictures.push(url);
-      }
+      if (savedPictures.includes(url)) return;
+      savedPictures.push(url);
     });
     Preferences.set(P.savedPictures, savedPictures);
     log.log("Migrated SAVED PICTURES");

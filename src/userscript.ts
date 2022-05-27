@@ -5,7 +5,7 @@ export default {
   version: "0.10.1",
   description: "Custom Emerald Chat themes and fixes.",
   icon: "https://i.imgur.com/KLtVhho.png",
-  author: "Fxkleti, Atsos/Ritsu, Aqua, Strawberry.",
+  author: "Atsos/Ritsu, Aqua, Strawberry.",
   hostname: "emeraldchat.com",
   path: "app",
   sitename: "Emerald Chat",

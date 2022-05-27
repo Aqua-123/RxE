@@ -77,11 +77,10 @@ export async function decoratePictures() {
           textContent: "delete_forever",
           title: "Block this image",
           onmousedown: (e: MouseEvent) => {
-            if (e.target instanceof HTMLElement) {
-              const img = e.target.parentElement?.parentElement
-                ?.firstChild as HTMLImageElement | null;
-              blockPicture(img?.src);
-            }
+            if (!(e.target instanceof HTMLElement)) return;
+            const img = e.target.parentElement?.parentElement
+              ?.firstChild as HTMLImageElement | null;
+            blockPicture(img?.src);
           }
         })
       );
@@ -91,23 +90,19 @@ export async function decoratePictures() {
           textContent: "bookmark_border",
           title: "Bookmark this image",
           onmousedown: (e: MouseEvent) => {
-            if (e.target instanceof HTMLElement) {
-              const img = e.target.parentElement?.parentElement
-                ?.firstChild as HTMLImageElement | null;
-              savePicture(img?.src);
-            }
+            if (!(e.target instanceof HTMLElement)) return;
+            const img = e.target.parentElement?.parentElement
+              ?.firstChild as HTMLImageElement | null;
+            savePicture(img?.src);
           }
         })
       );
       pic.append(controls);
     }
-    if (pic.firstChild instanceof HTMLImageElement) {
-      const { src } = pic.firstChild;
-      const hash = await getHash(src);
-      if (blockedHashes.hasItem(hash)) {
-        pic.firstChild.src = "";
-      }
-    }
+    if (!(pic.firstChild instanceof HTMLImageElement)) return;
+    const { src } = pic.firstChild;
+    const hash = await getHash(src);
+    if (blockedHashes.hasItem(hash)) pic.firstChild.src = "";
   });
   // also look for an Upload Image dialog to populate with saved images
   const uploadForm = document.querySelector("form#picture_upload");
