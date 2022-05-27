@@ -98,8 +98,7 @@ export function multiLineOverride() {
   };
 
   function prependMicropost(this: Microposts, post: EmeraldMicropost) {
-    let { data } = this.state;
-    if (!data) data = { microposts: [] };
+    const data = this.state.data || { microposts: [] };
     this.setState({
       data: { microposts: [post.micropost.id, ...data.microposts] }
     });
@@ -137,9 +136,7 @@ export function multiLineOverride() {
   };
 
   Microposts.prototype.render = function render() {
-    const { data } = this.state;
-    let microposts: number[] = [];
-    if (data) microposts = data.microposts;
+    const microposts = this.state.data ? this.state.data.microposts : [];
     const micropostElement = React.createElement(
       "div",
       { className: "user-microposts" },

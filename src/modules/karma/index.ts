@@ -124,9 +124,7 @@ function updatePersistentState(newMembers: EmeraldUser[]) {
   );
   const newState = [...persistentMembers, ...newPersistentMembers];
   // Remove old members from persistent state if too large
-  if (newState.length > 100) {
-    newState.splice(0, newState.length - 100);
-  }
+  if (newState.length > 100) newState.splice(0, newState.length - 100);
   return newState;
 }
 
@@ -134,7 +132,6 @@ function updatePersistentState(newMembers: EmeraldUser[]) {
 function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
   if (!App.room?.id?.startsWith?.("channel")) return false;
   if (!(RoomChannelMembersClient instanceof React.Component)) return false;
-
   const channelId = +App.room.id.slice(7);
   const currentChannel = channels.find(
     ({ channel }) => channel.id === channelId
@@ -159,11 +156,9 @@ function updateCurrentChannelUsers(channels: ChannelJsonResponse[]): boolean {
   const self = currentChannel.members.find(
     (member) => member?.id === App.user.id
   );
-  if (self) {
-    updateKarma(self.karma);
-    return true;
-  }
-  return false;
+  if (!self) return false;
+  updateKarma(self.karma);
+  return true;
 }
 
 // eslint-disable-next-line camelcase
@@ -176,9 +171,7 @@ function updateChannelInfo(data: { text_channels: ChannelJsonResponse[] }) {
   const selfUpdated = updateCurrentChannelUsers(newTextChannels);
 
   // 3. fetch and update our own karma if needed
-  if (!selfUpdated) {
-    refreshKarma();
-  }
+  if (!selfUpdated) refreshKarma();
 }
 
 function refreshChannelInfo() {

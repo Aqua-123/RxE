@@ -165,12 +165,11 @@ export function initMessages() {
 
     App.room.play_sound("/sfx/simple_alert.wav");
     this.append(messageData);
-    if (PushNotifications.idle()) {
-      PushNotifications.send(notNum(messageData.user)?.display_name ?? "", {
-        icon: notNum(messageData.user)?.display_picture ?? "",
-        body: messageData.messages[0]
-      });
-    }
+    if (!PushNotifications.idle()) return;
+    PushNotifications.send(notNum(messageData.user)?.display_name ?? "", {
+      icon: notNum(messageData.user)?.display_picture ?? "",
+      body: messageData.messages[0]
+    });
   };
 }
 
@@ -200,9 +199,8 @@ export function decorateMessages() {
     const messageLines = messageBlock.childNodes;
 
     // Remove extra messages.
-    while (messageLines && messageLines.length > messages.length) {
+    while (messageLines && messageLines.length > messages.length)
       messageLines[0].remove();
-    }
 
     // If we removed all of them, don't bother decorating.
     // eslint-disable-next-line no-continue
@@ -301,9 +299,8 @@ export function betterMessageRendering() {
 export function markTextOnly() {
   const textOnly = document.querySelectorAll(".room-component-message-text");
   textOnly.forEach((child) => {
-    const children = child.childNodes;
-    children.forEach((e) => {
-      const element = e as HTMLElement;
+    const children = child.childNodes as NodeListOf<HTMLElement>;
+    children.forEach((element) => {
       if (
         element.classList.contains("text-only") ||
         element.querySelector(".room-component-message-picture") ||
