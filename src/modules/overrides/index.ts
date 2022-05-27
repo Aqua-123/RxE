@@ -124,6 +124,7 @@ export function applyOverrides() {
     const { channel } = resp;
     this.setState({ current_channel: channel });
     if (channel.channel_type === "voice") this.voice_connect(resp);
+    RoomClient?.clear_messages();
     $.ajax({
       type: "GET",
       url: `channel_json?id=${channel.id}`,

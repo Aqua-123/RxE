@@ -414,6 +414,7 @@ declare class Room extends React.Component<// add props
   voice_disconnect(): void;
   expand(e: boolean): void;
   disconnected(e: AppInterface): void;
+  clear_messages(): void;
 }
 
 declare class MatchMenu extends React.Component<{
@@ -609,6 +610,7 @@ declare let UserProfileReact: null | UserProfile;
 declare module PushNotifications {
   const idle: Function;
   const send: (name: string, data: { icon: string; body: string }) => void;
+  var request_permission: Function;
 }
 
 // yeah. conflicts

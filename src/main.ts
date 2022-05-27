@@ -57,7 +57,8 @@ async function init() {
   await until(() => !!browserWindow.App);
 
   dev.init();
-
+  // override some builtin behavior
+  applyOverrides();
   // migrate settings from older userscripts, if any
   migrateSettings();
 
@@ -65,7 +66,7 @@ async function init() {
   initPluginAPI();
 
   // override some builtin behavior
-  applyOverrides();
+  // applyOverrides();
   // inject network middleware
   initNetwork();
   // antiban
