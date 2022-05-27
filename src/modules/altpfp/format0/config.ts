@@ -20,7 +20,7 @@ export const TOKEN_DIGITS = {
   PALETTE_SELECTION: 3
 };
 
-export const LOG_ENCODING_INFO = true;
+export const LOG_ENCODING_INFO = false;
 
 export const CHOOSE_COMPRESSION_PARAMETERS = false;
 
