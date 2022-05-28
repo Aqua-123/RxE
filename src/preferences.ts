@@ -46,7 +46,7 @@ export const P = {
   imgProtect: new BooleanPreference({
     key: "imgProtect",
     label: T.preferences.imgProtect.label,
-    default: false
+    default: true
   }),
   imgBlur: new BooleanPreference({
     key: "imgBlur",
@@ -159,7 +159,7 @@ export const P = {
   hideImageFallback: new BooleanPreference({
     key: "hideImageFallback",
     label: T.preferences.hideImageFallback.label,
-    default: true
+    default: false
   }),
   imgurDeleteHashes: new ListPreference<[string, string]>({
     key: "imgurDeleteHashes",
