@@ -11,6 +11,27 @@ export const uploadForm = () => (
   </MenuMicro>
 );
 
+function ImageUploadNotes(props: any) {
+  const { text } = props;
+  return (
+    <div>
+      <b>Note</b>: {text}
+    </div>
+  );
+}
+function UploadFailureMessage(props: any) {
+  const { failureReason } = props;
+  return (
+    <div className="picture-upload-error">
+      <div>We couldn&apos;t upload your picture.</div>
+      <div>
+        {"Reason: "}
+        <span className="picture-upload-error-reason">{failureReason}</span>
+      </div>
+    </div>
+  );
+}
+
 export function initComponents() {
   loadCSS(css);
   Room.prototype.room_input = function roomInput() {
@@ -35,27 +56,6 @@ export function initComponents() {
       </div>
     );
   };
-  function ImageUploadNotes(props: any) {
-    const { text } = props;
-    return (
-      <div>
-        <b>Note</b>: {text}
-      </div>
-    );
-  }
-  function UploadFailureMessage(props: any) {
-    const { failureReason } = props;
-    return (
-      <div className="picture-upload-error">
-        <div>We couldn&apos;t upload your picture.</div>
-        <div>
-          {"Reason: "}
-          <span className="picture-upload-error-reason">{failureReason}</span>
-        </div>
-      </div>
-    );
-  }
-
   PictureUpload.prototype.body = function body() {
     const { failureReason } = this.state;
     const enabled = canUpload();

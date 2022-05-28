@@ -32,6 +32,23 @@ function joinPrivateRoom() {
   joinSpecialRoom(name, ".private-rooms");
 }
 
+function CreateRoom(props: any) {
+  const { type } = props || ({} as { type: string });
+  const { action } = props || {};
+  const { text } = props || ({} as { text: string });
+  return (
+    <div
+      className={`channel-unit ${type}`}
+      onClick={() => action()}
+      onKeyPress={() => action()}
+      role="button"
+      tabIndex={0}
+    >
+      {text}
+    </div>
+  );
+}
+
 function wfafOverrides() {
   RoomChannelSelect.prototype.body = function rssBody() {
     // eslint-disable-next-line camelcase,react/no-this-in-sfc
@@ -42,33 +59,18 @@ function wfafOverrides() {
         {/* eslint-disable-next-line react/no-this-in-sfc */}
         {text_channels.map((t) => this.channel_button(t))}
         <div className="room-user-label">{T.hiddenChannels}</div>
-        <div
-          className="wfaf channel-unit"
-          onClick={() => joinWFAF()}
-          onKeyPress={() => joinWFAF()}
-          role="button"
-          tabIndex={0}
-        >
-          {T.WFAF}
-        </div>
-        <div
-          className="private-rooms channel-unit"
-          onClick={() => joinPrivateRoom()}
-          onKeyPress={() => joinPrivateRoom()}
-          role="button"
-          tabIndex={0}
-        >
-          {T.privateRooms}
-        </div>
+        <CreateRoom type="wfaf" action={joinWFAF} text={T.WFAF} />
+        <CreateRoom
+          type="private-rooms"
+          action={joinPrivateRoom}
+          text={T.privateRooms}
+        />
       </div>
     );
   };
 }
 
-export function renderWFAFAndPrivateRooms() {
-  wfafOverrides();
-
-  // setup hooks
+function setupHooks() {
   const subReject = ActionCable.Subscriptions.prototype.reject;
   ActionCable.Subscriptions.prototype.reject = function reject(id) {
     if (id === App.room.client.identifier && App.room.id === specialRoom) {
@@ -76,4 +78,9 @@ export function renderWFAFAndPrivateRooms() {
     }
     subReject.call(this, id);
   };
+}
+
+export function renderWFAFAndPrivateRooms() {
+  wfafOverrides();
+  setupHooks();
 }

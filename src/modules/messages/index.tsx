@@ -45,7 +45,26 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
   if (messageArr.length === 1) this.state.messages = messages;
   else this.setState({ messages });
 }
-
+function UserInfo(props: any) {
+  const { user, karma, colour, textShadow, timeago } = props;
+  return (
+    <span className="user-extra">
+      <b>({karma})</b>
+      {" / "}
+      <span
+        style={{
+          color: colour,
+          textShadow,
+          whiteSpace: "nowrap"
+        }}
+      >
+        {timeago!}
+      </span>
+      {user.master && !user.proxy && <b style={{ color: "#f00" }}> CALLAN </b>}
+      {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
+    </span>
+  );
+}
 export function initMessages() {
   loadCSS(css);
   Message.prototype.content = function content() {
@@ -111,6 +130,16 @@ export function initMessages() {
       isSelf;
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
+
+    const userInfo = user ? (
+      <UserInfo
+        user={user}
+        karma={karma}
+        timeago={timeago}
+        color={color}
+        textShadow={textShadow}
+      />
+    ) : null;
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
@@ -128,21 +157,7 @@ export function initMessages() {
             <Flair data={flair} />
           </div>
           <Badge badge={user?.badge ?? null} />
-          {Preferences.get(P.showInfo) && !!user && (
-            <span className="user-extra">
-              <b>({karma})</b>
-              {" / "}
-              <span style={{ color, textShadow, whiteSpace: "nowrap" }}>
-                {timeago!}
-              </span>
-              {user.master && !user.proxy && (
-                <b style={{ color: "#f00" }}> CALLAN </b>
-              )}
-              {user.mod && !user.proxy && (
-                <b style={{ color: "#f00" }}> MOD </b>
-              )}
-            </span>
-          )}
+          {Preferences.get(P.showInfo) && userInfo}
           <div className={contentClasses.join(" ")}>
             {muted ? <i>Blocked message</i> : this.content()}
           </div>

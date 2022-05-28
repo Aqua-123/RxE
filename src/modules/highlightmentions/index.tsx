@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import React from "react";
 import { P, Preferences } from "~src/preferences";
 import { wrapStringPartitions } from "~src/utils";

@@ -46,44 +46,53 @@ function applySort(key: "name.asc" | "name.desc" | "age.asc" | "age.desc") {
   }
 }
 
+const lookupBtn = (
+  <button
+    className="material-icons navigation-notification-unit lookup-button"
+    onClick={lookup}
+    type="button"
+  >
+    face
+  </button>
+);
+
+const sortUsers = (
+  <div className="navigation-dropdown-content">
+    <div>{T.preferences.userSort.label}</div>
+    {(["name.asc", "name.desc", "age.asc", "age.desc"] as const).map((key) => (
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
+      <li
+        className={Preferences.get(P.userSort) === key ? "selected" : ""}
+        onClick={() => applySort(key)}
+      >
+        {T.preferences.userSort[key]}
+      </li>
+    ))}
+  </div>
+);
+
+const dropDown = (
+  <div className="navigation-dropdown sort-button">
+    <span className="material-icons navigation-notification-unit">
+      arrow_drop_down
+    </span>
+    {sortUsers}
+  </div>
+);
+
 export function initUserList() {
   RoomChannelMembers.prototype.body = function rcmBody() {
     // eslint-disable-next-line react/no-this-in-sfc
     const { members } = this.state;
     if (!members) return null;
-
     if (members.length < 1) {
       return (
         <div className="room-component-module">
-          <div className="room-user-label">empty</div>
+          <div className="room-user-label">{lookupBtn}</div>
         </div>
       );
     }
-    const lookupBtn = (
-      <button
-        className="material-icons navigation-notification-unit lookup-button"
-        onClick={lookup}
-        type="button"
-      >
-        face
-      </button>
-    );
-    const sortUsers = (
-      <div className="navigation-dropdown-content">
-        <div>{T.preferences.userSort.label}</div>
-        {(["name.asc", "name.desc", "age.asc", "age.desc"] as const).map(
-          (key) => (
-            // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-noninteractive-element-interactions
-            <li
-              className={Preferences.get(P.userSort) === key ? "selected" : ""}
-              onClick={() => applySort(key)}
-            >
-              {T.preferences.userSort[key]}
-            </li>
-          )
-        )}
-      </div>
-    );
+
     const userList = existing(members).map((e) =>
       React.createElement(UserUnit, {
         key: e.id,
@@ -96,12 +105,7 @@ export function initUserList() {
         <div className="room-user-label">
           {lookupBtn}
           {`online \u2014 ${members.length}`}
-          <div className="navigation-dropdown sort-button">
-            <span className="material-icons navigation-notification-unit">
-              arrow_drop_down
-            </span>
-            {sortUsers}
-          </div>
+          {dropDown}
         </div>
         {userList}
       </div>
@@ -109,6 +113,7 @@ export function initUserList() {
   };
   const rcmSetState = RoomChannelMembers.prototype.setState;
 
+  // Sorter
   RoomChannelMembers.prototype.setState = function setState(stateNew) {
     if (!stateNew || !("members" in stateNew)) return;
     if (!this.state.members)
@@ -131,51 +136,8 @@ export function initUserList() {
   };
 
   Room.prototype.disconnected = function disconnected(e) {
-    if (this.state.mode === "channel")
-      RoomChannelMembersClient.remove_member(e.user);
+    if (this.state.mode !== "channel") return;
+    RoomChannelMembersClient.remove_member(e.user);
   };
-
-  /*
-  // Taking reference from previous version of this code cause above one went shwoop my head :)
-  RoomChannelMembers.prototype.setState = function setState(e) {
-    if (e && "members" in e) {
-      const userSort = Preferences.get(P.userSort);
-      switch (userSort) {
-        default:
-        case "name.asc":
-          e.members = e.members
-            .filter((v) => !!v)
-            .sort((a, b) => a!.display_name.localeCompare(b!.display_name));
-          break;
-        case "name.desc":
-          e.members = e.members
-            .filter((v) => !!v)
-            .sort((a, b) => b!.display_name.localeCompare(a!.display_name));
-          break;
-        case "age.asc":
-          e.members = e.members
-            .filter((v) => !!v)
-            .sort((a, b) => b!.id - a!.id);
-          break;
-        case "age.desc":
-          e.members = e.members
-            .filter((v) => !!v)
-            .sort((a, b) => a!.id - b!.id);
-          break;
-      }
-      const previousMembers = this.state.members;
-      e.members.forEach((member) => {
-        if (
-          !previousMembers ||
-          !previousMembers.find((pm) => pm!.id === member!.id)
-        ) {
-          browserWindow.RxE.dispatchEvent("room.userlist", member);
-        }
-      });
-    }
-    rcmSetState.call(this, e as any);
-  };
-  */
-
   loadCSS(style);
 }
