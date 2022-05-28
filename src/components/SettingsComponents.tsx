@@ -83,13 +83,9 @@ export function mutelist(props: SettingsProps) {
       renderItem={([id, name]) => [
         <span className="ritsu-permamutelist-user-name">{name}</span>,
         <span
-          className="material-icons"
+          className="material-icons permamute-list"
           onClick={() => createUserProfile(id)}
           onKeyDown={() => createUserProfile(id)}
-          style={{
-            marginLeft: "0.5em",
-            cursor: "pointer"
-          }}
           role="button"
           tabIndex={0}
         >
