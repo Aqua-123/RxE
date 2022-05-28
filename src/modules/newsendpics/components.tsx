@@ -35,7 +35,7 @@ export function initComponents() {
       </div>
     );
   };
-  function CreateNote(props: any) {
+  function ImageUploadNotes(props: any) {
     const { text } = props;
     return (
       <div>
@@ -43,7 +43,7 @@ export function initComponents() {
       </div>
     );
   }
-  function CaughtFailure(props: any) {
+  function UploadFailureMessage(props: any) {
     const { failureReason } = props;
     return (
       <div className="picture-upload-error">
@@ -62,9 +62,14 @@ export function initComponents() {
 
     const notesSection = (
       <div className="picture-upload-info">
-        <CreateNote text={uploadInfo.destination} />
-        <CreateNote text={uploadInfo.ratelimit} />
-        {failureReason && <CaughtFailure failureReason={failureReason} />}
+        <ImageUploadNotes text={uploadInfo.destination} />
+        <ImageUploadNotes text={uploadInfo.ratelimit} />
+        {App.user._karma < 10 && (
+          <ImageUploadNotes text={uploadInfo.lowKarma} />
+        )}
+        {failureReason && (
+          <UploadFailureMessage failureReason={failureReason} />
+        )}
       </div>
     );
 

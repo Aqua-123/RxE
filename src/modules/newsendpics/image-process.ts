@@ -48,4 +48,9 @@ export async function upload(image: File): Promise<RitsuChatImage> {
   return imgur.uploadChatImage(image);
 }
 
-export const uploadInfo = { ratelimit, destination: imgur.destinationInfo };
+export const uploadInfo = {
+  ratelimit,
+  destination: imgur.destinationInfo,
+  lowKarma:
+    "Warning: Due to low karma, images sent by you may be hidden from other users."
+};
