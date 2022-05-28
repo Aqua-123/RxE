@@ -90,7 +90,6 @@ export function initMessages() {
       flair: user?.flair ?? { color: "" }
     };
     const karmaNumeric = user?._karma ?? user?.karma ?? 0;
-    const karmaLow = karmaNumeric < 10;
     const karma = formatSignedAmount(karmaNumeric);
     const experience = user ? userExperience(user) : 0;
     const createdAt = user?.created_at && new Date(user?.created_at);
@@ -131,14 +130,7 @@ export function initMessages() {
           <Badge badge={user?.badge ?? null} />
           {Preferences.get(P.showInfo) && !!user && (
             <span className="user-extra">
-              {karmaLow && isSelf ? (
-                <b title="Your profile picture and images might not be visible to others due to low karma.">
-                  (<span style={{ color: "#f66" }}>{karma}</span>)
-                </b>
-              ) : (
-                <b>({karma})</b>
-              )}
-
+              <b>({karma})</b>
               {" / "}
               <span style={{ color, textShadow, whiteSpace: "nowrap" }}>
                 {timeago!}
