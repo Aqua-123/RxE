@@ -159,7 +159,7 @@ export const P = {
   hideImageFallback: new BooleanPreference({
     key: "hideImageFallback",
     label: T.preferences.hideImageFallback.label,
-    default: false
+    default: true
   }),
   imgurDeleteHashes: new ListPreference<[string, string]>({
     key: "imgurDeleteHashes",
