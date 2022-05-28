@@ -2,7 +2,7 @@ import { Preferences } from "~src/preferences";
 import { PX } from "~src/x/preferences";
 
 /**
- * Hack only overrides
+ * Hacks only overrides
  */
 export function hackOverrides() {
   if (!FEATURES.HACKS) return;

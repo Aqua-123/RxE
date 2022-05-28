@@ -22,7 +22,4 @@ export function windowOverrides() {
       const resp = document.getElementById("messages");
       if (resp) resp.scrollTop = resp.scrollHeight;
     });
-
-  // non-hack: "Sign up to continue" only shows once at start
-  App.temp.check = () => {};
 }
