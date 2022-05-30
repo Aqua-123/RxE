@@ -102,6 +102,7 @@ async function init() {
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
+  // decorateHeader();
   // start our script's rendering loop
   render([
     markTextOnly,

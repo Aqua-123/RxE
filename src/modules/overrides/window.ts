@@ -1,3 +1,4 @@
+import React from "react";
 import window from "~src/browserWindow";
 
 /**
@@ -22,4 +23,7 @@ export function windowOverrides() {
       const resp = document.getElementById("messages");
       if (resp) resp.scrollTop = resp.scrollHeight;
     });
+  Dashboard.prototype.ads = function ads() {
+    return React.createElement("div", {});
+  };
 }

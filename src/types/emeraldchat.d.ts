@@ -519,7 +519,9 @@ declare class Dashboard extends React.Component<
     jumbotron: boolean;
     user: { display_picture: string };
   }
-> {}
+> {
+  ads(): JSX.Element;
+}
 
 declare const DashboardClient: null | {
   setState: Function;
