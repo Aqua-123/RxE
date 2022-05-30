@@ -55,10 +55,12 @@ function useImageFallback(img: HTMLImageElement) {
 function applyAnimationRestriction(img: Image, srcOriginal?: string) {
   if (isStaticImage[img.src] === true) {
     if (srcOriginal) img.src = srcOriginal;
+    return false;
+  }
+  if (isStaticImage[img.src] === false) {
+    img.src = "https://emeraldchat.com/avicons_strict/1.png";
     return true;
   }
-  img.src = "https://emeraldchat.com/avicons_strict/1.png";
-  if (isStaticImage[img.src] === false) return true;
   return false;
 }
 
@@ -70,6 +72,7 @@ function restrictAnimation(img: Image) {
 
   getImageType(srcOriginal).then((type) => {
     isStaticImage[srcOriginal] = type !== "image/gif";
+    // expected value for an image url = "url" : true
     applyAnimationRestriction(img, srcOriginal);
   });
 }
@@ -88,6 +91,6 @@ export function renderBrokenImages() {
   Array.from(document.images).forEach((img) => {
     useImageFallback(img);
     if (img.complete && img.naturalHeight === 0) img.onerror?.("");
-    if (Preferences.get(P.showAnimatedImages)) restrictAnimation(img);
+    if (!Preferences.get(P.showAnimatedImages)) restrictAnimation(img);
   });
 }
