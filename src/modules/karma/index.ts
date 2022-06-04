@@ -35,7 +35,7 @@ function updateKarma(karma: number) {
   if (!karmaTracker) return;
   if (!isMobile) karmaTracker.textContent = karma ? `Karma: ${karma}` : "";
   else {
-    if (karma) {
+    if (!karma) {
       karmaTracker.textContent = "";
       return;
     }
