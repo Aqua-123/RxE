@@ -1,7 +1,7 @@
 import { P, Preferences } from "~src/preferences";
 import { timeSince } from "~src/utils";
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 50;
 const INTERVAL = 3600e3;
 
 const uploadsAll = () => Preferences.get(P.imgurLastUploadTimes);
