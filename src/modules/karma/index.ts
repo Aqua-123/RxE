@@ -27,12 +27,22 @@ function showKarmaChange(change: number) {
 }
 
 function updateKarma(karma: number) {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
   if (karma === currentKarma) return;
   if (currentKarma !== null) showKarmaChange(karma - currentKarma);
   currentKarma = karma;
-  const karmaTracker = document.querySelector(".karma-tracker");
+  const karmaTracker = document.querySelector(".karma-tracker") as HTMLElement;
   if (!karmaTracker) return;
-  karmaTracker.textContent = karma ? `Karma: ${karma}` : "";
+  if (!isMobile) karmaTracker.textContent = karma ? `Karma: ${karma}` : "";
+  else {
+    if (!karma) {
+      karmaTracker.textContent = "";
+      return;
+    }
+    if (karma > 0) karmaTracker.textContent = `+${karma}`;
+    else if (karma <= 0) karmaTracker.textContent = `${karma}`;
+    karmaTracker.style.color = karma > 0 ? "#3ec435" : "#eb3b3b";
+  }
 }
 
 function refreshKarma() {

@@ -14,7 +14,8 @@ export const GREETERS = [
   11427049, // Thea ✰
   16008266, // Lumi
   21550262, // Blue
-  21541886 // Eva
+  21541886, // Eva
+  14267520 // Mecha Babe
 ];
 /*
 function colorRating(rating: SpamRating[number]) {
