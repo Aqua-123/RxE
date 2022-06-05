@@ -308,8 +308,15 @@ export function markTextOnly() {
     const children = child.childNodes as NodeListOf<HTMLElement>;
     children.forEach((element) => {
       if (
+        element.classList.contains("text-only") &&
+        (element.querySelector(".embed") ||
+          element.querySelector(".room-component-message-picture-container"))
+      ) {
+        element.classList.remove("text-only");
+      }
+      if (
         element.classList.contains("text-only") ||
-        element.querySelector(".room-component-message-picture") ||
+        element.querySelector(".room-component-message-picture-container") ||
         element.querySelector(".embed")
       )
         return;
