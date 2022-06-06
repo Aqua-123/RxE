@@ -310,14 +310,19 @@ export function markTextOnly() {
       if (
         element.classList.contains("text-only") &&
         (element.querySelector(".embed") ||
-          element.querySelector(".room-component-message-picture-container"))
+          element.querySelector(".room-component-message-picture-container") ||
+          element.querySelector(".room-component-message-picture"))
       ) {
         element.classList.remove("text-only");
       }
       if (
         element.classList.contains("text-only") ||
+        element.classList.contains(
+          "room-component-message-picture-container"
+        ) ||
         element.querySelector(".room-component-message-picture-container") ||
-        element.querySelector(".embed")
+        element.querySelector(".embed") ||
+        element.querySelector(".room-component-message-picture")
       )
         return;
       element.classList.add("text-only");
