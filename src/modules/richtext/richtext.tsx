@@ -111,7 +111,7 @@ function makeMarkdown(text: string): string {
   if (text.startsWith("*")) return decorateText("italic", text.slice(1, -1));
   if (text.startsWith("__"))
     return decorateText("underline", text.slice(2, -2));
-  if (text.startsWith("_")) return decorateText("italic", text.slice(2, -2));
+  if (text.startsWith("_")) return decorateText("italic", text.slice(1, -1));
   if (text.startsWith("`")) return decorateText("monospace", text.slice(1, -1));
   if (text.startsWith("^^"))
     return decorateText("superscript", text.slice(2, -2));
