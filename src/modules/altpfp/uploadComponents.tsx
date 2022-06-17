@@ -50,7 +50,11 @@ const openUserPicture = (user: EmeraldUser) => () => {
 export function profilePicture(this: UserProfile) {
   const { user, current_user: currentUser } = this.state.data;
   const onDrop = onDropHandler(user);
+  const lowKarma = currentUser.karma < 10;
   const { display_picture: displayPicture } = user;
+  const customPic =
+    !displayPicture.includes("robohash.org") &&
+    !displayPicture.includes("emeraldchat.com/avicons");
   if (user.id !== currentUser.id) {
     return (
       <img
@@ -66,6 +70,14 @@ export function profilePicture(this: UserProfile) {
   const dragNDrop = null;
   return (
     <span onDrop={onDrop}>
+      {lowKarma && customPic && (
+        <div
+          className="material-icons ritsu-avatar-karma-warning"
+          title="Due to low karma, some users may not see your avatar in chat."
+        >
+          warning
+        </div>
+      )}
       <img
         alt="User avatar"
         className="user-profile-avatar"

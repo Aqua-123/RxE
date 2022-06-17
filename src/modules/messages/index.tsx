@@ -75,9 +75,7 @@ export function initMessages() {
     const pictureBlocked = !isSelf && lowKarma && imgProtect;
     if (picture && !pictureBlocked) return <MessagePicture picture={picture} />;
     if (picture)
-      return [
-        <div>(Image blocked) {wrapLinks(picture.url, (rest) => rest)}</div>
-      ];
+      return [<div>(Image) {wrapLinks(picture.url, (rest) => rest)}</div>];
     return messages.map((text) => (
       <div key={JSON.stringify(text)}>{this.process(text)}</div>
     ));
@@ -110,6 +108,8 @@ export function initMessages() {
     };
     const karmaNumeric = user?._karma ?? user?.karma ?? 0;
     const karma = formatSignedAmount(karmaNumeric);
+    const imgProtect = Preferences.get(P.imgProtect);
+    const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
     const experience = user ? userExperience(user) : 0;
     const createdAt = user?.created_at && new Date(user?.created_at);
     const timeago =
@@ -130,6 +130,7 @@ export function initMessages() {
       isSelf;
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
+    const blockPic = !safeDisplayPic && (muted || (lowKarma && imgProtect));
 
     const userInfo = user ? (
       <UserInfo
@@ -143,17 +144,33 @@ export function initMessages() {
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
-          <img
-            className={displayPicClasses.join(" ")}
-            alt="User display avatar"
-            src={user?.display_picture}
+          {blockPic ? (
+            <div
+              className="material-icons room-component-message-avatar ritsu-avatar-hidden"
+              title="User avatar hidden due to image settings"
+            >
+              visibility_off
+            </div>
+          ) : (
+            <img
+              className={displayPicClasses.join(" ")}
+              alt="User display avatar"
+              src={user?.display_picture}
+              onMouseDown={(event) =>
+                user && UserViewGenerator.generate({ event, user })
+              }
+            />
+          )}
+        </div>
+        <div className="room-component-message-right">
+          <div
+            className="room-component-flair"
             onMouseDown={(event) =>
               user && UserViewGenerator.generate({ event, user })
             }
-          />
-        </div>
-        <div className="room-component-message-right">
-          <div className="room-component-flair">
+            role="button"
+            tabIndex={-1}
+          >
             <Flair data={flair} />
           </div>
           <Badge badge={user?.badge ?? null} />
