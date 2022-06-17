@@ -812,3 +812,10 @@ declare type MicropostJson = {
   muted: boolean;
   picture: boolean;
 };
+
+declare class CommentSettings extends React.Component<{ parent: __Comment }> {
+  close(): void;
+  authorized(): boolean;
+  delete(): void;
+  open(): void;
+}
