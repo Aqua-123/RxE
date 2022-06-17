@@ -39,12 +39,16 @@ export function profileOverrides() {
       )
     );
   };
-  
+
   CommentSettings.prototype.authorized = function authorized() {
     const comment = this.props.parent;
-    const { micropost_data, comment_data } = comment.state;
-    const { micropost, wall, current_user: thisUser } = micropost_data;
-    return thisUser.mod || thisUser.master ||
-      null != wall && comment_data?.user?.id == thisUser.id;
-  }
+    const { micropost_data: micropostData, comment_data: commmentData } =
+      comment.state;
+    const { wall, current_user: thisUser } = micropostData;
+    return (
+      thisUser.mod ||
+      thisUser.master ||
+      (wall != null && commmentData?.user?.id === thisUser.id)
+    );
+  };
 }

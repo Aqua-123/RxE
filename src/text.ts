@@ -131,7 +131,8 @@ export default {
       },
       unsafe: {
         title: "Wild West",
-        content: "Anyone can add you. No restrictions on images or profile pictures."
+        content:
+          "Anyone can add you. No restrictions on images or profile pictures."
       }
     }
   }
