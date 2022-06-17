@@ -4,7 +4,8 @@ import {
   StringPreference,
   PreferenceManager,
   ListPreference,
-  MultichoicePreference
+  MultichoicePreference,
+  IntegerPreference
 } from "ts-preferences";
 import { preferences } from "~userscripter";
 
@@ -186,6 +187,11 @@ export const P = {
     key: "showAnimatedImages",
     label: T.preferences.showAnimatedImages.label,
     default: true
+  }),
+  introductionCompletedVersion: new IntegerPreference({
+    key: "introductionCompletedVersion",
+    label: "introductionCompletedVersion",
+    default: 0
   })
 } as const;
 

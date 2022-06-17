@@ -113,5 +113,26 @@ export default {
   ...(FEATURES.HACKS && {
     banMessage:
       "⚠️ You have been banned! You may not be able to rejoin the chat! ⚠️"
-  })
+  }),
+  introduction: {
+    title: "Welcome to RxE.",
+    content: "How do you want to use Emerald?",
+    presetsTitle: "Choose your preset",
+    presets: {
+      safe: {
+        title: "Safe",
+        content:
+          "Block requests from new accounts. Images from low karma accounts are hidden, all others blurred. GIFs and embeds are not shown."
+      },
+      normal: {
+        title: "Normal",
+        content:
+          "Anyone can add you. Images from low karma accounts are hidden. GIFs and embeds are shown."
+      },
+      unsafe: {
+        title: "Wild West",
+        content: "Anyone can add you. No restrictions on images or profile pictures."
+      }
+    }
+  }
 } as const;

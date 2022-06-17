@@ -43,6 +43,7 @@ import * as onbeforesend from "./modules/onbeforesend";
 import * as richText from "./modules/richtext";
 import * as dev from "./modules/dev";
 import { createEmbeds } from "./modules/embeds";
+import * as introModal from "./modules/settings/intro-dialog";
 
 async function init() {
   const featureSet = `(${[
@@ -102,6 +103,7 @@ async function init() {
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
+  introModal.init();
   // decorateHeader();
   // start our script's rendering loop
   render([
