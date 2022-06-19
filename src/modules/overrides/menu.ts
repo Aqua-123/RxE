@@ -130,25 +130,6 @@ export function menuOverrides() {
       error: () => this.close()
     });
   };
-  UserProfile.prototype.componentDidMount = function profileMount() {
-    $.ajax({
-      type: "GET",
-      url: `/profile_json?id=${this.props.id}`,
-      dataType: "json",
-      success: (resp: ProfileData) => this.setState({ data: resp }),
-      error: () => this.close()
-    });
-  };
-
-  const isPostedOnSelf = (content: string) => {
-    const regex = /posted on your profile.*/g;
-    return regex.test(content);
-  };
-  const likedComment = (content: string) => {
-    const regex = /liked your comment.*/g;
-    return regex.test(content);
-  };
-
   NotificationUnit.prototype.action = function action(event: _MouseEvent) {
     const { target } = event;
     if (!(target instanceof Node)) return;
@@ -157,14 +138,9 @@ export function menuOverrides() {
     if (acTarget.matches(".notification-button, .notification-button *"))
       return;
     const notification = this.props.data;
-
-    let sender = notification.data.sender ?? notification.data.user;
-    const { content } = notification.data;
+    const sender = notification.data.sender ?? notification.data.user;
     // No unit means no post to open the profile for.
     // Just show a UserView.
-    if (isPostedOnSelf(content) || likedComment(content)) {
-      sender = notification.data.user;
-    }
     if (
       !("unit" in notification.data) ||
       notification.tier === "friend_request"
@@ -178,14 +154,13 @@ export function menuOverrides() {
     // Tell app UI code which post to highlight.
     if ("unit" in notification.data) App.params = notification.data.unit;
 
-    let id =
+    const id =
+      notification.data.unit?.post.user_id ??
+      notification.data.unit?.author.id ??
       notification.data.unit?.post.author_id ??
       notification.data.unit?.comment.author_id ??
       notification.data.sender.id;
 
-    if (isPostedOnSelf(content) || likedComment(content)) {
-      id = notification.data.user.id;
-    }
     // Reload or open UserProfile.
     if (UserProfileReact) UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
