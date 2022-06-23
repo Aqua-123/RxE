@@ -5,6 +5,9 @@ import { FORMATS, parseImage } from "./formats";
 import { onClickOrKeyUp } from "~src/utils";
 import { setBioImage } from "./bio-image";
 
+const LOW_KARMA_WARNING =
+  "Due to low karma, some users may not see your avatar in chat.";
+
 const onDropHandler = (user: EmeraldUser) => (ev: DragEvent) => {
   ev.preventDefault();
   ev.stopPropagation();
@@ -73,7 +76,9 @@ export function profilePicture(this: UserProfile) {
       {lowKarma && customPic && (
         <div
           className="material-icons ritsu-avatar-karma-warning"
-          title="Due to low karma, some users may not see your avatar in chat."
+          title={LOW_KARMA_WARNING}
+          onClick={() => alert(LOW_KARMA_WARNING)}
+          role="button"
         >
           warning
         </div>
