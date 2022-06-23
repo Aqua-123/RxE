@@ -77,8 +77,9 @@ export function profilePicture(this: UserProfile) {
         <div
           className="material-icons ritsu-avatar-karma-warning"
           title={LOW_KARMA_WARNING}
-          onClick={() => alert(LOW_KARMA_WARNING)}
           role="button"
+          tabIndex={-1}
+          {...onClickOrKeyUp(() => alert(LOW_KARMA_WARNING))}
         >
           warning
         </div>
