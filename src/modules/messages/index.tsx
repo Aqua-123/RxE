@@ -141,6 +141,10 @@ export function initMessages() {
         textShadow={textShadow}
       />
     ) : null;
+    
+    const showUserView = (event) =>
+      user && UserViewGenerator.generate({ event, user });
+    
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
@@ -148,6 +152,7 @@ export function initMessages() {
             <div
               className="material-icons room-component-message-avatar ritsu-avatar-hidden"
               title="User avatar hidden due to image settings"
+              onMouseDown={showUserView}
             >
               visibility_off
             </div>
@@ -156,9 +161,7 @@ export function initMessages() {
               className={displayPicClasses.join(" ")}
               alt="User display avatar"
               src={user?.display_picture}
-              onMouseDown={(event) =>
-                user && UserViewGenerator.generate({ event, user })
-              }
+              onMouseDown={showUserView}
             />
           )}
         </div>
