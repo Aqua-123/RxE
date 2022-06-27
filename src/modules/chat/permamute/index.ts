@@ -2,7 +2,7 @@ import React from "react";
 import { ListPreferenceMap } from "~src/listprefcache";
 import { P, Preferences } from "~src/preferences";
 import { setDiff } from "~src/utils";
-import { clearRating } from "../antispam";
+import { clearRating } from "../../antispam";
 /**
  * Updates mutes about to be saved.
  */

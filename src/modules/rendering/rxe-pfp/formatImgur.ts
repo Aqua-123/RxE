@@ -1,4 +1,4 @@
-import { idFromURL, imgurPNG, upload } from "../newsendpics/imgur";
+import { idFromURL, imgurPNG, upload } from "../../newsendpics/imgur";
 
 export const formatImgur: ImageFormat = {
   unpack(compressed) {

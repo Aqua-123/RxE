@@ -1,6 +1,6 @@
 import React, { ChangeEvent, DragEvent } from "react";
 import ReactDOM from "react-dom";
-import { DRAGNDROP_FORMAT, uploadPicture } from "./uploadPicture";
+import { DRAGNDROP_FORMAT, uploadPicture } from "./upload-picture";
 import { FORMATS, parseImage } from "./formats";
 import { onClickOrKeyUp } from "~src/utils";
 import { setBioImage } from "./bio-image";

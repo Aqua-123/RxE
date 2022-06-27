@@ -715,3 +715,29 @@ export async function loadImage(url: string): Promise<Image> {
   });
   return image;
 }
+
+export async function getImageType(url: string): Promise<string | undefined> {
+  const request = await fetch(url);
+  const buffer = await request.arrayBuffer();
+  const bytes = new Uint8Array(buffer.slice(0, 4));
+  const header = Array.from(bytes)
+    .map((val) => val.toString(16))
+    .join("");
+
+  if (header.startsWith("424d")) return "image/bmp";
+
+  switch (header) {
+    case "89504e47":
+      return "image/png";
+    case "47494638":
+      return "image/gif";
+    case "ffd8ffe0":
+    case "ffd8ffe1":
+    case "ffd8ffe2":
+      return "image/jpeg";
+    case "25504446":
+      return "application/pdf";
+    default:
+      return undefined;
+  }
+}

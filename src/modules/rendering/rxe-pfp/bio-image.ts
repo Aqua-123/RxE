@@ -1,4 +1,4 @@
-import { updatePicToAlbum } from "../newalbum";
+import { updatePicToAlbum } from "../../newalbum";
 
 export const BIO_IMAGE = () =>
   /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;

@@ -4,7 +4,7 @@ import { SettingsDialogSettings, SettingsDialogHacks } from "./SettingsDialog";
 import CheckboxSetting from "./CheckboxSetting";
 import RadioSetting from "./RadioSetting";
 import TextSetting from "./TextfieldSetting";
-import { updateRoomMutes } from "~src/modules/permamute";
+import { updateRoomMutes } from "~src/modules/chat/permamute";
 import ListSetting from "./ListSetting";
 
 export type SettingsProps = SettingsDialogSettings & {

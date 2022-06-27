@@ -1,6 +1,6 @@
 import { links } from "~src/meta";
-import { sanitizeURL } from "../richtext/linkutils";
-import { wrapMarkdown } from "../richtext/richtext";
+import { sanitizeURL } from "../../richtext/linkutils";
+import { wrapMarkdown } from "../../richtext/richtext";
 
 const emotes = {
   shrug: "¯\\_(ツ)_/¯",

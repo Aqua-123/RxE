@@ -1,7 +1,7 @@
 // #9. Decorate Header
 import U from "~src/userscript";
 import { crel } from "~src/utils";
-import { getDisplayPicture } from "./altpfp/interceptUser";
+import { getDisplayPicture } from "./rxe-pfp/interceptUser";
 
 function setLogo(logo: Element) {
   const displayPicture = getDisplayPicture(App.user);

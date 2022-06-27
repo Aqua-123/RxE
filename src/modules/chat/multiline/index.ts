@@ -1,7 +1,7 @@
 import React from "react";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
-import { upload } from "../newsendpics/image-process";
+import { upload } from "../../newsendpics/image-process";
 
 const shouldSend = (
   event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>

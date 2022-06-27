@@ -1,5 +1,5 @@
 import { isYoutube, returnInnerHtml, isSpotify } from "./utils";
-import { desanitizeURL } from "../richtext/linkutils";
+import { desanitizeURL } from "../linkutils";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { P, Preferences } from "~src/preferences";

@@ -21,3 +21,10 @@
   top: 116px;
   left: 0px;
 }
+
+html.hidePfp {
+  .room-component-message-left,
+  .navigation-notification-unit-image {
+    display: none;
+  }
+}

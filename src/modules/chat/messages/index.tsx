@@ -8,7 +8,7 @@ import {
   notNum,
   getUserId
 } from "~src/utils";
-import { maybeEmbed } from "../embeds/utils";
+import { maybeEmbed } from "../../richtext/embeds/utils";
 import { wrapLinks } from "~src/modules/richtext/messagelinks";
 import css from "./style.scss";
 

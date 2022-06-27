@@ -4,9 +4,9 @@ import {
   bioWithoutImage,
   extractBioImage,
   saveBio
-} from "~src/modules/altpfp/bio-image";
+} from "~src/modules/rendering/rxe-pfp/bio-image";
 import { wrapRich } from "./richtext";
-import { formatName } from "../altpfp/formats";
+import { formatName } from "../rendering/rxe-pfp/formats";
 
 type BioImageProps = {
   raw: string;

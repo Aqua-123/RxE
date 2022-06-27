@@ -3,7 +3,7 @@ import browserWindow from "~src/browserWindow";
 import { existing, loadCSS, notNum, wrapMethod } from "~src/utils";
 import { getDisplayPicture, interceptUsers } from "./interceptUser";
 import css from "./styles.scss";
-import { profilePicture } from "./uploadComponents";
+import { profilePicture } from "./upload-components";
 
 export function init() {
   loadCSS(css);

@@ -1,5 +1,5 @@
 import { P, Preferences } from "~src/preferences";
-import { extractBioImage } from "../altpfp/bio-image";
+import { extractBioImage } from "../rendering/rxe-pfp/bio-image";
 import { imgurPNG, IMGUR_URL_REGEXP } from "../newsendpics/imgur";
 import { albumFunctionality } from "./components";
 
