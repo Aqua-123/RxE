@@ -1,4 +1,6 @@
 /* eslint-disable max-classes-per-file */
+
+// TODO: Split up
 import React, { KeyboardEvent, MouseEvent } from "react";
 
 const { max, min } = Math;
@@ -740,4 +742,13 @@ export async function getImageType(url: string): Promise<string | undefined> {
     default:
       return undefined;
   }
+}
+
+export function isFunction<T>(f: Function | T): f is Function {
+  return typeof f === "function";
+}
+
+export function oneOrMore<T>(obj: T | T[]): T[] {
+  if (Array.isArray(obj)) return obj;
+  return [obj];
 }

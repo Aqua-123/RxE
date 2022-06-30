@@ -104,3 +104,11 @@ body.tmp-message span.room-component-print:last-of-type {
 .channel-expand-icon {
   padding: 8px;
 }
+
+.ritsu-icon-network-unavail {
+  color: red !important;
+}
+
+html:not(.network-unavail) .ritsu-icon-network-unavail {
+  display: none;
+}

@@ -620,7 +620,7 @@ declare class __Comment extends React.Component<
   any,
   {
     compact: boolean;
-    micropost_data: unknown;
+    micropost_data: MicropostData;
     comment_data?: {
       user: EmeraldUser;
       likes_count: number;
@@ -655,6 +655,21 @@ declare class Microposts extends React.Component<
   scroll_bottom(): void;
 }
 
+declare type MicropostData = {
+  comments: number[];
+  liked: boolean;
+  likes: unknown[];
+  comments_count: number;
+  likes_count: number;
+  micropost: WallPost;
+  wall: WallComment; // Wall
+  author: EmeraldUser;
+  current_user: EmeraldUser;
+  subscribed: boolean;
+  muted: boolean;
+  picture: unknown;
+};
+
 declare class Micropost extends React.Component<
   {
     key: number;
@@ -682,20 +697,7 @@ declare class Micropost extends React.Component<
       muted: boolean;
       picture: unknown;
     };
-    micropost_data: {
-      comments: number[];
-      liked: boolean;
-      likes: unknown[];
-      comments_count: number;
-      likes_count: number;
-      micropost: WallPost;
-      wall: WallComment; // Wall
-      author: EmeraldUser;
-      current_user: EmeraldUser;
-      subscribed: boolean;
-      muted: boolean;
-      picture: unknown;
-    };
+    micropost_data: MicropostData;
     comment_data: {
       comment: WallComment;
       user: EmeraldUser;
@@ -777,13 +779,6 @@ declare type PrivateMessage = {
 declare class LikeButton extends React.Component<{
   data: { liked: boolean; value: number; id: number; class?: string };
 }> {}
-
-declare class CommentSettings extends React.Component<{
-  parent: Micropost;
-}> {
-  authorized(): boolean;
-}
-
 declare class BR extends React.Component<{
   children: React.ReactNode;
 }> {}

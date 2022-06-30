@@ -31,20 +31,21 @@ function addKarmaPlaceholder(logo: Element) {
   logo?.parentElement?.insertBefore(tracker, logo?.nextSibling);
 }
 
-function fullScreenButton() {
+function headerIcons() {
   const iconsHolder = document.querySelector(".navigation-notification-icons");
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  if (!iconsHolder?.children) return;
   if (
     document.fullscreenEnabled &&
-    iconsHolder?.children &&
-    !Array.from(iconsHolder?.children).some((child) =>
-      child?.textContent?.includes("full")
-    ) &&
+    !iconsHolder.querySelector(".ritsu-button-fullscreen") &&
     !isMobile
   ) {
     const fullscreenIcon = crel("span", {
-      className: "material-icons navigation-notification-unit",
+      className:
+        "material-icons navigation-notification-unit ritsu-button-fullscreen",
       textContent: "open_in_full",
+      tabIndex: -1,
+      role: "button",
       onmousedown: async () => {
         if (document.fullscreenElement) {
           document.exitFullscreen();
@@ -57,6 +58,22 @@ function fullScreenButton() {
     });
     const icon = crel("span");
     icon.append(fullscreenIcon);
+    iconsHolder.prepend(icon);
+  }
+  if (!iconsHolder.querySelector(".ritsu-icon-network-unavail")) {
+    const networkText =
+      "Emerald is not responding - switching chats is not recommended.";
+    const networkIcon = crel("span", {
+      className:
+        "material-icons navigation-notification-unit ritsu-icon-network-unavail",
+      textContent: "signal_cellular_alt",
+      tabIndex: -1,
+      role: "button",
+      title: networkText,
+      onmousedown: () => alert(networkText)
+    });
+    const icon = crel("span");
+    icon.append(networkIcon);
     iconsHolder.prepend(icon);
   }
 }
@@ -81,7 +98,7 @@ function addTextToLogo(logo: Element) {
 export function decorateHeader() {
   const logo = document.querySelector(".main-logo");
   if (!logo) return;
-  fullScreenButton();
+  headerIcons();
   setLogo(logo);
   setFavicon();
   addKarmaPlaceholder(logo);
