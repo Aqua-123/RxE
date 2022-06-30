@@ -2,7 +2,7 @@ export default {
   id: "ritsu-emerald",
   name: "Ritsu x Emerald",
   shortName: "RxE",
-  version: "0.11.1.1", // also check package.json
+  version: "0.11.2", // also check package.json
   description: "Custom Emerald Chat themes and fixes.",
   icon: "https://i.imgur.com/KLtVhho.png",
   author: "Atsos/Ritsu, Aqua, Strawberry.",
