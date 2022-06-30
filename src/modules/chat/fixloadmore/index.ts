@@ -1,5 +1,5 @@
 import { getUserId } from "~src/utils";
-import { fasterAppend } from "../messages";
+import { fasterAppend } from "~src/modules/chat/messages";
 
 export function initLoadMore() {
   function prepend(this: Room, newMessages: MessageData[]) {

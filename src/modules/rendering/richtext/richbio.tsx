@@ -6,7 +6,7 @@ import {
   saveBio
 } from "~src/modules/rendering/rxe-pfp/bio-image";
 import { wrapRich } from "./richtext";
-import { formatName } from "../rendering/rxe-pfp/formats";
+import { formatName } from "~src/modules/rendering/rxe-pfp/formats";
 
 type BioImageProps = {
   raw: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import { fasterAppend } from "../chat/messages";
+import { fasterAppend } from "~src/modules/chat/messages";
 import window from "~src/browserWindow";
 
 /**

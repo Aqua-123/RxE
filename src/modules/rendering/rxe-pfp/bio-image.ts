@@ -1,4 +1,4 @@
-import { updatePicToAlbum } from "../../newalbum";
+import { updatePicToAlbum } from "~src/modules/newalbum";
 
 export const BIO_IMAGE = () =>
   /\[?rxe-pfp:?([A-Za-z0-9+/=\u{E0020}-\u{E005F}]+)\]?/gu;
@@ -13,7 +13,6 @@ export function extractBioImage(bio: string): string | null {
   );
 }
 
-// todo: change behaviour so multiple formats are compatible
 export function bioWithoutImage(bio: string): string {
   const lastIndex = Array.from(bio.matchAll(BIO_IMAGE()))
     .map((match) => match.index)

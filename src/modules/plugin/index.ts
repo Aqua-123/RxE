@@ -34,10 +34,12 @@ function dispatchEvent(name: string, object: Record<string, any>) {
   return defaultPrevented;
 }
 
+// todo: Move
 function fixTyping(obj: MessageData) {
   if (obj.typing) RoomClient?.start_typing(obj.user);
   else RoomClient?.stop_typing();
 }
+
 export function initPluginAPI() {
   const RxE = {
     version,

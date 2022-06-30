@@ -5,7 +5,7 @@ import {
   decodeInvisible as decode,
   encodeInvisible as encode
 } from "~src/utils";
-import { dot, sanitizeURL } from "../richtext/linkutils";
+import { dot, sanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 import { newUpload as recordUpload } from "./ratelimit";
 
 export const HIDE_IMGUR_LINK: () => boolean = () =>

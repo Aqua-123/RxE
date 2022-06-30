@@ -1,6 +1,6 @@
 import React from "react";
 import { links } from "~src/meta";
-import { sanitizeURL } from "../richtext/linkutils";
+import { sanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 import * as imgur from "./imgur";
 import { ratelimitInfo as ratelimit } from "./ratelimit";
 

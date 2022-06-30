@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { updatePicToAlbum } from "src/modules/newalbum";
-import { uploadForm } from "src/modules/newsendpics/components";
-import { parseImage, FORMATS } from "../rendering/rxe-pfp/formats";
-import { setBioImage } from "../rendering/rxe-pfp/bio-image";
+import { updatePicToAlbum } from "~src/modules/newalbum";
+import { uploadForm } from "~src/modules/chat/chat-image/components";
+import { parseImage, FORMATS } from "~src/modules/rendering/rxe-pfp/formats";
+import { setBioImage } from "~src/modules/rendering/rxe-pfp/bio-image";
 import { P, Preferences } from "~src/preferences";
 
 const profileTabs = {

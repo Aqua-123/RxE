@@ -8,8 +8,8 @@ import {
   notNum,
   getUserId
 } from "~src/utils";
-import { maybeEmbed } from "../../richtext/embeds/utils";
-import { wrapLinks } from "~src/modules/richtext/messagelinks";
+import { maybeEmbed } from "~src/modules/rendering/richtext/embeds/utils";
+import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
 import css from "./style.scss";
 
 function getRoomMember(id: number) {

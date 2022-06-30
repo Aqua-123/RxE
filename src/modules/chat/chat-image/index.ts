@@ -4,7 +4,7 @@ import { initComponents, uploadForm } from "./components";
 import { upload, decodeImage, display, emit } from "./image-process";
 import { imageFromURL } from "./imgur";
 import { canUpload } from "./ratelimit";
-import { updatePicToAlbum } from "../newalbum";
+import { updatePicToAlbum } from "~src/modules/newalbum";
 
 export function initSendPics() {
   initComponents();

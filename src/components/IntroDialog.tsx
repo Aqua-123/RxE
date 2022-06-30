@@ -3,7 +3,7 @@ import { P, Preferences, RequestBlockMode } from "~src/preferences";
 import styles from "./style.module.scss";
 import T from "~src/text";
 import ThemesView from "./Themes";
-import { initTheme, Theme } from "../themes";
+import { initTheme, Theme } from "~src/themes";
 
 import { getSettings } from "~src/modules/settings";
 

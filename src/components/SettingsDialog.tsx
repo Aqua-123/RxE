@@ -6,7 +6,7 @@ import SettingsView from "./Settings";
 import ThemesView from "./Themes";
 import HacksView from "./Hacks";
 
-import { Theme, initTheme } from "../themes";
+import { Theme, initTheme } from "~src/themes";
 import styles from "./style.module.scss";
 import {
   applySettings,

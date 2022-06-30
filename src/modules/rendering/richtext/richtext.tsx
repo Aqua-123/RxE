@@ -1,6 +1,9 @@
 import React from "react";
 import { stringGroups, wrapPartitions } from "~src/utils";
-import { decodeImage, picture } from "../newsendpics/image-process";
+import {
+  decodeImage,
+  picture
+} from "~src/modules/chat/chat-image/image-process";
 import { urlImageDirectLinkAny } from "./linkutils";
 import { wrapLinks } from "./messagelinks";
 

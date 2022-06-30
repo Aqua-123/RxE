@@ -1,6 +1,6 @@
 import { P, Preferences } from "~src/preferences";
-import { extractBioImage } from "../rendering/rxe-pfp/bio-image";
-import { imgurPNG, IMGUR_URL_REGEXP } from "../newsendpics/imgur";
+import { extractBioImage } from "~src/modules/rendering/rxe-pfp/bio-image";
+import { imgurPNG, IMGUR_URL_REGEXP } from "~src/modules/chat/chat-image/imgur";
 import { albumFunctionality } from "./components";
 
 export function initPictureAlbum() {

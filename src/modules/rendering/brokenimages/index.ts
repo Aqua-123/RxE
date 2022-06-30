@@ -1,6 +1,6 @@
 import { getImageType } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
-import { urlImageDirectLinkAny } from "../../richtext/linkutils";
+import { urlImageDirectLinkAny } from "~src/modules/rendering/richtext/linkutils";
 import tickSVG from "./tick.svg";
 
 // 1. replace /badges/tick.svg broken images with a data: tickSVG URI

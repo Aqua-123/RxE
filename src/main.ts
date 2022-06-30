@@ -6,12 +6,12 @@ import { initAdBlocker, removeAds } from "./modules/ads";
 // import { initPictureAlbum } from "./modules/album";
 import { initPictureAlbum } from "./modules/newalbum";
 import { initAntiBan } from "./modules/antiban";
-import { initAntiSpam } from "./modules/antispam";
+import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
 import { initPicturesBlur } from "./modules/blur";
 import { renderBrokenImages } from "./modules/rendering/brokenimages";
 import { decorateProfileDialog } from "./modules/flaircolor";
-import { initGender } from "./modules/gender";
+import { initGender } from "./modules/rendering/gender";
 import { decorateHeader } from "./modules/rendering/header";
 import { initKarmaTracker } from "./modules/karma";
 import {
@@ -32,15 +32,15 @@ import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { initPermaMute } from "./modules/chat/permamute";
 import { initLoadMore } from "./modules/chat/fixloadmore";
-import { initSendPics } from "./modules/newsendpics";
+import { initSendPics } from "./modules/chat/chat-image";
 import { multiLineOverride } from "./modules/chat/multiline";
 import * as altpfp from "./modules/rendering/rxe-pfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/chat/highlightmentions/index";
 import * as onbeforesend from "./modules/chat/onbeforesend";
-import * as richText from "./modules/richtext";
+import * as richText from "./modules/rendering/richtext";
 import * as dev from "./modules/unobfuscate";
-import { createEmbeds } from "./modules/richtext/embeds";
+import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 
 async function init() {
