@@ -36,9 +36,9 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
     ) {
       const n = lastMessage.messages;
       const r = n[n.length - 1];
-      if (!r || element.messages[0] === r) return;
+      if (element.messages[0] === r) return;
       if (maybeEmbed(r)) messages.push(element);
-      lastMessage.messages.push(element.messages[0]);
+      messages[messages.length - 1].messages.push(element.messages[0]);
     } else messages.push(element);
   });
   this.setState({ messages });
