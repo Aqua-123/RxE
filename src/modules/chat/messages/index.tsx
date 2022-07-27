@@ -41,9 +41,7 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
       lastMessage.messages.push(element.messages[0]);
     } else messages.push(element);
   });
-  // prevent using this.setState if only one message was added
-  if (messageArr.length === 1) this.state.messages = messages;
-  else this.setState({ messages });
+  this.setState({ messages });
 }
 function UserInfo(props: any) {
   const { user, karma, colour, textShadow, timeago } = props;
