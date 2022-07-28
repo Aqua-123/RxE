@@ -170,26 +170,31 @@ export function menuOverrides() {
 
   // Fix crash on null sender
   NotificationUnit.prototype.image = function image() {
-    return React.createElement('img', {
-      className: 'navigation-notification-unit-image',
+    return React.createElement("img", {
+      className: "navigation-notification-unit-image",
       src: this.props.data?.data?.sender?.display_picture
     });
-  }
+  };
   NotificationUnit.prototype.content = function content() {
-    const { content, sender } = this.props.data.data;
+    const { content: contentWhole, sender } = this.props.data.data;
     const flairData = {
       string: sender?.display_name ?? "(no name)",
       flair: sender?.flair ?? { color: "" }
     };
     const flair = React.createElement(Flair, { data: flairData });
-    const contentTrimmed = content.length > 64 
-      ? content.substring(0, 64) + "..." 
-      : content;
-    const message = React.createElement('span', {
-      className: 'navigation-notification-unit-message'
-    }, contentTrimmed);
-    return React.createElement('span', null, flair, message);
-  }
+    const contentTrimmed =
+      contentWhole.length > 64
+        ? `${contentWhole.substring(0, 64)}...`
+        : contentWhole;
+    const message = React.createElement(
+      "span",
+      {
+        className: "navigation-notification-unit-message"
+      },
+      contentTrimmed
+    );
+    return React.createElement("span", null, flair, message);
+  };
 }
 
 /*
