@@ -159,13 +159,37 @@ export function menuOverrides() {
       notification.data.unit?.author.id ??
       notification.data.unit?.post.author_id ??
       notification.data.unit?.comment.author_id ??
-      notification.data.sender.id;
+      notification.data?.sender?.id ??
+      notification.sender_id;
 
     // Reload or open UserProfile.
     if (UserProfileReact) UserProfileReact.load(id);
     const userProfile = React.createElement(UserProfile, { id });
     ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
   };
+
+  // Fix crash on null sender
+  NotificationUnit.prototype.image = function image() {
+    return React.createElement('img', {
+      className: 'navigation-notification-unit-image',
+      src: this.props.data?.data?.sender?.display_picture
+    });
+  }
+  NotificationUnit.prototype.content = function content() {
+    const { content, sender } = this.props.data.data;
+    const flairData = {
+      string: sender?.display_name ?? "(no name)",
+      flair: sender?.flair ?? { color: "" }
+    };
+    const flair = React.createElement(Flair, { data: flairData });
+    const contentTrimmed = content.length > 64 
+      ? content.substring(0, 64) + "..." 
+      : content;
+    const message = React.createElement('span', {
+      className: 'navigation-notification-unit-message'
+    }, contentTrimmed);
+    return React.createElement('span', null, flair, message);
+  }
 }
 
 /*

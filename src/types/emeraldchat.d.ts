@@ -108,7 +108,7 @@ declare type MessageNotificationProps = {
   created_at: string;
   data: {
     user: EmeraldUser;
-    sender: EmeraldUser;
+    sender: null | EmeraldUser;
     message: {
       messages: string[];
       picture: null | EmeraldPicture;

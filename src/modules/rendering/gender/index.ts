@@ -6,7 +6,8 @@ function genderIntercept(this: any, element: () => JSX.Element) {
   let gender;
   const img = element.apply(this);
   if (!this.props.data) return img;
-  if (this.props.data.data) gender = this.props.data.data.sender.gender;
+  // this is why you typecheck
+  if (this.props.data.data?.sender) gender = this.props.data.data.sender.gender;
   if (this.props.data.gender) gender = this.props.data.gender;
   if (img.props.children) img.props.children[0].props["data-gender"] = gender;
   else img.props["data-gender"] = gender;
