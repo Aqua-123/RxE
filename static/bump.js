@@ -94,7 +94,7 @@ const newVersion = process.argv[2];
 
   await exec("git add package.json src/userscript.ts");
   try {
-    await exec(`git commit -m 'Bump to version ${newVersion}'`);
+    await exec(`git commit -m 'Bump to v${newVersion}' [auto]`);
   } catch (_) {
     // ignore empty commits
   }
