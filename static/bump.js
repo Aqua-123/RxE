@@ -133,4 +133,6 @@ const newVersion = process.argv[2];
   }
 
   fs.writeFileSync(`${RELEASES_META}/${VERSION_FILE}`, newVersion);
+
+  console.log(`Updated files in release directory to v${newVersion}`);
 })();
