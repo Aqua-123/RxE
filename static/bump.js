@@ -121,8 +121,11 @@ const newVersion = process.argv[2];
   const NEW_RELEASE_FROM = `${RELEASE_BUILT}/${RELEASE_UNIVERSAL}`;
   const NEW_RELEASE_UNIVERSAL = `${RELEASES_LOCATION}/${RELEASE_UNIVERSAL}`;
   const NEW_RELEASE_NAMED = `${RELEASES_LOCATION}/${RELEASE_NAMED(newVersion)}`;
-
-  fs.renameSync(OLD_RELEASE_FROM, OLD_RELEASE_TO);
+  if (fs.fileExists(OLD_RELEASE_FROM) {
+    fs.renameSync(OLD_RELEASE_FROM, OLD_RELEASE_TO);
+  } else {
+    console.log("Could not locate old release: please move to 'Previous Versions' folder manually.");
+  }
   fs.copyFileSync(NEW_RELEASE_FROM, NEW_RELEASE_UNIVERSAL);
   fs.copyFileSync(NEW_RELEASE_FROM, NEW_RELEASE_NAMED);
 
