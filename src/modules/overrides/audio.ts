@@ -8,7 +8,7 @@ export function initAudio() {
       Cookies.set("muted", MuteButtonClient.state.muted ? "t" : "");
   });
 
-  // if no setting found, start with audio ping on every message disabled
+  // if no setting found, start with audio ping disabled
   MuteButton.prototype.componentDidMount = function componentDidMount() {
     const muted = Cookies.get("muted");
     this.setState({

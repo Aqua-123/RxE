@@ -5,6 +5,41 @@ import window from "~src/browserWindow";
 /**
  Apply overrides to the Room client and related objects.
  */
+
+function mountChannel(this: Room) {
+  this.setState({
+    right_panel: true,
+    left_panel: true,
+    print: ""
+  });
+}
+
+function joinPrivateRoom(this: Room, e: any) {
+  App.room.join(this.props.data.id);
+  fasterAppend.call(this, e.messages);
+  this.setState({
+    messages_count: e.messages_count,
+    id: this.props.data.id
+  });
+  this.scroll();
+}
+
+function mountPrivate(this: Room) {
+  mountChannel.call(this);
+  $.ajax({
+    type: "GET",
+    url: `/default_private_messages?id=${this.props.data.id}`,
+    dataType: "json",
+    success: joinPrivateRoom.bind(this)
+  });
+}
+
+function mountMatchMenu(this: Room, action: string) {
+  this.setState({
+    print: React.createElement(MatchMenu, { data: { queue: action } })
+  });
+}
+
 export function roomclientOverrides() {
   const stateObj = {
     match: "text",
@@ -13,41 +48,16 @@ export function roomclientOverrides() {
     channel: "",
     private: ""
   };
+
   Room.prototype.componentDidMount = function componentDidMount() {
     this.clear_print();
     const { mode } = this.state;
     const action = stateObj[mode];
-    if (action) {
-      this.setState({
-        print: React.createElement(MatchMenu, { data: { queue: action } })
-      });
-    } else if (mode === "channel") {
-      this.setState({
-        right_panel: true,
-        left_panel: true,
-        print: ""
-      });
-    } else if (mode === "private") {
-      this.setState({
-        right_panel: true,
-        left_panel: true
-      });
-      $.ajax({
-        type: "GET",
-        url: `/default_private_messages?id=${this.props.data.id}`,
-        dataType: "json",
-        success: function join(this: Room, e: any) {
-          App.room.join(this.props.data.id);
-          fasterAppend.call(this, e.messages);
-          this.setState({
-            messages_count: e.messages_count,
-            id: this.props.data.id
-          });
-          this.scroll();
-        }.bind(this)
-      });
-    }
+    if (action) mountMatchMenu.call(this, action);
+    else if (mode === "channel") mountChannel.call(this);
+    else if (mode === "private") mountPrivate.call(this);
   };
+
   Room.prototype.trim_messages = function trimMessages() {
     const max = this.state.mode === "channel" ? 100 : 5000;
     const { messages } = this.state;

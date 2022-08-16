@@ -12,7 +12,6 @@ enum DoSendRequest {
 function interceptAjax(url: string, settings: AjaxOpts): DoSendRequest {
   const { SendRequest, AbortRequest } = DoSendRequest;
   if (!FEATURES.HACKS) return SendRequest;
-
   if (url === "/user_is_temp") {
     shortCircuit(settings, async () => ({ status: false, temp: false }));
     return AbortRequest;
