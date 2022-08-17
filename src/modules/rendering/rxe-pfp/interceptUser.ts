@@ -3,14 +3,18 @@ import { getUserId, wrapMethod } from "~src/utils";
 import { extractBioImage } from "./bio-image";
 import { unpackImage } from "./formats";
 
+const GEM_AVICON = "https://emeraldchat.com/avicons_strict/1.png";
+const ROBOHASH_URL = (id: number | undefined) =>
+  `https://robohash.org/yay${id}.png?set=set4`;
 export function getDisplayPicture(user: Partial<EmeraldUser>): string {
   const lowKarma = (user._karma ?? user.karma ?? 0) < 10;
+  const isEmeUpload = user?.display_picture?.includes(
+    "emeraldchat.com/uploads"
+  );
   const fallback =
-    !user?.display_picture?.includes("emeraldchat.com/uploads") || lowKarma
-      ? `https://robohash.org/yay${user.id}.png?set=set4`
-      : user.display_picture;
+    !isEmeUpload || lowKarma ? ROBOHASH_URL(user.id) : user.display_picture!;
   const isSelf = getUserId(App.user) === getUserId(user as EmeraldUser);
-  if (lowKarma && !isSelf && Preferences.get(P.imgProtect)) return fallback;
+  if (lowKarma && !isSelf && Preferences.get(P.imgProtect)) return GEM_AVICON;
   if (user.bio === undefined) {
     console.warn("user.bio is undefined");
     return fallback;
