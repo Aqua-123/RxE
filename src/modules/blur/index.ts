@@ -5,7 +5,6 @@ export function applyBlurs() {
   const arrElements = document.querySelectorAll(
     ".navigation-notification-unit-image"
   ) as NodeListOf<HTMLImageElement>;
-  console.log(arrElements);
   arrElements.forEach((element) => {
     if (
       element.src.includes("robohash") ||
@@ -13,7 +12,6 @@ export function applyBlurs() {
     )
       return;
     element.classList.add("ritsu-would-blur");
-    console.log("blurring", element.src);
   });
 }
 
