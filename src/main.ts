@@ -8,7 +8,7 @@ import { initPictureAlbum } from "./modules/newalbum";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
-import { initPicturesBlur } from "./modules/blur";
+import { initPicturesBlur, applyBlurs } from "./modules/blur";
 import { renderBrokenImages } from "./modules/rendering/brokenimages";
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { initGender } from "./modules/rendering/gender";
@@ -104,6 +104,7 @@ async function init() {
   // decorateHeader();
   // start our script's rendering loop
   render([
+    applyBlurs,
     markTextOnly,
     createEmbeds,
     reorderMenu,

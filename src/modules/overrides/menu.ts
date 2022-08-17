@@ -170,8 +170,12 @@ export function menuOverrides() {
 
   // Fix crash on null sender
   NotificationUnit.prototype.image = function image() {
+    const classList = "navigation-notification-unit-image";
+    // if (!this.props.data?.data?.sender?.display_picture.includes("robohash")) {
+    //   classList += " ritsu-would-blur";
+    // }
     return React.createElement("img", {
-      className: "navigation-notification-unit-image",
+      className: classList,
       src: this.props.data?.data?.sender?.display_picture
     });
   };
