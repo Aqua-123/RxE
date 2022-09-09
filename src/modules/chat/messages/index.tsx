@@ -41,8 +41,11 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
       messages[messages.length - 1].messages.push(element.messages[0]);
     } else messages.push(element);
   });
-  this.setState({ messages });
+  // prevent using this.setState if only one message was added
+  if (messageArr.length === 1) this.state.messages = messages;
+  else this.setState({ messages });
 }
+
 function UserInfo(props: any) {
   const { user, karma, colour, textShadow, timeago } = props;
   return (
@@ -143,37 +146,45 @@ export function initMessages() {
     const showUserView = (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
       user && UserViewGenerator.generate({ event, user });
 
+    const imgBlocked = (
+      <div
+        className="material-icons room-component-message-avatar ritsu-avatar-hidden"
+        title="User avatar hidden due to image settings"
+        onMouseDown={showUserView}
+        role="button"
+        tabIndex={-1}
+      >
+        visibility_off
+      </div>
+    );
+
+    const displayPicture = (
+      <img
+        className={displayPicClasses.join(" ")}
+        alt="User display avatar"
+        src={user?.display_picture}
+        onMouseDown={showUserView}
+      />
+    );
+
+    const userFlair = (
+      <div
+        className="room-component-flair"
+        onMouseDown={showUserView}
+        role="button"
+        tabIndex={-1}
+      >
+        <Flair data={flair} />
+      </div>
+    );
+
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
-          {blockPic ? (
-            <div
-              className="material-icons room-component-message-avatar ritsu-avatar-hidden"
-              title="User avatar hidden due to image settings"
-              onMouseDown={showUserView}
-              role="button"
-              tabIndex={-1}
-            >
-              visibility_off
-            </div>
-          ) : (
-            <img
-              className={displayPicClasses.join(" ")}
-              alt="User display avatar"
-              src={user?.display_picture}
-              onMouseDown={showUserView}
-            />
-          )}
+          {blockPic ? imgBlocked : displayPicture}
         </div>
         <div className="room-component-message-right">
-          <div
-            className="room-component-flair"
-            onMouseDown={showUserView}
-            role="button"
-            tabIndex={-1}
-          >
-            <Flair data={flair} />
-          </div>
+          {userFlair}
           <Badge badge={user?.badge ?? null} />
           {Preferences.get(P.showInfo) && userInfo}
           <div className={contentClasses.join(" ")}>

@@ -6,7 +6,7 @@ export function initLoadMore() {
     RoomClient?.trim_messages();
     const messagesStored = RoomClient?.state.messages;
     if (!messagesStored) return;
-    newMessages.forEach((newMessage /* singleton */) => {
+    newMessages.forEach((newMessage) => {
       if (messagesStored.length === 0) messagesStored.unshift(newMessage);
 
       const followingMessageBlk = messagesStored[0];
