@@ -110,9 +110,9 @@ const markdownStyles: Record<string, TextDecoration> = {
   "`": "monospace",
   "^^": "superscript",
   ",,": "hooked",
-  "<" : "cursive",
-  "<<" : "cursiveBold",
-  "~" : "smallcaps"
+  "<": "cursive",
+  "<<": "cursiveBold",
+  "~": "smallcaps"
 };
 
 const markdownDelimiters = Object.getOwnPropertyNames(markdownStyles) as Array<
@@ -126,7 +126,7 @@ function mirrorDelimiter(delim: string): string {
   if (delim === "*//") return "//*";
   if (delim === "<<") return ">>";
   if (delim === "<") return ">";
-  
+
   return delim;
 }
 
