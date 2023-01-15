@@ -109,18 +109,24 @@ const markdownStyles: Record<string, TextDecoration> = {
   "***": "boldItalic",
   "`": "monospace",
   "^^": "superscript",
-  ",,": "hooked"
+  ",,": "hooked",
+  "<" : "cursive",
+  "<<" : "cursiveBold",
+  "~" : "smallcaps"
 };
 
 const markdownDelimiters = Object.getOwnPropertyNames(markdownStyles) as Array<
   keyof typeof markdownStyles
 >;
 markdownDelimiters.sort((a, b) => b.length - a.length);
-
 function mirrorDelimiter(delim: string): string {
   if (delim === "[[") return "]]";
   if (delim === "((") return "))";
   if (delim === "{{") return "}}";
+  if (delim === "*//") return "//*";
+  if (delim === "<<") return ">>";
+  if (delim === "<") return ">";
+  
   return delim;
 }
 
@@ -141,7 +147,7 @@ export function wrapMarkdown(
 ): string {
   return wrapPartitions<string, string>(
     text,
-    /(?<=\s|^|\.,;!\?)(\*{1,3}|_{1,2}|~~|`|\^\^|,,|\[{2}|\({2}|\{{2})\S(?:.*?\S)?(?:\1|\]{2}|\){2}|\}{2})(?=\s|$|\.,;!\?)/g,
+    /(?<=\s|^|\.,;!\?)(\*{1,3}|_{1,2}|~{1,2}|<{1,2}|`|\^\^|,,|\[{2}|\({2}|\{{2})\S(?:.*?\S)?(?:\1|\]{2}|\){2}|\}{2}|>{1,2})(?=\s|$|\.,;!\?)/g,
     makeMarkdown,
     restWrapper
   ).join("");
