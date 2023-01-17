@@ -51,6 +51,16 @@ function addSubstitutions(substitutions: Record<string, string>) {
   );
 }
 
+function addZWSP(message: string) {
+  const words = message.split(" ");
+  let newMessage = "";
+  words.forEach((word: string) => {
+    newMessage += ` ${[word.slice(0, 1), "‎", word.slice(1)].join("")}`;
+  });
+  const finalMessage = newMessage;
+  return finalMessage;
+}
+
 export function init() {
   addSubstitutions(emotes);
 
@@ -66,8 +76,10 @@ export function init() {
   };
 
   Room.prototype.process = function process(message) {
-    if (commands.process(message)) return null;
-    if (commands.checkMail(message)) return commands.processMail(message);
-    return sanitizeURL(wrapMarkdown(message));
+    const fixedMessage = addZWSP(message);
+    if (commands.process(fixedMessage)) return null;
+    if (commands.checkMail(fixedMessage))
+      return commands.processMail(fixedMessage);
+    return sanitizeURL(wrapMarkdown(fixedMessage));
   };
 }
