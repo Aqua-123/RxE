@@ -42,6 +42,7 @@ import * as richText from "./modules/rendering/richtext";
 import * as dev from "./modules/unobfuscate";
 import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
+import { initversionCheck } from "./modules/versioncheck";
 
 async function init() {
   const featureSet = `(${[
@@ -101,6 +102,7 @@ async function init() {
   richText.init();
   onbeforesend.init();
   introModal.init();
+  initversionCheck();
   // decorateHeader();
   // start our script's rendering loop
   render([

@@ -593,7 +593,8 @@ export const without = <T>(item: T, array: T[]) =>
 
 export const stripBiDi = (s: string) => {
   const bidireg = /[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g;
-  if (bidireg.test(s)) return s.replace(bidireg, "").split("").reverse().join("");
+  if (bidireg.test(s))
+    return s.replace(bidireg, "").split("").reverse().join("");
   return s;
 };
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
@@ -753,4 +754,37 @@ export function isFunction<T>(f: Function | T): f is Function {
 export function oneOrMore<T>(obj: T | T[]): T[] {
   if (Array.isArray(obj)) return obj;
   return [obj];
+}
+
+export function versionComparison(v1: string, v2: string) {
+  let vnum1 = 0;
+  let vnum2 = 0;
+  for (let i = 0, j = 0; i < v1.length || j < v2.length; ) {
+    // storing numeric part of
+    // version 1 in vnum1
+    while (i < v1.length && v1[i] !== ".") {
+      vnum1 = vnum1 * 10 + (Number(v1[i]) - Number("0"));
+
+      i += 1;
+    }
+
+    // storing numeric part of
+    // version 2 in vnum2
+    while (j < v2.length && v2[j] !== ".") {
+      vnum2 = vnum2 * 10 + (Number(v2[j]) - Number("0"));
+      console.log(Number(v2[j]), v2[j]);
+      j += 1;
+    }
+    console.log(vnum1, vnum2);
+    if (vnum1 > vnum2) return 1;
+    if (vnum2 > vnum1) return -1;
+
+    // if equal, reset variables and
+    // go for next numeric part
+    vnum1 = 0;
+    vnum2 = 0;
+    i += 1;
+    j += 1;
+  }
+  return 0;
 }
