@@ -591,13 +591,11 @@ export const percent = (fraction: number) =>
 export const without = <T>(item: T, array: T[]) =>
   array.filter((arrayItem) => arrayItem !== item);
 
-export const stripBiDi = (s: string) =>
-  s
-    .replace(/[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g, "")
-    .split("")
-    .reverse()
-    .join("");
-
+export const stripBiDi = (s: string) => {
+  const bidireg = /[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g;
+  if (bidireg.test(s)) return s.replace(bidireg, "").split("").reverse().join("");
+  return s;
+};
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
 export function textEntropy(msg: string, sep: RegExp | string = "") {
   const sorted = msg.split(sep).sort();
