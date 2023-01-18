@@ -51,7 +51,8 @@ function addSubstitutions(substitutions: Record<string, string>) {
   );
 }
 
-function addZWSP(message: string) {
+function addZWSP(message: string | null) {
+  if (!message) return null;
   const words = message.split(" ");
   let newMessage = "";
   words.forEach((word: string) => {
@@ -66,20 +67,19 @@ export function init() {
 
   Room.prototype.send = function send(rawMessage: string) {
     const message = this.process ? this.process(rawMessage) : rawMessage;
-    if (message === null) return;
+    const fixedMessage = addZWSP(message);
+    if (fixedMessage === null) return;
     this.append({
-      messages: [message],
+      messages: [fixedMessage],
       user: App.user
     });
-    App.room.client.speak({ message });
+    App.room.client.speak({ message: fixedMessage });
     this.scroll();
   };
 
   Room.prototype.process = function process(message) {
-    const fixedMessage = addZWSP(message);
-    if (commands.process(fixedMessage)) return null;
-    if (commands.checkMail(fixedMessage))
-      return commands.processMail(fixedMessage);
-    return sanitizeURL(wrapMarkdown(fixedMessage));
+    if (commands.process(message)) return null;
+    if (commands.checkMail(message)) return commands.processMail(message);
+    return sanitizeURL(wrapMarkdown(message));
   };
 }
