@@ -550,6 +550,7 @@ declare class UserView extends React.Component<
   top: () => JSX.Element;
   unmute: Function;
   mute: Function;
+  switch: Function;
   message: Function;
   mod_button: Function;
   permamute: Function;

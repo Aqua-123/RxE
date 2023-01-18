@@ -1,7 +1,7 @@
 import React from "react";
 import { fasterAppend } from "~src/modules/chat/messages";
 import window from "~src/browserWindow";
-
+import { stripBiDi } from "~src/utils";
 /**
  Apply overrides to the Room client and related objects.
  */
@@ -109,5 +109,14 @@ export function roomclientOverrides() {
     this.updated = rpUpdated.bind(this);
     this.updated(channelResponse);
     this.updated = function doNothing() {};
+  };
+  Room.prototype.start_typing = function st(e) {
+    if (e.id === App.user.id) return;
+    this.setState({
+      typing: stripBiDi(e.display_name)
+    });
+    window.typing_timer = setTimeout(() => {
+      this.stop_typing();
+    }, 1e4);
   };
 }
