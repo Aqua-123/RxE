@@ -593,9 +593,7 @@ export const without = <T>(item: T, array: T[]) =>
 
 export const stripBiDi = (s: string) => {
   const bidireg = /[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g;
-  if (bidireg.test(s))
-    return s.replace(bidireg, "").split("").reverse().join("");
-  return s;
+  return s.replace(bidireg, "");
 };
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
 export function textEntropy(msg: string, sep: RegExp | string = "") {
@@ -772,10 +770,8 @@ export function versionComparison(v1: string, v2: string) {
     // version 2 in vnum2
     while (j < v2.length && v2[j] !== ".") {
       vnum2 = vnum2 * 10 + (Number(v2[j]) - Number("0"));
-      console.log(Number(v2[j]), v2[j]);
       j += 1;
     }
-    console.log(vnum1, vnum2);
     if (vnum1 > vnum2) return 1;
     if (vnum2 > vnum1) return -1;
 
