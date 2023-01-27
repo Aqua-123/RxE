@@ -17,8 +17,7 @@ import { initKarmaTracker } from "./modules/karma";
 import {
   betterMessageRendering,
   decorateMessages,
-  initMessages,
-  markTextOnly
+  initMessages
 } from "./modules/chat/messages";
 import { initNetwork } from "./modules/network";
 import { applyOverrides } from "./modules/overrides";
@@ -107,7 +106,6 @@ async function init() {
   // start our script's rendering loop
   render([
     applyBlurs,
-    markTextOnly,
     createEmbeds,
     reorderMenu,
     injectRitsuMenu,

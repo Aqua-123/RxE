@@ -11,6 +11,8 @@ import {
 import { maybeEmbed } from "~src/modules/rendering/richtext/embeds/utils";
 import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
 import css from "./style.scss";
+import { willEmbed } from "~src/modules/rendering/richtext/embeds";
+import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 
 function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
@@ -66,6 +68,20 @@ function UserInfo(props: any) {
     </span>
   );
 }
+
+function mapText(this: Message, text: string) {
+  if (willEmbed(`https://${desanitizeURL(text)}`))
+    return (
+      <div className="embed" key={JSON.stringify(text)}>
+        {this.process(text)}
+      </div>
+    );
+  return (
+    <div className="text-only" key={JSON.stringify(text)}>
+      {this.process(text)}
+    </div>
+  );
+}
 export function initMessages() {
   loadCSS(css);
   Message.prototype.content = function content() {
@@ -74,12 +90,11 @@ export function initMessages() {
     const imgProtect = Preferences.get(P.imgProtect);
     const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
     const pictureBlocked = !isSelf && lowKarma && imgProtect;
-    if (picture && !pictureBlocked) return <MessagePicture picture={picture} />;
-    if (picture)
+    if (picture) {
+      if (!pictureBlocked) return <MessagePicture picture={picture} />;
       return [<div>(Image) {wrapLinks(picture.url, (rest) => rest)}</div>];
-    return messages.map((text) => (
-      <div key={JSON.stringify(text)}>{this.process(text)}</div>
-    ));
+    }
+    return messages.map((text) => mapText.call(this, text));
   };
 
   Message.prototype.render = function render() {
@@ -330,31 +345,4 @@ export function betterMessageRendering() {
   Room.prototype.append = function append(e) {
     fasterAppend.call(this, [e]);
   };
-}
-export function markTextOnly() {
-  const textOnly = document.querySelectorAll(".room-component-message-text");
-  textOnly.forEach((child) => {
-    const children = child.childNodes as NodeListOf<HTMLElement>;
-    children.forEach((element) => {
-      if (
-        element.classList.contains("text-only") &&
-        (element.querySelector(".embed") ||
-          element.querySelector(".room-component-message-picture-container") ||
-          element.querySelector(".room-component-message-picture"))
-      ) {
-        element.classList.remove("text-only");
-      }
-      if (
-        element.classList.contains("text-only") ||
-        element.classList.contains(
-          "room-component-message-picture-container"
-        ) ||
-        element.querySelector(".room-component-message-picture-container") ||
-        element.querySelector(".embed") ||
-        element.querySelector(".room-component-message-picture")
-      )
-        return;
-      element.classList.add("text-only");
-    });
-  });
 }

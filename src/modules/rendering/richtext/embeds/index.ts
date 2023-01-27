@@ -4,6 +4,10 @@ import css from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 
+export function willEmbed(content: string) {
+  return isYoutube(content) || isSpotify(content);
+}
+
 function embedElements(className: string) {
   const newLineHtml = "<br>";
   const allowEmbeds = Preferences.get(P.toggleEmbeds);
