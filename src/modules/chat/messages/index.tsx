@@ -13,6 +13,7 @@ import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
 import css from "./style.scss";
 import { willEmbed } from "~src/modules/rendering/richtext/embeds";
 import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
+import { decodeImage } from "../chat-image/imgur";
 
 function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
@@ -70,7 +71,7 @@ function UserInfo(props: any) {
 }
 
 function mapText(this: Message, text: string) {
-  if (willEmbed(`https://${desanitizeURL(text)}`))
+  if (willEmbed(`https://${desanitizeURL(text)}`) || decodeImage(text))
     return (
       <div className="embed" key={JSON.stringify(text)}>
         {this.process(text)}
