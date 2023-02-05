@@ -42,6 +42,7 @@ import * as dev from "./modules/unobfuscate";
 import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
+import { fixChatRoomWidth } from "./modules/rendering/chatroom";
 
 async function init() {
   const featureSet = `(${[
@@ -105,6 +106,7 @@ async function init() {
   // decorateHeader();
   // start our script's rendering loop
   render([
+    fixChatRoomWidth,
     applyBlurs,
     createEmbeds,
     reorderMenu,
