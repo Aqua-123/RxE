@@ -21,6 +21,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("trackKarma", props)}
       {checkboxPreference("fancyColors", props)}
       {radioPreference("blockReqs", props)}
+      {checkboxPreference("notifyUpdates", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}
       {checkboxPreference("imgProtect", props)}

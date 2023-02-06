@@ -84,6 +84,11 @@ export const P = {
     label: T.preferences.trackKarma.label,
     default: true
   }),
+  notifyUpdates: new BooleanPreference({
+    key: "notifyUpdates",
+    label: T.preferences.notifyUpdates.label,
+    default: true
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

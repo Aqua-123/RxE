@@ -101,6 +101,9 @@ export default {
     },
     showAnimatedImages: {
       label: "Show GIFs"
+    },
+    notifyUpdates: {
+      label: "Notify when updates are available"
     }
   },
   hiddenChannels: "hidden channels",
