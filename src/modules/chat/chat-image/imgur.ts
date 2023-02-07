@@ -21,6 +21,7 @@ const IMGUR_ENCODED_REGEXP = () => new RegExp(`${IMGUR_HEADER_ENCODED}(\\S*)`);
 export const IMGUR_URL_REGEXP = () =>
   new RegExp(`imgur${dot}com/([a-z0-9]+)`, "i");
 
+console.log(IMGUR_URL_REGEXP);
 export const imgurPNG = (id: string) => `https://i.imgur.com/${id}.png`;
 
 export const headers = () => ({
