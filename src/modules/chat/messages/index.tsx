@@ -9,7 +9,7 @@ import {
   getUserId
 } from "~src/utils";
 import { maybeEmbed } from "~src/modules/rendering/richtext/embeds/utils";
-import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
+// import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
 import css from "./style.scss";
 import { willEmbed } from "~src/modules/rendering/richtext/embeds";
 import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
@@ -85,18 +85,60 @@ function mapText(this: Message, text: string) {
 }
 export function initMessages() {
   loadCSS(css);
+
+  Message.prototype.content = function content() {
+    const { data } = this.props;
+    const { picture, messages, user } = this.props.data;
+    const isSelf = data.isMine || getUserId(user) === getUserId(App.user);
+    const imgProtect = Preferences.get(P.imgProtect);
+    const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
+    const pictureBlocked = !isSelf && lowKarma && imgProtect;
+    if (picture) {
+      if (!pictureBlocked)
+        return React.createElement(
+          "div",
+          { className: "image-wrap" },
+          React.createElement("img", {
+            src: picture,
+            className: "message-image"
+          })
+        );
+      return React.createElement(
+        "div",
+        { className: "image-wrap" },
+        React.createElement(
+          "a",
+          {
+            className: "image-warning",
+            onClick: this.showImage.bind(this)
+          },
+          "click here to show image"
+        ),
+        React.createElement("img", {
+          src: picture,
+          className: "message-image hidden"
+        })
+      );
+    }
+
+    return messages.map((text) => mapText.call(this, text));
+  };
+
+  /*
   Message.prototype.content = function content() {
     const { picture, messages, user } = this.props.data;
     const isSelf = getUserId(this.props.data.user) === getUserId(App.user);
     const imgProtect = Preferences.get(P.imgProtect);
     const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
     const pictureBlocked = !isSelf && lowKarma && imgProtect;
+
     if (picture) {
       if (!pictureBlocked) return <MessagePicture picture={picture} />;
       return [<div>(Image) {wrapLinks(picture.url, (rest) => rest)}</div>];
     }
     return messages.map((text) => mapText.call(this, text));
   };
+  */
 
   Message.prototype.render = function render() {
     if (!this.props.data.user)
@@ -248,24 +290,30 @@ export function decorateMessages() {
 
     const { messages } = messageBlocksState[i];
     const messageLines = messageBlock.childNodes;
-
     // Remove extra messages.
-    while (messageLines && messageLines.length > messages.length)
-      messageLines[0].remove();
+    if (messageLines) {
+      while (messageLines && messageLines.length > messages.length)
+        messageLines[0].remove();
 
-    // If we removed all of them, don't bother decorating.
-    // eslint-disable-next-line no-continue
-    if (!messageLines || !(messageLines[0] as HTMLElement).classList) return;
+      // If we removed all of them, don't bother decorating.
+      // eslint-disable-next-line no-continue
+      if (
+        !messageLines ||
+        messageLines[0] ||
+        !(messageLines[0] as HTMLElement).classList
+      )
+        return;
 
-    // Mark as jumbo emoji in limited circumstances.
-    if (
-      Preferences.get(P.bigEmoji) &&
-      messages.length === 1 &&
-      /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
-    ) {
-      (messageLines[0] as HTMLElement).classList.add("jumbo-message");
-    } else {
-      (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
+      // Mark as jumbo emoji in limited circumstances.
+      if (
+        Preferences.get(P.bigEmoji) &&
+        messages.length === 1 &&
+        /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
+      ) {
+        (messageLines[0] as HTMLElement).classList.add("jumbo-message");
+      } else {
+        (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
+      }
     }
   }
 }
@@ -342,8 +390,9 @@ export function betterMessageRendering() {
       </div>
     );
   };
-
+  /*
   Room.prototype.append = function append(e) {
     fasterAppend.call(this, [e]);
   };
+  */
 }

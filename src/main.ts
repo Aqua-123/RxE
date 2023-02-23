@@ -4,12 +4,12 @@ import browserWindow from "./browserWindow";
 import { migrateSettings } from "./migrateSettings";
 import { initAdBlocker, removeAds } from "./modules/ads";
 // import { initPictureAlbum } from "./modules/album";
-import { initPictureAlbum } from "./modules/newalbum";
+// import { initPictureAlbum } from "./modules/newalbum";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
 import { initPicturesBlur, applyBlurs } from "./modules/blur";
-import { renderBrokenImages } from "./modules/rendering/brokenimages";
+// import { renderBrokenImages } from "./modules/rendering/brokenimages";
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { initGender } from "./modules/rendering/gender";
 import { decorateHeader } from "./modules/rendering/header";
@@ -31,9 +31,9 @@ import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { initPermaMute } from "./modules/chat/permamute";
 import { initLoadMore } from "./modules/chat/fixloadmore";
-import { initSendPics } from "./modules/chat/chat-image";
+// import { initSendPics } from "./modules/chat/chat-image";
 import { multiLineOverride } from "./modules/chat/multiline";
-import * as altpfp from "./modules/rendering/rxe-pfp";
+// import * as altpfp from "./modules/rendering/rxe-pfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/chat/highlightmentions/index";
 import * as onbeforesend from "./modules/chat/onbeforesend";
@@ -43,6 +43,7 @@ import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
+import { initComponents } from "./modules/chat/chat-image/components";
 
 async function init() {
   const featureSet = `(${[
@@ -81,7 +82,7 @@ async function init() {
   initMessages();
   initPictures();
   initPicturesBlur();
-  initPictureAlbum();
+  // initPictureAlbum();
   // karma tracker
   initKarmaTracker();
   // anti-spam
@@ -95,9 +96,10 @@ async function init() {
 
   initUserList();
   initPermaMute();
-  initSendPics();
+  // initSendPics();
+  initComponents();
   multiLineOverride();
-  altpfp.init();
+  // altpfp.init();
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
@@ -116,7 +118,7 @@ async function init() {
     decorateProfileDialog,
     decorateMessages,
     removeAds,
-    renderBrokenImages,
+    // renderBrokenImages,
     renderWFAFAndPrivateRooms
   ]);
 }

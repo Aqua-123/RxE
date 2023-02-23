@@ -94,6 +94,7 @@ declare class UpgradeAccount {
 declare class ModPanel extends React.Component {}
 
 declare type MessageData = {
+  isMine?: Boolean;
   messages: string[];
   picture?: null | EmeraldPicture;
   user: EmeraldUser;
@@ -492,6 +493,7 @@ declare class RoomPrivate extends React.Component<
 
 declare class Message extends React.Component<{ data: MessageData }> {
   content(): JSXContent;
+  showImage(): JSXContent;
   process(text: string): JSXContentOpt;
 }
 
@@ -544,6 +546,7 @@ declare class UserView extends React.Component<
 > {
   componentDidMount: () => void;
   close(): void;
+  report_user(): void;
   view_profile: Function;
   exit_click: (e: MouseEvent) => void;
   bottom: () => JSX.Element;
