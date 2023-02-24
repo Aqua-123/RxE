@@ -14,7 +14,6 @@ export function hackOverrides() {
         if (prop === "temp") return false;
         if (prop === "karma") return 31337;
         if (prop === "_karma") return user.karma;
-        if (prop === "gold") return true;
       }
       if (Preferences.get(PX?.enableModUI!)) {
         if (prop === "master") return true;

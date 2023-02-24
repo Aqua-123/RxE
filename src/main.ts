@@ -40,7 +40,6 @@ import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
-import { initComponents } from "./modules/chat/chat-image/components";
 
 async function init() {
   const featureSet = `(${[
@@ -93,7 +92,6 @@ async function init() {
   initUserList();
   initPermaMute();
   initSendPics();
-  initComponents();
   multiLineOverride();
   highlightMentions.init();
   richText.init();
