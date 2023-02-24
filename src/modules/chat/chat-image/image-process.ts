@@ -33,7 +33,7 @@ export function display(
   return {
     user,
     messages: [],
-    picture: { url }
+    picture: url
   };
 }
 

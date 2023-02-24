@@ -83,6 +83,14 @@ function mapText(this: Message, text: string) {
     </div>
   );
 }
+
+// restrict to only allowed urls
+function isSafeUrl(picture: string | null | undefined) {
+  if (!picture) return picture;
+  const regex =
+    /^(data:image\/([a-zA-Z]*);base64,)|(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
+  return regex.test(picture);
+}
 export function initMessages() {
   loadCSS(css);
 
@@ -91,10 +99,21 @@ export function initMessages() {
     const { picture, messages, user } = this.props.data;
     const isSelf = data.isMine || getUserId(user) === getUserId(App.user);
     const imgProtect = Preferences.get(P.imgProtect);
+    const urlIsSafe = isSafeUrl(picture);
+
     const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
-    const pictureBlocked = !isSelf && lowKarma && imgProtect;
+    const pictureWarn = !isSelf && lowKarma && imgProtect;
+    const pictureBlock = !urlIsSafe;
     if (picture) {
-      if (!pictureBlocked)
+      if (pictureBlock)
+        return (
+          <div className="blocked-image">
+            <div className="warning-text">
+              <strong>This image was blocked as it was deemed malicious</strong>
+            </div>
+          </div>
+        );
+      if (!pictureWarn)
         return React.createElement(
           "div",
           { className: "image-wrap" },

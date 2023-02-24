@@ -12,8 +12,7 @@ const ROBOHASH = "https://robohash.org/";
 const GEM_AVICON = "https://emeraldchat.com/avicons_strict/1.png";
 const DATA_IMAGE = "data:image";
 const IS_AVICON = (src: string) => src.includes("/avicons_strict/");
-const IS_MESSAGE_PIC = (img: Image) =>
-  img.classList.contains("room-component-message-picture");
+const IS_MESSAGE_PIC = (img: Image) => img.classList.contains("message-image");
 const ROBOHASH_CAT_FALLBACK = (s: string) =>
   `https://robohash.org/yay${s}.png?set=set4`;
 
@@ -58,7 +57,7 @@ function applyAnimationRestriction(img: Image, srcOriginal?: string) {
     return false;
   }
   if (isStaticImage[img.src] === false) {
-    img.src = "https://emeraldchat.com/avicons_strict/1.png";
+    img.src = GEM_AVICON;
     return true;
   }
   return false;
