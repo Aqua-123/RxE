@@ -308,9 +308,11 @@ declare type ProileJson = {
   wall_id: number;
 };
 
-declare type EmeraldPicture = {
-  url: string;
-};
+declare type EmeraldPicture =
+  | {
+      url: string;
+    }
+  | string;
 
 declare type EmeraldPictureDetailed = {
   author_id: number; // unused

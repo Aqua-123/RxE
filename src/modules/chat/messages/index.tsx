@@ -91,6 +91,7 @@ function isSafeUrl(picture: string | null | undefined) {
     /^(data:image\/([a-zA-Z]*);base64,)|(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
   return regex.test(picture);
 }
+
 export function initMessages() {
   loadCSS(css);
 
@@ -109,7 +110,7 @@ export function initMessages() {
         return (
           <div className="blocked-image">
             <div className="warning-text">
-              <strong>This image was blocked as it was deemed malicious</strong>
+              This image was blocked as it was deemed malicious
             </div>
           </div>
         );
