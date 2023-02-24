@@ -1,15 +1,11 @@
-import * as format0 from "./format0/index";
 import formatImgur from "./formatImgur";
 
 export const FORMATS: Record<string, ImageFormatType> = {
-  FORMAT0: "0",
   IMGUR: "i"
 };
 
 export function formatName(format: string): string {
   switch (format) {
-    case FORMATS.FORMAT0:
-      return "format0";
     case FORMATS.IMGUR:
       return "imgur";
     default:
@@ -18,8 +14,7 @@ export function formatName(format: string): string {
 }
 
 export const imageFormats: Record<ImageFormatType, ImageFormat> = {
-  "0": format0,
-  "i": formatImgur
+  i: formatImgur
 };
 
 export async function compressImage(

@@ -1,7 +1,7 @@
 import React from "react";
 import css from "./style.scss";
 import { loadCSS } from "~src/utils";
-import { upload } from "~src/modules/chat/chat-image/image-process";
+// import { upload } from "~src/modules/chat/chat-image/image-process";
 
 const shouldSend = (
   event: React.KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -16,8 +16,19 @@ async function processPaste(item: DataTransferItem) {
   // eslint-disable-next-line no-alert
   if (!file || !confirm("Are you sure you want to upload this image in chat?"))
     return;
-  const url = await upload(file);
-  if (RoomClient) RoomClient.sendRitsuPicture?.(url);
+  // convert file to base64
+  const base64 = String(
+    await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.readAsDataURL(file);
+    })
+  );
+  RoomClient?.send_picture(base64);
+  // const url = await upload(file);
+  // if (RoomClient) RoomClient.sendRitsuPicture?.(url);
 }
 function onPaste(event: ClipboardEvent) {
   if (!event.clipboardData) return;
