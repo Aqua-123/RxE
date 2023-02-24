@@ -3,8 +3,6 @@ import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
 import { migrateSettings } from "./migrateSettings";
 import { initAdBlocker, removeAds } from "./modules/ads";
-// import { initPictureAlbum } from "./modules/album";
-// import { initPictureAlbum } from "./modules/newalbum";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
@@ -31,7 +29,7 @@ import { renderWFAFAndPrivateRooms } from "./modules/wfaf";
 import { until } from "./utils";
 import { initPermaMute } from "./modules/chat/permamute";
 import { initLoadMore } from "./modules/chat/fixloadmore";
-// import { initSendPics } from "./modules/chat/chat-image";
+import { initSendPics } from "./modules/chat/chat-image";
 import { multiLineOverride } from "./modules/chat/multiline";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/chat/highlightmentions/index";
@@ -81,7 +79,6 @@ async function init() {
   initMessages();
   initPictures();
   initPicturesBlur();
-  // initPictureAlbum();
   // karma tracker
   initKarmaTracker();
   // anti-spam
@@ -95,16 +92,14 @@ async function init() {
 
   initUserList();
   initPermaMute();
-  // initSendPics();
+  initSendPics();
   initComponents();
   multiLineOverride();
-  // altpfp.init();
   highlightMentions.init();
   richText.init();
   onbeforesend.init();
   introModal.init();
   initversionCheck();
-  // decorateHeader();
   // start our script's rendering loop
   render([
     fixChatRoomWidth,
