@@ -4,11 +4,16 @@ import { initComponents, uploadForm } from "./components";
 import { upload, decodeImage, display, emit } from "./image-process";
 import { imageFromURL } from "./imgur";
 import { canUpload } from "./ratelimit";
-import { updatePicToAlbum } from "~src/modules/newalbum";
 
 export function initSendPics() {
   initComponents();
+  const rpUpload = Room.prototype.upload_picture;
   Room.prototype.upload_picture = function uploadPicture() {
+    if (App.user.gold) {
+      rpUpload.call(this);
+      return;
+    }
+
     ReactDOM.render(uploadForm(), document.getElementById("ui-hatch-2"));
     // compatibility with fav pictures
     PictureUploader.onUploaded = function onUploaded(picture) {
@@ -34,8 +39,7 @@ export function initSendPics() {
     try {
       const image = await upload(imageFile);
       this.close();
-      if (UserProfileReact) updatePicToAlbum(image.url);
-      else if (RoomClient) RoomClient.sendRitsuPicture?.(image);
+      if (RoomClient) RoomClient.sendRitsuPicture?.(image);
     } catch (error) {
       this.setState({
         failureReason: error instanceof Error ? error.message : `${error}`

@@ -1,10 +1,9 @@
 // #9. Decorate Header
 import U from "~src/userscript";
 import { crel } from "~src/utils";
-import { getDisplayPicture } from "./rxe-pfp/interceptUser";
 
 function setLogo(logo: Element) {
-  const displayPicture = getDisplayPicture(App.user);
+  const displayPicture = App.user.display_picture;
   if (!(logo instanceof HTMLImageElement) || logo.src === displayPicture)
     return;
   logo.src = displayPicture;

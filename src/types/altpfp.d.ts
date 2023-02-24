@@ -4,7 +4,7 @@ declare type RGB = [number, number, number];
 
 // type RGBA = [number, number, number, number];
 
-type ImageFormatType = "0" | "i";
+type ImageFormatType = "i";
 interface ImageFormat {
   /**
    * Unpacks an image.

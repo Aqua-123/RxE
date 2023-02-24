@@ -6,7 +6,7 @@ export default {
   description: "Custom Emerald Chat themes and fixes.",
   icon: "https://i.imgur.com/KLtVhho.png",
   author: "Atsos/Ritsu, Aqua, Strawberry.",
-  hostname: "em-preprod.herokuapp.com",
+  hostname: "emeraldchat.com",
   path: "app",
   sitename: "Emerald Chat",
   namespace: "Emerald Bot - Ritsu Project",

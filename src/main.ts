@@ -9,7 +9,7 @@ import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
 import { initPicturesBlur, applyBlurs } from "./modules/blur";
-// import { renderBrokenImages } from "./modules/rendering/brokenimages";
+import { renderBrokenImages } from "./modules/rendering/brokenimages";
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { initGender } from "./modules/rendering/gender";
 import { decorateHeader } from "./modules/rendering/header";
@@ -33,7 +33,6 @@ import { initPermaMute } from "./modules/chat/permamute";
 import { initLoadMore } from "./modules/chat/fixloadmore";
 // import { initSendPics } from "./modules/chat/chat-image";
 import { multiLineOverride } from "./modules/chat/multiline";
-// import * as altpfp from "./modules/rendering/rxe-pfp";
 import * as blockreqs from "./modules/blockreqs";
 import * as highlightMentions from "./modules/chat/highlightmentions/index";
 import * as onbeforesend from "./modules/chat/onbeforesend";
@@ -118,7 +117,7 @@ async function init() {
     decorateProfileDialog,
     decorateMessages,
     removeAds,
-    // renderBrokenImages,
+    renderBrokenImages,
     renderWFAFAndPrivateRooms
   ]);
 }

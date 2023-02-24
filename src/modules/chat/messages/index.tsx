@@ -23,6 +23,28 @@ function getRoomMember(id: number) {
 }
 
 // try using this instead of regular this.append
+/*
+export function fasterAppend(this: Room, messageArr: MessageData) {
+  this.trim_messages();
+  const { messages } = this.state;
+  const lastMessage = messages[messages.length - 1];
+  if (
+    lastMessage &&
+    lastMessage.user.id === messageArr.user.id &&
+    !lastMessage.picture &&
+    !messageArr.picture &&
+    lastMessage.messages.length < 16
+  ) {
+    const n = lastMessage.messages;
+    const r = n[n.length - 1];
+    if (messageArr.messages[0] === r) return;
+    lastMessage.messages.push(messageArr.messages[0]);
+  } else messages.push(messageArr);
+  this.setState({
+    messages
+  });
+}
+*/
 export function fasterAppend(this: Room, messageArr: MessageData[]) {
   const max = this.state.mode === "channel" ? 50 : 5000;
   const { messages } = this.state;
@@ -239,7 +261,7 @@ export function initMessages() {
     const displayPicture = (
       <img
         className={displayPicClasses.join(" ")}
-        alt="User display avatar"
+        alt=""
         src={user?.display_picture}
         onMouseDown={showUserView}
       />
@@ -410,9 +432,7 @@ export function betterMessageRendering() {
       </div>
     );
   };
-  /*
   Room.prototype.append = function append(e) {
     fasterAppend.call(this, [e]);
   };
-  */
 }
