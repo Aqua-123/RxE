@@ -18,6 +18,9 @@ export default {
       superTemp: {
         label: "Spoof karma and registered status locally"
       },
+      spoofGold: {
+        label: "Spoof emerald gold status locally"
+      },
       enableModUI: {
         label: "Spoof mod status locally"
       },

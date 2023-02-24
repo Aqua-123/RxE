@@ -8,6 +8,11 @@ export const PX = FEATURES.HACKS
         label: T.preferences.superTemp!.label,
         default: true
       }),
+      spoofGold: new BooleanPreference({
+        key: "spoofGold",
+        label: T.preferences.spoofGold!.label,
+        default: false
+      }),
       enableModUI: new BooleanPreference({
         key: "enableModUI",
         label: T.preferences.enableModUI!.label,

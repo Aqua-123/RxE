@@ -19,6 +19,7 @@ export function hackOverrides() {
         if (prop === "master") return true;
         if (prop === "mod") return true;
       }
+      if (Preferences.get(PX?.spoofGold!)) if (prop === "gold") return true;
       if (prop === "proxy") return true;
       return user[prop];
     }
