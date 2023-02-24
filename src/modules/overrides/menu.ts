@@ -171,9 +171,6 @@ export function menuOverrides() {
   // Fix crash on null sender
   NotificationUnit.prototype.image = function image() {
     const classList = "navigation-notification-unit-image";
-    // if (!this.props.data?.data?.sender?.display_picture.includes("robohash")) {
-    //   classList += " ritsu-would-blur";
-    // }
     return React.createElement("img", {
       className: classList,
       src: this.props.data?.data?.sender?.display_picture
@@ -200,44 +197,3 @@ export function menuOverrides() {
     return React.createElement("span", null, flair, message);
   };
 }
-
-/*
-  Microposts.prototype.render = function render () {
-        const micropostIds: number[] = this.state.data?.microposts ?? [];
-        
-	// const highlightedId = (App.params?.post as (WallPost | undefined))?.id;
-                
-        let className = 'user-microposts';
-        
-	// you can detect the presence of a highlighted ID
-	// however, it's always inserted at the start
-	// and that doesn't tell you whether it exists
-                
-        const microposts = React.createElement('div', {
-          className
-        }, micropostIds.map(function (id) {
-          return React.createElement(Micropost, {
-            key: id,
-            data: { id }
-            // higlight: ...
-            // you could pass highlight as a prop 
-            // (and then clear the id to match only once)
-            // but you'll have to paste the whole the render function
-            // or figure out a way to change the className after
-            // receiving a render()'d element.
-          })
-        }));
-        
-        const input = React.createElement('div', {
-          className: 'user-micropost-input-background'
-        }, React.createElement('input', {
-          className: 'user-micropost-input',
-          onKeyDown: this.micropost_input.bind(this),
-          placeholder: 'Post something...'
-        }));
-        
-        return React.createElement('span', {
-          key: this.props.data.wall_id
-        }, input, microposts)
-  }
-*/
