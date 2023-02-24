@@ -16,7 +16,6 @@
     "**/lib/**": true
   },
   "files.exclude": {
-    "**/lib/**": true,
     "**/data/**": true,
     "**/yarn.lock/**": true,
     "**/node_modules/**": true

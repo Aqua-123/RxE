@@ -1,4 +1,3 @@
-import * as richBio from "./richbio";
 import * as richPost from "./richpost";
 import { loadCSS } from "~src/utils";
 import { processImage, wrapRich } from "./richtext";
@@ -16,6 +15,5 @@ export function init() {
       wrapRich(nonImage, processOld)
     );
   };
-  richBio.init();
   richPost.init();
 }

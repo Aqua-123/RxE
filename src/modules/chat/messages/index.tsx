@@ -9,7 +9,7 @@ import {
   getUserId
 } from "~src/utils";
 import { maybeEmbed } from "~src/modules/rendering/richtext/embeds/utils";
-import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
+// import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
 import css from "./style.scss";
 import { willEmbed } from "~src/modules/rendering/richtext/embeds";
 import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
@@ -23,6 +23,28 @@ function getRoomMember(id: number) {
 }
 
 // try using this instead of regular this.append
+/*
+export function fasterAppend(this: Room, messageArr: MessageData) {
+  this.trim_messages();
+  const { messages } = this.state;
+  const lastMessage = messages[messages.length - 1];
+  if (
+    lastMessage &&
+    lastMessage.user.id === messageArr.user.id &&
+    !lastMessage.picture &&
+    !messageArr.picture &&
+    lastMessage.messages.length < 16
+  ) {
+    const n = lastMessage.messages;
+    const r = n[n.length - 1];
+    if (messageArr.messages[0] === r) return;
+    lastMessage.messages.push(messageArr.messages[0]);
+  } else messages.push(messageArr);
+  this.setState({
+    messages
+  });
+}
+*/
 export function fasterAppend(this: Room, messageArr: MessageData[]) {
   const max = this.state.mode === "channel" ? 50 : 5000;
   const { messages } = this.state;
@@ -83,20 +105,82 @@ function mapText(this: Message, text: string) {
     </div>
   );
 }
+
+// restrict to only allowed urls
+function isSafeUrl(picture: string | null | undefined) {
+  if (!picture) return picture;
+  const regex =
+    /^(data:image\/([a-zA-Z]*);base64,)|(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)$/;
+  return regex.test(picture);
+}
+
 export function initMessages() {
   loadCSS(css);
+
+  Message.prototype.content = function content() {
+    const { data } = this.props;
+    const { picture, messages, user } = this.props.data;
+    const isSelf = data.isMine || getUserId(user) === getUserId(App.user);
+    const imgProtect = Preferences.get(P.imgProtect);
+    const urlIsSafe = isSafeUrl(picture);
+
+    const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
+    const pictureWarn = !isSelf && lowKarma && imgProtect;
+    const pictureBlock = !urlIsSafe;
+    if (picture) {
+      if (pictureBlock)
+        return (
+          <div className="blocked-image">
+            <div className="warning-text">
+              This image was blocked as it was deemed malicious
+            </div>
+          </div>
+        );
+      if (!pictureWarn)
+        return React.createElement(
+          "div",
+          { className: "image-wrap" },
+          React.createElement("img", {
+            src: picture,
+            className: "message-image"
+          })
+        );
+      return React.createElement(
+        "div",
+        { className: "image-wrap" },
+        React.createElement(
+          "a",
+          {
+            className: "image-warning",
+            onClick: this.showImage.bind(this)
+          },
+          "click here to show image"
+        ),
+        React.createElement("img", {
+          src: picture,
+          className: "message-image hidden"
+        })
+      );
+    }
+
+    return messages.map((text) => mapText.call(this, text));
+  };
+
+  /*
   Message.prototype.content = function content() {
     const { picture, messages, user } = this.props.data;
     const isSelf = getUserId(this.props.data.user) === getUserId(App.user);
     const imgProtect = Preferences.get(P.imgProtect);
     const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
     const pictureBlocked = !isSelf && lowKarma && imgProtect;
+
     if (picture) {
       if (!pictureBlocked) return <MessagePicture picture={picture} />;
       return [<div>(Image) {wrapLinks(picture.url, (rest) => rest)}</div>];
     }
     return messages.map((text) => mapText.call(this, text));
   };
+  */
 
   Message.prototype.render = function render() {
     if (!this.props.data.user)
@@ -177,7 +261,7 @@ export function initMessages() {
     const displayPicture = (
       <img
         className={displayPicClasses.join(" ")}
-        alt="User display avatar"
+        alt=""
         src={user?.display_picture}
         onMouseDown={showUserView}
       />
@@ -248,24 +332,30 @@ export function decorateMessages() {
 
     const { messages } = messageBlocksState[i];
     const messageLines = messageBlock.childNodes;
-
     // Remove extra messages.
-    while (messageLines && messageLines.length > messages.length)
-      messageLines[0].remove();
+    if (messageLines) {
+      while (messageLines && messageLines.length > messages.length)
+        messageLines[0].remove();
 
-    // If we removed all of them, don't bother decorating.
-    // eslint-disable-next-line no-continue
-    if (!messageLines || !(messageLines[0] as HTMLElement).classList) return;
+      // If we removed all of them, don't bother decorating.
+      // eslint-disable-next-line no-continue
+      if (
+        !messageLines ||
+        messageLines[0] ||
+        !(messageLines[0] as HTMLElement).classList
+      )
+        return;
 
-    // Mark as jumbo emoji in limited circumstances.
-    if (
-      Preferences.get(P.bigEmoji) &&
-      messages.length === 1 &&
-      /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
-    ) {
-      (messageLines[0] as HTMLElement).classList.add("jumbo-message");
-    } else {
-      (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
+      // Mark as jumbo emoji in limited circumstances.
+      if (
+        Preferences.get(P.bigEmoji) &&
+        messages.length === 1 &&
+        /^\p{Extended_Pictographic}{1,5}$/u.test(messages[0])
+      ) {
+        (messageLines[0] as HTMLElement).classList.add("jumbo-message");
+      } else {
+        (messageLines[0] as HTMLElement).classList.remove("jumbo-message");
+      }
     }
   }
 }
@@ -342,7 +432,6 @@ export function betterMessageRendering() {
       </div>
     );
   };
-
   Room.prototype.append = function append(e) {
     fasterAppend.call(this, [e]);
   };

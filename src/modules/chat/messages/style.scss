@@ -4,7 +4,6 @@
   align-items: baseline;
 }
 
-
 .user-badge-container {
   align-self: center;
 }
@@ -50,4 +49,20 @@ div.ritsu-avatar-hidden {
   color: var(--app-fg-color);
   font-size: 32px;
   padding: 3px;
+}
+
+.blocked-image {
+  border: 1px solid #f00;
+  border-radius: 5px;
+  padding: 2px;
+}
+
+.warning-text {
+  padding: 2px;
+  margin: 2px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: bold;
+  color: #7c2626;
+  text-align: justify;
 }
