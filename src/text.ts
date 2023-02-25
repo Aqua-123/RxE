@@ -41,7 +41,7 @@ export default {
       label: "Block and favorite images"
     },
     legacyImages: {
-      label: "Use legacy image sending (for emerlad gold users)"
+      label: "Use legacy image sending (for emerald gold users)"
     },
     imgProtect: {
       label: "Hide images from low karma accounts"

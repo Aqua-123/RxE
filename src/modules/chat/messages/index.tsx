@@ -14,6 +14,7 @@ import css from "./style.scss";
 import { willEmbed } from "~src/modules/rendering/richtext/embeds";
 import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 import { decodeImage } from "../chat-image/imgur";
+import { picture as pic } from "~src/modules/chat/chat-image/image-process";
 
 function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
@@ -22,29 +23,6 @@ function getRoomMember(id: number) {
   return (members || membersPersistent).find((user) => user?.id === id);
 }
 
-// try using this instead of regular this.append
-/*
-export function fasterAppend(this: Room, messageArr: MessageData) {
-  this.trim_messages();
-  const { messages } = this.state;
-  const lastMessage = messages[messages.length - 1];
-  if (
-    lastMessage &&
-    lastMessage.user.id === messageArr.user.id &&
-    !lastMessage.picture &&
-    !messageArr.picture &&
-    lastMessage.messages.length < 16
-  ) {
-    const n = lastMessage.messages;
-    const r = n[n.length - 1];
-    if (messageArr.messages[0] === r) return;
-    lastMessage.messages.push(messageArr.messages[0]);
-  } else messages.push(messageArr);
-  this.setState({
-    messages
-  });
-}
-*/
 export function fasterAppend(this: Room, messageArr: MessageData[]) {
   const max = this.state.mode === "channel" ? 50 : 5000;
   const { messages } = this.state;
@@ -136,15 +114,8 @@ export function initMessages() {
             </div>
           </div>
         );
-      if (!pictureWarn)
-        return React.createElement(
-          "div",
-          { className: "image-wrap" },
-          React.createElement("img", {
-            src: picture,
-            className: "message-image"
-          })
-        );
+      const pictureToDisplay = pic({ url: picture });
+      if (!pictureWarn) return pictureToDisplay;
       return React.createElement(
         "div",
         { className: "image-wrap" },
@@ -156,31 +127,12 @@ export function initMessages() {
           },
           "click here to show image"
         ),
-        React.createElement("img", {
-          src: picture,
-          className: "message-image hidden"
-        })
+        React.createElement("div", { className: "hidden" }, pictureToDisplay)
       );
     }
 
     return messages.map((text) => mapText.call(this, text));
   };
-
-  /*
-  Message.prototype.content = function content() {
-    const { picture, messages, user } = this.props.data;
-    const isSelf = getUserId(this.props.data.user) === getUserId(App.user);
-    const imgProtect = Preferences.get(P.imgProtect);
-    const lowKarma = notNum(user)?.temp || (notNum(user)?.karma ?? 0) < 10;
-    const pictureBlocked = !isSelf && lowKarma && imgProtect;
-
-    if (picture) {
-      if (!pictureBlocked) return <MessagePicture picture={picture} />;
-      return [<div>(Image) {wrapLinks(picture.url, (rest) => rest)}</div>];
-    }
-    return messages.map((text) => mapText.call(this, text));
-  };
-  */
 
   Message.prototype.render = function render() {
     if (!this.props.data.user)

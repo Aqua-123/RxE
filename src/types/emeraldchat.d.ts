@@ -376,7 +376,11 @@ declare class PictureUpload extends React.Component<
   close(): void;
 }
 declare const RoomClient: null | Room;
-
+declare class MessagePictureUpload extends React.Component<{}> {
+  handleSubmit(e: { preventDefault: () => void }): void;
+  body(): JSX.Element;
+  uploadImage?(): void; // custom
+}
 declare class Room extends React.Component<// add props
 {
   data: { id: number };

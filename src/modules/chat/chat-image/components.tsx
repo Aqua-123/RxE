@@ -1,36 +1,12 @@
 import React from "react";
-import { IMGUR_ENDPOINT } from "./imgur";
-import { canUpload, nextUpload } from "./ratelimit";
-import { uploadInfo } from "./image-process";
 import { loadCSS } from "~src/utils";
 import css from "./style.scss";
 
 export const uploadForm = () => (
   <MenuMicro>
-    <PictureUpload />
+    <MessagePictureUpload />
   </MenuMicro>
 );
-
-function ImageUploadNotes(props: any) {
-  const { text } = props;
-  return (
-    <div>
-      <b>Note</b>: {text}
-    </div>
-  );
-}
-function UploadFailureMessage(props: any) {
-  const { failureReason } = props;
-  return (
-    <div className="picture-upload-error">
-      <div>We couldn&apos;t upload your picture.</div>
-      <div>
-        {"Reason: "}
-        <span className="picture-upload-error-reason">{failureReason}</span>
-      </div>
-    </div>
-  );
-}
 
 export function initComponents() {
   loadCSS(css);
@@ -54,64 +30,6 @@ export function initComponents() {
           photo_camera
         </span>
       </div>
-    );
-  };
-  PictureUpload.prototype.body = function body() {
-    const { failureReason } = this.state;
-    const enabled = canUpload();
-
-    const notesSection = (
-      <div className="picture-upload-info">
-        <ImageUploadNotes text={uploadInfo.destination} />
-        <ImageUploadNotes text={uploadInfo.ratelimit} />
-        {App.user._karma < 10 && (
-          <ImageUploadNotes text={uploadInfo.lowKarma} />
-        )}
-        {failureReason && (
-          <UploadFailureMessage failureReason={failureReason} />
-        )}
-      </div>
-    );
-
-    const uploadSection = enabled
-      ? " Choose a file"
-      : ` Wait ${$.timeago(nextUpload())} before uploading again.`;
-
-    const labelComp = (
-      <label htmlFor="image">
-        <span
-          className="material-icons upload-thing"
-          style={{ cursor: enabled ? "pointer" : "not-allowed" }}
-        >
-          {enabled ? "cloud_upload" : "hourglass_top"}
-        </span>
-        {uploadSection}
-      </label>
-    );
-    const inputElement = (
-      <input
-        id="image"
-        className="picture-upload-button"
-        name="image"
-        type="file"
-        accept="image/*"
-        disabled={!enabled}
-        onChange={() => enabled && this.uploadImage?.()}
-      />
-    );
-
-    return (
-      <form
-        id="picture_upload"
-        name="picture_upload"
-        data-remote="true"
-        method="post"
-        action={IMGUR_ENDPOINT}
-      >
-        {inputElement}
-        {labelComp}
-        {notesSection}
-      </form>
     );
   };
 }

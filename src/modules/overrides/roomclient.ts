@@ -110,6 +110,7 @@ export function roomclientOverrides() {
     this.updated(channelResponse);
     this.updated = function doNothing() {};
   };
+
   Room.prototype.start_typing = function st(e) {
     if (e.id === App.user.id) return;
     this.setState({

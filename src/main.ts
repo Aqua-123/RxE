@@ -98,6 +98,7 @@ async function init() {
   onbeforesend.init();
   introModal.init();
   initversionCheck();
+  // initAlbum();
   // start our script's rendering loop
   render([
     fixChatRoomWidth,

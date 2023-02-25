@@ -109,10 +109,9 @@ export async function decoratePictures() {
   if (!uploadForm) return;
   const dialog = uploadForm.parentElement!;
   const nagText = dialog.querySelector<HTMLElement>(".ui-menu-text");
-  if (nagText?.firstElementChild?.tagName === "B") {
+  if (nagText?.firstElementChild?.tagName === "B" && !UserProfileReact) {
     nagText.style.display = "none";
   } else if (nagText) nagText.style.display = "";
-
   const imageGrid = dialog.querySelector(".image-grid");
   if (imageGrid) return;
   const buttons = dialog.querySelector(".ui-menu-buttons");
@@ -120,7 +119,6 @@ export async function decoratePictures() {
     className: "image-grid"
   });
   // eslint-disable-next-line no-console
-  // console.log(savedPictures);
   savedPictures.values().forEach((src: string) => {
     const image = crel("div", {
       style: `background-image: url(${encodeURI(src)}), url(${encodeURI(
