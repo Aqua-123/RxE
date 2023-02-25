@@ -25,6 +25,7 @@ export default function Settings(props: SettingsProps) {
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}
       {checkboxPreference("imgProtect", props)}
+      {checkboxPreference("legacyImages", props)}
       {checkboxPreference("hidePfp", props)}
       {checkboxPreference("showAnimatedImages", props)}
       {checkboxPreference("imgControl", props)}

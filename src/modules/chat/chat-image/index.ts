@@ -4,12 +4,13 @@ import { initComponents, uploadForm } from "./components";
 import { upload, decodeImage, display, emit } from "./image-process";
 import { imageFromURL } from "./imgur";
 import { canUpload } from "./ratelimit";
+import { P } from "~src/preferences";
 
 export function initSendPics() {
   initComponents();
   const rpUpload = Room.prototype.upload_picture;
   Room.prototype.upload_picture = function uploadPicture() {
-    if (App.user.gold) {
+    if (App.user.gold && !P.legacyImages && this.state.mode !== "channel") {
       rpUpload.call(this);
       return;
     }

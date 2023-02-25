@@ -1,6 +1,7 @@
 import { getImageType } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 import { urlImageDirectLinkAny } from "~src/modules/rendering/richtext/linkutils";
+import tickSVG from "./tick.svg";
 
 // do something cool with other broken images somehow.
 
@@ -75,6 +76,14 @@ function restrictAnimation(img: Image) {
 }
 
 export function renderBrokenImages() {
+  const goldImages = document.querySelectorAll('img[src*="/badges/tick.svg"]');
+  goldImages.forEach((img) => {
+    // can't set a data: URI in <img>, blocked by CSP. be violent instead.
+    const parent = img.parentElement;
+    img.outerHTML = tickSVG;
+    parent?.querySelector("svg")?.classList.add("user-badge-tick");
+  });
+
   Array.from(document.images).forEach((img) => {
     useImageFallback(img);
     if (img.complete && img.naturalHeight === 0) img.onerror?.("");

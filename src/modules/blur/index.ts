@@ -4,6 +4,7 @@ import blurCSS from "./style.scss";
 export function applyBlurs() {
   const toBeBlurred = [
     "room-component-message-picture",
+    "message-image",
     "navigation-notification-unit-image"
   ];
   toBeBlurred.forEach((className) => {

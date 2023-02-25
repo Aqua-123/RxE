@@ -61,7 +61,7 @@ function insertPicture(url: string) {
 export async function decoratePictures() {
   // add block and save buttons on every image in chat.
   const pics = document.querySelectorAll(
-    ".room-component-message-picture-container"
+    ".room-component-message-picture-container, .image-wrap"
   );
   pics.forEach(async (pic) => {
     if (

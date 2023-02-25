@@ -49,6 +49,11 @@ export const P = {
     label: T.preferences.imgProtect.label,
     default: true
   }),
+  legacyImages: new BooleanPreference({
+    key: "legacyImages",
+    label: T.preferences.legacyImages.label,
+    default: true
+  }),
   imgBlur: new BooleanPreference({
     key: "imgBlur",
     label: T.preferences.imgBlur.label,
