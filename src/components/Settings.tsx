@@ -20,8 +20,8 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("adBlocker", props)}
       {checkboxPreference("trackKarma", props)}
       {checkboxPreference("fancyColors", props)}
-      {radioPreference("blockReqs", props)}
       {checkboxPreference("notifyUpdates", props)}
+      {radioPreference("blockReqs", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}
       {checkboxPreference("imgProtect", props)}
