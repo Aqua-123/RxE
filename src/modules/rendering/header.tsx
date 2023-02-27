@@ -116,9 +116,9 @@ function headerIcons() {
         countOverlay.style.display = "none";
       }
     }
-
+    loadCSS(css);
     updatePicModIcon();
-    setInterval(updatePicModIcon, 30000);
+    setInterval(updatePicModIcon, 15000);
   }
 }
 function addTextToLogo(logo: Element) {
@@ -142,7 +142,6 @@ function addTextToLogo(logo: Element) {
 export function decorateHeader() {
   const logo = document.querySelector(".main-logo");
   if (!logo) return;
-  loadCSS(css);
   headerIcons();
   setLogo(logo);
   setFavicon();
