@@ -7,7 +7,7 @@ import tickSVG from "./tick.svg";
 
 const isStaticImage: Record<string, boolean> = {};
 
-const ROBOHASH = "https://robohash.org/";
+// const ROBOHASH = "https://robohash.org/";
 const GEM_AVICON = "https://emeraldchat.com/avicons_strict/1.png";
 const DATA_IMAGE = "data:image";
 const IS_AVICON = (src: string) => src.includes("/avicons_strict/");
@@ -25,8 +25,7 @@ enum FallbackLevel {
 function fallbackLevel(img: Image): FallbackLevel {
   if (IS_MESSAGE_PIC(img)) return FallbackLevel.NoFallbackAvailable;
 
-  if (img.src.startsWith(ROBOHASH) || img.src.startsWith(DATA_IMAGE))
-    return FallbackLevel.AviconFallback;
+  if (img.src.startsWith(DATA_IMAGE)) return FallbackLevel.AviconFallback;
 
   if (IS_AVICON(img.src)) return FallbackLevel.NoFallbackAvailable;
 

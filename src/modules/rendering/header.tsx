@@ -1,6 +1,8 @@
 // #9. Decorate Header
+
 import U from "~src/userscript";
-import { crel } from "~src/utils";
+import { crel, loadCSS } from "~src/utils";
+import css from "./style.scss";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -28,6 +30,15 @@ function addKarmaPlaceholder(logo: Element) {
     className: "karma-tracker"
   });
   logo?.parentElement?.insertBefore(tracker, logo?.nextSibling);
+}
+
+async function fetchData() {
+  const response = await fetch("/picture_moderations");
+  if (response.status === 403) {
+    return 0;
+  }
+  const data = await response.json();
+  return data.length ? data.length : 0;
 }
 
 function headerIcons() {
@@ -75,6 +86,40 @@ function headerIcons() {
     icon.append(networkIcon);
     iconsHolder.prepend(icon);
   }
+
+  if (!iconsHolder.querySelector(".ritsu-icon-pic-mod") && App.user.mod) {
+    const countOverlay = crel("span", {
+      className: "notification-count-overlay"
+    });
+
+    const picModIcon = crel("span", {
+      className:
+        "material-icons navigation-notification-unit ritsu-icon-pic-mod",
+      textContent: "account_box",
+      tabIndex: -1,
+      role: "button",
+      style: "color: white;",
+      title: "Picture Moderation",
+      onmousedown: () => ActionTray.prototype.pictureModeration()
+    });
+    iconsHolder.prepend(countOverlay);
+    iconsHolder.prepend(picModIcon);
+
+    // eslint-disable-next-line no-inner-declarations
+    async function updatePicModIcon() {
+      const response = await fetchData();
+      const spany = countOverlay;
+      if (spany) spany.textContent = response;
+      if (response > 0) {
+        countOverlay.style.display = "inline";
+      } else {
+        countOverlay.style.display = "none";
+      }
+    }
+
+    updatePicModIcon();
+    setInterval(updatePicModIcon, 30000);
+  }
 }
 function addTextToLogo(logo: Element) {
   const displayName = App.user.display_name || "(...)";
@@ -97,6 +142,7 @@ function addTextToLogo(logo: Element) {
 export function decorateHeader() {
   const logo = document.querySelector(".main-logo");
   if (!logo) return;
+  loadCSS(css);
   headerIcons();
   setLogo(logo);
   setFavicon();

@@ -381,6 +381,10 @@ declare class MessagePictureUpload extends React.Component<{}> {
   body(): JSX.Element;
   uploadImage?(): void; // custom
 }
+
+declare class ActionTray extends React.Component<{}> {
+  pictureModeration(): void;
+}
 declare class Room extends React.Component<// add props
 {
   data: { id: number };
