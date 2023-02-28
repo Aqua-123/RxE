@@ -71,7 +71,13 @@ function UserInfo(props: any) {
 }
 
 function mapText(this: Message, text: string) {
-  if (willEmbed(`https://${desanitizeURL(text)}`) || decodeImage(text))
+  const placeholderRemoved = desanitizeURL(text).replace("Image: ", "");
+  console.log(placeholderRemoved);
+  if (
+    willEmbed(placeholderRemoved) ||
+    willEmbed(`https://${placeholderRemoved}`) ||
+    decodeImage(placeholderRemoved)
+  )
     return (
       <div className="embed" key={JSON.stringify(text)}>
         {this.process(text)}
