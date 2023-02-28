@@ -653,33 +653,20 @@ export function oneOrMore<T>(obj: T | T[]): T[] {
   return [obj];
 }
 
-export function versionComparison(v1: string, v2: string) {
-  let vnum1 = 0;
-  let vnum2 = 0;
-  for (let i = 0, j = 0; i < v1.length || j < v2.length; ) {
-    // storing numeric part of
-    // version 1 in vnum1
-    while (i < v1.length && v1[i] !== ".") {
-      vnum1 = vnum1 * 10 + (Number(v1[i]) - Number("0"));
+export function versionComparison(version1: string, version2: string): number {
+  const version1Array = version1.split(".");
+  const version2Array = version2.split(".");
 
-      i += 1;
+  for (let i = 0; i < 4; i += 1) {
+    const num1 = Number(version1Array[i]);
+    const num2 = Number(version2Array[i]);
+    if (num1 > num2) {
+      return 1;
     }
-
-    // storing numeric part of
-    // version 2 in vnum2
-    while (j < v2.length && v2[j] !== ".") {
-      vnum2 = vnum2 * 10 + (Number(v2[j]) - Number("0"));
-      j += 1;
+    if (num1 < num2) {
+      return -1;
     }
-    if (vnum1 > vnum2) return 1;
-    if (vnum2 > vnum1) return -1;
-
-    // if equal, reset variables and
-    // go for next numeric part
-    vnum1 = 0;
-    vnum2 = 0;
-    i += 1;
-    j += 1;
   }
+
   return 0;
 }
