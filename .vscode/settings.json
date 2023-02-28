@@ -17,8 +17,7 @@
   },
   "files.exclude": {
     "**/data/**": true,
-    "**/yarn.lock/**": true,
-    "**/node_modules/**": true
+    "**/yarn.lock/**": true
   },
   "editor.fontFamily": "'MonoLisa', 'monospace', monospace, 'fira code'"
 }
