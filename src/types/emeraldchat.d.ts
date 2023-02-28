@@ -385,6 +385,16 @@ declare class MessagePictureUpload extends React.Component<{}> {
 declare class ActionTray extends React.Component<{}> {
   pictureModeration(): void;
 }
+
+declare class PictureModeration extends React.Component<
+  {},
+  {
+    picture_moderations: EmeraldUser[];
+  }
+> {
+  approve(id: Number): void;
+  delete(id: Number): void;
+}
 declare class Room extends React.Component<// add props
 {
   data: { id: number };

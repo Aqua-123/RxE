@@ -2,6 +2,7 @@
 
 import U from "~src/userscript";
 import { crel, loadCSS } from "~src/utils";
+import { setModIconCount } from "../modMenu";
 import css from "./style.scss";
 
 function setLogo(logo: Element) {
@@ -89,7 +90,9 @@ function headerIcons() {
 
   if (!iconsHolder.querySelector(".ritsu-icon-pic-mod") && App.user.mod) {
     const countOverlay = crel("span", {
-      className: "notification-count-overlay"
+      className: "notification-count-overlay",
+      textContent: 0,
+      style: "display: none;"
     });
 
     const picModIcon = crel("span", {
@@ -108,13 +111,7 @@ function headerIcons() {
     // eslint-disable-next-line no-inner-declarations
     async function updatePicModIcon() {
       const response = await fetchData();
-      const spany = countOverlay;
-      if (spany) spany.textContent = response;
-      if (response > 0) {
-        countOverlay.style.display = "inline";
-      } else {
-        countOverlay.style.display = "none";
-      }
+      setModIconCount(response);
     }
     loadCSS(css);
     updatePicModIcon();

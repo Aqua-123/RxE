@@ -40,6 +40,7 @@ import { createEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
+import { modFunctionInit } from "./modules/modMenu";
 
 async function init() {
   const featureSet = `(${[
@@ -100,6 +101,7 @@ async function init() {
   initversionCheck();
   // initAlbum();
   // start our script's rendering loop
+  modFunctionInit();
   render([
     fixChatRoomWidth,
     applyBlurs,
