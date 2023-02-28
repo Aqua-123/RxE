@@ -72,7 +72,6 @@ function UserInfo(props: any) {
 
 function mapText(this: Message, text: string) {
   const placeholderRemoved = desanitizeURL(text).replace("Image: ", "");
-  console.log(placeholderRemoved);
   if (
     willEmbed(placeholderRemoved) ||
     willEmbed(`https://${placeholderRemoved}`) ||

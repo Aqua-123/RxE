@@ -1,16 +1,24 @@
 import React from "react";
 import styles from "./style.module.scss";
 
-export function VersionDialog(version: { version: string }) {
+export function VersionDialog(props: { version: string; changes: string }) {
   // eslint-disable-next-line react/destructuring-assignment
-  const ver = version.version;
+  const { version, changes } = props;
+  const preStyle = {
+    fontFamily: "Arial, sans-serif",
+    fontSize: "16px"
+  };
   return (
     <Menu>
       <div key="custom_menu" className={styles.ritsuMenuContainer}>
         Update available for RxE!
         <br />
         <br />
-        Version {ver} of RxE is out!
+        Version {version} of RxE is out!
+        <br />
+        <br />
+        The changes are:-
+        <pre style={preStyle}>{changes}</pre>
         <br />
         <br />
         Visit the{" "}

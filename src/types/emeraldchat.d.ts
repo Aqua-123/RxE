@@ -386,6 +386,15 @@ declare class ActionTray extends React.Component<{}> {
   pictureModeration(): void;
 }
 
+declare type ModPicture = {
+  id: Number;
+  user_id: Number;
+  created_at: String;
+  updated_at: String;
+  display_name: String;
+  username: String;
+  image_url: String;
+};
 declare class PictureModeration extends React.Component<
   {},
   {
@@ -394,6 +403,17 @@ declare class PictureModeration extends React.Component<
 > {
   approve(id: Number): void;
   delete(id: Number): void;
+}
+
+declare class PictureModerationUnit extends React.Component<
+  {
+    data: ModPicture;
+  },
+  {}
+> {
+  render(): void;
+  approve(): void;
+  delete(): void;
 }
 declare class Room extends React.Component<// add props
 {

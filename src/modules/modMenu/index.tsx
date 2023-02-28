@@ -1,3 +1,8 @@
+/* eslint-disable react/no-this-in-sfc */
+import React from "react";
+import styles from "./style.scss";
+import { loadCSS } from "~src/utils";
+
 export function setModIconCount(count: Number) {
   const countOverlay = document.querySelector(
     ".notification-count-overlay"
@@ -22,6 +27,7 @@ function stateUpdate(this: PictureModeration, id: Number) {
 }
 
 export function modFunctionInit() {
+  loadCSS(styles);
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
       type: "POST",
@@ -37,5 +43,41 @@ export function modFunctionInit() {
       dataType: "json",
       success: stateUpdate.bind(this, id)
     });
+  };
+  PictureModerationUnit.prototype.render = function pmuRender() {
+    const { data } = this.props;
+    return React.createElement(
+      "div",
+      {
+        className: "dashboard-button animated",
+        style: {
+          paddingTop: "30px",
+          height: "400px"
+        }
+      },
+      React.createElement("img", {
+        src: data.image_url,
+        className: "mod-approval-pic"
+      }),
+      React.createElement("h2", null, `${data.display_name}(${data.username})`),
+      React.createElement(
+        "button",
+        {
+          className: "ui-button-match-mega gold-button",
+          onClick: this.approve,
+          type: "button"
+        },
+        "Approve"
+      ),
+      React.createElement(
+        "button",
+        {
+          className: "ui-button-match-mega red-button",
+          onClick: this.delete,
+          type: "button"
+        },
+        "Reject"
+      )
+    );
   };
 }
