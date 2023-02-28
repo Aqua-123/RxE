@@ -37,29 +37,6 @@ function update() {
   return "updated";
 }
 
-/*
-function content(this: NotificationUnit) {
-    const { data: { sender, content: message } } = this.props.data;
-    const flair = React.createElement(Flair, {
-        data: {
-            string: sender.display_name,
-            flair: sender.flair
-        },
-        onClick: (event: _MouseEvent) => {
-            console.log(event);
-            UserViewGenerator.generate({ event, user: sender });
-        }
-    });
-    const text = message.length > 64 ? `${message.substring(0, 64)}...` : message;
-    const messageSpan = React.createElement('span', {
-        style: {
-            marginLeft: '8px'
-        }
-    }, text);
-    return React.createElement('span', null, flair, messageSpan);
-}
-*/
-
 export async function early() {
   Notifications.prototype.update = update;
   if (!NotificationsReact) return;
@@ -67,5 +44,4 @@ export async function early() {
   if (NotificationsReact.state && NotificationsReact.state.data)
     filterNotifications(NotificationsReact.state.data);
   else console.warn("failed to filter friend requests early");
-  // NotificationUnit.prototype.content = content;
 }

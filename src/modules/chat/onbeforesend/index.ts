@@ -52,7 +52,6 @@ function addSubstitutions(substitutions: Record<string, string>) {
 }
 
 function addZWSP(message: string | null) {
-  console.log("I was called");
   if (!message) return null;
   const words = message.split(" ");
   let newMessage = "";
@@ -67,7 +66,6 @@ export function init() {
   addSubstitutions(emotes);
 
   Room.prototype.send = function send(rawMessage: string) {
-    console.log(rawMessage);
     const message = this.process
       ? this.process(rawMessage)
       : addZWSP(rawMessage);
