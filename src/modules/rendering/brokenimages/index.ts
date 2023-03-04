@@ -1,7 +1,7 @@
 import { getImageType } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 import { urlImageDirectLinkAny } from "~src/modules/rendering/richtext/linkutils";
-import tickSVG from "./tick.svg";
+// import tickSVG from "./tick.svg";
 
 // do something cool with other broken images somehow.
 
@@ -11,7 +11,7 @@ const isStaticImage: Record<string, boolean> = {};
 const GEM_AVICON = "https://emeraldchat.com/avicons_strict/1.png";
 const DATA_IMAGE = "data:image";
 const IS_AVICON = (src: string) => src.includes("/avicons_strict/");
-const IS_ASSET = (src: string) => src.includes("emeraldchat.com/assets");
+const IS_ASSET = (src: string) => src.includes("emeraldchat.com/");
 const IS_MESSAGE_PIC = (img: Image) => img.classList.contains("message-image");
 const ROBOHASH_CAT_FALLBACK = (s: string) =>
   `https://robohash.org/yay${s}.png?set=set4`;
@@ -77,13 +77,13 @@ function restrictAnimation(img: Image) {
 }
 
 export function renderBrokenImages() {
-  const goldImages = document.querySelectorAll('img[src*="/badges/tick.svg"]');
-  goldImages.forEach((img) => {
-    // can't set a data: URI in <img>, blocked by CSP. be violent instead.
-    const parent = img.parentElement;
-    img.outerHTML = tickSVG;
-    parent?.querySelector("svg")?.classList.add("user-badge-tick");
-  });
+  // const goldImages = document.querySelectorAll('img[src*="/badges/tick.svg"]');
+  // goldImages.forEach((img) => {
+  //   // can't set a data: URI in <img>, blocked by CSP. be violent instead.
+  //   const parent = img.parentElement;
+  //   img.outerHTML = tickSVG;
+  //   parent?.querySelector("svg")?.classList.add("user-badge-tick");
+  // });
 
   Array.from(document.images).forEach((img) => {
     useImageFallback(img);

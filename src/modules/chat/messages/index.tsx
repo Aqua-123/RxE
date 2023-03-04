@@ -49,6 +49,15 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
   else this.setState({ messages });
 }
 
+const tag = (tagName: string) => <b style={{ color: "#f00" }}> {tagName} </b>;
+
+function specialTag(user: any) {
+  if (user.proxy) return undefined;
+  if (user.master) return tag("MASTER");
+  if (user.mod) return tag("MOD");
+  return undefined;
+}
+
 function UserInfo(props: any) {
   const { user, karma, colour, textShadow, timeago } = props;
   return (
@@ -64,8 +73,7 @@ function UserInfo(props: any) {
       >
         {timeago!}
       </span>
-      {user.master && !user.proxy && <b style={{ color: "#f00" }}> CALLAN </b>}
-      {user.mod && !user.proxy && <b style={{ color: "#f00" }}> MOD </b>}
+      {specialTag(user)}
     </span>
   );
 }
