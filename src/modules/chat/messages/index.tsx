@@ -44,9 +44,7 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
       messages[messages.length - 1].messages.push(element.messages[0]);
     } else messages.push(element);
   });
-  // prevent using this.setState if only one message was added
-  if (messageArr.length === 1) this.state.messages = messages;
-  else this.setState({ messages });
+  this.setState({ messages });
 }
 
 const tag = (tagName: string) => <b style={{ color: "#f00" }}> {tagName} </b>;
@@ -80,18 +78,15 @@ function UserInfo(props: any) {
 
 function mapText(this: Message, text: string) {
   const placeholderRemoved = desanitizeURL(text).replace("Image: ", "");
+  let className = "text-only";
   if (
     willEmbed(placeholderRemoved) ||
     willEmbed(`https://${placeholderRemoved}`) ||
     decodeImage(placeholderRemoved)
   )
-    return (
-      <div className="embed" key={JSON.stringify(text)}>
-        {this.process(text)}
-      </div>
-    );
+    className = "embed";
   return (
-    <div className="text-only" key={JSON.stringify(text)}>
+    <div className={className} key={JSON.stringify(text)}>
       {this.process(text)}
     </div>
   );
