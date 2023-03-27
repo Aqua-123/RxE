@@ -134,6 +134,7 @@ body > div > nav {
 }
 .ui-input.ui-input {
   background: var(--dialog-input-bg-color) !important;
+  color: var(--input-fg-color);
 }
 .dashboard-card-image.dashboard-card-image {
   border-color: var(--dashboard-icon-fg-color);
