@@ -101,12 +101,13 @@ function headerIcons() {
       textContent: "account_box",
       tabIndex: -1,
       role: "button",
-      style: "color: white;",
       title: "Picture Moderation",
       onmousedown: () => ActionTray.prototype.pictureModeration()
     });
-    iconsHolder.prepend(countOverlay);
-    iconsHolder.prepend(picModIcon);
+    const icon = crel("span");
+    icon.append(picModIcon);
+    icon.append(countOverlay);
+    iconsHolder.prepend(icon);
 
     // eslint-disable-next-line no-inner-declarations
     async function updatePicModIcon() {
