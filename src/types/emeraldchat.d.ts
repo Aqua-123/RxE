@@ -73,11 +73,18 @@ declare interface AppInterface {
   webrtc: {
     client: null;
   };
+  cable: {
+    url: String;
+    connection: any;
+    subscription: any;
+  };
 }
 
 declare const App: AppInterface;
 
 declare module ActionCable {
+  function createConsumer(url?: string): any;
+
   class Subscriptions {
     reject(id: string): void;
   }

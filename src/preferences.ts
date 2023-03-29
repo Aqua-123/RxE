@@ -94,6 +94,11 @@ export const P = {
     label: T.preferences.notifyUpdates.label,
     default: true
   }),
+  hideFromGc: new BooleanPreference({
+    key: "hideFromGc",
+    label: T.preferences.hideFromGc.label,
+    default: false
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

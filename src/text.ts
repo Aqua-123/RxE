@@ -110,6 +110,9 @@ export default {
     },
     notifyUpdates: {
       label: "Notify when updates are available"
+    },
+    hideFromGc: {
+      label: "Hide yourself from side-list in group chat (mods only)"
     }
   },
   hiddenChannels: "hidden channels",

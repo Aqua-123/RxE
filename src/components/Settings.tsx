@@ -13,7 +13,6 @@ import RegExpSetting from "./RegExpSetting";
 
 export default function Settings(props: SettingsProps) {
   const { muteRegexes, applySettings } = props;
-
   return (
     <div className={styles.settings}>
       {settingsSection(styles.settingsSection, T.generalTitle)}
@@ -21,6 +20,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("trackKarma", props)}
       {checkboxPreference("fancyColors", props)}
       {checkboxPreference("notifyUpdates", props)}
+      {App.user.mod && checkboxPreference("hideFromGc", props)}
       {radioPreference("blockReqs", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}

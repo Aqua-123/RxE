@@ -2,6 +2,8 @@
 import React from "react";
 import styles from "./style.scss";
 import { loadCSS } from "~src/utils";
+import { hideUser } from "./ws";
+import { Preferences, P } from "~src/preferences";
 
 export function setModIconCount(count: Number) {
   const countOverlay = document.querySelector(
@@ -28,6 +30,8 @@ function stateUpdate(this: PictureModeration, id: Number) {
 
 export function modFunctionInit() {
   loadCSS(styles);
+  console.log(Preferences.get(P.hideFromGc));
+  if (Preferences.get(P.hideFromGc)) hideUser();
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
       type: "POST",

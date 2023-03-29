@@ -83,5 +83,8 @@
     "react": "16.4.2",
     "react-dom": "16.4.2",
     "ts-preferences": "^2.0.0"
+  },
+  "dependencies": {
+    "actioncable": "^5.2.8-1"
   }
 }
