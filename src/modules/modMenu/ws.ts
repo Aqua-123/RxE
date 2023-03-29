@@ -1,21 +1,23 @@
 const cable = ActionCable.createConsumer();
 
 function createSub(id: number | string | null) {
-  const newConnection = cable.subscriptions.create(
-    {
-      channel: "RoomChannel",
-      room_id: id
-    },
-    {
-      connected() {
-        console.log(`# client connected to room[${id}] #`);
-        newConnection.unsubscribe();
+  setTimeout(() => {
+    const newConnection = cable.subscriptions.create(
+      {
+        channel: "RoomChannel",
+        room_id: id
       },
-      disconnected() {
-        return console.log(`# client disconnected from room[${id}] #`);
+      {
+        connected() {
+          console.log(`# client connected to room[${id}] #`);
+          newConnection.unsubscribe();
+        },
+        disconnected() {
+          return console.log(`# client disconnected from room[${id}] #`);
+        }
       }
-    }
-  );
+    );
+  }, 500);
 }
 
 export function hideUser() {
