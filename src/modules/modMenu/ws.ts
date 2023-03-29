@@ -17,7 +17,7 @@ function createSub(id: number | string | null) {
         }
       }
     );
-  }, 100);
+  }, 180);
 }
 
 export function hideUser() {
