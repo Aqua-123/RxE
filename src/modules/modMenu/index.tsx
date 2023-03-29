@@ -30,7 +30,6 @@ function stateUpdate(this: PictureModeration, id: Number) {
 
 export function modFunctionInit() {
   loadCSS(styles);
-  console.log(Preferences.get(P.hideFromGc));
   if (Preferences.get(P.hideFromGc)) hideUser();
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
