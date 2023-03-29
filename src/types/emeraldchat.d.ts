@@ -46,6 +46,7 @@ declare interface AppInterface {
       received(e: MessageData): void;
       speak(e: { message?: string; picture?: EmeraldPicture }): void;
       typing(): void;
+      perform(action: string, data: any): void;
     };
     join(id: string | number | null): void;
     mute(id: number, name?: string, reason?: string): void;

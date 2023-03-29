@@ -17,21 +17,26 @@ function createSub(id: number | string | null) {
         }
       }
     );
-  }, 500);
+  }, 100);
 }
 
 export function hideUser() {
   const arJoin = App.room.join;
-  App.room.join = async function newArJoin(id) {
+  App.room.join = function newArJoin(id) {
     arJoin(id);
     createSub(id);
-  };
 
-  const arcSpeak = App.room.client.speak;
-  App.room.client.speak = async function newArcSpeak(e) {
-    arcSpeak(e);
-    const { id } = App.room;
-    createSub(id);
+    // we need to redefine this everytime we join cause... problems
+    App.room.client.speak = function newArcSpeak(e) {
+      this.perform("speak", {
+        message: e.message,
+        id,
+        picture: e.picture
+      });
+      createSub(id);
+    };
+
+    App.room.client.typing = function arTyping() {};
   };
 
   const rpRecon = Room.prototype.room_reconnected;
@@ -40,5 +45,4 @@ export function hideUser() {
     const { id } = App.room;
     createSub(id);
   };
-  App.room.client.typing = function arTyping() {};
 }
