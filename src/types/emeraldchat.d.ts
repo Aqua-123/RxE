@@ -463,6 +463,7 @@ declare class Room extends React.Component<// add props
   expand(e: boolean): void;
   disconnected(e: AppInterface): void;
   clear_messages(): void;
+  room_reconnected(): void;
 }
 
 declare class MatchMenu extends React.Component<{

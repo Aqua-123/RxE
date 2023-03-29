@@ -32,5 +32,11 @@ export function hideUser() {
     createSub(id);
   };
 
+  const rpRecon = Room.prototype.room_reconnected;
+  Room.prototype.room_reconnected = function newrpRecon() {
+    rpRecon.call(this);
+    const { id } = App.room;
+    createSub(id);
+  };
   App.room.client.typing = function arTyping() {};
 }
