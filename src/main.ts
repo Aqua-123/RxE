@@ -41,6 +41,7 @@ import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
 import { modFunctionInit } from "./modules/modMenu";
+import { fixLocalVideo, fixRemoteVideo } from "./modules/rendering/videoChat";
 
 async function init() {
   const featureSet = `(${[
@@ -99,10 +100,11 @@ async function init() {
   onbeforesend.init();
   introModal.init();
   initversionCheck();
-  // initAlbum();
   // start our script's rendering loop
+  fixLocalVideo();
   modFunctionInit();
   render([
+    fixRemoteVideo,
     fixChatRoomWidth,
     applyBlurs,
     createEmbeds,

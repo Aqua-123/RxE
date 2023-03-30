@@ -199,7 +199,7 @@ declare class NotificationUnit extends React.Component<{
   friend_request_accept(e: _MouseEvent): void;
   friend_request_reject(e: _MouseEvent): void;
 }
-
+declare class RightComponentVideo extends React.Component<{}> {}
 declare type FriendRequest = {
   created_at: string;
   data: {
