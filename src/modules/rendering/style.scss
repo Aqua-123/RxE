@@ -10,3 +10,8 @@
   margin-right: 9px;
   padding: 3px;
 }
+
+.container,
+.room-component-container {
+  height: calc(100vh - 46px) !important;
+}
