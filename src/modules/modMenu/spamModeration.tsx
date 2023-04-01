@@ -32,7 +32,7 @@ export function spamModOverride() {
         </div>
         <div className="spam-user-info">
           <p style={{ paddingBottom: "10px" }}>{data.display_name}</p>
-          <p>Username: {data.username ? "Yes" : "No"}</p>
+          <p>Username: {data.username}</p>
           <p>Gold: {data.gold ? "Yes" : "No"}</p>
           <p>Content: {data.content}</p>
           <p>Last message: {time}</p>
