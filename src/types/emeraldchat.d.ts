@@ -215,6 +215,27 @@ declare type FriendRequest = {
   user_id: number;
 };
 
+declare class SpamModerationUnit extends React.Component<{
+  data: {
+    content: string;
+    display_name: string;
+    display_picture: string;
+    email: string;
+    gold: Boolean;
+    id: number;
+    ip: string;
+    ips_used: number;
+    karma: number;
+    latest_message: string;
+    master: Boolean;
+    message_count: number;
+    mod: Boolean;
+    online: Boolean;
+    ratio_of_messages: number;
+    username: string;
+  };
+}> {}
+
 declare type NotificationsStateData = {
   read: NotificationProps[];
   unread: NotificationProps[];

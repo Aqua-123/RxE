@@ -4,8 +4,9 @@ import styles from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { hideUser } from "./ws";
 import { Preferences, P } from "~src/preferences";
+import { spamModOverride } from "./spamModeration";
 
-export function setModIconCount(count: Number) {
+export function setModIconCount(count: number) {
   const countOverlay = document.querySelector(
     ".notification-count-overlay"
   ) as HTMLElement;
@@ -30,6 +31,7 @@ function stateUpdate(this: PictureModeration, id: Number) {
 
 export function modFunctionInit() {
   loadCSS(styles);
+  spamModOverride();
   if (Preferences.get(P.hideFromGc)) hideUser();
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
