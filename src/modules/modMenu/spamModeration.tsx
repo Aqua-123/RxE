@@ -39,7 +39,6 @@ export function spamModOverride() {
           <p>Message count: {data.message_count}</p>
           <p>Ratio of messages: {data.ratio_of_messages}</p>
           <p>IPs used: {data.ips_used}</p>
-          <p>Sample IP: {data.ip}</p>
         </div>
       </div>
     );
