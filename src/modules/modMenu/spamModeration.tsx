@@ -14,9 +14,9 @@ export function spamModOverride() {
         className="dashboard-button animated"
         style={{
           paddingTop: "30px",
-          paddingBottom: "30px",
-          minHeight: "330px",
-          height: "max-content"
+          // paddingBottom: "30px",
+          minHeight: "330px"
+          // height: "max-content"
         }}
       >
         <div className="room-component-message-left">
@@ -31,14 +31,12 @@ export function spamModOverride() {
           />
         </div>
         <div className="spam-user-info">
-          <p style={{ paddingBottom: "10px" }}>{data.display_name}</p>
+          {/* <p style={{ paddingBottom: "10px" }}>{data.display_name}</p> */}
           <p>Username: {data.username}</p>
           <p>Gold: {data.gold ? "Yes" : "No"}</p>
           <p>Content: {data.content}</p>
           <p>Last message: {time}</p>
           <p>Message count: {data.message_count}</p>
-          <p>Ratio of messages: {data.ratio_of_messages}</p>
-          <p>IPs used: {data.ips_used}</p>
         </div>
       </div>
     );
