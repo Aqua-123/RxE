@@ -20,6 +20,10 @@ declare class MuteButton extends React.Component<any, { muted: boolean }> {
 
 declare const MuteButtonClient: MuteButton;
 
+declare const SetGenderRenderer: {
+  render(): void;
+};
+
 declare type EventData = {
   notification_update: boolean;
   message_notification: boolean;
@@ -440,7 +444,6 @@ declare class PictureModerationUnit extends React.Component<
   },
   {}
 > {
-  render(): void;
   approve(): void;
   delete(): void;
 }

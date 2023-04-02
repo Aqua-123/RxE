@@ -20,6 +20,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("trackKarma", props)}
       {checkboxPreference("fancyColors", props)}
       {checkboxPreference("notifyUpdates", props)}
+      {checkboxPreference("hideTyping", props)}
       {App.user.mod && checkboxPreference("hideFromGc", props)}
       {radioPreference("blockReqs", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}

@@ -113,6 +113,9 @@ export default {
     },
     hideFromGc: {
       label: "Hide yourself from side-list in group chat (mods only)"
+    },
+    hideTyping: {
+      label: "Hide your typing status in chat"
     }
   },
   hiddenChannels: "hidden channels",

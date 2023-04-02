@@ -15,6 +15,7 @@ import { initKarmaTracker } from "./modules/karma";
 import {
   betterMessageRendering,
   decorateMessages,
+  hideTyping,
   initMessages
 } from "./modules/chat/messages";
 import { initNetwork } from "./modules/network";
@@ -103,6 +104,7 @@ async function init() {
   // start our script's rendering loop
   fixLocalVideo();
   modFunctionInit();
+  hideTyping();
   render([
     fixRemoteVideo,
     fixChatRoomWidth,

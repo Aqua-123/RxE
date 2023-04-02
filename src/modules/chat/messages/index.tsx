@@ -396,3 +396,14 @@ export function betterMessageRendering() {
     fasterAppend.call(this, [e]);
   };
 }
+
+// Hide your typing status in chat
+// AKA my first attempt at adding something to RxE
+export function hideTyping() {
+  if (!Preferences.get(P.hideTyping)) return;
+  const arJoin = App.room.join;
+  App.room.join = function newArJoin(id) {
+    arJoin.call(this, id);
+    App.room.client.typing = function noTyping() {};
+  };
+}

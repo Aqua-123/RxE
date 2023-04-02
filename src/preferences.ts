@@ -94,6 +94,11 @@ export const P = {
     label: T.preferences.notifyUpdates.label,
     default: true
   }),
+  hideTyping: new BooleanPreference({
+    key: "hideTyping",
+    label: T.preferences.hideTyping.label,
+    default: false
+  }),
   hideFromGc: new BooleanPreference({
     key: "hideFromGc",
     label: T.preferences.hideFromGc.label,
