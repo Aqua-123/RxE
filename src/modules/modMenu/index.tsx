@@ -43,7 +43,7 @@ const reasons = [
   {
     value: "inappropriate_content",
     label:
-      "Distribution/Promotion of inappropriate/illegal/content such as: ..."
+      "Distribution/Promotion of inappropriate/illegal/explicit such as: ..."
   },
   {
     value: "sexual_harassment",
