@@ -54,7 +54,7 @@ const reasons = [
 export function modFunctionInit() {
   loadCSS(styles);
   spamModOverride();
-  if (Preferences.get(P.hideFromGc)) hideUser();
+  if (Preferences.get(P.hideFromGc) && App.user.mod) hideUser();
   ModPanel.prototype.issue_ban_menu = function issueMenu() {
     return <BanForm reasons={reasons} />;
   };
