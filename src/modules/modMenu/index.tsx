@@ -38,7 +38,7 @@ const reasons = [
   },
   {
     value: "csa",
-    label: "Distribution/Promotion of illegal content related to CP/CSA"
+    label: "Distribution/Promotion of illegal content involving CP/CSA"
   },
   {
     value: "inappropriate_content",
