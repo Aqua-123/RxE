@@ -103,7 +103,9 @@ declare class UpgradeAccount {
   signup: Function;
 }
 
-declare class ModPanel extends React.Component {}
+declare class ModPanel extends React.Component {
+  issue_ban_menu(): JSX.Element;
+}
 
 declare type MessageData = {
   isMine?: Boolean;

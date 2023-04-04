@@ -5,6 +5,7 @@ import { loadCSS } from "~src/utils";
 import { hideUser } from "./ws";
 import { Preferences, P } from "~src/preferences";
 import { spamModOverride } from "./spamModeration";
+import { BanForm } from "./banForm";
 
 export function setModIconCount(count: number) {
   const countOverlay = document.querySelector(
@@ -29,10 +30,36 @@ function stateUpdate(this: PictureModeration, id: Number) {
   this.setState(state);
 }
 
+const reasons = [
+  { value: "spam", label: "Multiple spam attempts in chat" },
+  {
+    value: "harassment",
+    label: "Harassment, threats and/or abuse towards an user or group of users"
+  },
+  {
+    value: "csa",
+    label: "Distribution/Promotion of illegal content related to CP/CSA"
+  },
+  {
+    value: "inappropriate_content",
+    label:
+      "Distribution/Promotion of inappropriate/illegal/content such as: ..."
+  },
+  {
+    value: "sexual_harassment",
+    label:
+      "Sexually explicit remarks causing distress towards an user or group of users"
+  },
+  { value: "other", label: "Other" }
+];
+
 export function modFunctionInit() {
   loadCSS(styles);
   spamModOverride();
   if (Preferences.get(P.hideFromGc)) hideUser();
+  ModPanel.prototype.issue_ban_menu = function issueMenu() {
+    return <BanForm reasons={reasons} />;
+  };
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
       type: "POST",
