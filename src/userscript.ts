@@ -2,7 +2,7 @@ export default {
   id: "ritsu-emerald",
   name: "Ritsu x Emerald",
   shortName: "RxE",
-  version: "0.12.6.6", // yarn bump to update version
+  version: "0.12.6.7", // yarn bump to update version
   description: "Custom Emerald Chat themes and fixes.",
   icon: "https://i.imgur.com/KLtVhho.png",
   author: "Atsos/Ritsu, Aqua, Strawberry, Teriyaki",
