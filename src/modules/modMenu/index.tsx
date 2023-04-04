@@ -46,8 +46,7 @@ const reasons = [
   },
   {
     value: "sexual_harassment",
-    label:
-      "Sexually explicit remarks causing distress towards an user or group of users"
+    label: "Sexually explicit remarks towards an user or group of users"
   },
   { value: "other", label: "Other" }
 ];
