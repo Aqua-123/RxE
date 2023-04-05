@@ -252,19 +252,33 @@ declare type reportLogData = {
 
 declare class ReportLogModeration extends React.Component<{}> {
   state: {
+    // NOTE: this is our own field
     spam_moderations: spamModData[];
     reeport_logs: reportLogData[];
   };
+  // NOTE: this is our own field
   fetch_spam(): void;
   fetch_data(): void;
 }
 declare class SpamModeration extends React.Component<{}> {
   state: {
     spam_moderations: spamModData[];
+    // NOTE: this is our own field
     report_logs: reportLogData[];
+    // NOTE: this is our own field
+    sortByMessageCount: boolean;
   };
+  // NOTE: this is our own field
   fetch_reports(): void;
   fetch_data(): void;
+  // NOTE: this is our own field
+  sortLastMessage(): void;
+  // NOTE: this is our own field
+  sortMessageCount(): void;
+  // NOTE: this is our own field
+  toggleSort(): void;
+  // NOTE: this is our own field
+  sortMessages(): void;
 }
 declare class SpamModerationUnit extends React.Component<{
   data: spamModData;

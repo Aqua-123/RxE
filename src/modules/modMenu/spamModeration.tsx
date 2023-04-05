@@ -35,21 +35,60 @@ export function spamModOverride() {
   SpamModeration.prototype.componentDidMount = function smCDM() {
     this.fetch_data();
     this.fetch_reports();
+    this.setState({ sortByMessageCount: false });
   };
 
+  SpamModeration.prototype.sortMessages = function () {
+    const { sortByMessageCount } = this.state;
+    if (sortByMessageCount) {
+      this.sortMessageCount();
+    } else this.sortLastMessage();
+  };
+
+  SpamModeration.prototype.toggleSort = function ts() {
+    this.sortMessages();
+    this.setState({ sortByMessageCount: !this.state.sortByMessageCount });
+    this.forceUpdate();
+  };
   SpamModeration.prototype.render = function smFR() {
     const spamModerationState = this.state.spam_moderations;
     const reportLogState = this.state.report_logs;
-
+    this.sortMessages = this.sortMessages.bind(this);
+    this.toggleSort = this.toggleSort.bind(this);
     return (
       <div className="dashboard-background">
         <div className="dashboard-container">
           <div className="meet-cards-container video-moderation">
+            <br />
+            <button type="button" onClick={this.toggleSort}>
+              {this.state.sortByMessageCount
+                ? "Sort by last message"
+                : "Sort by message count"}
+            </button>
+            <br />
+            <br />
             {spamModUnits(spamModerationState, reportLogState)}
           </div>
         </div>
       </div>
     );
+  };
+
+  SpamModeration.prototype.sortMessageCount = function smSMC() {
+    const spamModList = this.state.spam_moderations;
+    const sortedSpamList = spamModList.sort(
+      (a, b) => b.message_count - a.message_count
+    );
+    this.setState({ spam_moderations: sortedSpamList });
+  };
+  SpamModeration.prototype.sortLastMessage = function smSMC() {
+    const spamModList = this.state.spam_moderations;
+    const sortedSpamList = spamModList.sort((a, b) => {
+      const dateA = new Date(a.latest_message).getTime();
+      const dateB = new Date(b.latest_message).getTime();
+      return dateB - dateA;
+    });
+    this.setState({ spam_moderations: sortedSpamList });
   };
 
   SpamModerationUnit.prototype.render = function smuRender() {
