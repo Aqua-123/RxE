@@ -37,6 +37,10 @@ const reasons = [
     label: "Harassment, threats and/or abuse towards an user or group of users"
   },
   {
+    value: "sexual_harassment",
+    label: "Sexually explicit remarks towards an user or group of users"
+  },
+  {
     value: "csa",
     label: "Distribution/Promotion of illegal content involving CP/CSA"
   },
@@ -45,8 +49,12 @@ const reasons = [
     label: "Distribution/Promotion of illegal/explicit content"
   },
   {
-    value: "sexual_harassment",
-    label: "Sexually explicit remarks towards an user or group of users"
+    value: "underage",
+    label: "You must be +18 in order to use 1-on-1 chat"
+  },
+  {
+    value: "racism",
+    label: "Spreading derogatory words/racism/bigotry in chat"
   },
   { value: "other", label: "Other" }
 ];
