@@ -221,25 +221,59 @@ declare type FriendRequest = {
   user_id: number;
 };
 
-declare class SpamModerationUnit extends React.Component<{
-  data: {
-    content: string;
-    display_name: string;
-    display_picture: string;
-    email: string;
-    gold: Boolean;
-    id: number;
-    ip: string;
-    ips_used: number;
-    karma: number;
-    latest_message: string;
-    master: Boolean;
-    message_count: number;
-    mod: Boolean;
-    online: Boolean;
-    ratio_of_messages: number;
-    username: string;
+declare type spamModData = {
+  banned: boolean;
+  content: string;
+  display_name: string;
+  display_picture: string;
+  gold: boolean;
+  id: number;
+  karma: number;
+  latest_message: string;
+  master: boolean;
+  message_count: number;
+  mod: boolean;
+  online: boolean;
+  username: string;
+};
+
+declare type reportLogData = {
+  display_name: string;
+  display_picture: string;
+  gold: boolean;
+  id: number;
+  karma: number;
+  master: boolean;
+  mod: boolean;
+  online: boolean;
+  people_reporting: number;
+  username: string;
+};
+
+declare class ReportLogModeration extends React.Component<{}> {
+  state: {
+    spam_moderations: spamModData[];
+    reeport_logs: reportLogData[];
   };
+  fetch_spam(): void;
+  fetch_data(): void;
+}
+declare class SpamModeration extends React.Component<{}> {
+  state: {
+    spam_moderations: spamModData[];
+    report_logs: reportLogData[];
+  };
+  fetch_reports(): void;
+  fetch_data(): void;
+}
+declare class SpamModerationUnit extends React.Component<{
+  data: spamModData;
+  has_report?: Boolean;
+}> {}
+
+declare class ReportLogModerationUnit extends React.Component<{
+  data: reportLogData;
+  has_report?: Boolean;
 }> {}
 
 declare type NotificationsStateData = {

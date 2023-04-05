@@ -2,8 +2,8 @@
 
 import U from "~src/userscript";
 import { crel, loadCSS } from "~src/utils";
-import { setModIconCount } from "../modMenu";
 import css from "./style.scss";
+import { setModIconCount } from "../modMenu/pictureModeration";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
