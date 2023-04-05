@@ -17,10 +17,11 @@ function createSub(id: number | string | null) {
         }
       }
     );
-  }, 300);
+  }, 230);
 }
 
 export function hideUser() {
+  if (!App.user.mod) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
     arJoin(id);
