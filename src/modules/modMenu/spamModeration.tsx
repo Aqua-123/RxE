@@ -59,7 +59,6 @@ export function spamModOverride() {
       <div className="dashboard-background">
         <div className="dashboard-container">
           <div className="meet-cards-container video-moderation">
-            <br />
             <button type="button" onClick={this.toggleSort}>
               {this.state.sortByMessageCount
                 ? "Sort by last message"
