@@ -41,7 +41,8 @@ body > div > nav {
 .room-component-container.room-component-container {
   color: var(--app-fg-color);
 }
-.dashboard-button.animated.zoomIn {
+.dashboard-button.animated.zoomIn,
+.dashboard-button {
   background: var(--dashboard-button-bg-color);
 }
 .navigation-notification-icons.navigation-notification-icons {

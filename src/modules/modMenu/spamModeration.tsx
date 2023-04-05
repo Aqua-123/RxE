@@ -50,6 +50,7 @@ export function spamModOverride() {
     this.setState({ sortByMessageCount: !this.state.sortByMessageCount });
     this.forceUpdate();
   };
+
   SpamModeration.prototype.render = function smFR() {
     const spamModerationState = this.state.spam_moderations;
     const reportLogState = this.state.report_logs;
