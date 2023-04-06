@@ -20,8 +20,20 @@ function createSub(id: number | string | null) {
   }, 230);
 }
 
-export function hideUser() {
-  // if (!App.user.mod) return;
+async function checkModStatus() {
+  try {
+    const response = await fetch("https://emeraldchat.com/current_user_json");
+    const data = await response.json();
+    return data.mod === true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export async function hideUser() {
+  const isMod = await checkModStatus();
+  if (!isMod) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
     arJoin(id);
