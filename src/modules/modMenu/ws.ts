@@ -26,14 +26,13 @@ async function checkModStatus() {
     const data = await response.json();
     return data.mod === true;
   } catch (error) {
-    console.error(error);
     return false;
   }
 }
 
 export async function hideUser() {
   const isMod = await checkModStatus();
-  if (!isMod) return;
+  if (!isMod && !(FEATURES.HACKS && App.user.mod)) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
     arJoin(id);

@@ -22,7 +22,7 @@ export function reportModOverride() {
       type: "GET",
       url: "/spam_moderation",
       dataType: "json",
-      success: function (this: ReportLogModeration, e: spamModData[]) {
+      success: function rmSuccess(this: ReportLogModeration, e: spamModData[]) {
         const state = {
           spam_moderations: e
         };
