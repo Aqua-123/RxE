@@ -23,7 +23,7 @@ export function spamModOverride() {
       type: "GET",
       url: "/report_logs_moderation",
       dataType: "json",
-      success: function (this: SpamModeration, e: reportLogData[]) {
+      success: function successFunc(this: SpamModeration, e: reportLogData[]) {
         const state = {
           report_logs: e
         };
@@ -38,7 +38,7 @@ export function spamModOverride() {
     this.setState({ sortByMessageCount: false });
   };
 
-  SpamModeration.prototype.sortMessages = function () {
+  SpamModeration.prototype.sortMessages = function sortMessagesFunc() {
     const { sortByMessageCount } = this.state;
     if (sortByMessageCount) {
       this.sortMessageCount();
