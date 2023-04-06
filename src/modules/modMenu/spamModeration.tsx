@@ -125,6 +125,7 @@ export function spamModOverride() {
           <p>Content: {data.content}</p>
           <p>Last message: {time}</p>
           <p>Message count: {data.message_count}</p>
+          <p>Banned: {data.banned ? "Yes" : "No"}</p>
         </div>
       </div>
     );

@@ -75,6 +75,7 @@ export function reportModOverride() {
           />
         </div>
         <div className="spam-user-info">
+          <p>Name: {data.display_name}</p>
           <p>Username: {data.username}</p>
           <p>Users Reporting count: {data.people_reporting}</p>
         </div>
