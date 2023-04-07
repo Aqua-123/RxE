@@ -24,6 +24,39 @@ function stateUpdate(this: PictureModeration, id: Number) {
 }
 
 export function pictureModerationOverride() {
+  PictureModeration.prototype.update = function pmUpdate() {
+    setInterval(() => {
+      if (!document.body.classList.contains("picModMounted")) return;
+      this.fetch();
+    }, 15000);
+  };
+
+  PictureModeration.prototype.fetch = function pmFetch() {
+    $.ajax({
+      type: "GET",
+      url: "/picture_moderations",
+      dataType: "json",
+      success: function fetchSuccess(this: PictureModeration, e: any) {
+        const state = {
+          picture_moderations: e
+        };
+        this.setState(state);
+        setModIconCount(e.length);
+      }.bind(this)
+    });
+  };
+
+  const cdm = PictureModeration.prototype.componentDidMount;
+  PictureModeration.prototype.componentDidMount = function newCDM() {
+    cdm?.call(this);
+    document.body.classList.add("picModMounted");
+    this.update();
+  };
+
+  PictureModeration.prototype.componentWillUnmount = function pmCWU() {
+    document.body.classList.remove("picModMounted");
+  };
+
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
     $.ajax({
       type: "POST",
@@ -32,6 +65,7 @@ export function pictureModerationOverride() {
       success: stateUpdate.bind(this, id)
     });
   };
+
   PictureModeration.prototype.delete = function pmDelete(id: Number) {
     $.ajax({
       type: "DELETE",
