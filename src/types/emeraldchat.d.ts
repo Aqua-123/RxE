@@ -482,6 +482,7 @@ declare class PictureModeration extends React.Component<
   {},
   {
     picture_moderations: EmeraldUser[];
+    interval: NodeJS.Timer;
   }
 > {
   fetch(): void;

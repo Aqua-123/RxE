@@ -25,10 +25,11 @@ function stateUpdate(this: PictureModeration, id: Number) {
 
 export function pictureModerationOverride() {
   PictureModeration.prototype.update = function pmUpdate() {
-    setInterval(() => {
+    const interval = setInterval(() => {
       if (!document.body.classList.contains("picModMounted")) return;
       this.fetch();
     }, 15000);
+    this.setState({ interval });
   };
 
   PictureModeration.prototype.fetch = function pmFetch() {
@@ -55,6 +56,8 @@ export function pictureModerationOverride() {
 
   PictureModeration.prototype.componentWillUnmount = function pmCWU() {
     document.body.classList.remove("picModMounted");
+    const { interval } = this.state;
+    clearInterval(interval);
   };
 
   PictureModeration.prototype.approve = function pmApprove(id: Number) {
