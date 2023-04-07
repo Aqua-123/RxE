@@ -24,22 +24,22 @@ export const fontsQuery = [
 
 export type Font = typeof fontsQuery[number];
 
-function defaultFont() {
-  const body = document.getElementsByTagName("body")[0];
-  body.style.font = "14px Roboto";
-  const microposts = document.querySelectorAll(
-    ".user-profile-micro"
-  ) as NodeListOf<HTMLElement>;
-  Array.from(microposts).forEach((element) => {
-    element.style.fontFamily = "Roboto !important";
-  });
-  const menuNotif = document.querySelectorAll(
-    ".notification-menu-container-text"
-  ) as NodeListOf<HTMLElement>;
-  Array.from(menuNotif).forEach((element) => {
-    element.style.fontFamily = "Roboto";
-  });
-}
+// function defaultFont() {
+//   const body = document.getElementsByTagName("body")[0];
+//   body.style.font = "14px Roboto";
+//   const microposts = document.querySelectorAll(
+//     ".user-profile-micro"
+//   ) as NodeListOf<HTMLElement>;
+//   Array.from(microposts).forEach((element) => {
+//     element.style.fontFamily = "Roboto !important";
+//   });
+//   const menuNotif = document.querySelectorAll(
+//     ".notification-menu-container-text"
+//   ) as NodeListOf<HTMLElement>;
+//   Array.from(menuNotif).forEach((element) => {
+//     element.style.fontFamily = "Roboto";
+//   });
+// }
 
 function changeFont(font: string) {
   const body = document.getElementsByTagName("body")[0];
@@ -66,7 +66,7 @@ export function initFont() {
   switch (font.value) {
     case "roboto":
     default:
-      defaultFont();
+      changeFont(font.label[0]);
       break;
     case "comic_sans":
       changeFont(font.label[1]);
