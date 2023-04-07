@@ -30,12 +30,7 @@ export const fontsQuery = {
   verdana: "Verdana"
 };
 
-export type Font =
-  | "roboto"
-  | "comic_sans"
-  | "helvetica"
-  | "trebuchet"
-  | "verdana";
+export type Font = keyof typeof fontsQuery;
 
 // export type Font = typeof fontsQuery[number]["value"];
 
