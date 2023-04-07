@@ -3,6 +3,7 @@ import U from "./userscript";
 export default {
   title: `${U.name} ${U.version}`,
   themeTitle: "Choose your theme",
+  fontTitle: "Choose your font",
   ...(FEATURES.HACKS && { hacksTitle: "Extra Settings" }),
   generalTitle: "General Settings",
   imagesTitle: "Image Settings",
@@ -13,6 +14,10 @@ export default {
     theme: {
       label: "Theme",
       description: "Reskin the chat"
+    },
+    font: {
+      label: "Font",
+      description: "Change the font"
     },
     ...(FEATURES.HACKS && {
       superTemp: {

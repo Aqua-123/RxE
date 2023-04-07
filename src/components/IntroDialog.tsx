@@ -67,6 +67,8 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
 
+  applyFont = (font: Fonts) => {};
+
   applyPreset = (preset: Preset) => {
     if (preset === "safe") {
       Preferences.set(P.blockReqs, RequestBlockMode.Reject);

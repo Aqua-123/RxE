@@ -29,6 +29,13 @@ export const P = {
     default: "ritsu",
     multiline: false
   }),
+  font: new StringPreference({
+    key: "font",
+    label: T.preferences.font.label,
+    description: T.preferences.font.description,
+    default: "default",
+    multiline: false
+  }),
   adBlocker: new BooleanPreference({
     key: "adBlocker",
     label: T.preferences.adBlocker.label,
