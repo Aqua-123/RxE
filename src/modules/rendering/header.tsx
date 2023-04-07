@@ -111,6 +111,7 @@ function headerIcons() {
 
     // eslint-disable-next-line no-inner-declarations
     async function updatePicModIcon() {
+      if (document.body.classList.contains("picModMounted")) return;
       const response = await fetchData();
       setModIconCount(response);
     }
