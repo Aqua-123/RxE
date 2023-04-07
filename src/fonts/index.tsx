@@ -4,7 +4,7 @@ export type FontsProps = {
   font: Font;
   applyFont(font: Font): void;
 };
-
+/*
 export const fontsQuery = [
   { value: "roboto", label: "Default Font" },
   {
@@ -21,8 +21,23 @@ export const fontsQuery = [
   },
   { value: "verdana", label: "Verdana" }
 ];
+*/
+export const fontsQuery = {
+  roboto: "Default Font",
+  comic_sans: "Comic Sans MS",
+  helvetica: "Helvetica",
+  trebuchet: "Trebuchet MS",
+  verdana: "Verdana"
+};
 
-export type Font = typeof fontsQuery[number];
+export type Font =
+  | "roboto"
+  | "comic_sans"
+  | "helvetica"
+  | "trebuchet"
+  | "verdana";
+
+// export type Font = typeof fontsQuery[number]["value"];
 
 // function defaultFont() {
 //   const body = document.getElementsByTagName("body")[0];
@@ -61,24 +76,27 @@ function changeFont(font: string) {
 }
 
 export function initFont() {
-  const font = Preferences.get(P.font.value) as Font;
-  defaultFont();
-  switch (font.value) {
-    case "roboto":
-    default:
-      changeFont(font.label[0]);
-      break;
-    case "comic_sans":
-      changeFont(font.label[1]);
-      break;
-    case "helvetica":
-      changeFont(font.label[2]);
-      break;
-    case "trebuchet":
-      changeFont(font.label[3]);
-      break;
-    case "verdana":
-      changeFont(font.label[4]);
-      break;
-  }
+  const font = Preferences.get(P.font) as Font;
+  if (!font) changeFont("roboto");
+  const fontLabel = fontsQuery[font];
+  changeFont(fontLabel);
+  //
+  // switch (font.value) {
+  //   case "roboto":
+  //   default:
+  //     changeFont(font.label[0]);
+  //     break;
+  //   case "comic_sans":
+  //     changeFont(font.label[1]);
+  //     break;
+  //   case "helvetica":
+  //     changeFont(font.label[2]);
+  //     break;
+  //   case "trebuchet":
+  //     changeFont(font.label[3]);
+  //     break;
+  //   case "verdana":
+  //     changeFont(font.label[4]);
+  //     break;
+  // }
 }
