@@ -6,6 +6,7 @@ import ThemesView from "./Themes";
 import { initTheme, Theme } from "~src/themes";
 
 import { getSettings } from "~src/modules/settings";
+import { Font } from "~src/fonts";
 
 export const CURRENT_INTRO_VERSION = 1;
 
@@ -15,6 +16,7 @@ const PRESETS: Preset[] = ["safe", "normal", "unsafe"];
 type IntroDialogState = {
   theme: Theme;
   preset: Preset;
+  font: Font;
 };
 
 type PresetProps = {
@@ -55,8 +57,8 @@ function PresetView({ preset: presetCurrent, applyPreset }: PresetProps) {
 export class IntroDialog extends React.Component<{}, IntroDialogState> {
   constructor() {
     super({});
-    const { theme } = getSettings();
-    this.state = { theme, preset: "normal" };
+    const { theme, font } = getSettings();
+    this.state = { theme, font, preset: "normal" };
   }
 
   applyTheme = (theme: Theme) => {
@@ -67,7 +69,10 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
   };
 
-  applyFont = (font: Fonts) => {};
+  applyFont = (font: Font) => {
+    Preferences.set(P.font, font);
+    // add rest of function here
+  };
 
   applyPreset = (preset: Preset) => {
     if (preset === "safe") {
