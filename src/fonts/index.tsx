@@ -4,6 +4,7 @@ export type FontsProps = {
   font: Font;
   applyFont(font: Font): void;
 };
+
 /*
 export const fontsQuery = [
   { value: "roboto", label: "Default Font" },

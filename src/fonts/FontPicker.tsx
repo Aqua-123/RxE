@@ -4,12 +4,14 @@ import T from "~src/text";
 import { fontsQuery } from "~src/fonts/index";
 import { P, Preferences } from "~src/preferences";
 
-export interface FontFormProps {
-  fonts: {
-    value: string;
-    label: string;
-  }[];
-}
+export type FontFormProps = typeof fontsQuery;
+
+// export interface FontFormProps {
+//   fonts: {
+//     value: string;
+//     label: string;
+//   }[];
+// }
 
 interface FontFormState {
   font: string;
@@ -19,7 +21,7 @@ export class FontForm extends Component<FontFormProps, FontFormState> {
   constructor(props: FontFormProps) {
     super(props);
     this.state = {
-      font: props.fonts[0].label
+      font: props.roboto
     };
   }
 
