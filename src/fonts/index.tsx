@@ -90,6 +90,7 @@ export type FontLabel =
 export function initFont() {
   const font = Preferences.get(P.font) as FontLabel;
   let styleSheet = document.head.querySelector(".custom-font");
+  console.log(font);
   if (!styleSheet) {
     document.head.append(
       crel("style", {
