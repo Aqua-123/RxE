@@ -5,46 +5,20 @@ import { loadCSS } from "~src/utils";
 import { hideUser } from "./ws";
 import { Preferences, P } from "~src/preferences";
 import { spamModOverride } from "./spamModeration";
-import { BanForm } from "./banForm";
-import { reportModOverride } from "./reportModeration";
-import { pictureModerationOverride } from "./pictureModeration";
-
-const reasons = [
-  { value: "spam", label: "Multiple spam attempts in chat" },
-  {
-    value: "harassment",
-    label: "Harassment, threats and/or abuse towards an user or group of users"
-  },
-  {
-    value: "sexual_harassment",
-    label: "Sexually explicit remarks towards an user or group of users"
-  },
-  {
-    value: "csa",
-    label: "Distribution/Promotion of illegal content involving CP/CSA"
-  },
-  {
-    value: "inappropriate_content",
-    label: "Distribution/Promotion of illegal/explicit content"
-  },
-  {
-    value: "underage",
-    label: "You must be +18 in order to use 1-on-1 chat"
-  },
-  {
-    value: "racism",
-    label: "Spreading derogatory words/racism/bigotry in chat"
-  },
-  { value: "other", label: "Other" }
-];
+import { BanForm, reasonList } from "./components/banForm";
+import { reportModOverride } from "./components/reportModeration";
+import { pictureModerationOverride } from "./components/pictureModeration";
 
 export function modFunctionInit() {
   loadCSS(styles);
   spamModOverride();
   reportModOverride();
   pictureModerationOverride();
-  if (Preferences.get(P.hideFromGc)) hideUser();
+  if (Preferences.get(P.hideFromGc))
+    setTimeout(() => {
+      hideUser();
+    }, 1000);
   ModPanel.prototype.issue_ban_menu = function issueMenu() {
-    return <BanForm reasons={reasons} />;
+    return <BanForm reasons={reasonList} />;
   };
 }

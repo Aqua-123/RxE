@@ -3,7 +3,7 @@
 import U from "~src/userscript";
 import { crel, loadCSS } from "~src/utils";
 import css from "./style.scss";
-import { setModIconCount } from "../modMenu/pictureModeration";
+import { setModIconCount } from "../modMenu/components/pictureModeration";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;

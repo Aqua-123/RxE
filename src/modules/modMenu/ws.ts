@@ -19,20 +19,20 @@ function createSub(id: number | string | null) {
     );
   }, 230);
 }
-
+/* 
 async function checkModStatus() {
   try {
     const response = await fetch("https://emeraldchat.com/current_user_json");
-    const data = await response.json();
-    return data.mod === true;
+    const data = (await response.json()) as EmeraldUser;
+    return data.mod === true || data.master === true;
   } catch (error) {
     return false;
   }
 }
-
+*/
 export async function hideUser() {
-  const isMod = await checkModStatus();
-  if (!isMod && !(FEATURES.HACKS && App.user.mod)) return;
+  // const isMod = await checkModStatus();
+  if (!App.user.mod) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
     arJoin(id);

@@ -14,6 +14,35 @@ interface BanFormState {
   showCustomReason: boolean;
 }
 
+export const reasonList = [
+  { value: "spam", label: "Multiple spam attempts in chat" },
+  {
+    value: "harassment",
+    label: "Harassment, threats and/or abuse towards an user or group of users"
+  },
+  {
+    value: "sexual_harassment",
+    label: "Sexually explicit remarks towards an user or group of users"
+  },
+  {
+    value: "csa",
+    label: "Distribution/Promotion of illegal content involving CP/CSA"
+  },
+  {
+    value: "inappropriate_content",
+    label: "Distribution/Promotion of illegal/explicit content"
+  },
+  {
+    value: "underage",
+    label: "You must be +18 in order to use 1-on-1 chat"
+  },
+  {
+    value: "racism",
+    label: "Spreading derogatory words/racism/bigotry in chat"
+  },
+  { value: "other", label: "Other" }
+];
+
 export class BanForm extends Component<BanFormProps, BanFormState> {
   constructor(props: BanFormProps) {
     super(props);
