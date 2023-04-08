@@ -97,7 +97,7 @@ export function initFont() {
         type: "text/css"
       })
     );
-    styleSheet = document.head.querySelector(".custom-theme")!;
+    styleSheet = document.head.querySelector(".custom-font")!;
   }
   const css = [];
   switch (font) {
