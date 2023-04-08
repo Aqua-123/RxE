@@ -54,8 +54,6 @@ export default class SettingsDialog extends React.Component<
   };
 
   applyFont = (font: Font) => {
-    console.log(font);
-    // Preferences.set(P.font, font);
     initFont();
     this.setState({ font });
   };

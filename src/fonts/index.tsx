@@ -78,7 +78,6 @@ function changeFont(font: string) {
 
 export function initFont() {
   const font = Preferences.get(P.font) as FontLabel;
-  console.log(font);
   if (!font || font === "Default Font") changeFont("Roboto");
   // const fontLabel = fontsQuery[font];
   else changeFont(font);
