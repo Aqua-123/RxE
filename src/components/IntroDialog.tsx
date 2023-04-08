@@ -7,7 +7,7 @@ import { initTheme, Theme } from "~src/themes";
 
 import { getSettings } from "~src/modules/settings";
 import { Font, initFont } from "~src/fonts";
-import { FontForm } from "~src/fonts/FontPicker";
+import { FontForm, FontFormProps } from "~src/fonts/FontPicker";
 
 export const CURRENT_INTRO_VERSION = 1;
 
@@ -102,6 +102,17 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
 
   render() {
     const { theme, font, preset } = this.state;
+    const props: FontFormProps = {
+      fonts: {
+        roboto: "Default Font",
+        comic_sans: "Comic Sans MS",
+        helvetica: "Helvetica",
+        trebuchet: "Trebuchet MS",
+        verdana: "Verdana"
+      },
+      currentFont: font,
+      applyFont: this.applyFont
+    };
     return (
       <Menu>
         <div key="custom_menu" className={styles.ritsuMenuContainer}>
@@ -110,7 +121,7 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
           <br />
           {T.introduction.content}
           <ThemesView theme={theme} applyTheme={this.applyTheme} />
-          <FontForm font={font} applyFont={this.applyFont} />
+          <FontForm {...props} />
           <PresetView preset={preset} applyPreset={this.applyPreset} />
           <div className="ui-menu-buttons">
             <div

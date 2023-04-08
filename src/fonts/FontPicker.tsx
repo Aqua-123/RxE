@@ -1,11 +1,23 @@
 import React, { Component } from "react";
-import styles from "./style.module.scss";
+import styles from "./style.scss";
 import T from "~src/text";
-import { fontsQuery } from "~src/fonts/index";
+import { fontsQuery, Font, FontLabel } from "~src/fonts/index";
 import { P, Preferences } from "~src/preferences";
 
-export type FontFormProps = typeof fontsQuery;
+// export type FontFormProps = typeof fontsQuery;
 
+export interface FontFormProps {
+  fonts: {
+    roboto: FontLabel;
+    // eslint-disable-next-line camelcase
+    comic_sans: FontLabel;
+    helvetica: FontLabel;
+    trebuchet: FontLabel;
+    verdana: FontLabel;
+  };
+  currentFont: Font;
+  applyFont(font: Font): void;
+}
 // export interface FontFormProps {
 //   fonts: {
 //     value: string;
@@ -21,14 +33,16 @@ export class FontForm extends Component<FontFormProps, FontFormState> {
   constructor(props: FontFormProps) {
     super(props);
     this.state = {
-      font: props.roboto
+      font: props.currentFont
     };
   }
 
   handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedFont = e.target.value;
+    const selectedFont = e.target.value as Font;
     Preferences.set(P.font, selectedFont);
     this.setState({ font: selectedFont });
+    const { applyFont } = this.props;
+    applyFont(selectedFont);
   };
 
   render(): React.ReactNode {

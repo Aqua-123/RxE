@@ -10,7 +10,7 @@ import {
   BooleanPreference as BooleanPreference,
   Preference
 } from "ts-preferences";
-import { Font } from "~src/fonts";
+import { Font, initFont } from "~src/fonts";
 
 function booleanSettings<
   K extends string | number | symbol,
@@ -50,6 +50,7 @@ export function applySettings() {
     document.documentElement.classList.toggle(key, obj[key]);
   });
   initTheme();
+  initFont();
 }
 
 export function openSettings() {

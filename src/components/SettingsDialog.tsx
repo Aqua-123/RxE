@@ -15,7 +15,7 @@ import {
 } from "~src/modules/settings";
 
 import { Font, initFont } from "~src/fonts";
-import { FontForm } from "~src/fonts/FontPicker";
+import { FontForm, FontFormProps } from "~src/fonts/FontPicker";
 
 type SettingsDialogState = SettingsType & {
   needsReload: boolean;
@@ -54,7 +54,8 @@ export default class SettingsDialog extends React.Component<
   };
 
   applyFont = (font: Font) => {
-    Preferences.set(P.font, font);
+    console.log(font);
+    // Preferences.set(P.font, font);
     initFont();
     this.setState({ font });
   };
@@ -71,10 +72,21 @@ export default class SettingsDialog extends React.Component<
 
   render() {
     const { theme, font, settings, hacks_, needsReload } = this.state;
+    const props: FontFormProps = {
+      fonts: {
+        roboto: "Default Font",
+        comic_sans: "Comic Sans MS",
+        helvetica: "Helvetica",
+        trebuchet: "Trebuchet MS",
+        verdana: "Verdana"
+      },
+      currentFont: font,
+      applyFont: this.applyFont
+    };
     return (
       <div>
         <ThemesView theme={theme} applyTheme={this.applyTheme} />
-        <FontForm fonts={font} applyFont={this.applyFont} />
+        <FontForm {...props} />
         <SettingsView {...settings} applySettings={this.applySettings} />
         {FEATURES.HACKS && (
           <HacksView {...hacks_} applyHacks={this.applyHacks_} />

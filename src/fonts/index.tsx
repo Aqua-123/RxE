@@ -32,7 +32,12 @@ export const fontsQuery = {
 };
 
 export type Font = keyof typeof fontsQuery;
-
+export type FontLabel =
+  | "Default Font"
+  | "Comic Sans MS"
+  | "Helvetica"
+  | "Trebuchet MS"
+  | "Verdana";
 // export type Font = typeof fontsQuery[number]["value"];
 
 // function defaultFont() {
@@ -72,10 +77,11 @@ function changeFont(font: string) {
 }
 
 export function initFont() {
-  const font = Preferences.get(P.font) as Font;
-  if (!font) changeFont("roboto");
-  const fontLabel = fontsQuery[font];
-  changeFont(fontLabel);
+  const font = Preferences.get(P.font) as FontLabel;
+  console.log(font);
+  if (!font || font === "Default Font") changeFont("Roboto");
+  // const fontLabel = fontsQuery[font];
+  else changeFont(font);
   //
   // switch (font.value) {
   //   case "roboto":
