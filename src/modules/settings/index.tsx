@@ -10,6 +10,7 @@ import {
   BooleanPreference as BooleanPreference,
   Preference
 } from "ts-preferences";
+import { Font, initFont } from "~src/fonts";
 
 function booleanSettings<
   K extends string | number | symbol,
@@ -23,6 +24,7 @@ function booleanSettings<
 export function getSettings() {
   return {
     theme: Preferences.get(P.theme) as Theme,
+    font: Preferences.get(P.font) as Font,
     ...(FEATURES.HACKS && {
       hacks_: booleanSettings(PX!)
     }),
@@ -48,6 +50,7 @@ export function applySettings() {
     document.documentElement.classList.toggle(key, obj[key]);
   });
   initTheme();
+  initFont();
 }
 
 export function openSettings() {

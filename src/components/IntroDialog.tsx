@@ -6,6 +6,8 @@ import ThemesView from "./Themes";
 import { initTheme, Theme } from "~src/themes";
 
 import { getSettings } from "~src/modules/settings";
+import { Font, initFont } from "~src/fonts";
+import { FontForm, FontFormProps } from "~src/fonts/FontPicker";
 
 export const CURRENT_INTRO_VERSION = 1;
 
@@ -15,6 +17,7 @@ const PRESETS: Preset[] = ["safe", "normal", "unsafe"];
 type IntroDialogState = {
   theme: Theme;
   preset: Preset;
+  font: Font;
 };
 
 type PresetProps = {
@@ -55,8 +58,8 @@ function PresetView({ preset: presetCurrent, applyPreset }: PresetProps) {
 export class IntroDialog extends React.Component<{}, IntroDialogState> {
   constructor() {
     super({});
-    const { theme } = getSettings();
-    this.state = { theme, preset: "normal" };
+    const { theme, font } = getSettings();
+    this.state = { theme, font, preset: "normal" };
   }
 
   applyTheme = (theme: Theme) => {
@@ -65,6 +68,12 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
     initTheme();
     this.setState({ theme });
     setTimeout(() => document.body.classList.remove("themeChange"), 1000);
+  };
+
+  applyFont = (font: Font) => {
+    // Preferences.set(P.font, font);
+    initFont();
+    this.setState({ font });
   };
 
   applyPreset = (preset: Preset) => {
@@ -92,7 +101,18 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
   };
 
   render() {
-    const { theme, preset } = this.state;
+    const { theme, font, preset } = this.state;
+    const props: FontFormProps = {
+      fonts: {
+        roboto: "Default Font",
+        comic_sans: "Comic Sans MS",
+        helvetica: "Helvetica",
+        trebuchet: "Trebuchet MS",
+        verdana: "Verdana"
+      },
+      currentFont: font,
+      applyFont: this.applyFont
+    };
     return (
       <Menu>
         <div key="custom_menu" className={styles.ritsuMenuContainer}>
@@ -101,6 +121,7 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
           <br />
           {T.introduction.content}
           <ThemesView theme={theme} applyTheme={this.applyTheme} />
+          <FontForm {...props} />
           <PresetView preset={preset} applyPreset={this.applyPreset} />
           <div className="ui-menu-buttons">
             <div
