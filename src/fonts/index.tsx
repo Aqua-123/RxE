@@ -60,7 +60,7 @@ export type FontLabel =
 function changeFont(font: string) {
   const body = document.getElementsByTagName("body")[0];
   const size = "14px ";
-  body.style.font = size.concat(font);
+  body.style.font = `${size + font} !important`;
   const microposts = document.querySelectorAll(
     ".user-profile-micro"
   ) as NodeListOf<HTMLElement>;
