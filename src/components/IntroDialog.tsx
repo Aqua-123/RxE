@@ -71,7 +71,7 @@ export class IntroDialog extends React.Component<{}, IntroDialogState> {
   };
 
   applyFont = (font: Font) => {
-    Preferences.set(P.font, font);
+    // Preferences.set(P.font, font);
     initFont();
     this.setState({ font });
   };
