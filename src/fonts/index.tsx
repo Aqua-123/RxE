@@ -66,7 +66,7 @@ function changeFont(font: string) {
   ) as NodeListOf<HTMLElement>;
   const importantTag = " !important";
   Array.from(microposts).forEach((element) => {
-    element.style.fontFamily = font.concat(importantTag);
+    element.style.fontFamily = `${font + importantTag}`;
   });
   const menuNotif = document.querySelectorAll(
     ".notification-menu-container-text"

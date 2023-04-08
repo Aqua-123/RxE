@@ -107,13 +107,13 @@ async function init() {
   modFunctionInit();
   hideTyping();
   render([
+    initFont,
     fixRemoteVideo,
     fixChatRoomWidth,
     applyBlurs,
     createEmbeds,
     reorderMenu,
     injectRitsuMenu,
-    initFont,
     decorateHeader,
     decoratePictures,
     decorateProfileDialog,
