@@ -2,7 +2,6 @@ import U from "~src/userscript";
 import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
 import { migrateSettings } from "./migrateSettings";
-import { initFont } from "~src/fonts/index";
 import { initAdBlocker, removeAds } from "./modules/ads";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
@@ -107,7 +106,6 @@ async function init() {
   modFunctionInit();
   hideTyping();
   render([
-    initFont,
     fixRemoteVideo,
     fixChatRoomWidth,
     applyBlurs,
