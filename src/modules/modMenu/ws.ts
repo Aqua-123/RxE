@@ -19,25 +19,13 @@ function createSub(id: number | string | null) {
     );
   }, 230);
 }
-/* 
-async function checkModStatus() {
-  try {
-    const response = await fetch("https://emeraldchat.com/current_user_json");
-    const data = (await response.json()) as EmeraldUser;
-    return data.mod === true || data.master === true;
-  } catch (error) {
-    return false;
-  }
-}
-*/
+
 export async function hideUser() {
-  // const isMod = await checkModStatus();
-  if (!App.user.mod) return;
+  if (!App.user.mod && !App.user.master) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
     arJoin(id);
     createSub(id);
-
     // we need to redefine this everytime we join cause... problems
     App.room.client.speak = function newArcSpeak(e) {
       this.perform("speak", {
