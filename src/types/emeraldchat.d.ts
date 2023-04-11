@@ -470,13 +470,13 @@ declare class ActionTray extends React.Component<{}> {
 }
 
 declare type ModPicture = {
-  id: Number;
-  user_id: Number;
-  created_at: String;
-  updated_at: String;
-  display_name: String;
-  username: String;
-  image_url: String;
+  id: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  display_name: string;
+  username: string;
+  image_url: string;
 };
 declare class PictureModeration extends React.Component<
   {},
@@ -486,8 +486,8 @@ declare class PictureModeration extends React.Component<
   }
 > {
   fetch(): void;
-  approve(id: Number): void;
-  delete(id: Number): void;
+  approve(id: number): void;
+  delete(id: number): void;
   //Note: This is out own field
   update(): void;
 }
@@ -498,6 +498,9 @@ declare class PictureModerationUnit extends React.Component<
   },
   {}
 > {
+  state: {
+    user: EmeraldUser;
+  };
   approve(): void;
   delete(): void;
 }

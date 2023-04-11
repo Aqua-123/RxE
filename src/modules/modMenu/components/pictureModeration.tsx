@@ -23,6 +23,12 @@ function stateUpdate(this: PictureModeration, id: Number) {
   this.setState(state);
 }
 
+async function getUserData(id: number) {
+  const response = await fetch(`https://emeraldchat.com/profile_json?id=${id}`);
+  const data = (await response.json()) as ProfileData;
+  return data;
+}
+
 export function pictureModerationOverride() {
   PictureModeration.prototype.update = function pmUpdate() {
     const interval = setInterval(() => {
@@ -77,40 +83,44 @@ export function pictureModerationOverride() {
       success: stateUpdate.bind(this, id)
     });
   };
+
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
-    return React.createElement(
-      "div",
-      {
-        className: "dashboard-button animated",
-        style: {
-          paddingTop: "30px",
-          height: "400px"
-        }
-      },
-      React.createElement("img", {
-        src: data.image_url,
-        className: "mod-approval-pic"
-      }),
-      React.createElement("h2", null, `${data.display_name}(${data.username})`),
-      React.createElement(
-        "button",
-        {
-          className: "ui-button-match-mega gold-button",
-          onClick: this.approve,
-          type: "button"
-        },
-        "Approve"
-      ),
-      React.createElement(
-        "button",
-        {
-          className: "ui-button-match-mega red-button",
-          onClick: this.delete,
-          type: "button"
-        },
-        "Reject"
-      )
+    return (
+      <div
+        className="dashboard-button animated"
+        style={{ paddingTop: "30px", height: "400px" }}
+      >
+        <img src={data.image_url} alt="" className="mod-approval-pic" />
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div
+          onMouseDown={async (e) => {
+            let user;
+            if (!this.state) {
+              const userData = await getUserData(data.user_id);
+              user = userData.user;
+            } else user = this.state.user;
+            this.setState({ user });
+            UserViewGenerator.generate({ event: e, user });
+          }}
+        >
+          <h2>{`${data.display_name}(${data.username})`}</h2>
+        </div>
+        <button
+          className="ui-button-match-mega gold-button"
+          onClick={this.approve}
+          type="button"
+        >
+          Approve
+        </button>
+        <button
+          className="ui-button-match-mega red-button"
+          onClick={this.delete}
+          type="button"
+        >
+          Reject
+        </button>
+      </div>
     );
   };
 }

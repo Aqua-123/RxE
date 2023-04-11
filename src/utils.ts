@@ -492,6 +492,7 @@ export const without = <T>(item: T, array: T[]) =>
 
 export const stripBiDi = (s: string) => {
   const bidireg = /[\u061C\u200E-\u200F\u202A-\u202E\u2066-\u2069]/g;
+  if (!s) return s;
   return s.replace(bidireg, "");
 };
 // from https://www.mathworks.com/matlabcentral/fileexchange/38295-compute-the-entropy-of-an-entered-text-string
