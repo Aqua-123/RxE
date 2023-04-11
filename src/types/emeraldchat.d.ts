@@ -477,6 +477,7 @@ declare type ModPicture = {
   display_name: string;
   username: string;
   image_url: string;
+  imageHash?: string;
 };
 declare class PictureModeration extends React.Component<
   {},
@@ -495,6 +496,8 @@ declare class PictureModeration extends React.Component<
 declare class PictureModerationUnit extends React.Component<
   {
     data: ModPicture;
+    approve(id: number): void;
+    delete(id: number): void;
   },
   {}
 > {

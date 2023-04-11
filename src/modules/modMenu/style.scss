@@ -25,4 +25,57 @@ button:hover {
 button:focus,
 button:active {
   outline: none;
+  background-color: transparent;
+}
+.checkmark-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.checkmark-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 2px solid #fff;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  padding: 0%;
+
+  &.selected {
+    background-color: #007aff;
+    opacity: 1;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  .checkmark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+  }
+
+  &.selected .checkmark {
+    opacity: 1;
+  }
 }
