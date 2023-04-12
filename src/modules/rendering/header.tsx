@@ -62,37 +62,6 @@ async function fetchData() {
     reject
   );
 
-  /* const pictureModerations = await Promise.all(
-    modPictures.map(async (modPicture) => {
-      const imageData = await getImageData(modPicture.image_url);
-      const imageHash = (await hashBlob(imageData)) as string;
-      return { ...modPicture, imageHash };
-    })
-  );
-
-  const recordedHashes = Preferences.get(P.picModHashes);
-
-  const filteredElements = pictureModerations.filter((elem) =>
-    recordedHashes.some((recordedHash) => recordedHash[0] === elem.imageHash)
-  );
-
-  filteredElements.forEach((filteredElem) => {
-    const action = recordedHashes.find(
-      (recordedHash) => recordedHash[0] === filteredElem.imageHash
-    )?.[1];
-
-    if (action === "approve") {
-      this.approve(filteredElem.id);
-    } else if (action === "delete") {
-      this.delete(filteredElem.id);
-    }
-  });
-
-  const filteredPictureModerations = pictureModerations.filter((modPicture) => {
-    const hash = modPicture.imageHash;
-    return recordedHashes.every(([recordedHash, _]) => recordedHash !== hash);
-  }); */
-
   return filteredPictureModerations.length
     ? filteredPictureModerations.length
     : 0;
