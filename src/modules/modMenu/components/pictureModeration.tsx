@@ -2,8 +2,6 @@
 import React from "react";
 import md5 from "md5";
 
-import ReactDOM from "react-dom";
-
 export function setModIconCount(count: number) {
   const countOverlay = document.querySelector(
     ".notification-count-overlay"
@@ -29,22 +27,18 @@ interface CheckmarkButtonProps {
 
 function CheckmarkButton(props: CheckmarkButtonProps): JSX.Element {
   const { isSelected, onClick } = props;
+  const checkMark = (
+    <svg width="16" height="16" viewBox="0 0 16 16" style={{ fill: "#fff" }}>
+      <path d="M6 11.776l-3.88-3.888-1.12 1.152 5 5 10-10-1.12-1.152-8.88 8.888z" />
+    </svg>
+  );
   return (
     <button
       className={`checkmark-button${isSelected ? " selected" : ""} `}
       onClick={onClick}
       type="button"
     >
-      {isSelected && (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          style={{ fill: "#fff" }}
-        >
-          <path d="M6 11.776l-3.88-3.888-1.12 1.152 5 5 10-10-1.12-1.152-8.88 8.888z" />
-        </svg>
-      )}
+      {isSelected && checkMark}
     </button>
   );
 }
@@ -137,6 +131,7 @@ class ModifiedPictureModeration extends React.Component<
     });
   };
 
+  /*
   approveSelectedElements = () => {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -148,7 +143,21 @@ class ModifiedPictureModeration extends React.Component<
     // clear the selected elements array
     this.setState({ selectedElements: [] });
   };
+*/
+  approveSelectedElements = () => {
+    const { state } = this;
+    const selectedElements = state.selectedElements.slice();
+    selectedElements.forEach((id) => {
+      // find the element with matching id
+      const element = state.picture_moderations.find((e) => e.id === id);
+      // approve the element
+      if (element) this.approve(element.id);
+    });
+    // clear the selected elements array
+    this.setState({ selectedElements: [] });
+  };
 
+  /*
   deleteSelectedElements = () => {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -162,7 +171,24 @@ class ModifiedPictureModeration extends React.Component<
     // clear the selected elements array
     this.setState({ selectedElements: [] });
   };
+  */
+  deleteSelectedElements = () => {
+    const { state } = this;
+    const selectedElements = state.selectedElements.slice();
+    selectedElements.forEach((id) => {
+      // find the element with matching id
+      const elementIndex = state.picture_moderations.findIndex(
+        (e) => e.id === id
+      );
+      // remove the element from the original array
+      state.picture_moderations.splice(elementIndex, 1);
+      this.delete(id);
+    });
+    // clear the selected elements array
+    this.setState({ selectedElements: [] });
+  };
 
+  /*
   toggleElementSelection(index: number) {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -175,6 +201,25 @@ class ModifiedPictureModeration extends React.Component<
       state.picture_moderations.forEach((element, i) => {
         if (i !== index && element.imageHash === selectedElementHash) {
           selectedElements.push(i);
+        }
+      });
+    }
+    this.setState({ selectedElements });
+  } */
+  toggleElementSelection(id: number) {
+    const { state } = this;
+    const selectedElements = state.selectedElements.slice();
+    if (selectedElements.includes(id)) {
+      selectedElements.splice(selectedElements.indexOf(id), 1);
+    } else {
+      selectedElements.push(id);
+      // find all elements with matching image hashes and add them to the selection
+      const selectedElementHash = state.picture_moderations.find(
+        (e) => e.id === id
+      )?.imageHash;
+      state.picture_moderations.forEach((element) => {
+        if (element.id !== id && element.imageHash === selectedElementHash) {
+          selectedElements.push(element.id);
         }
       });
     }
@@ -192,15 +237,15 @@ class ModifiedPictureModeration extends React.Component<
           Approve Selected Images
         </button>
         <div className="meet-cards-container video-moderation">
-          {picture_moderations.map((user, index) => (
+          {picture_moderations.map((user, _index) => (
             <div
               // eslint-disable-next-line react/no-array-index-key
-              key={index}
+              key={user.id}
               className="checkmark-button-container"
             >
               <CheckmarkButton
-                isSelected={selectedElements.includes(index)}
-                onClick={() => this.toggleElementSelection(index)}
+                isSelected={selectedElements.includes(user.id)}
+                onClick={() => this.toggleElementSelection(user.id)}
               />
               <PictureModerationUnit
                 key={`picture_moderation${user.id}`}
@@ -218,13 +263,6 @@ class ModifiedPictureModeration extends React.Component<
 
 export function pictureModerationOverride() {
   PictureModeration = ModifiedPictureModeration;
-  ActionTray.prototype.pictureModeration = function atPM() {
-    ReactDOM.render(
-      React.createElement(ModifiedPictureModeration, null),
-      document.getElementById("container")
-    );
-  };
-
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
     return (
