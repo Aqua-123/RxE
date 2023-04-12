@@ -43,6 +43,26 @@ function CheckmarkButton(props: CheckmarkButtonProps): JSX.Element {
   );
 }
 
+async function getImageData(url: string) {
+  const response = await fetch(url);
+  return response.blob();
+}
+
+function hashBlob(blob: Blob) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      const data = fileReader.result as string;
+      const hash = md5(data);
+      resolve(hash);
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+    fileReader.readAsArrayBuffer(blob);
+  });
+}
+
 interface pictureModerationState {
   picture_moderations: ModPicture[];
   selectedElements: number[];
@@ -87,15 +107,18 @@ class ModifiedPictureModeration extends React.Component<
       type: "GET",
       url: "/picture_moderations",
       dataType: "json",
-      success: function fetchSuccess(
+      success: async function fetchSuccess(
         this: ModifiedPictureModeration,
         e: ModPicture[]
       ) {
         const state = {
-          picture_moderations: e.map((modPicture) => {
-            const hash = md5(modPicture.image_url);
-            return { ...modPicture, imageHash: hash };
-          })
+          picture_moderations: await Promise.all(
+            e.map(async (modPicture) => {
+              const imageData = await getImageData(modPicture.image_url);
+              const hash = (await hashBlob(imageData)) as string;
+              return { ...modPicture, imageHash: hash };
+            })
+          )
         };
         this.setState(state);
         setModIconCount(e.length);
@@ -218,16 +241,29 @@ class ModifiedPictureModeration extends React.Component<
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
     if (selectedElements.includes(id)) {
-      selectedElements.splice(selectedElements.indexOf(id), 1);
+      // unselect the element and all elements with matching imageHash
+      const selectedElementHash = state.picture_moderations.find(
+        (e) => e.id === id
+      )?.imageHash;
+      state.picture_moderations.forEach((element) => {
+        if (element.imageHash === selectedElementHash) {
+          const index = selectedElements.indexOf(element.id);
+          if (index !== -1) {
+            selectedElements.splice(index, 1);
+          }
+        }
+      });
     } else {
+      // select the element and all elements with matching imageHash
       selectedElements.push(id);
-      // find all elements with matching image hashes and add them to the selection
       const selectedElementHash = state.picture_moderations.find(
         (e) => e.id === id
       )?.imageHash;
       state.picture_moderations.forEach((element) => {
         if (element.id !== id && element.imageHash === selectedElementHash) {
-          selectedElements.push(element.id);
+          if (!selectedElements.includes(element.id)) {
+            selectedElements.push(element.id);
+          }
         }
       });
     }
