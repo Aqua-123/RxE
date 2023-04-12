@@ -113,9 +113,7 @@ class ModifiedPictureModeration extends React.Component<
       picture_moderations: await Promise.all(
         e.map(async (modPicture) => {
           const imageData = await getImageData(modPicture.image_url);
-          console.log(imageData);
           const hash = (await hashBlob(imageData)) as string;
-          console.log(hash, "hash");
           return { ...modPicture, imageHash: hash };
         })
       )
