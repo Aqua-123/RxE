@@ -16,22 +16,12 @@ export function setModIconCount(count: number) {
   }
 }
 
-function stateUpdate(this: PictureModeration, id: Number) {
-  const newListOfPics = this.state.picture_moderations.filter(
-    (t) => t.id !== id
-  );
-  const state = {
-    picture_moderations: newListOfPics
-  };
-  setModIconCount(newListOfPics.length);
-  this.setState(state);
-}
-
 async function getUserData(id: number) {
   const response = await fetch(`https://emeraldchat.com/profile_json?id=${id}`);
   const data = (await response.json()) as ProfileData;
   return data;
 }
+
 interface CheckmarkButtonProps {
   isSelected: boolean;
   onClick: () => void;
@@ -59,13 +49,15 @@ function CheckmarkButton(props: CheckmarkButtonProps): JSX.Element {
   );
 }
 
-class PictureModeration extends React.Component<
+interface pictureModerationState {
+  picture_moderations: ModPicture[];
+  selectedElements: number[];
+  interval: NodeJS.Timer | undefined;
+}
+
+class ModifiedPictureModeration extends React.Component<
   {},
-  {
-    picture_moderations: ModPicture[];
-    selectedElements: number[];
-    interval: NodeJS.Timer | undefined;
-  }
+  pictureModerationState
 > {
   constructor(props: {}) {
     super(props);
@@ -101,7 +93,10 @@ class PictureModeration extends React.Component<
       type: "GET",
       url: "/picture_moderations",
       dataType: "json",
-      success: function fetchSuccess(this: PictureModeration, e: ModPicture[]) {
+      success: function fetchSuccess(
+        this: ModifiedPictureModeration,
+        e: ModPicture[]
+      ) {
         const state = {
           picture_moderations: e.map((modPicture) => {
             const hash = md5(modPicture.image_url);
@@ -114,12 +109,22 @@ class PictureModeration extends React.Component<
     });
   };
 
+  stateUpdate = (id: number) => {
+    const { picture_moderations } = this.state;
+    const newListOfPics = picture_moderations.filter((t) => t.id !== id);
+    const state = {
+      picture_moderations: newListOfPics
+    };
+    setModIconCount(newListOfPics.length);
+    this.setState(state);
+  };
+
   approve = (id: number) => {
     $.ajax({
       type: "POST",
       url: `/picture_moderations/${id}/approve`,
       dataType: "json",
-      success: stateUpdate.bind(this, id)
+      success: this.stateUpdate.bind(this, id)
     });
   };
 
@@ -128,7 +133,7 @@ class PictureModeration extends React.Component<
       type: "DELETE",
       url: `/picture_moderations/${id}`,
       dataType: "json",
-      success: stateUpdate.bind(this, id)
+      success: this.stateUpdate.bind(this, id)
     });
   };
 
@@ -212,16 +217,16 @@ class PictureModeration extends React.Component<
 }
 
 export function pictureModerationOverride() {
+  PictureModeration = ModifiedPictureModeration;
   ActionTray.prototype.pictureModeration = function atPM() {
     ReactDOM.render(
-      React.createElement(PictureModeration, null),
+      React.createElement(ModifiedPictureModeration, null),
       document.getElementById("container")
     );
   };
 
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
-    console.log(1);
     return (
       <div
         className="dashboard-button animated"

@@ -479,6 +479,7 @@ declare type ModPicture = {
   image_url: string;
   imageHash?: string;
 };
+/*
 declare class PictureModeration extends React.Component<
   {},
   {
@@ -492,7 +493,9 @@ declare class PictureModeration extends React.Component<
   //Note: This is out own field
   update(): void;
 }
+*/
 
+declare let PictureModeration: any;
 declare class PictureModerationUnit extends React.Component<
   {
     data: ModPicture;
