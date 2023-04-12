@@ -7,7 +7,7 @@ button {
   background-color: #3b6a3d; /* Green */
   border: none;
   color: white;
-  padding: 15px 32px;
+  padding: 13px 22px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
@@ -25,7 +25,7 @@ button:hover {
 button:focus,
 button:active {
   outline: none;
-  background-color: transparent;
+  background-color: #3b6a3d;
 }
 .checkmark-button-container {
   position: relative;

@@ -108,10 +108,16 @@ export async function picModFetchHandler(
   return filteredPictureModerations;
 }
 
+function clearPicModCache() {
+  Preferences.set(P.picModHashes, []);
+  alert("Image cache for picture moderation has been cleared");
+}
+
 interface pictureModerationState {
   picture_moderations: ModPicture[];
   selectedElements: number[];
   interval: NodeJS.Timer | undefined;
+  selectAllLabel: string;
 }
 
 class ModifiedPictureModeration extends React.Component<
@@ -123,7 +129,8 @@ class ModifiedPictureModeration extends React.Component<
     this.state = {
       picture_moderations: [],
       selectedElements: [],
-      interval: undefined
+      interval: undefined,
+      selectAllLabel: "Select All"
     };
   }
 
@@ -264,13 +271,26 @@ class ModifiedPictureModeration extends React.Component<
   }
 
   selectAllElements() {
-    const { picture_moderations } = this.state;
+    const { picture_moderations, selectedElements } = this.state;
     const allIds = picture_moderations.map((element) => element.id);
-    this.setState({ selectedElements: allIds });
+
+    // Check if all elements are already selected
+    const allSelected = allIds.every((id) => selectedElements.includes(id));
+
+    // If all elements are already selected, unselect all elements
+    // Otherwise, select all elements
+    if (allSelected) {
+      this.setState({ selectedElements: [] });
+      this.setState({ selectAllLabel: "Select All" });
+    } else {
+      this.setState({ selectedElements: allIds });
+      this.setState({ selectAllLabel: "Unselect All" });
+    }
   }
 
   render() {
-    const { picture_moderations, selectedElements } = this.state;
+    const { picture_moderations, selectedElements, selectAllLabel } =
+      this.state;
 
     const deleteSelectedElements = () => {
       this.deleteSelectedElements();
@@ -297,9 +317,11 @@ class ModifiedPictureModeration extends React.Component<
           Delete Selected Images
         </button>
         <button onClick={selectAllElements} type="button">
-          Select All Images
+          {selectAllLabel}
         </button>
-
+        <button onClick={clearPicModCache} type="button">
+          Clear Cache
+        </button>
         <br />
         <div className="meet-cards-container video-moderation">
           {picture_moderations.map((user) => (
