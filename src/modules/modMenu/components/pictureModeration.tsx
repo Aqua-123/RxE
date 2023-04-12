@@ -108,24 +108,26 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ interval });
   };
 
-  handleFetch = async (e: ModPicture[]) => {
-    const state = {
-      picture_moderations: await Promise.all(
-        e.map(async (modPicture) => {
-          const imageData = await getImageData(modPicture.image_url);
-          const hash = (await hashBlob(imageData)) as string;
-          return { ...modPicture, imageHash: hash };
-        })
-      )
-    };
+  handleFetch = async (modPictures: ModPicture[]) => {
+    const pictureModerations = await Promise.all(
+      modPictures.map(async (modPicture) => {
+        const imageData = await getImageData(modPicture.image_url);
+        const imageHash = (await hashBlob(imageData)) as string;
+        return { ...modPicture, imageHash };
+      })
+    );
+
     const recordedHashes = Preferences.get(P.picModHashes);
-    const filteredElements = state.picture_moderations.filter((elem) =>
+
+    const filteredElements = pictureModerations.filter((elem) =>
       recordedHashes.some((recordedHash) => recordedHash[0] === elem.imageHash)
     );
+
     filteredElements.forEach((filteredElem) => {
       const action = recordedHashes.find(
         (recordedHash) => recordedHash[0] === filteredElem.imageHash
       )?.[1];
+
       if (action === "approve") {
         this.approve(filteredElem.id);
       } else if (action === "delete") {
@@ -133,7 +135,7 @@ class ModifiedPictureModeration extends React.Component<
       }
     });
 
-    const filteredPictureModerations = state.picture_moderations.filter(
+    const filteredPictureModerations = pictureModerations.filter(
       (modPicture) => {
         const hash = modPicture.imageHash;
         return recordedHashes.every(
@@ -141,6 +143,7 @@ class ModifiedPictureModeration extends React.Component<
         );
       }
     );
+
     this.setState({ picture_moderations: filteredPictureModerations });
     setModIconCount(filteredPictureModerations.length);
   };
