@@ -194,6 +194,11 @@ export const P = {
     label: "imgurDeleteHashes",
     default: []
   }),
+  picModHashes: new ListPreference<[string, string]>({
+    key: "picModHashes",
+    label: "picModHashes",
+    default: []
+  }),
   ignoreURLBlacklist: new BooleanPreference({
     key: "ignoreURLBlacklist",
     label: T.preferences.ignoreURLBlacklist.label,

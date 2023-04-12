@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 import React from "react";
 import md5 from "md5";
+import { ListPreferenceMap } from "~src/listprefcache";
+import { P, Preferences } from "~src/preferences";
 
 export function setModIconCount(count: number) {
   const countOverlay = document.querySelector(
@@ -51,6 +53,7 @@ async function getImageData(url: string) {
 function hashBlob(blob: Blob) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
+    fileReader.readAsDataURL(blob);
     fileReader.onload = () => {
       const data = fileReader.result as string;
       const hash = md5(data);
@@ -59,8 +62,11 @@ function hashBlob(blob: Blob) {
     fileReader.onerror = (error) => {
       reject(error);
     };
-    fileReader.readAsArrayBuffer(blob);
   });
+}
+
+function updatePicHashListPref(hash: string, action: string) {
+  ListPreferenceMap.addItem({ key: hash, item: action }, P.picModHashes);
 }
 
 interface pictureModerationState {
@@ -102,27 +108,51 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ interval });
   };
 
+  handleFetch = async (e: ModPicture[]) => {
+    const state = {
+      picture_moderations: await Promise.all(
+        e.map(async (modPicture) => {
+          const imageData = await getImageData(modPicture.image_url);
+          console.log(imageData);
+          const hash = (await hashBlob(imageData)) as string;
+          console.log(hash, "hash");
+          return { ...modPicture, imageHash: hash };
+        })
+      )
+    };
+    const recordedHashes = Preferences.get(P.picModHashes);
+    const filteredElements = state.picture_moderations.filter((elem) =>
+      recordedHashes.some((recordedHash) => recordedHash[0] === elem.imageHash)
+    );
+    filteredElements.forEach((filteredElem) => {
+      const action = recordedHashes.find(
+        (recordedHash) => recordedHash[0] === filteredElem.imageHash
+      )?.[1];
+      if (action === "approve") {
+        this.approve(filteredElem.id);
+      } else if (action === "delete") {
+        this.delete(filteredElem.id);
+      }
+    });
+
+    const filteredPictureModerations = state.picture_moderations.filter(
+      (modPicture) => {
+        const hash = modPicture.imageHash;
+        return recordedHashes.every(
+          ([recordedHash, _]) => recordedHash !== hash
+        );
+      }
+    );
+    this.setState({ picture_moderations: filteredPictureModerations });
+    setModIconCount(filteredPictureModerations.length);
+  };
+
   fetch = () => {
     $.ajax({
       type: "GET",
       url: "/picture_moderations",
       dataType: "json",
-      success: async function fetchSuccess(
-        this: ModifiedPictureModeration,
-        e: ModPicture[]
-      ) {
-        const state = {
-          picture_moderations: await Promise.all(
-            e.map(async (modPicture) => {
-              const imageData = await getImageData(modPicture.image_url);
-              const hash = (await hashBlob(imageData)) as string;
-              return { ...modPicture, imageHash: hash };
-            })
-          )
-        };
-        this.setState(state);
-        setModIconCount(e.length);
-      }.bind(this)
+      success: this.handleFetch.bind(this)
     });
   };
 
@@ -137,6 +167,10 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   approve = (id: number) => {
+    const { state } = this;
+    const picture = state.picture_moderations.find((p) => p.id === id);
+    const hash = picture?.imageHash;
+    if (hash) updatePicHashListPref(hash, "approve");
     $.ajax({
       type: "POST",
       url: `/picture_moderations/${id}/approve`,
@@ -150,6 +184,10 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   delete = (id: number) => {
+    const { state } = this;
+    const picture = state.picture_moderations.find((p) => p.id === id);
+    const hash = picture?.imageHash;
+    if (hash) updatePicHashListPref(hash, "delete");
     $.ajax({
       type: "DELETE",
       url: `/picture_moderations/${id}`,
@@ -162,19 +200,6 @@ class ModifiedPictureModeration extends React.Component<
     });
   };
 
-  /*
-  approveSelectedElements = () => {
-    const { state } = this;
-    const selectedElements = state.selectedElements.slice();
-    selectedElements.forEach((index) => {
-      // approve the element
-      const { id } = state.picture_moderations[index];
-      this.approve(id);
-    });
-    // clear the selected elements array
-    this.setState({ selectedElements: [] });
-  };
-*/
   approveSelectedElements = () => {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -188,21 +213,6 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ selectedElements: [] });
   };
 
-  /*
-  deleteSelectedElements = () => {
-    const { state } = this;
-    const selectedElements = state.selectedElements.slice();
-    // sort the array in descending order to avoid index issues
-    selectedElements.sort((a, b) => b - a);
-    selectedElements.forEach((index) => {
-      // remove the element from the original array
-      const { id } = state.picture_moderations[index];
-      this.delete(id);
-    });
-    // clear the selected elements array
-    this.setState({ selectedElements: [] });
-  };
-  */
   deleteSelectedElements = () => {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -219,24 +229,6 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ selectedElements: [] });
   };
 
-  /*
-  toggleElementSelection(index: number) {
-    const { state } = this;
-    const selectedElements = state.selectedElements.slice();
-    if (selectedElements.includes(index)) {
-      selectedElements.splice(selectedElements.indexOf(index), 1);
-    } else {
-      selectedElements.push(index);
-      // find all elements with matching image hashes and add them to the selection
-      const selectedElementHash = state.picture_moderations[index].imageHash;
-      state.picture_moderations.forEach((element, i) => {
-        if (i !== index && element.imageHash === selectedElementHash) {
-          selectedElements.push(i);
-        }
-      });
-    }
-    this.setState({ selectedElements });
-  } */
   toggleElementSelection(id: number) {
     const { state } = this;
     const selectedElements = state.selectedElements.slice();
@@ -259,8 +251,10 @@ class ModifiedPictureModeration extends React.Component<
       const selectedElementHash = state.picture_moderations.find(
         (e) => e.id === id
       )?.imageHash;
+      console.log(selectedElementHash);
       state.picture_moderations.forEach((element) => {
         if (element.id !== id && element.imageHash === selectedElementHash) {
+          console.log(element.imageHash);
           if (!selectedElements.includes(element.id)) {
             selectedElements.push(element.id);
           }
