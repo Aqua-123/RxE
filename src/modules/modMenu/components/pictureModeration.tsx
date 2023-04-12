@@ -118,7 +118,11 @@ class ModifiedPictureModeration extends React.Component<
       type: "POST",
       url: `/picture_moderations/${id}/approve`,
       dataType: "json",
-      success: this.stateUpdate.bind(this, id)
+      success: this.stateUpdate.bind(this, id),
+      error: (err) => {
+        if (err.status === 404 || err.status === 403)
+          this.stateUpdate.bind(this, id);
+      }
     });
   };
 
@@ -127,7 +131,11 @@ class ModifiedPictureModeration extends React.Component<
       type: "DELETE",
       url: `/picture_moderations/${id}`,
       dataType: "json",
-      success: this.stateUpdate.bind(this, id)
+      success: this.stateUpdate.bind(this, id),
+      error: (err) => {
+        if (err.status === 404 || err.status === 403)
+          this.stateUpdate.bind(this, id);
+      }
     });
   };
 
