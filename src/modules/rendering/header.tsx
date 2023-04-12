@@ -3,7 +3,10 @@
 import U from "~src/userscript";
 import { crel, loadCSS } from "~src/utils";
 import css from "./style.scss";
-import { setModIconCount } from "../modMenu/components/pictureModeration";
+import {
+  picModFetchHandler,
+  setModIconCount
+} from "../modMenu/components/pictureModeration";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -33,13 +36,66 @@ function addKarmaPlaceholder(logo: Element) {
   logo?.parentElement?.insertBefore(tracker, logo?.nextSibling);
 }
 
+function approve(id: number) {
+  $.ajax({
+    type: "POST",
+    url: `/picture_moderations/${id}/approve`,
+    dataType: "json"
+  });
+}
+function reject(id: number) {
+  $.ajax({
+    type: "DELETE",
+    url: `/picture_moderations/${id}`,
+    dataType: "json"
+  });
+}
 async function fetchData() {
   const response = await fetch("/picture_moderations");
   if (response.status === 403) {
     return 0;
   }
-  const data = await response.json();
-  return data.length ? data.length : 0;
+  const modPictures = (await response.json()) as ModPicture[];
+  const filteredPictureModerations = await picModFetchHandler(
+    modPictures,
+    approve,
+    reject
+  );
+
+  /* const pictureModerations = await Promise.all(
+    modPictures.map(async (modPicture) => {
+      const imageData = await getImageData(modPicture.image_url);
+      const imageHash = (await hashBlob(imageData)) as string;
+      return { ...modPicture, imageHash };
+    })
+  );
+
+  const recordedHashes = Preferences.get(P.picModHashes);
+
+  const filteredElements = pictureModerations.filter((elem) =>
+    recordedHashes.some((recordedHash) => recordedHash[0] === elem.imageHash)
+  );
+
+  filteredElements.forEach((filteredElem) => {
+    const action = recordedHashes.find(
+      (recordedHash) => recordedHash[0] === filteredElem.imageHash
+    )?.[1];
+
+    if (action === "approve") {
+      this.approve(filteredElem.id);
+    } else if (action === "delete") {
+      this.delete(filteredElem.id);
+    }
+  });
+
+  const filteredPictureModerations = pictureModerations.filter((modPicture) => {
+    const hash = modPicture.imageHash;
+    return recordedHashes.every(([recordedHash, _]) => recordedHash !== hash);
+  }); */
+
+  return filteredPictureModerations.length
+    ? filteredPictureModerations.length
+    : 0;
 }
 
 function headerIcons() {

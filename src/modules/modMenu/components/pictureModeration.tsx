@@ -45,12 +45,12 @@ function CheckmarkButton(props: CheckmarkButtonProps): JSX.Element {
   );
 }
 
-async function getImageData(url: string) {
+export async function getImageData(url: string) {
   const response = await fetch(url);
   return response.blob();
 }
 
-function hashBlob(blob: Blob) {
+export function hashBlob(blob: Blob) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(blob);
@@ -67,6 +67,45 @@ function hashBlob(blob: Blob) {
 
 function updatePicHashListPref(hash: string, action: string) {
   ListPreferenceMap.addItem({ key: hash, item: action }, P.picModHashes);
+}
+
+export async function picModFetchHandler(
+  modPictures: ModPicture[],
+  approveFunc: (arg0: number) => void,
+  deleteFunc: (arg0: number) => void
+) {
+  const pictureModerations = await Promise.all(
+    modPictures.map(async (modPicture) => {
+      const imageData = await getImageData(modPicture.image_url);
+      const imageHash = (await hashBlob(imageData)) as string;
+      return { ...modPicture, imageHash };
+    })
+  );
+
+  const recordedHashes = Preferences.get(P.picModHashes);
+
+  const filteredElements = pictureModerations.filter((elem) =>
+    recordedHashes.some((recordedHash) => recordedHash[0] === elem.imageHash)
+  );
+
+  filteredElements.forEach((filteredElem) => {
+    const action = recordedHashes.find(
+      (recordedHash) => recordedHash[0] === filteredElem.imageHash
+    )?.[1];
+
+    if (action === "approve") {
+      approveFunc(filteredElem.id);
+    } else if (action === "delete") {
+      deleteFunc(filteredElem.id);
+    }
+  });
+
+  const filteredPictureModerations = pictureModerations.filter((modPicture) => {
+    const hash = modPicture.imageHash;
+    return recordedHashes.every(([recordedHash, _]) => recordedHash !== hash);
+  });
+
+  return filteredPictureModerations;
 }
 
 interface pictureModerationState {
@@ -109,7 +148,7 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   handleFetch = async (modPictures: ModPicture[]) => {
-    const pictureModerations = await Promise.all(
+    /* const pictureModerations = await Promise.all(
       modPictures.map(async (modPicture) => {
         const imageData = await getImageData(modPicture.image_url);
         const imageHash = (await hashBlob(imageData)) as string;
@@ -142,6 +181,12 @@ class ModifiedPictureModeration extends React.Component<
           ([recordedHash, _]) => recordedHash !== hash
         );
       }
+    ); */
+
+    const filteredPictureModerations = await picModFetchHandler(
+      modPictures,
+      this.approve,
+      this.delete
     );
 
     this.setState({ picture_moderations: filteredPictureModerations });
@@ -231,60 +276,57 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   toggleElementSelection(id: number) {
-    const { state } = this;
-    const selectedElements = state.selectedElements.slice();
+    const { picture_moderations, selectedElements } = this.state;
+
+    const selectedElementHash = picture_moderations.find(
+      (e) => e.id === id
+    )?.imageHash;
+
+    const filteredIds = picture_moderations
+      .filter((element) => element.imageHash === selectedElementHash)
+      .map((element) => element.id);
+
+    let newSelectedElements: number[];
     if (selectedElements.includes(id)) {
-      // unselect the element and all elements with matching imageHash
-      const selectedElementHash = state.picture_moderations.find(
-        (e) => e.id === id
-      )?.imageHash;
-      state.picture_moderations.forEach((element) => {
-        if (element.imageHash === selectedElementHash) {
-          const index = selectedElements.indexOf(element.id);
-          if (index !== -1) {
-            selectedElements.splice(index, 1);
-          }
-        }
-      });
+      newSelectedElements = selectedElements.filter(
+        (elementId) => !filteredIds.includes(elementId)
+      );
     } else {
-      // select the element and all elements with matching imageHash
-      selectedElements.push(id);
-      const selectedElementHash = state.picture_moderations.find(
-        (e) => e.id === id
-      )?.imageHash;
-      console.log(selectedElementHash);
-      state.picture_moderations.forEach((element) => {
-        if (element.id !== id && element.imageHash === selectedElementHash) {
-          console.log(element.imageHash);
-          if (!selectedElements.includes(element.id)) {
-            selectedElements.push(element.id);
-          }
-        }
-      });
+      newSelectedElements = [...selectedElements, ...filteredIds];
     }
-    this.setState({ selectedElements });
+
+    this.setState({ selectedElements: newSelectedElements });
   }
 
   render() {
     const { picture_moderations, selectedElements } = this.state;
+
+    const deleteSelectedElements = () => {
+      this.deleteSelectedElements();
+    };
+
+    const approveSelectedElements = () => {
+      this.approveSelectedElements();
+    };
+
+    const toggleElementSelection = (id: number) => {
+      this.toggleElementSelection(id);
+    };
+
     return (
       <div className="dashboard-container">
-        <button onClick={() => this.deleteSelectedElements()} type="button">
+        <button onClick={deleteSelectedElements} type="button">
           Delete Selected Images
         </button>
-        <button onClick={() => this.approveSelectedElements()} type="button">
+        <button onClick={approveSelectedElements} type="button">
           Approve Selected Images
         </button>
         <div className="meet-cards-container video-moderation">
-          {picture_moderations.map((user, _index) => (
-            <div
-              // eslint-disable-next-line react/no-array-index-key
-              key={user.id}
-              className="checkmark-button-container"
-            >
+          {picture_moderations.map((user) => (
+            <div key={user.id} className="checkmark-button-container">
               <CheckmarkButton
                 isSelected={selectedElements.includes(user.id)}
-                onClick={() => this.toggleElementSelection(user.id)}
+                onClick={() => toggleElementSelection(user.id)}
               />
               <PictureModerationUnit
                 key={`picture_moderation${user.id}`}
