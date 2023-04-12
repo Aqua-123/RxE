@@ -263,6 +263,12 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ selectedElements: newSelectedElements });
   }
 
+  selectAllElements() {
+    const { picture_moderations } = this.state;
+    const allIds = picture_moderations.map((element) => element.id);
+    this.setState({ selectedElements: allIds });
+  }
+
   render() {
     const { picture_moderations, selectedElements } = this.state;
 
@@ -278,14 +284,23 @@ class ModifiedPictureModeration extends React.Component<
       this.toggleElementSelection(id);
     };
 
+    const selectAllElements = () => {
+      this.selectAllElements();
+    };
+
     return (
       <div className="dashboard-container">
-        <button onClick={deleteSelectedElements} type="button">
-          Delete Selected Images
-        </button>
         <button onClick={approveSelectedElements} type="button">
           Approve Selected Images
         </button>
+        <button onClick={deleteSelectedElements} type="button">
+          Delete Selected Images
+        </button>
+        <button onClick={selectAllElements} type="button">
+          Select All Images
+        </button>
+
+        <br />
         <div className="meet-cards-container video-moderation">
           {picture_moderations.map((user) => (
             <div key={user.id} className="checkmark-button-container">
