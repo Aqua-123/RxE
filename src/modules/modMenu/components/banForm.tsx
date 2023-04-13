@@ -14,6 +14,21 @@ interface BanFormState {
   showCustomReason: boolean;
 }
 
+const durationList = [
+  ["120", "2 minutes"],
+  ["300", "5 minutes"],
+  ["600", "10 minutes"],
+  ["900", "15 minutes"],
+  ["1800", "30 minutes"],
+  ["3600", "1 hour"],
+  ["10800", "3 hours"],
+  ["21600", "6 hours"],
+  ["43200", "12 hours"],
+  ["86400", "1 day"],
+  // ["259200", "3 days"],
+  ["31556952", "Permanently"]
+];
+
 export const reasonList = [
   { value: "spam", label: "Multiple spam attempts in chat" },
   {
@@ -77,6 +92,20 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
     }));
   };
 
+  // eslint-disable-next-line class-methods-use-this
+  renderDurationOption(value: string, label: string) {
+    return <option value={value}>{label}</option>;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  renderReasonOption(reasonObj: { value: string; label: string }) {
+    return (
+      <option key={reasonObj.value} value={reasonObj.label}>
+        {reasonObj.label}
+      </option>
+    );
+  }
+
   render() {
     const { duration, reason, showCustomReason } = this.state;
     const { reasons } = this.props;
@@ -94,18 +123,9 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
             value={duration}
             onChange={this.handleDurationChange}
           >
-            <option value="120">2 minutes</option>
-            <option value="300">5 minutes</option>
-            <option value="600">10 minutes</option>
-            <option value="900">15 minutes</option>
-            <option value="1800">30 minutes</option>
-            <option value="3600">1 hour</option>
-            <option value="10800">3 hours</option>
-            <option value="21600">6 hours</option>
-            <option value="43200">12 hours</option>
-            <option value="86400">1 day</option>
-            {/* <option value="259200">3 days</option> */}
-            <option value="31556952">Permanently</option>
+            {durationList.map(([value, label]) =>
+              this.renderDurationOption(value, label)
+            )}
           </select>
         </label>
         <div className="m1">reason</div>
@@ -125,11 +145,7 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
               value={reason}
               onChange={this.handleReasonChange}
             >
-              {reasons.map((reasonObj) => (
-                <option key={reasonObj.value} value={reasonObj.label}>
-                  {reasonObj.label}
-                </option>
-              ))}
+              {reasons.map((reasonObj) => this.renderReasonOption(reasonObj))}
             </select>
           </label>
         )}
