@@ -4,10 +4,10 @@ import styles from "./style.scss";
 import { loadCSS } from "~src/utils";
 import { hideUser } from "./ws";
 import { Preferences, P } from "~src/preferences";
-import { spamModOverride } from "./spamModeration";
 import { BanForm, reasonList } from "./components/banForm";
 import { reportModOverride } from "./components/reportModeration";
 import { pictureModerationOverride } from "./components/PictureModeration/pictureModeration";
+import { spamModOverride } from "./components/spamModeration";
 
 export function modFunctionInit() {
   loadCSS(styles);
