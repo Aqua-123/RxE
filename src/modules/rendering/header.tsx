@@ -6,7 +6,7 @@ import css from "./style.scss";
 import {
   picModFetchHandler,
   setModIconCount
-} from "../modMenu/components/pictureModeration";
+} from "../modMenu/components/PictureModeration/utils";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;

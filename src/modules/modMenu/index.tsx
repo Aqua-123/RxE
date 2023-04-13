@@ -7,7 +7,7 @@ import { Preferences, P } from "~src/preferences";
 import { spamModOverride } from "./spamModeration";
 import { BanForm, reasonList } from "./components/banForm";
 import { reportModOverride } from "./components/reportModeration";
-import { pictureModerationOverride } from "./components/pictureModeration";
+import { pictureModerationOverride } from "./components/PictureModeration/pictureModeration";
 
 export function modFunctionInit() {
   loadCSS(styles);
