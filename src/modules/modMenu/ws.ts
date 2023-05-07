@@ -1,3 +1,5 @@
+import { Preferences, P } from "~src/preferences";
+
 const cable = ActionCable.createConsumer();
 
 function createSub(id: number | string | null) {
@@ -20,7 +22,7 @@ function createSub(id: number | string | null) {
   }, 230);
 }
 
-export async function hideUser() {
+async function hideUser() {
   if (!App.user.mod && !App.user.master) return;
   const arJoin = App.room.join;
   App.room.join = function newArJoin(id) {
@@ -45,4 +47,11 @@ export async function hideUser() {
     const { id } = App.room;
     createSub(id);
   };
+}
+
+export function initHideUser() {
+  if (Preferences.get(P.hideFromGc))
+    setTimeout(() => {
+      hideUser();
+    }, 1000);
 }

@@ -194,7 +194,11 @@ export const P = {
     label: "imgurDeleteHashes",
     default: []
   }),
-  picModHashes: new ListPreference<[string, string]>({
+  picModHashes: new ListPreference<{
+    hash: string;
+    approvals: number;
+    rejections: number;
+  }>({
     key: "picModHashes",
     label: "picModHashes",
     default: []

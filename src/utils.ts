@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
 // TODO: Split up
+import md5 from "md5";
 import React, { KeyboardEvent, MouseEvent } from "react";
 
 const { max, min } = Math;
@@ -670,4 +671,24 @@ export function versionComparison(version1: string, version2: string): number {
   }
 
   return 0;
+}
+
+export function hashBlob(blob: Blob) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.readAsDataURL(blob);
+    fileReader.onload = () => {
+      const data = fileReader.result as string;
+      const hash = md5(data);
+      resolve(hash);
+    };
+    fileReader.onerror = (error) => {
+      reject(error);
+    };
+  });
+}
+
+export async function getImageBlobFromUrl(url: string) {
+  const response = await fetch(url);
+  return response.blob();
 }

@@ -162,3 +162,9 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
     );
   }
 }
+
+export function initBanForm() {
+  ModPanel.prototype.issue_ban_menu = function issueMenu() {
+    return <BanForm reasons={reasonList} />;
+  };
+}

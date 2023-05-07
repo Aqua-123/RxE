@@ -106,6 +106,7 @@ class ModifiedPictureModeration extends React.Component<
     const { state } = this;
     const picture = state.picture_moderations.find((p) => p.id === id);
     const hash = picture?.imageHash;
+    console.log(hash);
     if (hash) updatePicHashListPref(hash, "approve");
     $.ajax({
       type: "POST",
@@ -123,7 +124,7 @@ class ModifiedPictureModeration extends React.Component<
     const { state } = this;
     const picture = state.picture_moderations.find((p) => p.id === id);
     const hash = picture?.imageHash;
-    if (hash) updatePicHashListPref(hash, "delete");
+    if (hash) updatePicHashListPref(hash, "reject");
     $.ajax({
       type: "DELETE",
       url: `/picture_moderations/${id}`,
