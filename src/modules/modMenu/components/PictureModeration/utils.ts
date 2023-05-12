@@ -38,7 +38,6 @@ export function updatePicHashListPref(hash: string, action: string) {
     } else if (action === "reject") {
       matchingRecord.rejections += 1;
     }
-    console.log(currentRecords);
     Preferences.set(P.picModHashes, currentRecords);
   } else {
     const newRecord = {

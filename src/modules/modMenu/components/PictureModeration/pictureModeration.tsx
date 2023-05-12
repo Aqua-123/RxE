@@ -102,11 +102,14 @@ class ModifiedPictureModeration extends React.Component<
     this.setState(state);
   };
 
-  approve = (id: number) => {
+  findPicture = (id: number) => {
     const { state } = this;
-    const picture = state.picture_moderations.find((p) => p.id === id);
+    return state.picture_moderations.find((p) => p.id === id);
+  };
+
+  approve = (id: number) => {
+    const picture = this.findPicture(id);
     const hash = picture?.imageHash;
-    console.log(hash);
     if (hash) updatePicHashListPref(hash, "approve");
     $.ajax({
       type: "POST",
@@ -121,9 +124,10 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   delete = (id: number) => {
-    const { state } = this;
-    const picture = state.picture_moderations.find((p) => p.id === id);
+    const picture = this.findPicture(id);
+    console.log(picture, id);
     const hash = picture?.imageHash;
+    console.log(hash);
     if (hash) updatePicHashListPref(hash, "reject");
     $.ajax({
       type: "DELETE",
@@ -155,12 +159,12 @@ class ModifiedPictureModeration extends React.Component<
     const selectedElements = state.selectedElements.slice();
     selectedElements.forEach((id) => {
       // find the element with matching id
+      this.delete(id);
       const elementIndex = state.picture_moderations.findIndex(
         (e) => e.id === id
       );
       // remove the element from the original array
       state.picture_moderations.splice(elementIndex, 1);
-      this.delete(id);
     });
     // clear the selected elements array
     this.setState({ selectedElements: [] });
@@ -199,11 +203,12 @@ class ModifiedPictureModeration extends React.Component<
     // If all elements are already selected, unselect all elements
     // Otherwise, select all elements
     if (allSelected) {
-      this.setState({ selectedElements: [] });
-      this.setState({ selectAllLabel: "Select All" });
+      this.setState({ selectedElements: [], selectAllLabel: "Select All" });
     } else {
-      this.setState({ selectedElements: allIds });
-      this.setState({ selectAllLabel: "Unselect All" });
+      this.setState({
+        selectedElements: allIds,
+        selectAllLabel: "Unselect All"
+      });
     }
   }
 
