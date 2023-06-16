@@ -12,7 +12,8 @@ const exceptions = [
   "about:blank",
   "open.spotify.com",
   "i.redd.it",
-  "ibb.co"
+  "ibb.co",
+  "challenges.cloudflare.com"
 ];
 
 export function removeAds() {
