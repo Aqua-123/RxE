@@ -33,11 +33,11 @@ export const reasonList = [
   { value: "spam", label: "Multiple spam attempts in chat" },
   {
     value: "harassment",
-    label: "Harassment, threats and/or abuse towards an user or group of users"
+    label: "Harassment, threats and/or abuse towards a user or group of users"
   },
   {
     value: "sexual_harassment",
-    label: "Sexually explicit remarks towards an user or group of users"
+    label: "Sexually explicit remarks towards a user or group of users"
   },
   {
     value: "csa",
@@ -49,11 +49,15 @@ export const reasonList = [
   },
   {
     value: "underage",
-    label: "You must be +18 in order to use 1-on-1 chat"
+    label: "You must be 18+ in order to use 1-on-1 Text Chat/Video Chat"
   },
   {
     value: "racism",
     label: "Spreading derogatory words/racism/bigotry in chat"
+  },
+  {
+    value: "english",
+    label: "Please keep group chat in English"
   },
   { value: "other", label: "Other" }
 ];
