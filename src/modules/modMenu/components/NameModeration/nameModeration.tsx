@@ -238,6 +238,19 @@ class ModifiedNameModeration extends React.Component<
             </div>
           ))}
         </div>
+        <br />
+        <button onClick={approveSelectedElements} type="button">
+          Approve Selected Names
+        </button>
+        <button onClick={deleteSelectedElements} type="button">
+          Delete Selected Names
+        </button>
+        <button onClick={selectAllElements} type="button">
+          {selectAllLabel}
+        </button>
+        <button onClick={clearNameModCache} type="button">
+          Clear Cache
+        </button>
       </div>
     );
   }

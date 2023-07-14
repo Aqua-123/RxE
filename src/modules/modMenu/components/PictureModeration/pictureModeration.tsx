@@ -238,6 +238,19 @@ class ModifiedPictureModeration extends React.Component<
             </div>
           ))}
         </div>
+        <br />
+        <button onClick={approveSelectedElements} type="button">
+          Approve Selected Images
+        </button>
+        <button onClick={deleteSelectedElements} type="button">
+          Delete Selected Images
+        </button>
+        <button onClick={selectAllElements} type="button">
+          {selectAllLabel}
+        </button>
+        <button onClick={clearPicModCache} type="button">
+          Clear Cache
+        </button>
       </div>
     );
   }
