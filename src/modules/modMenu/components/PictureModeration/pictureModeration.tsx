@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React from "react";
+import ReactDOM from "react-dom";
 import {
   picModFetchHandler,
   setModIconCount,
@@ -257,12 +258,28 @@ export function pictureModerationOverride() {
   PictureModeration = ModifiedPictureModeration;
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
+    const open_picture = function () {
+      const element = React.createElement(Picture, {
+        data: {
+          src: data.image_url
+        }
+      });
+      ReactDOM.render(element, document.getElementById("ui-hatch-2"));
+    };
     return (
       <div
         className="dashboard-button animated"
         style={{ paddingTop: "30px", height: "400px" }}
       >
-        <img src={data.image_url} alt="" className="mod-approval-pic" />
+        <div>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+          <img
+            src={data.image_url}
+            onMouseDown={open_picture}
+            alt=""
+            className="mod-approval-pic"
+          />
+        </div>
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
           onMouseDown={async (e) => {
