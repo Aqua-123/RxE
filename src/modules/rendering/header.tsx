@@ -184,16 +184,19 @@ function headerIcons() {
 
   // eslint-disable-next-line no-inner-declarations
   async function updateNameModIcon() {
-    console.log(document.body.classList.contains("picModMounted"));
     if (document.body.classList.contains("picModMounted")) return;
     const response = await fetchNameModData();
     setNameModIconCount(response);
   }
 
   loadCSS(css);
-  updatePicModIcon();
-  setInterval(updatePicModIcon, 15000);
-  setInterval(updateNameModIcon, 15000);
+  if (!document.body.classList.contains("watchers_started")) {
+    updatePicModIcon();
+    updateNameModIcon();
+    document.body.classList.add("watchers_started");
+    setInterval(updatePicModIcon, 15000);
+    setInterval(updateNameModIcon, 15000);
+  }
 }
 function addTextToLogo(logo: Element) {
   const displayName = App.user.display_name || "(...)";
