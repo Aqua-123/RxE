@@ -203,6 +203,15 @@ export const P = {
     label: "picModHashes",
     default: []
   }),
+  nameModRecords: new ListPreference<{
+    name: string;
+    approvals: number;
+    rejections: number;
+  }>({
+    key: "nameModRecords",
+    label: "nameModRecords",
+    default: []
+  }),
   ignoreURLBlacklist: new BooleanPreference({
     key: "ignoreURLBlacklist",
     label: T.preferences.ignoreURLBlacklist.label,

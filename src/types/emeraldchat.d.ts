@@ -469,6 +469,16 @@ declare class ActionTray extends React.Component<{}> {
   pictureModeration(): void;
 }
 
+declare type ModName = {
+  id: number;
+  new_display_name: string;
+  old_display_name: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  username: string;
+};
+
 declare type ModPicture = {
   id: number;
   user_id: number;
@@ -479,26 +489,27 @@ declare type ModPicture = {
   image_url: string;
   imageHash?: string;
 };
-/*
-declare class PictureModeration extends React.Component<
-  {},
-  {
-    picture_moderations: EmeraldUser[];
-    interval: NodeJS.Timer;
-  }
-> {
-  fetch(): void;
-  approve(id: number): void;
-  delete(id: number): void;
-  //Note: This is out own field
-  update(): void;
-}
-*/
 
 declare let PictureModeration: any;
 declare class PictureModerationUnit extends React.Component<
   {
     data: ModPicture;
+    approve(id: number): void;
+    delete(id: number): void;
+  },
+  {}
+> {
+  state: {
+    user: EmeraldUser;
+  };
+  approve(): void;
+  delete(): void;
+}
+
+declare let DisplayNameModeration: any;
+declare class DisplayNameModerationUnit extends React.Component<
+  {
+    data: ModName;
     approve(id: number): void;
     delete(id: number): void;
   },

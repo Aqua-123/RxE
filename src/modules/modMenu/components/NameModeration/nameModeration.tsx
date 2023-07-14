@@ -1,28 +1,28 @@
+/* eslint-disable react/button-has-type */
 /* eslint-disable camelcase */
 import React from "react";
 import {
-  picModFetchHandler,
-  setModIconCount,
-  clearPicModCache,
-  updatePicHashListPref
+  clearNameModCache,
+  nameModFetchHandler,
+  updateNameRecPref
 } from "./utils";
-import { CheckmarkButton, getUserData } from "../utils";
+import { CheckmarkButton } from "../utils";
 
 interface pictureModerationState {
-  picture_moderations: ModPicture[];
+  display_name_moderations: ModName[];
   selectedElements: number[];
   interval: NodeJS.Timer | undefined;
   selectAllLabel: string;
 }
 
-class ModifiedPictureModeration extends React.Component<
+class ModifiedNameModeration extends React.Component<
   {},
   pictureModerationState
 > {
   constructor(props: {}) {
     super(props);
     this.state = {
-      picture_moderations: [],
+      display_name_moderations: [],
       selectedElements: [],
       interval: undefined,
       selectAllLabel: "Select All"
@@ -49,48 +49,47 @@ class ModifiedPictureModeration extends React.Component<
     this.setState({ interval });
   };
 
-  handleFetch = async (modPictures: ModPicture[]) => {
-    const filteredPictureModerations = await picModFetchHandler(
-      modPictures,
+  handleFetch = async (modNames: ModName[]) => {
+    const filteredNameModeration = await nameModFetchHandler(
+      modNames,
       this.approve,
       this.delete
     );
 
-    this.setState({ picture_moderations: filteredPictureModerations });
-    setModIconCount(filteredPictureModerations.length);
+    this.setState({ display_name_moderations: filteredNameModeration });
   };
 
   fetch = () => {
     $.ajax({
       type: "GET",
-      url: "/picture_moderations",
+      url: "/display_name_moderations",
       dataType: "json",
       success: this.handleFetch.bind(this)
     });
   };
 
   stateUpdate = (id: number) => {
-    const { picture_moderations } = this.state;
-    const newListOfPics = picture_moderations.filter((t) => t.id !== id);
+    const { display_name_moderations } = this.state;
+    const newListofNames = display_name_moderations.filter((t) => t.id !== id);
     const state = {
-      picture_moderations: newListOfPics
+      display_name_moderations: newListofNames
     };
-    setModIconCount(newListOfPics.length);
     this.setState(state);
   };
 
-  findPicture = (id: number) => {
+  findNameObj = (id: number) => {
     const { state } = this;
-    return state.picture_moderations.find((p) => p.id === id);
+    return state.display_name_moderations.find((p) => p.id === id);
   };
 
   approve = (id: number) => {
-    const picture = this.findPicture(id);
-    const hash = picture?.imageHash;
-    if (hash) updatePicHashListPref(hash, "approve");
+    const picture = this.findNameObj(id);
+    if (!picture) return;
+    const newName = picture.new_display_name;
+    if (newName) updateNameRecPref(newName, "approve");
     $.ajax({
       type: "POST",
-      url: `/picture_moderations/${id}/approve`,
+      url: `/display_name_moderations/${id}/approve`,
       dataType: "json",
       success: this.stateUpdate.bind(this, id),
       error: (err) => {
@@ -101,9 +100,10 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   delete = (id: number) => {
-    const picture = this.findPicture(id);
-    const hash = picture?.imageHash;
-    if (hash) updatePicHashListPref(hash, "reject");
+    const picture = this.findNameObj(id);
+    if (!picture) return;
+    const newName = picture.new_display_name;
+    if (newName) updateNameRecPref(newName, "reject");
     $.ajax({
       type: "DELETE",
       url: `/picture_moderations/${id}`,
@@ -121,7 +121,7 @@ class ModifiedPictureModeration extends React.Component<
     const selectedElements = state.selectedElements.slice();
     selectedElements.forEach((id) => {
       // find the element with matching id
-      const element = state.picture_moderations.find((e) => e.id === id);
+      const element = state.display_name_moderations.find((e) => e.id === id);
       // approve the element
       if (element) this.approve(element.id);
     });
@@ -135,25 +135,25 @@ class ModifiedPictureModeration extends React.Component<
     selectedElements.forEach((id) => {
       // find the element with matching id
       this.delete(id);
-      const elementIndex = state.picture_moderations.findIndex(
+      const elementIndex = state.display_name_moderations.findIndex(
         (e) => e.id === id
       );
       // remove the element from the original array
-      state.picture_moderations.splice(elementIndex, 1);
+      state.display_name_moderations.splice(elementIndex, 1);
     });
     // clear the selected elements array
     this.setState({ selectedElements: [] });
   };
 
   toggleElementSelection(id: number) {
-    const { picture_moderations, selectedElements } = this.state;
+    const { display_name_moderations, selectedElements } = this.state;
 
-    const selectedElementHash = picture_moderations.find(
+    const selectedElementName = display_name_moderations.find(
       (e) => e.id === id
-    )?.imageHash;
+    )?.new_display_name;
 
-    const filteredIds = picture_moderations
-      .filter((element) => element.imageHash === selectedElementHash)
+    const filteredIds = display_name_moderations
+      .filter((element) => element.new_display_name === selectedElementName)
       .map((element) => element.id);
 
     let newSelectedElements: number[];
@@ -169,8 +169,8 @@ class ModifiedPictureModeration extends React.Component<
   }
 
   selectAllElements() {
-    const { picture_moderations, selectedElements } = this.state;
-    const allIds = picture_moderations.map((element) => element.id);
+    const { display_name_moderations, selectedElements } = this.state;
+    const allIds = display_name_moderations.map((element) => element.id);
 
     // Check if all elements are already selected
     const allSelected = allIds.every((id) => selectedElements.includes(id));
@@ -188,7 +188,7 @@ class ModifiedPictureModeration extends React.Component<
   }
 
   render() {
-    const { picture_moderations, selectedElements, selectAllLabel } =
+    const { display_name_moderations, selectedElements, selectAllLabel } =
       this.state;
 
     const deleteSelectedElements = () => {
@@ -210,26 +210,26 @@ class ModifiedPictureModeration extends React.Component<
     return (
       <div className="dashboard-container">
         <button onClick={approveSelectedElements} type="button">
-          Approve Selected Images
+          Approve Selected Names
         </button>
         <button onClick={deleteSelectedElements} type="button">
-          Delete Selected Images
+          Delete Selected Names
         </button>
         <button onClick={selectAllElements} type="button">
           {selectAllLabel}
         </button>
-        <button onClick={clearPicModCache} type="button">
+        <button onClick={clearNameModCache} type="button">
           Clear Cache
         </button>
         <br />
         <div className="meet-cards-container video-moderation">
-          {picture_moderations.map((user) => (
+          {display_name_moderations.map((user) => (
             <div key={user.id} className="checkmark-button-container">
               <CheckmarkButton
                 isSelected={selectedElements.includes(user.id)}
                 onClick={() => toggleElementSelection(user.id)}
               />
-              <PictureModerationUnit
+              <DisplayNameModerationUnit
                 key={`picture_moderation${user.id}`}
                 data={user}
                 delete={this.delete}
@@ -243,41 +243,27 @@ class ModifiedPictureModeration extends React.Component<
   }
 }
 
-export function pictureModerationOverride() {
-  PictureModeration = ModifiedPictureModeration;
-  PictureModerationUnit.prototype.render = function pmuRender() {
+export function nameModerationOverride() {
+  DisplayNameModeration = ModifiedNameModeration;
+  DisplayNameModerationUnit.prototype.render = function dnmuRender() {
     const { data } = this.props;
     return (
       <div
         className="dashboard-button animated"
-        style={{ paddingTop: "30px", height: "400px" }}
+        style={{ paddingTop: "30px", height: "300px" }}
       >
-        <img src={data.image_url} alt="" className="mod-approval-pic" />
-        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-        <div
-          onMouseDown={async (e) => {
-            let user;
-            if (!this.state) {
-              const userData = await getUserData(data.user_id);
-              user = userData.user;
-            } else user = this.state.user;
-            this.setState({ user });
-            UserViewGenerator.generate({ event: e, user });
-          }}
-        >
-          <h2>{`${data.display_name}(${data.username})`}</h2>
-        </div>
+        <h2 style={{ whiteSpace: "normal" }}>New: {data.new_display_name}</h2>
+        <h2 style={{ whiteSpace: "normal" }}>Old: {data.old_display_name}</h2>
+        <h2>({this.props.data.username})</h2>
         <button
           className="ui-button-match-mega gold-button"
           onClick={this.approve}
-          type="button"
         >
           Approve
         </button>
         <button
           className="ui-button-match-mega red-button"
           onClick={this.delete}
-          type="button"
         >
           Reject
         </button>

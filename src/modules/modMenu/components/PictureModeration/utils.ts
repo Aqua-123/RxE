@@ -1,5 +1,6 @@
 import { Preferences, P } from "~src/preferences";
 import { getImageBlobFromUrl, hashBlob } from "~src/utils";
+import { getAction } from "../utils";
 
 export function setModIconCount(count: number) {
   const countOverlay = document.querySelector(
@@ -11,22 +12,6 @@ export function setModIconCount(count: number) {
   } else {
     countOverlay.style.display = "none";
   }
-}
-
-export async function getUserData(id: number) {
-  const response = await fetch(`https://emeraldchat.com/profile_json?id=${id}`);
-  const data = (await response.json()) as ProfileData;
-  return data;
-}
-
-function getAction(approvals: number, rejections: number) {
-  if (approvals >= 2 && rejections >= 2) {
-    // conflicted, hence hash will be cleared from memory to get new actions
-    return "conflicted";
-  }
-  if (approvals >= 2) return "approve";
-  if (rejections >= 2) return "reject";
-  return "standby";
 }
 
 export function updatePicHashListPref(hash: string, action: string) {
@@ -46,7 +31,6 @@ export function updatePicHashListPref(hash: string, action: string) {
       rejections: action === "reject" ? 1 : 0
     };
     const updatedRecords = [...currentRecords, newRecord];
-    console.log(updatedRecords);
     Preferences.set(P.picModHashes, updatedRecords);
   }
 }
@@ -58,6 +42,7 @@ function deleteConflicts(conflictedHashes: string[]) {
   );
   Preferences.set(P.picModHashes, newRecords);
 }
+
 export async function picModFetchHandler(
   modPictures: ModPicture[],
   approveFunc: (id: number) => void,
