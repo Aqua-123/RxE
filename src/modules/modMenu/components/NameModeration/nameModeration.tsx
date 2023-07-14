@@ -6,7 +6,7 @@ import {
   nameModFetchHandler,
   updateNameRecPref
 } from "./utils";
-import { CheckmarkButton } from "../utils";
+import { CheckmarkButton, getUserData } from "../utils";
 
 interface pictureModerationState {
   display_name_moderations: ModName[];
@@ -270,9 +270,22 @@ export function nameModerationOverride() {
         className="dashboard-button animated"
         style={{ paddingTop: "30px", height: "300px" }}
       >
-        <h2 style={{ whiteSpace: "normal" }}>New: {data.new_display_name}</h2>
-        <h2 style={{ whiteSpace: "normal" }}>Old: {data.old_display_name}</h2>
-        <h2>({this.props.data.username})</h2>
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div
+          onMouseDown={async (e) => {
+            let user;
+            if (!this.state) {
+              const userData = await getUserData(data.user_id);
+              user = userData.user;
+            } else user = this.state.user;
+            this.setState({ user });
+            UserViewGenerator.generate({ event: e, user });
+          }}
+        >
+          <h2 style={{ whiteSpace: "normal" }}>New: {data.new_display_name}</h2>
+          <h2 style={{ whiteSpace: "normal" }}>Old: {data.old_display_name}</h2>
+          <h2>({this.props.data.username})</h2>
+        </div>
         <button
           className="ui-button-match-mega gold-button"
           onClick={this.approve}
