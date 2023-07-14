@@ -4,6 +4,7 @@ import React from "react";
 import {
   clearNameModCache,
   nameModFetchHandler,
+  setNameModIconCount,
   updateNameRecPref
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
@@ -53,7 +54,7 @@ class ModifiedNameModeration extends React.Component<
       this.approve,
       this.delete
     );
-
+    setNameModIconCount(filteredNameModeration.length);
     this.setState({ display_name_moderations: filteredNameModeration });
   };
 
@@ -72,6 +73,7 @@ class ModifiedNameModeration extends React.Component<
     const state = {
       display_name_moderations: newListofNames
     };
+    setNameModIconCount(newListofNames.length);
     this.setState(state);
   };
 

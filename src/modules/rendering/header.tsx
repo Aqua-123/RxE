@@ -5,8 +5,12 @@ import { crel, loadCSS } from "~src/utils";
 import css from "./style.scss";
 import {
   picModFetchHandler,
-  setModIconCount
+  setPicModIconCount
 } from "../modMenu/components/PictureModeration/utils";
+import {
+  nameModFetchHandler,
+  setNameModIconCount
+} from "../modMenu/components/NameModeration/utils";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -50,7 +54,7 @@ function reject(id: number) {
     dataType: "json"
   });
 }
-async function fetchData() {
+async function fetchPicModData() {
   const response = await fetch("/picture_moderations");
   if (response.status === 403) {
     return 0;
@@ -67,6 +71,20 @@ async function fetchData() {
     : 0;
 }
 
+async function fetchNameModData() {
+  const response = await fetch("/display_name_moderations");
+  if (response.status === 403) {
+    return 0;
+  }
+  const modNames = (await response.json()) as ModName[];
+  const filteredNameModerations = await nameModFetchHandler(
+    modNames,
+    approve,
+    reject
+  );
+
+  return filteredNameModerations.length ? filteredNameModerations.length : 0;
+}
 function headerIcons() {
   const iconsHolder = document.querySelector(".navigation-notification-icons");
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -114,7 +132,7 @@ function headerIcons() {
   }
 
   if (!iconsHolder.querySelector(".ritsu-icon-pic-mod") && App.user.mod) {
-    const countOverlay = crel("span", {
+    const imgCountOverlay = crel("span", {
       className: "notification-count-overlay",
       textContent: 0,
       style: "display: none;"
@@ -131,19 +149,51 @@ function headerIcons() {
     });
     const icon = crel("span");
     icon.append(picModIcon);
-    icon.append(countOverlay);
+    icon.append(imgCountOverlay);
     iconsHolder.prepend(icon);
-
-    // eslint-disable-next-line no-inner-declarations
-    async function updatePicModIcon() {
-      if (document.body.classList.contains("picModMounted")) return;
-      const response = await fetchData();
-      setModIconCount(response);
-    }
-    loadCSS(css);
-    updatePicModIcon();
-    setInterval(updatePicModIcon, 15000);
   }
+
+  // eslint-disable-next-line no-inner-declarations
+  async function updatePicModIcon() {
+    if (document.body.classList.contains("picModMounted")) return;
+    const response = await fetchPicModData();
+    setPicModIconCount(response);
+  }
+
+  if (!iconsHolder.querySelector(".ritsu-icon-name-mod") && App.user.mod) {
+    const nameCountOverlay = crel("span", {
+      className: "name-count-overlay",
+      textContent: 0,
+      style: "display: none;"
+    });
+
+    const nameModIcon = crel("span", {
+      className:
+        "material-icons navigation-notification-unit ritsu-icon-name-mod",
+      textContent: "badge",
+      tabIndex: -1,
+      role: "button",
+      title: "Display Name Moderation",
+      onmousedown: () => ActionTray.prototype.display_nameModeration()
+    });
+    const icon = crel("span");
+    icon.append(nameModIcon);
+    icon.append(nameCountOverlay);
+    iconsHolder.prepend(icon);
+  }
+
+  // eslint-disable-next-line no-inner-declarations
+  async function updateNameModIcon() {
+    console.log(document.body.classList.contains("picModMounted"));
+    if (document.body.classList.contains("picModMounted")) return;
+    const response = await fetchNameModData();
+    setNameModIconCount(response);
+  }
+
+  loadCSS(css);
+  updatePicModIcon();
+  setInterval(updatePicModIcon, 15000);
+  setInterval(updateNameModIcon, 15000);
 }
 function addTextToLogo(logo: Element) {
   const displayName = App.user.display_name || "(...)";

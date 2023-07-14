@@ -467,6 +467,7 @@ declare class MessagePictureUpload extends React.Component<{}> {
 
 declare class ActionTray extends React.Component<{}> {
   pictureModeration(): void;
+  display_nameModeration(): void
 }
 
 declare type ModName = {

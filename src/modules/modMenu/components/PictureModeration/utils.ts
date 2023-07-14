@@ -2,7 +2,7 @@ import { Preferences, P } from "~src/preferences";
 import { getImageBlobFromUrl, hashBlob } from "~src/utils";
 import { getAction } from "../utils";
 
-export function setModIconCount(count: number) {
+export function setPicModIconCount(count: number) {
   const countOverlay = document.querySelector(
     ".notification-count-overlay"
   ) as HTMLElement;

@@ -3,7 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {
   picModFetchHandler,
-  setModIconCount,
+  setPicModIconCount,
   clearPicModCache,
   updatePicHashListPref
 } from "./utils";
@@ -56,7 +56,7 @@ class ModifiedPictureModeration extends React.Component<
     );
 
     this.setState({ picture_moderations: filteredPictureModerations });
-    setModIconCount(filteredPictureModerations.length);
+    setPicModIconCount(filteredPictureModerations.length);
   };
 
   fetch = () => {
@@ -74,7 +74,7 @@ class ModifiedPictureModeration extends React.Component<
     const state = {
       picture_moderations: newListOfPics
     };
-    setModIconCount(newListOfPics.length);
+    setPicModIconCount(newListOfPics.length);
     this.setState(state);
   };
 

@@ -2,6 +2,18 @@
 import { Preferences, P } from "~src/preferences";
 import { getAction } from "../utils";
 
+export function setNameModIconCount(count: number) {
+  const countOverlay = document.querySelector(
+    ".name-count-overlay"
+  ) as HTMLElement;
+  if (countOverlay) countOverlay.textContent = String(count);
+  if (count > 0) {
+    countOverlay.style.display = "inline";
+  } else {
+    countOverlay.style.display = "none";
+  }
+}
+
 export function updateNameRecPref(name: string, action: string) {
   const currentRecords = Preferences.get(P.nameModRecords);
   const matchingRecord = currentRecords.find((record) => record.name === name);
