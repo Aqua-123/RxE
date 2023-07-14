@@ -6,6 +6,7 @@ import { reportModOverride } from "./components/reportModeration";
 import { pictureModerationOverride } from "./components/PictureModeration/pictureModeration";
 import { spamModOverride } from "./components/spamModeration";
 import { nameModerationOverride } from "./components/NameModeration/nameModeration";
+import { videoModerationOverride } from "./components/VideoModeration/videoModeration";
 
 export function modFunctionInit() {
   loadCSS(styles);
@@ -13,6 +14,7 @@ export function modFunctionInit() {
   reportModOverride();
   pictureModerationOverride();
   nameModerationOverride();
+  videoModerationOverride();
   initHideUser();
   initBanForm();
 }

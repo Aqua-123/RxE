@@ -467,7 +467,7 @@ declare class MessagePictureUpload extends React.Component<{}> {
 
 declare class ActionTray extends React.Component<{}> {
   pictureModeration(): void;
-  display_nameModeration(): void
+  display_nameModeration(): void;
 }
 
 declare type ModName = {
@@ -489,6 +489,16 @@ declare type ModPicture = {
   username: string;
   image_url: string;
   imageHash?: string;
+};
+
+declare type ModVideo = {
+  created_at: string;
+  display_name: string;
+  id: number;
+  image_url: string;
+  updated_at: string;
+  user_id: number;
+  username: string;
 };
 
 declare let PictureModeration: any;
@@ -520,6 +530,19 @@ declare class DisplayNameModerationUnit extends React.Component<
     user: EmeraldUser;
   };
   approve(): void;
+  delete(): void;
+}
+
+declare let VideoModeration: any;
+declare class VideoModerationUnit extends React.Component<
+  {
+    data: ModVideo;
+  },
+  {}
+> {
+  state: {
+    user: EmeraldUser;
+  };
   delete(): void;
 }
 declare class Room extends React.Component<// add props
