@@ -12,7 +12,6 @@ interface pictureModerationState {
   picture_moderations: ModPicture[];
   selectedElements: number[];
   interval: NodeJS.Timer | undefined;
-  selectAllLabel: string;
 }
 
 class ModifiedPictureModeration extends React.Component<
@@ -24,8 +23,7 @@ class ModifiedPictureModeration extends React.Component<
     this.state = {
       picture_moderations: [],
       selectedElements: [],
-      interval: undefined,
-      selectAllLabel: "Select All"
+      interval: undefined
     };
   }
 
@@ -178,19 +176,16 @@ class ModifiedPictureModeration extends React.Component<
     // If all elements are already selected, unselect all elements
     // Otherwise, select all elements
     if (allSelected) {
-      this.setState({ selectedElements: [], selectAllLabel: "Select All" });
+      this.setState({ selectedElements: [] });
     } else {
       this.setState({
-        selectedElements: allIds,
-        selectAllLabel: "Unselect All"
+        selectedElements: allIds
       });
     }
   }
 
-  render() {
-    const { picture_moderations, selectedElements, selectAllLabel } =
-      this.state;
-
+  actionButtons() {
+    const { picture_moderations, selectedElements } = this.state;
     const deleteSelectedElements = () => {
       this.deleteSelectedElements();
     };
@@ -199,16 +194,12 @@ class ModifiedPictureModeration extends React.Component<
       this.approveSelectedElements();
     };
 
-    const toggleElementSelection = (id: number) => {
-      this.toggleElementSelection(id);
-    };
-
     const selectAllElements = () => {
       this.selectAllElements();
     };
 
     return (
-      <div className="dashboard-container">
+      <div>
         <button onClick={approveSelectedElements} type="button">
           Approve Selected Images
         </button>
@@ -216,11 +207,28 @@ class ModifiedPictureModeration extends React.Component<
           Delete Selected Images
         </button>
         <button onClick={selectAllElements} type="button">
-          {selectAllLabel}
+          {!selectedElements.length ||
+          picture_moderations.length !== selectedElements.length
+            ? "Select All"
+            : "Unselect All"}
         </button>
         <button onClick={clearPicModCache} type="button">
           Clear Cache
         </button>
+      </div>
+    );
+  }
+
+  render() {
+    const { picture_moderations, selectedElements } = this.state;
+
+    const toggleElementSelection = (id: number) => {
+      this.toggleElementSelection(id);
+    };
+
+    return (
+      <div className="dashboard-container">
+        {this.actionButtons()}
         <br />
         <div className="meet-cards-container video-moderation">
           {picture_moderations.map((user) => (
@@ -238,23 +246,7 @@ class ModifiedPictureModeration extends React.Component<
             </div>
           ))}
         </div>
-        {picture_moderations.length ? (
-          <div>
-            <button onClick={approveSelectedElements} type="button">
-              Approve Selected Images
-            </button>
-            <button onClick={deleteSelectedElements} type="button">
-              Delete Selected Images
-            </button>
-            <button onClick={selectAllElements} type="button">
-              {selectAllLabel}
-            </button>
-            <button onClick={clearPicModCache} type="button">
-              Clear Cache
-            </button>
-          </div>
-        ) : undefined}
-
+        {picture_moderations.length ? this.actionButtons() : undefined}
         <br />
       </div>
     );

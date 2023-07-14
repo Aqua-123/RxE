@@ -12,7 +12,6 @@ interface pictureModerationState {
   display_name_moderations: ModName[];
   selectedElements: number[];
   interval: NodeJS.Timer | undefined;
-  selectAllLabel: string;
 }
 
 class ModifiedNameModeration extends React.Component<
@@ -24,8 +23,7 @@ class ModifiedNameModeration extends React.Component<
     this.state = {
       display_name_moderations: [],
       selectedElements: [],
-      interval: undefined,
-      selectAllLabel: "Select All"
+      interval: undefined
     };
   }
 
@@ -178,18 +176,16 @@ class ModifiedNameModeration extends React.Component<
     // If all elements are already selected, unselect all elements
     // Otherwise, select all elements
     if (allSelected) {
-      this.setState({ selectedElements: [], selectAllLabel: "Select All" });
+      this.setState({ selectedElements: [] });
     } else {
       this.setState({
-        selectedElements: allIds,
-        selectAllLabel: "Unselect All"
+        selectedElements: allIds
       });
     }
   }
 
-  render() {
-    const { display_name_moderations, selectedElements, selectAllLabel } =
-      this.state;
+  actionButtons() {
+    const { display_name_moderations, selectedElements } = this.state;
 
     const deleteSelectedElements = () => {
       this.deleteSelectedElements();
@@ -199,16 +195,11 @@ class ModifiedNameModeration extends React.Component<
       this.approveSelectedElements();
     };
 
-    const toggleElementSelection = (id: number) => {
-      this.toggleElementSelection(id);
-    };
-
     const selectAllElements = () => {
       this.selectAllElements();
     };
-
     return (
-      <div className="dashboard-container">
+      <div>
         <button onClick={approveSelectedElements} type="button">
           Approve Selected Names
         </button>
@@ -216,11 +207,28 @@ class ModifiedNameModeration extends React.Component<
           Delete Selected Names
         </button>
         <button onClick={selectAllElements} type="button">
-          {selectAllLabel}
+          {!selectedElements.length ||
+          display_name_moderations.length !== selectedElements.length
+            ? "Select All"
+            : "Unselect All"}
         </button>
         <button onClick={clearNameModCache} type="button">
           Clear Cache
         </button>
+      </div>
+    );
+  }
+
+  render() {
+    const { display_name_moderations, selectedElements } = this.state;
+
+    const toggleElementSelection = (id: number) => {
+      this.toggleElementSelection(id);
+    };
+
+    return (
+      <div className="dashboard-container">
+        {this.actionButtons()}
         <br />
         <div className="meet-cards-container video-moderation">
           {display_name_moderations.map((user) => (
@@ -238,22 +246,7 @@ class ModifiedNameModeration extends React.Component<
             </div>
           ))}
         </div>
-        {display_name_moderations.length ? (
-          <div>
-            <button onClick={approveSelectedElements} type="button">
-              Approve Selected Names
-            </button>
-            <button onClick={deleteSelectedElements} type="button">
-              Delete Selected Names
-            </button>
-            <button onClick={selectAllElements} type="button">
-              {selectAllLabel}
-            </button>
-            <button onClick={clearNameModCache} type="button">
-              Clear Cache
-            </button>
-          </div>
-        ) : undefined}
+        {display_name_moderations.length ? this.actionButtons() : undefined}
 
         <br />
       </div>
