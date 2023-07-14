@@ -106,7 +106,7 @@ class ModifiedNameModeration extends React.Component<
     if (newName) updateNameRecPref(newName, "reject");
     $.ajax({
       type: "DELETE",
-      url: `/picture_moderations/${id}`,
+      url: `/display_name_moderations/${id}`,
       dataType: "json",
       success: this.stateUpdate.bind(this, id),
       error: (err) => {
