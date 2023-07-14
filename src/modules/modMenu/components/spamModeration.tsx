@@ -104,28 +104,43 @@ export function spamModOverride() {
         style={{
           paddingTop: "30px",
           minHeight: "330px",
-          border: hasReport ? "4px solid red" : ""
+          border: hasReport ? "4px solid red" : "",
+          background: data.banned ? "#2f0303 !important" : ""
         }}
       >
         <div className="room-component-message-left">
-          <img
-            onMouseDown={(e) =>
-              /* @ts-ignore */
-              UserViewGenerator.generate({ event: e, user: data })
-            }
-            src={data.display_picture}
-            alt=""
-            className="room-component-message-avatar"
-          />
+          <div style={{ border: data.gold ? "4px solid blue !important" : "" }}>
+            <div>
+              {data.gold ? (
+                <img
+                  src="https://emeraldchat.com/badges/tick.svg"
+                  alt=""
+                  style={{
+                    zIndex: 1,
+                    height: "25px",
+                    marginBottom: "-20px",
+                    marginRight: "-20px"
+                  }}
+                />
+              ) : undefined}
+              <img
+                onMouseDown={(e) =>
+                  /* @ts-ignore */
+                  UserViewGenerator.generate({ event: e, user: data })
+                }
+                src={data.display_picture}
+                alt=""
+                className="room-component-message-avatar"
+              />
+            </div>
+          </div>
         </div>
         <div className="spam-user-info">
           <p>Name: {data.display_name}</p>
-          <p>Username: {data.username}</p>
           <p>Gold: {data.gold ? "Yes" : "No"}</p>
           <p>Content: {data.content}</p>
           <p>Last message: {time}</p>
           <p>Message count: {data.message_count}</p>
-          <p>Banned: {data.banned ? "Yes" : "No"}</p>
         </div>
       </div>
     );
