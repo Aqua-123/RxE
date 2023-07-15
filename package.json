@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.13.0.2",
+  "version": "0.13.1.1",
   "name": "emerald",
   "scripts": {
     "build-webpack-config": "tsc -p tsconfig.webpack.json",
