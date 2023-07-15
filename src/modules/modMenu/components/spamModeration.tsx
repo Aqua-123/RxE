@@ -137,7 +137,6 @@ export function spamModOverride() {
         </div>
         <div className="spam-user-info">
           <p>Name: {data.display_name}</p>
-          <p>Gold: {data.gold ? "Yes" : "No"}</p>
           <p>Content: {data.content}</p>
           <p>Last message: {time}</p>
           <p>Message count: {data.message_count}</p>
