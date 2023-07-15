@@ -105,7 +105,7 @@ export function spamModOverride() {
           paddingTop: "30px",
           minHeight: "330px",
           border: hasReport ? "4px solid red" : "",
-          background: data.banned ? "#2f0303 !important" : ""
+          background: data.banned ? "#2f0303" : ""
         }}
       >
         <div className="room-component-message-left">
