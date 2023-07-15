@@ -189,7 +189,6 @@ function headerIcons() {
     setNameModIconCount(response);
   }
 
-  loadCSS(css);
   if (!document.body.classList.contains("watchers_started")) {
     updatePicModIcon();
     updateNameModIcon();
@@ -216,6 +215,9 @@ function addTextToLogo(logo: Element) {
   }
 }
 
+export function initHeader() {
+  loadCSS(css);
+}
 export function decorateHeader() {
   const logo = document.querySelector(".main-logo");
   if (!logo) return;

@@ -34,7 +34,7 @@ export function getAction(approvals: number, rejections: number) {
 }
 
 export async function getUserData(id: number) {
-  const response = await fetch(`https://emeraldchat.com/profile_json?id=${id}`);
+  const response = await fetch(`/profile_json?id=${id}`);
   const data = (await response.json()) as ProfileData;
   return data;
 }

@@ -10,7 +10,7 @@ import { initPicturesBlur, applyBlurs } from "./modules/blur";
 import { renderBrokenImages } from "./modules/rendering/brokenimages";
 import { decorateProfileDialog } from "./modules/flaircolor";
 import { initGender } from "./modules/rendering/gender";
-import { decorateHeader } from "./modules/rendering/header";
+import { decorateHeader, initHeader } from "./modules/rendering/header";
 import { initKarmaTracker } from "./modules/karma";
 import {
   betterMessageRendering,
@@ -37,7 +37,7 @@ import * as highlightMentions from "./modules/chat/highlightmentions/index";
 import * as onbeforesend from "./modules/chat/onbeforesend";
 import * as richText from "./modules/rendering/richtext";
 import * as dev from "./modules/unobfuscate";
-import { createEmbeds } from "./modules/rendering/richtext/embeds";
+import { createEmbeds, initEmbeds } from "./modules/rendering/richtext/embeds";
 import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
@@ -103,6 +103,8 @@ async function init() {
   // start our script's rendering loop
   modFunctionInit();
   hideTyping();
+  initEmbeds();
+  initHeader();
   render([
     fixChatRoomWidth,
     applyBlurs,

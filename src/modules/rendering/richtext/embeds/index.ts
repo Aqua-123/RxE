@@ -28,8 +28,10 @@ function embedElements(className: string) {
   });
 }
 
-export function createEmbeds() {
+export function initEmbeds() {
   loadCSS(css);
+}
+export function createEmbeds() {
   embedElements("user-comment-right");
   embedElements("user-micropost-right");
   embedElements("room-component-message-text");

@@ -23,7 +23,7 @@ export function videoModerationOverride() {
         <img alt="" src={data.image_url} onMouseDown={openPicture} />
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div
-          onMouseDown={async (e) => {
+          onClick={async (e) => {
             let user;
             if (!this.state) {
               const userData = await getUserData(data.user_id);
