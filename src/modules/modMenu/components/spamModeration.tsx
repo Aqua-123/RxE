@@ -137,7 +137,9 @@ export function spamModOverride() {
         </div>
         <div className="spam-user-info">
           <p>Name: {data.display_name}</p>
-          <p>Content: {data.content}</p>
+          <p style={{ color: "orange", paddingLeft: "5px" }}>
+            Content: {data.content}
+          </p>
           <p>Last message: {time}</p>
           <p>Message count: {data.message_count}</p>
         </div>
