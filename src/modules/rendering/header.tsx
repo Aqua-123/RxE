@@ -40,20 +40,36 @@ function addKarmaPlaceholder(logo: Element) {
   logo?.parentElement?.insertBefore(tracker, logo?.nextSibling);
 }
 
-function approve(id: number) {
+function approvePicMod(id: number) {
   $.ajax({
     type: "POST",
     url: `/picture_moderations/${id}/approve`,
     dataType: "json"
   });
 }
-function reject(id: number) {
+function rejectPicMod(id: number) {
   $.ajax({
     type: "DELETE",
     url: `/picture_moderations/${id}`,
     dataType: "json"
   });
 }
+
+function approveNameMod(id: number) {
+  $.ajax({
+    type: "POST",
+    url: `/display_name_moderations/${id}/approve`,
+    dataType: "json"
+  });
+}
+function rejectNameMod(id: number) {
+  $.ajax({
+    type: "DELETE",
+    url: `/display_name_moderations/${id}`,
+    dataType: "json"
+  });
+}
+
 async function fetchPicModData() {
   const response = await fetch("/picture_moderations");
   if (response.status === 403) {
@@ -62,8 +78,8 @@ async function fetchPicModData() {
   const modPictures = (await response.json()) as ModPicture[];
   const filteredPictureModerations = await picModFetchHandler(
     modPictures,
-    approve,
-    reject
+    approvePicMod,
+    rejectPicMod
   );
 
   return filteredPictureModerations.length
@@ -79,8 +95,8 @@ async function fetchNameModData() {
   const modNames = (await response.json()) as ModName[];
   const filteredNameModerations = await nameModFetchHandler(
     modNames,
-    approve,
-    reject
+    approveNameMod,
+    rejectNameMod
   );
 
   return filteredNameModerations.length ? filteredNameModerations.length : 0;
