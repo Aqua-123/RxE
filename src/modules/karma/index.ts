@@ -34,15 +34,15 @@ function updateKarma(karma: number) {
   const karmaTracker = document.querySelector(".karma-tracker") as HTMLElement;
   if (!karmaTracker) return;
   if (!isMobile) karmaTracker.textContent = karma ? `Karma: ${karma}` : "";
-  else {
-    if (!karma) {
-      karmaTracker.textContent = "";
-      return;
-    }
-    if (karma > 0) karmaTracker.textContent = `+${karma}`;
-    else if (karma <= 0) karmaTracker.textContent = `${karma}`;
-    karmaTracker.style.color = karma > 0 ? "#3ec435" : "#eb3b3b";
-  }
+
+  //   if (!karma) {
+  //     karmaTracker.textContent = "";
+  //     return;
+  //   }
+  //   if (karma > 0) karmaTracker.textContent = `+${karma}`;
+  //   else if (karma <= 0) karmaTracker.textContent = `${karma}`;
+  //   karmaTracker.style.color = karma > 0 ? "#3ec435" : "#eb3b3b";
+  // }
 }
 
 function refreshKarma() {
