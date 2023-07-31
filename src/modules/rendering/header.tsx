@@ -72,7 +72,6 @@ function rejectNameMod(id: number) {
 
 async function fetchPicModData() {
   // if (!App.user.mod || !App.user.master) return 0;
-  if (!App.user.master) return 0;
   if (!App.user.mod) return 0;
   const response = await fetch("/picture_moderations");
   if (response.status === 403) {
@@ -92,7 +91,6 @@ async function fetchPicModData() {
 
 async function fetchNameModData() {
   // if (!App.user.mod || !App.user.master) return 0;
-  if (!App.user.master) return 0;
   if (!App.user.mod) return 0;
   const response = await fetch("/display_name_moderations");
   if (response.status === 403) {
