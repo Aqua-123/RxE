@@ -12,7 +12,9 @@ const emotes = {
 const commands = {
   all: {
     rxelink: () =>
-      RoomClient!.send(`Link to RxE extension for Emerald: ${links.repo}`)
+      RoomClient!.send(`Link to RxE extension for Emerald: ${links.repo}`),
+    rules: () =>
+      RoomClient!.send(`For the updated ruleset please see: ${links.rules}`)
   } as Record<string, AnyFunction>,
   on(command: string) {
     return {
