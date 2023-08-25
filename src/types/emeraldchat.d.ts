@@ -686,6 +686,7 @@ declare class RoomPrivate extends React.Component<
 
 declare class Message extends React.Component<{ data: MessageData }> {
   content(): JSXContent;
+  report_type(): JSX.Element;
   showImage(): JSXContent;
   process(text: string): JSXContentOpt;
 }

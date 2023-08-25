@@ -238,6 +238,17 @@ export function initMessages() {
       </div>
     );
 
+    const reportButton = (
+      <div
+        className="room-component-report"
+        onMouseDown={this.report_type.bind(this)}
+        role="button"
+        tabIndex={-1}
+      >
+        <i className="fa fa-warning fa-2x social" />
+      </div>
+    );
+
     return (
       <div className="room-component-message-container" data-id={user?.id}>
         <div className="room-component-message-left">
@@ -251,6 +262,7 @@ export function initMessages() {
             {muted ? <i>Blocked message</i> : this.content()}
           </div>
         </div>
+        {reportButton}
       </div>
     );
   };
