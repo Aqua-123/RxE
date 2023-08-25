@@ -244,6 +244,7 @@ declare type reportLogData = {
   id: number;
   karma: number;
   master: boolean;
+  report_logs: ReportLog[];
   mod: boolean;
   online: boolean;
   people_reporting: number;
@@ -252,14 +253,17 @@ declare type reportLogData = {
 
 declare class ReportLogModeration extends React.Component<{}> {
   state: {
+    sort: "max_count" | "most_recent";
     // NOTE: this is our own field
     spam_moderations: spamModData[];
     reeport_logs: reportLogData[];
   };
+  handleSortClick(): void;
   // NOTE: this is our own field
   fetch_spam(): void;
   fetch_data(): void;
 }
+
 declare class SpamModeration extends React.Component<{}> {
   state: {
     spam_moderations: spamModData[];
@@ -285,10 +289,28 @@ declare class SpamModerationUnit extends React.Component<{
   has_report?: Boolean;
 }> {}
 
+type ReportLog = {
+  id: number;
+  user_id: number;
+  reported_by_id: number;
+  created_at: string;
+  reason: string | null;
+  message: string | null;
+  username: string;
+  image: string | null;
+};
+
 declare class ReportLogModerationUnit extends React.Component<{
   data: reportLogData;
   has_report?: Boolean;
-}> {}
+}> {
+  state: {
+    selected: number;
+  };
+  renderContent(selectedReportLog: ReportLog): JSX.Element | null;
+  next(): void;
+  previous(): void;
+}
 
 declare type NotificationsStateData = {
   read: NotificationProps[];
