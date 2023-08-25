@@ -718,6 +718,7 @@ declare class UserView extends React.Component<
   componentDidMount: () => void;
   close(): void;
   report_user(): void;
+  report_type(): JSX.Element;
   view_profile: Function;
   exit_click: (e: MouseEvent) => void;
   bottom: () => JSX.Element;

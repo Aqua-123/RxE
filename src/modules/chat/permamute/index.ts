@@ -66,7 +66,7 @@ export function initPermaMute() {
       React.createElement(
         "div",
         {
-          onMouseDown: this.report_user.bind(this),
+          onMouseDown: this.report_type.bind(this),
           className: "user-profile-micro-button"
         },
         "Report"
