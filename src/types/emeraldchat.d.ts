@@ -516,8 +516,14 @@ declare type ModPicture = {
 declare type ModVideo = {
   created_at: string;
   display_name: string;
+  display_picture: string;
+  gold: boolean;
   id: number;
-  image_url: string;
+  images: string[];
+  karma: number;
+  master: boolean;
+  mod: boolean;
+  online: boolean;
   updated_at: string;
   user_id: number;
   username: string;
@@ -564,8 +570,11 @@ declare class VideoModerationUnit extends React.Component<
 > {
   state: {
     user: EmeraldUser;
+    imageId: number;
   };
   delete(): void;
+  next(): void;
+  previous(): void;
 }
 declare class Room extends React.Component<// add props
 {
