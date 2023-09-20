@@ -235,7 +235,9 @@ body > div > nav {
 .user-comment-input.user-comment-input {
   background: rgba(146, 17, 157, 0.44);
 }
-.user-micropost-date {
+.user-micropost-date,
+.room-component-input-icon,
+.notification-date {
   color: var(--emerald-label);
 }
 
@@ -259,6 +261,7 @@ body > div > nav {
   --chat-bg-color: black;
   --userlist-bg-color: black;
   --search-bg-color: #0b0b0b;
+  --upload-button-bg-color: rgb(65, 68, 74);
   --panel-bg-color: #0c0c0c;
   --item-hover-bg-color: #35383e;
   --upload-button-bg-color: #41444a;
@@ -305,6 +308,7 @@ body > div > nav {
   --app-fg-color: var(--white-label);
   --dialog-fg-color: var(--scarlet-label);
   --dashboard-hover-fg-color: var(--golden-label);
+  --upload-button-bg-color: var(--input-color-label);
 
   --ritsu-hair-color: var(--green-label);
   --ritsu-hair-dark-color: var(--green-label);
