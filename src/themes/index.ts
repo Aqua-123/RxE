@@ -5,8 +5,15 @@ import baseCSS from "./base.scss";
 import ritsuCSS from "./ritsu.scss";
 import lightCSS from "./light.scss";
 import teriblast from "./teriblast.scss";
+import teriblastV2 from "./teriblastv2.scss";
 
-export const THEMES = ["default", "ritsu", "light", "teriblast"] as const;
+export const THEMES = [
+  "default",
+  "ritsu",
+  "light",
+  "teriblast",
+  "teriblastv2"
+] as const;
 
 export type Theme = typeof THEMES[number];
 
@@ -35,6 +42,9 @@ export function initTheme() {
       break;
     case "teriblast":
       css.push(baseCSS, teriblast);
+      break;
+    case "teriblastv2":
+      css.push(baseCSS, teriblastV2);
       break;
   }
   styleSheet.textContent = css.join("\n");
