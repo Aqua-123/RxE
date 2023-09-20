@@ -12,7 +12,7 @@ export const THEMES = [
   "ritsu",
   "light",
   "teriblast",
-  "teriblastv2"
+  "teriblast V2"
 ] as const;
 
 export type Theme = typeof THEMES[number];
@@ -43,7 +43,7 @@ export function initTheme() {
     case "teriblast":
       css.push(baseCSS, teriblast);
       break;
-    case "teriblastv2":
+    case "teriblast V2":
       css.push(baseCSS, teriblastV2);
       break;
   }

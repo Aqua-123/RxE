@@ -185,11 +185,14 @@ body > div > nav {
 }
 .ui-button-match {
   background: rgb(20, 0, 26) !important;
+  color: var(--emerald-label);
   border-radius: 50px;
+  margin-left: 6px;
   border-top-right-radius: 1 !important;
   border-bottom-right-radius: 1 !important;
 }
-.room-component-module {
+.room-component-module,
+.room-component-left .room-user-label {
   background: rgba(37, 16, 39, 0.6) !important;
 }
 .room-component-right,
@@ -208,6 +211,12 @@ body > div > nav {
 }
 .ui-button-micro {
   border-color: var(--golden-label) !important;
+}
+.ui-button-mega {
+  border-color: var(--golden-label) !important;
+}
+.ui-interests-bg.ui-interests-bg {
+  background: var(--input-color-label) !important;
 }
 
 :root {
@@ -255,12 +264,14 @@ body > div > nav {
   --white-label: #e0e0e0;
   --blueberry-label: rgb(51, 0, 48);
   --input-color-label: rgb(20, 0, 26);
+  --blueberry-hover: #62034f;
 
   /* porting over new names*/
   --dialog-bg-color: var(--blueberry-label);
   --input-fg-color: var(--white-label);
   --dialog-input-bg-color: var(--input-color-label);
   --dialog-button-bg-color: var(--input-color-label);
+  --dialog-button-hover-bg-color: var(--blueberry-hover);
   --search-fg-color: var(--white-label);
   --roomlist-title-fg-color: var(--emerald-label);
   --userlist-title-fg-color: var(--emerald-label);
