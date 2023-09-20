@@ -221,7 +221,8 @@ body > div > nav {
 .ui-interests-bg.ui-interests-bg {
   background: var(--input-color-label) !important;
 }
-.ui-select select {
+.ui-select select,
+.room-notification.room-notification {
   background: var(--input-color-label) !important;
   border-color: var(--golden-label) !important;
   color: var(--pink-label) !important;
@@ -229,7 +230,8 @@ body > div > nav {
 .user-micropost-unit {
   background: var(--input-color-label);
 }
-.user-micropost-button {
+.user-micropost-button,
+.user-comment-button {
   color: var(--golden-label);
 }
 .user-comment-input.user-comment-input {
