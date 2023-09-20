@@ -242,6 +242,13 @@ body > div > nav {
 .notification-date {
   color: var(--emerald-label);
 }
+.user-profile-pictures-upload-button {
+  background: var(--input-color-label) !important;
+  color: var(--emerald-label) !important;
+}
+.user-profile-pictures-upload-button:hover {
+  background: var(--blueberry-hover);
+}
 
 :root {
   --app-bg-color: black;
