@@ -215,8 +215,28 @@ body > div > nav {
 .ui-button-mega {
   border-color: var(--golden-label) !important;
 }
+.ui-interests-bg {
+  border-color: var(--golden-label) !important;
+}
 .ui-interests-bg.ui-interests-bg {
   background: var(--input-color-label) !important;
+}
+.ui-select select {
+  background: var(--input-color-label) !important;
+  border-color: var(--golden-label) !important;
+  color: var(--pink-label) !important;
+}
+.user-micropost-unit {
+  background: var(--input-color-label);
+}
+.user-micropost-button {
+  color: var(--golden-label);
+}
+.user-comment-input.user-comment-input {
+  background: rgba(146, 17, 157, 0.44);
+}
+.user-micropost-date {
+  color: var(--emerald-label);
 }
 
 :root {
@@ -272,6 +292,7 @@ body > div > nav {
   --dialog-input-bg-color: var(--input-color-label);
   --dialog-button-bg-color: var(--input-color-label);
   --dialog-button-hover-bg-color: var(--blueberry-hover);
+  --search-bg-color: var(--input-color-label);
   --search-fg-color: var(--white-label);
   --roomlist-title-fg-color: var(--emerald-label);
   --userlist-title-fg-color: var(--emerald-label);
