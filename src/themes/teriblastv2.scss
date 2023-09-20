@@ -250,9 +250,10 @@ body > div > nav {
   --yellow-label: #fefb1f;
   --darkie-label: #0932a7;
   --white-label: #e0e0e0;
+  --blueberry-label: rgb(51, 0, 48);
 
   /* porting over new names*/
-  --dialog-bg-color: rgb(51, 0, 48);
+  --dialog-bg-color: var(--blueberry-label);
   --input-fg-color: var(--white-label);
   --search-fg-color: var(--white-label);
   --roomlist-title-fg-color: var(--emerald-label);
