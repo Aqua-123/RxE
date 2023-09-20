@@ -153,7 +153,7 @@ body > div > nav {
 }
 
 .user-profile-info {
-  background: rgba(128, 6, 46, 0.46);
+  background: rgb(20, 0, 26);
   border-radius: 5.5%;
 }
 
@@ -206,6 +206,9 @@ body > div > nav {
 .navigation-dropdown-content li {
   background: rgba(37, 16, 39) !important;
 }
+.ui-button-micro {
+  border-color: var(--golden-label) !important;
+}
 
 :root {
   --app-bg-color: black;
@@ -251,10 +254,13 @@ body > div > nav {
   --darkie-label: #0932a7;
   --white-label: #e0e0e0;
   --blueberry-label: rgb(51, 0, 48);
+  --input-color-label: rgb(20, 0, 26);
 
   /* porting over new names*/
   --dialog-bg-color: var(--blueberry-label);
   --input-fg-color: var(--white-label);
+  --dialog-input-bg-color: var(--input-color-label);
+  --dialog-button-bg-color: var(--input-color-label);
   --search-fg-color: var(--white-label);
   --roomlist-title-fg-color: var(--emerald-label);
   --userlist-title-fg-color: var(--emerald-label);
