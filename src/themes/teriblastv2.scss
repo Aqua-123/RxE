@@ -1,0 +1,276 @@
+.notification-unit.notification-unit {
+  background: var(--dialog-bg-color);
+  color: var(--white-label);
+}
+.user-profile-interest {
+  background: var(--last-child);
+  color: white;
+}
+
+:last-child > .navigation-notification-unit {
+  color: var(--green-label);
+}
+.user-profile-menu.user-profile-menu {
+  background: var(--dialog-bg-color);
+  color: var(--yellow-label);
+}
+.user-micropost-input-background.user-micropost-input-background {
+  background: var(--dialog-input-bg-color);
+}
+.user-micropost-input.user-micropost-input {
+  color: var(--dialog-input-fg-color);
+}
+.ui-button-micro.ui-button-micro {
+  background: var(--dialog-button-bg-color);
+  color: var(--white-label);
+}
+.ui-button-mega.ui-button-mega {
+  background: var(--dialog-button-bg-color);
+  color: var(--golden-label);
+}
+.notification-menu-container-text {
+  color: var(--pink-label);
+
+  span {
+    text-shadow: black 0 0 3px;
+  }
+}
+
+.ui-button-mega-icon {
+  color: var(--last-child);
+}
+
+.m1 {
+  color: var(--cyan-label);
+}
+
+.m2 {
+  color: var(--cyan-label);
+}
+
+.m4 {
+  color: var(--cyan-label);
+}
+
+label {
+  color: var(--violet-blue-label);
+}
+
+.user-profile-sub {
+  color: var(--white-label);
+}
+
+.notification-menu-container-text2 {
+  color: var(--violet-blue-label);
+}
+
+.ui-button {
+  background: var(--last-child);
+  color: var(--white-label);
+}
+
+.ui-button:hover {
+  background: var(--last-child-light);
+  color: var(--white-label);
+}
+
+.ui-button-text {
+  color: var(--white-label);
+}
+
+.ui-menu-text {
+  color: var(--violet-blue-label);
+}
+
+.ui-button-match-mega {
+  background: var(--last-child);
+  color: var(--white-label);
+}
+
+.ui-button-match-mega:hover {
+  background: var(--last-child-light);
+  color: var(--white-label);
+}
+
+.user-profile-micro-top {
+  background: var(--darkie-label);
+}
+
+.user-profile-micro-button {
+  background: var(--darkie-label);
+}
+
+.label {
+  color: var(--golden-label);
+}
+
+[type="radio"]:checked + label:after {
+  background-color: var(--green-aqua-label);
+}
+
+[type="checkbox"]:checked + label:before {
+  border-right: 2px solid #0eeca0;
+  border-bottom: 2px solid #0eeca0;
+}
+
+.room-component-message-avatar,
+html.showGender,
+.navigation-notification-unit-image,
+.main-logo,
+.dashboard-card-image,
+.user-profile-micro-avatar,
+.user-profile-avatar,
+.user-micropost-picture,
+.user-comment-picture,
+.user-profile-picture-hover {
+  border-radius: 10px;
+}
+
+.user-online-icon-profile {
+  margin-left: -27px;
+}
+
+/* V2 */
+
+#container,
+.room-component-center,
+.room-component-messages {
+  background: rgba(37, 16, 39, 0.2) !important;
+}
+
+body > div > nav {
+  background: rgba(117, 0, 128, 0.51) !important;
+}
+
+.dashboard-button.animated.zoomIn,
+.dashboard-button {
+  background: rgba(104, 40, 100, 0.44) !important;
+}
+.dashboard-button.dashboard-button:hover,
+.actionicon-mega.actionicon-mega:hover,
+.navigation-dropdown-content li:hover {
+  background: rgba(8, 33, 166, 0.4) !important;
+}
+.user-profile-menu.user-profile-menu {
+  background: rgba(15, 0, 123, 0.8);
+}
+.user-profile-info {
+  background: rgba(128, 6, 46, 0.46);
+  border-radius: 5.5%;
+}
+
+.room-component-typing-container {
+  color: #ffc107;
+}
+
+.line-scale-pulse-out-rapid > div {
+  background: #ffc107;
+}
+
+.line-scale-pulse-out-rapid2 > div {
+  background: red;
+}
+
+.channel-unit {
+  color: #fff;
+}
+
+.channel-unit-active {
+  background: #0932a7;
+}
+.channel-unit:hover,
+.channel-unit-active:hover {
+  color: #0eeca0;
+}
+.room-component-input-textarea {
+  background: rgb(20, 0, 26) !important;
+}
+.ui-button-match {
+  background: rgb(20, 0, 26) !important;
+  border-radius: 50px;
+  border-top-right-radius: 1 !important;
+  border-bottom-right-radius: 1 !important;
+}
+.room-component-module {
+  background: rgba(37, 16, 39, 0.6) !important;
+}
+.room-component-right,
+.room-component-right-container {
+  background: rgba(37, 16, 39, 0.6) !important;
+}
+.room-component-input {
+  background: #9e1dc1 !important;
+}
+.room-component-message-container {
+  border-color: #3fffe5;
+}
+.side-panel.side-panel,
+.navigation-dropdown-content li {
+  background: rgba(37, 16, 39) !important;
+}
+
+:root {
+  --app-bg-color: black;
+  --dialog-bg-color: #111;
+  --dialog-overlay-bg-color: rgba(0, 0, 0, 0.93);
+  --dialog-button-bg-color: #17191b;
+  --dialog-button-hover-bg-color: #151515;
+  --dialog-input-bg-color: #17191b;
+  --dashboard-button-bg-color: #100f10;
+  --dashboard-hover-bg-color: #33323270;
+  --header-bg-color: #100f10;
+  --userlist-bg-color: black;
+  --header-bg-color: #100f10;
+  --header-alt-bg-color: #3d4046;
+  --header-hover-bg-color: #3d4046;
+  --input-bg-color: #211f21;
+  --roomlist-bg-color: black;
+  --interests-bg-color: #2c2f35;
+  --chat-bg-color: black;
+  --userlist-bg-color: black;
+  --search-bg-color: #0b0b0b;
+  --panel-bg-color: #0c0c0c;
+  --item-hover-bg-color: #35383e;
+  --upload-button-bg-color: #41444a;
+  --menu-bg-color: #0a0a0a;
+  --header-fg-color: #e6fc6d;
+  --header-alt-fg-color: #232529;
+  --panel-fg-color: white;
+  --last-child: #b821bd;
+  --last-child-light: #ee71f2;
+
+  --emerald-label: #18e281;
+  --violet-blue-label: #8e95f9;
+  --green-label: #b9fc6d;
+  --golden-label: #ffc107;
+  --scarlet-label: #9ddb60;
+  --green-aqua-label: #0eeca0;
+  --golden-light-label: #ffe8a3;
+  --pink-label: #ffb3d1;
+  --dark-violet: #9c3edd;
+  --cyan-label: #3fffe5;
+  --yellow-label: #fefb1f;
+  --darkie-label: #0932a7;
+  --white-label: #e0e0e0;
+
+  /* porting over new names*/
+  --input-fg-color: var(--white-label);
+  --search-fg-color: var(--white-label);
+  --roomlist-title-fg-color: var(--emerald-label);
+  --userlist-title-fg-color: var(--emerald-label);
+  --message-fg-color: var(--green-label);
+  --user-profile-tab-active: var(--green-label);
+  --dialog-button-hover-fg-color: var(--golden-light-label);
+  --upload-button-fg-color: var(--golden-label);
+  --dashboard-icon-fg-color: var(--ritsu-hair-dark-color);
+  --main-logo-text: var(--green-label);
+  --app-fg-color: var(--white-label);
+  --dialog-fg-color: var(--scarlet-label);
+  --dashboard-hover-fg-color: var(--golden-label);
+
+  --ritsu-hair-color: var(--green-label);
+  --ritsu-hair-dark-color: var(--green-label);
+
+  --ritsu-menu-fg-color: var(--ritsu-hair-color);
+  --ritsu-menu-hover-fg-color: var(--ritsu-hair-color);
+}
