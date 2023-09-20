@@ -151,9 +151,7 @@ body > div > nav {
 .navigation-dropdown-content li:hover {
   background: rgba(8, 33, 166, 0.4) !important;
 }
-.user-profile-menu.user-profile-menu {
-  background: rgba(15, 0, 123, 0.8);
-}
+
 .user-profile-info {
   background: rgba(128, 6, 46, 0.46);
   border-radius: 5.5%;
@@ -254,6 +252,7 @@ body > div > nav {
   --white-label: #e0e0e0;
 
   /* porting over new names*/
+  --dialog-bg-color: rgb(51, 0, 48);
   --input-fg-color: var(--white-label);
   --search-fg-color: var(--white-label);
   --roomlist-title-fg-color: var(--emerald-label);
