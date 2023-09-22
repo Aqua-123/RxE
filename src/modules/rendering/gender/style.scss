@@ -12,6 +12,7 @@ html.showGender {
   .navigation-notification-unit-image,
   .user-profile-avatar,
   .user-micropost-picture {
+    border-color: #fff;
     &[data-gender="m"] {
       border-color: #0070ff;
     }
