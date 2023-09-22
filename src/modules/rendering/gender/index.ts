@@ -55,6 +55,16 @@ export function initGender() {
     return genderIntercept.call(this, ruuBody);
   };
 
+  const proBody = UserProfile.prototype.profile_picture;
+  UserProfile.prototype.profile_picture = function body() {
+    return genderIntercept.call(this, proBody);
+  };
+
+  const microBody = Micropost.prototype.body;
+  Micropost.prototype.body = function body() {
+    return genderIntercept.call(this, microBody);
+  };
+
   const mRender = Message.prototype.render;
   Message.prototype.render = function render() {
     const div = mRender.apply(this);

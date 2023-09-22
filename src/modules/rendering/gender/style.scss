@@ -36,56 +36,11 @@ html.showGender {
     width: 132px;
     height: 132px;
   }
-  .user-profile-menu.user-profile-menu {
-    &[data-gender="m"] {
-      border-color: #0070ff;
-    }
-    &[data-gender="f"] {
-      border-color: #ff80ea;
-    }
-    &[data-gender="pizza"] {
-      border-color: #00f0dc;
-    }
-    &[data-gender="vortex"] {
-      border-color: #000000;
-    }
-    &[data-gender="sunflower"] {
-      border-color: #ffc107;
-    }
-    &[data-gender="rose"] {
-      border-color: #800000;
-    }
-    &[data-gender="watermelon"] {
-      border-color: #18e281;
-    }
-  }
-
   .room-component-message-avatar {
     width: 42px;
     height: 42px;
   }
   .user-micropost-picture {
     margin: 2px 10px -2px 6px;
-    &[data-gender="m"] {
-      border-color: #0070ff;
-    }
-    &[data-gender="f"] {
-      border-color: #ff80ea;
-    }
-    &[data-gender="pizza"] {
-      border-color: #00f0dc;
-    }
-    &[data-gender="vortex"] {
-      border-color: #000000;
-    }
-    &[data-gender="sunflower"] {
-      border-color: #ffc107;
-    }
-    &[data-gender="rose"] {
-      border-color: #800000;
-    }
-    &[data-gender="watermelon"] {
-      border-color: #18e281;
-    }
   }
 }

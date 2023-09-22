@@ -916,6 +916,7 @@ declare class Micropost extends React.Component<
 > {
   show_comment_input: Function;
   write_comment: Function;
+  body(): JSX.Element;
   content(): JSX.Element | null;
   more(): void;
   youtube_process(text: string): JSX.Element;
