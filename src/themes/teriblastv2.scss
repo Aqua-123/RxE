@@ -13,6 +13,8 @@
 .user-profile-menu.user-profile-menu {
   background: var(--dialog-bg-color);
   color: var(--yellow-label);
+  border: 3px inset;
+  border-color: var(--border-label);
 }
 .user-micropost-input-background.user-micropost-input-background {
   background: var(--dialog-input-bg-color);
@@ -147,7 +149,10 @@ body > div > nav {
 .dashboard-button.animated.zoomIn,
 .dashboard-button {
   background: rgba(104, 40, 100, 0.44) !important;
+  border: 3px inset;
+  border-color: var(--border-label);
 }
+
 .dashboard-button.dashboard-button:hover,
 .actionicon-mega.actionicon-mega:hover,
 .navigation-dropdown-content li:hover {
@@ -162,6 +167,11 @@ body > div > nav {
 .user-profile-info {
   background: rgb(20, 0, 26);
   border: 2px inset;
+  border-color: var(--border-label);
+}
+
+.user-profile-avatar {
+  border: 4px inset;
   border-color: var(--border-label);
 }
 
