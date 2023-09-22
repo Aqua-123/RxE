@@ -1,15 +1,17 @@
 html.showGender {
   .room-component-message-avatar,
-  .navigation-notification-unit-image,
-  .user-profile-avatar,
-  .user-micropost-picture {
+  .navigation-notification-unit-image {
     border-color: #fff;
     /* border-color: attr("data-gender"); */
     border: 2px inset;
     width: 36px;
     height: 36px;
     margin: -2px 10px -2px -2px;
-
+  }
+  .room-component-message-avatar,
+  .navigation-notification-unit-image,
+  .user-profile-avatar,
+  .user-micropost-picture {
     &[data-gender="m"] {
       border-color: #0070ff;
     }
