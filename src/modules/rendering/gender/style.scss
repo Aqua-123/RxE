@@ -1,6 +1,8 @@
 html.showGender {
   .room-component-message-avatar,
-  .navigation-notification-unit-image {
+  .navigation-notification-unit-image,
+  .user-profile-avatar,
+  .user-micropost-picture {
     border-color: #fff;
     /* border-color: attr("data-gender"); */
     border: 2px inset;
@@ -14,9 +16,31 @@ html.showGender {
     &[data-gender="f"] {
       border-color: #ff80ea;
     }
+    &[data-gender="pizza"] {
+      border-color: #00f0dc;
+    }
+    &[data-gender="vortex"] {
+      border-color: #000000;
+    }
+    &[data-gender="sunflower"] {
+      border-color: #ffc107;
+    }
+    &[data-gender="rose"] {
+      border-color: #800000;
+    }
+    &[data-gender="watermelon"] {
+      border-color: #18e281;
+    }
+  }
+  .user-profile-avatar {
+    width: 132px;
+    height: 132px;
   }
   .room-component-message-avatar {
     width: 42px;
     height: 42px;
+  }
+  .user-micropost-picture {
+    margin: 2px 10px -2px 6px;
   }
 }
