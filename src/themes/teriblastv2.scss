@@ -157,6 +157,7 @@ body > div > nav {
 .actionicon-mega.actionicon-mega:hover,
 .navigation-dropdown-content li:hover {
   background: rgba(8, 33, 166, 0.4) !important;
+  border: 2px inset;
 }
 
 .ui-menu {
@@ -198,6 +199,7 @@ body > div > nav {
 .channel-unit:hover,
 .channel-unit-active:hover {
   color: #0eeca0;
+  border: 2px inset;
 }
 .room-component-input-textarea {
   background: rgb(20, 0, 26) !important;
