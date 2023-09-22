@@ -168,6 +168,7 @@ body > div > nav {
   background: rgb(20, 0, 26);
   border: 2px inset;
   border-color: var(--border-label);
+  height: calc(100% - 120%);
 }
 
 .user-profile-avatar {
@@ -279,6 +280,12 @@ body > div > nav {
 .ui-profile-menu {
   border: 2px inset;
   border-color: var(--border-label);
+}
+
+.notification-button {
+  border: 2px inset;
+  border-color: var(--border-label);
+  color: var(--white-label);
 }
 
 .user-micropost-date,
