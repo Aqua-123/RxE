@@ -7,12 +7,7 @@ html.showGender {
     width: 36px;
     height: 36px;
     margin: -2px 10px -2px -2px;
-  }
-  .room-component-message-avatar,
-  .navigation-notification-unit-image,
-  .user-profile-avatar,
-  .user-micropost-picture {
-    border-color: #fff;
+
     &[data-gender="m"] {
       border-color: #0070ff;
     }
@@ -35,15 +30,8 @@ html.showGender {
       border-color: #18e281;
     }
   }
-  .user-profile-avatar {
-    width: 132px;
-    height: 132px;
-  }
   .room-component-message-avatar {
     width: 42px;
     height: 42px;
-  }
-  .user-micropost-picture {
-    margin: 2px 10px -2px 6px;
   }
 }

@@ -16,6 +16,8 @@
 }
 .user-micropost-input-background.user-micropost-input-background {
   background: var(--dialog-input-bg-color);
+  border: 2px inset;
+  border-color: var(--border-label);
 }
 .user-micropost-input.user-micropost-input {
   color: var(--dialog-input-fg-color);
@@ -152,9 +154,15 @@ body > div > nav {
   background: rgba(8, 33, 166, 0.4) !important;
 }
 
+.ui-menu {
+  border: 3px inset;
+  border-color: var(--border-label);
+}
+
 .user-profile-info {
   background: rgb(20, 0, 26);
-  border-radius: 5.5%;
+  border: 2px inset;
+  border-color: var(--border-label);
 }
 
 .room-component-typing-container {
@@ -190,6 +198,8 @@ body > div > nav {
   margin-left: 6px;
   border-top-right-radius: 1 !important;
   border-bottom-right-radius: 1 !important;
+  border: 2px inset;
+  border-color: var(--border-label);
 }
 .room-component-module,
 .room-component-left .room-user-label {
@@ -201,6 +211,8 @@ body > div > nav {
 }
 .room-component-input {
   background: #9e1dc1 !important;
+  border: 1px inset;
+  border-color: var(--border-label);
 }
 .room-component-message-container {
   border-color: #3fffe5;
@@ -229,6 +241,8 @@ body > div > nav {
 }
 .user-micropost-unit {
   background: var(--input-color-label);
+  border: 2px inset;
+  border-color: var(--border-label);
 }
 .user-micropost-button,
 .user-comment-button {
@@ -237,6 +251,26 @@ body > div > nav {
 .user-comment-input.user-comment-input {
   background: rgba(146, 17, 157, 0.44);
 }
+
+.user-micropost-picture {
+  margin: 2px 10px -2px 6px;
+}
+
+.ui-search-box {
+  border: 2px inset;
+  border-color: var(--border-label);
+}
+
+.ui-input {
+  border: 2px inset !important;
+  border-color: var(--border-label) !important;
+}
+
+.ui-profile-menu {
+  border: 2px inset;
+  border-color: var(--border-label);
+}
+
 .user-micropost-date,
 .room-component-input-icon,
 .notification-date {
@@ -248,6 +282,10 @@ body > div > nav {
 }
 .user-profile-pictures-upload-button:hover {
   background: var(--blueberry-hover);
+}
+
+.room-component-picture-icon {
+  margin-left: 10px;
 }
 
 :root {
@@ -294,6 +332,7 @@ body > div > nav {
   --yellow-label: #fefb1f;
   --darkie-label: #0932a7;
   --white-label: #e0e0e0;
+  --border-label: #ced9ee;
   --blueberry-label: rgb(51, 0, 48);
   --input-color-label: rgb(20, 0, 26);
   --blueberry-hover: #62034f;

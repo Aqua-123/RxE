@@ -797,13 +797,9 @@ declare class UserProfile extends React.Component<
     data: ProfileData;
     compact_bio: boolean;
     tab: "feed" | "info" | "pictures";
-  },
-  {
-    data: EmeraldUser;
   }
 > {
   profile_buttons: Function;
-  body(): JSX.Element;
   switch(id: number): void;
   close(): void;
   update_profile_picture(): void;
@@ -916,14 +912,10 @@ declare class Micropost extends React.Component<
       liked: boolean;
       likes_count: number;
     };
-  },
-  {
-    data: EmeraldUser;
   }
 > {
   show_comment_input: Function;
   write_comment: Function;
-  body(): JSX.Element;
   content(): JSX.Element | null;
   more(): void;
   youtube_process(text: string): JSX.Element;
