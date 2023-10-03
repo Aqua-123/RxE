@@ -291,6 +291,15 @@ body > div > nav {
   color: var(--white-label);
 }
 
+.picture-upload-button.picture-upload-button + label {
+  border: 2px inset;
+  border-color: var(--golden-label);
+}
+
+.user-profile-pictures-picture-preview {
+  border: 2px inset;
+}
+
 .user-micropost-date,
 .room-component-input-icon,
 .notification-date {
@@ -306,6 +315,16 @@ body > div > nav {
 
 .room-component-picture-icon {
   margin-left: 10px;
+}
+
+/* Mobile tweaks */
+@media screen and (max-width: 640px) {
+  .user-profile-info {
+    width: 96%;
+  }
+  .user-micropost-unit {
+    width: 97%;
+  }
 }
 
 :root {
