@@ -50,7 +50,8 @@ export const reasonList = [
   },
   {
     value: "underage",
-    label: "You must be 18+ in order to use 1-on-1 Text Chat/Video Chat"
+    label:
+      "Feel free to join our Group Chat, but you must be 18+ in order to use 1-on-1 Text Chat/Video Chat"
   },
   {
     value: "racism",
