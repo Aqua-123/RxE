@@ -48,7 +48,11 @@ declare interface AppInterface {
       connected(): void;
       disconnected(): void;
       received(e: MessageData): void;
-      speak(e: { message?: string; picture?: EmeraldPicture }): void;
+      speak(e: {
+        message?: string;
+        mode?: string;
+        picture?: EmeraldPicture;
+      }): void;
       typing(): void;
       perform(action: string, data: any): void;
     };

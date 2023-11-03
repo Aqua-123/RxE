@@ -33,6 +33,7 @@ async function hideUser() {
       this.perform("speak", {
         message: e.message,
         id,
+        mode: e.mode,
         picture: e.picture
       });
       createSub(id);

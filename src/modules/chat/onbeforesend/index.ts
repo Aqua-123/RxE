@@ -68,6 +68,7 @@ export function init() {
   addSubstitutions(emotes);
 
   Room.prototype.send = function send(rawMessage: string) {
+    const { mode } = this.state;
     const message = this.process
       ? this.process(rawMessage)
       : addZWSP(rawMessage);
@@ -76,7 +77,7 @@ export function init() {
       messages: [message],
       user: App.user
     });
-    App.room.client.speak({ message });
+    App.room.client.speak({ message, mode });
     this.scroll();
   };
 

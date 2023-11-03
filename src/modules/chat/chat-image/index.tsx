@@ -41,8 +41,9 @@ export function initSendPics() {
   };
 
   Room.prototype.sendRitsuPicture = function sendRitsuPicture(image) {
+    const { mode } = this.state;
     this.append(display(image));
-    App.room.client.speak({ message: emit(image) });
+    App.room.client.speak({ message: emit(image), mode });
     this.scroll();
   };
 
