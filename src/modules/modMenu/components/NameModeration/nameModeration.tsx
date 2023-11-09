@@ -8,6 +8,7 @@ import {
   updateNameRecPref
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
+import { sendDataToFirestore } from "../firebase";
 
 interface pictureModerationState {
   display_name_moderations: ModName[];
@@ -87,6 +88,7 @@ class ModifiedNameModeration extends React.Component<
     if (!picture) return;
     const newName = picture.new_display_name;
     if (newName) updateNameRecPref(newName, "approve");
+
     $.ajax({
       type: "POST",
       url: `/display_name_moderations/${id}/approve`,
@@ -97,6 +99,9 @@ class ModifiedNameModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
+
+    const logJson = { nameModeration: newName, action: "approve" };
+    sendDataToFirestore(logJson);
   };
 
   delete = (id: number) => {
@@ -114,6 +119,9 @@ class ModifiedNameModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
+
+    const logJson = { nameModeration: newName, action: "reject" };
+    sendDataToFirestore(logJson);
   };
 
   approveSelectedElements = () => {

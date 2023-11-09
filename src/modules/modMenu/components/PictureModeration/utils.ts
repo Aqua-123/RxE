@@ -57,8 +57,17 @@ export async function picModFetchHandler(
     modPictures.map(async ({ id, image_url }) => {
       try {
         const imageData = await getImageBlobFromUrl(image_url);
+        // convert blob to base64 string
+
+        const base64Image = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(imageData);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = (error) => reject(error);
+        });
+
         const imageHash = (await hashBlob(imageData)) as string;
-        return { id, imageHash };
+        return { id, imageHash, base64Image };
       } catch (error) {
         console.error(`Error hashing image ${id}: ${error}`);
         return { id, error };
@@ -72,9 +81,12 @@ export async function picModFetchHandler(
   );
 
   // Update image hashes for matching mod pictures
-  pictureHashes.forEach(({ id, imageHash }) => {
+  pictureHashes.forEach(({ id, imageHash, base64Image }) => {
     const modPicture = modPictures.find(({ id: modId }) => modId === id);
-    if (modPicture) modPicture.imageHash = imageHash;
+    if (modPicture) {
+      modPicture.imageHash = imageHash;
+      modPicture.base64Image = base64Image;
+    }
   });
 
   // Filter mod pictures without a matching recorded hash

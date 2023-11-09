@@ -515,6 +515,7 @@ declare type ModPicture = {
   username: string;
   image_url: string;
   imageHash?: string;
+  base64Image?: string;
 };
 
 declare type ModVideo = {

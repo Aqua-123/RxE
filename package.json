@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.13.2.6",
+  "version": "0.13.2.7",
   "name": "emerald",
   "scripts": {
     "build-webpack-config": "tsc -p tsconfig.webpack.json",
@@ -86,7 +86,9 @@
     "ts-preferences": "^2.0.0"
   },
   "dependencies": {
+    "@types/firebase": "^3.2.1",
     "actioncable": "^5.2.8-1",
+    "firebase": "^10.6.0",
     "md5": "^2.3.0"
   }
 }
