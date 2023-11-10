@@ -12,10 +12,6 @@ const firebaseConfig = {
   measurementId: "G-LSKDYQLBQY"
 };
 
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-
 interface ModerationData {
   picture?: string;
   nameModeration?: string;
@@ -27,6 +23,8 @@ export async function sendDataToFirestore(data: {
   pictureBase64?: string;
   nameModeration?: string;
 }) {
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
   const { action, pictureBase64, nameModeration } = data;
   // Reference to your Firestore collection
   const dataJson: ModerationData = {
@@ -34,6 +32,7 @@ export async function sendDataToFirestore(data: {
   };
   if (pictureBase64) dataJson.picture = pictureBase64;
   if (nameModeration) dataJson.nameModeration = nameModeration;
+  console.log("dataJson", dataJson);
   try {
     const collectionRef = await addDoc(collection(db, "EmeraldChat"), dataJson);
     console.log("Document written with ID: ", collectionRef.id);
