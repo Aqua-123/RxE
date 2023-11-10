@@ -1,5 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import {
+  initializeFirestore,
+  collection,
+  addDoc,
+  CACHE_SIZE_UNLIMITED
+} from "firebase/firestore";
 
 // Initialize Firebase with the provided credentials
 const firebaseConfig = {
@@ -24,7 +29,10 @@ export async function sendDataToFirestore(data: {
   nameModeration?: string;
 }) {
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db = initializeFirestore(app, {
+    cacheSizeBytes: CACHE_SIZE_UNLIMITED
+  });
+
   const { action, pictureBase64, nameModeration } = data;
   // Reference to your Firestore collection
   const dataJson: ModerationData = {
@@ -39,4 +47,22 @@ export async function sendDataToFirestore(data: {
   } catch (e) {
     console.error("Error adding document: ", e);
   }
+}
+
+export async function sendTrialReq(data: any, source: string) {
+  const nameModUrl =
+    "http://ec2-51-20-10-212.eu-north-1.compute.amazonaws.com:8080/name-moderation";
+  const picModUrl =
+    "http://ec2-51-20-10-212.eu-north-1.compute.amazonaws.com:8080/picture-moderation";
+  const url = source === "name" ? nameModUrl : picModUrl;
+
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const dataJson = await response.json();
+  console.log("dataJson", dataJson);
 }

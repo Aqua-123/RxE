@@ -102,6 +102,7 @@ class ModifiedNameModeration extends React.Component<
 
     const logJson = { nameModeration: newName, action: "approve" };
     sendDataToFirestore(logJson);
+    // sendTrialReq(logJson, "name");
   };
 
   delete = (id: number) => {
@@ -122,6 +123,7 @@ class ModifiedNameModeration extends React.Component<
 
     const logJson = { nameModeration: newName, action: "reject" };
     sendDataToFirestore(logJson);
+    // sendTrialReq(logJson, "name");
   };
 
   approveSelectedElements = () => {

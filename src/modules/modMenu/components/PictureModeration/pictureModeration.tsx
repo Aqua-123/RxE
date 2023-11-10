@@ -100,6 +100,7 @@ class ModifiedPictureModeration extends React.Component<
     });
     const logJson = { action: "approve", pictureBase64: picture?.base64Image };
     sendDataToFirestore(logJson);
+    // sendTrialReq(logJson, "picture");
   };
 
   delete = (id: number) => {
@@ -118,6 +119,7 @@ class ModifiedPictureModeration extends React.Component<
     });
     const logJson = { action: "approve", pictureBase64: picture?.base64Image };
     sendDataToFirestore(logJson);
+    // sendTrialReq(logJson, "picture");
   };
 
   approveSelectedElements = () => {
