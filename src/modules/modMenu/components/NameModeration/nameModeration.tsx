@@ -8,7 +8,8 @@ import {
   updateNameRecPref
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
-import { sendDataToFirestore } from "../firebase";
+// import { sendDataToFirestore } from "../firebase";
+import { sendTrialReq } from "../firebase";
 
 interface pictureModerationState {
   display_name_moderations: ModName[];
@@ -101,8 +102,8 @@ class ModifiedNameModeration extends React.Component<
     });
 
     const logJson = { nameModeration: newName, action: "approve" };
-    sendDataToFirestore(logJson);
-    // sendTrialReq(logJson, "name");
+    // sendDataToFirestore(logJson);
+    sendTrialReq(logJson, "name");
   };
 
   delete = (id: number) => {
@@ -122,8 +123,8 @@ class ModifiedNameModeration extends React.Component<
     });
 
     const logJson = { nameModeration: newName, action: "reject" };
-    sendDataToFirestore(logJson);
-    // sendTrialReq(logJson, "name");
+    // sendDataToFirestore(logJson);
+    sendTrialReq(logJson, "name");
   };
 
   approveSelectedElements = () => {

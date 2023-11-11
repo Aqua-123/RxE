@@ -8,7 +8,8 @@ import {
   updatePicHashListPref
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
-import { sendDataToFirestore } from "../firebase";
+// import { sendDataToFirestore } from "../firebase";
+import { sendTrialReq } from "../firebase";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];
@@ -99,8 +100,8 @@ class ModifiedPictureModeration extends React.Component<
       }
     });
     const logJson = { action: "approve", pictureBase64: picture?.base64Image };
-    sendDataToFirestore(logJson);
-    // sendTrialReq(logJson, "picture");
+    // sendDataToFirestore(logJson);
+    sendTrialReq(logJson, "picture");
   };
 
   delete = (id: number) => {
@@ -118,8 +119,8 @@ class ModifiedPictureModeration extends React.Component<
       }
     });
     const logJson = { action: "approve", pictureBase64: picture?.base64Image };
-    sendDataToFirestore(logJson);
-    // sendTrialReq(logJson, "picture");
+    // sendDataToFirestore(logJson);
+    sendTrialReq(logJson, "picture");
   };
 
   approveSelectedElements = () => {
