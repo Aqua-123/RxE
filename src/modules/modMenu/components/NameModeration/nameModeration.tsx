@@ -72,9 +72,7 @@ class ModifiedNameModeration extends React.Component<
   stateUpdate = (id: number) => {
     const { display_name_moderations } = this.state;
     const newListofNames = display_name_moderations.filter((t) => t.id !== id);
-    const state = {
-      display_name_moderations: newListofNames
-    };
+    const state = { display_name_moderations: newListofNames };
     setNameModIconCount(newListofNames.length);
     this.setState(state);
   };
