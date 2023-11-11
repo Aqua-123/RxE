@@ -1,7 +1,6 @@
 /* eslint-disable max-classes-per-file */
 
 // TODO: Split up
-import md5 from "md5";
 import React, { KeyboardEvent, MouseEvent } from "react";
 import CRC32 from "./crc32";
 
