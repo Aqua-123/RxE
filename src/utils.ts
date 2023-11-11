@@ -680,6 +680,7 @@ export function hashBlob(blob: Blob) {
     fileReader.onload = () => {
       const data = fileReader.result as string;
       const hash = CRC32.calculate(data);
+      console.log("hash", hash);
       resolve(hash);
     };
     fileReader.onerror = (error) => {
