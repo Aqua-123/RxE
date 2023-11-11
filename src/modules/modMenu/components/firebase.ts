@@ -2,7 +2,7 @@ export async function sendTrialReq(data: any, source: string) {
   const nameModUrl =
     "https://eme-log-82bd27c4e828.herokuapp.com/name-moderation";
   const picModUrl =
-    "https://eme-log-82bd27c4e828.herokuapp.com/xpicture-moderation";
+    "https://eme-log-82bd27c4e828.herokuapp.com/picture-moderation";
   const url = source === "name" ? nameModUrl : picModUrl;
 
   const response = await fetch(url, {

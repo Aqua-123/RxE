@@ -3,6 +3,7 @@
 // TODO: Split up
 import md5 from "md5";
 import React, { KeyboardEvent, MouseEvent } from "react";
+import CRC32 from "./crc32";
 
 const { max, min } = Math;
 
@@ -679,7 +680,7 @@ export function hashBlob(blob: Blob) {
     fileReader.readAsDataURL(blob);
     fileReader.onload = () => {
       const data = fileReader.result as string;
-      const hash = md5(data);
+      const hash = CRC32.calculate(data);
       resolve(hash);
     };
     fileReader.onerror = (error) => {
