@@ -118,7 +118,7 @@ class ModifiedPictureModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
-    const logJson = { action: "approve", pictureBase64: picture?.base64Image };
+    const logJson = { action: "reject", pictureBase64: picture?.base64Image };
     // sendDataToFirestore(logJson);
     sendTrialReq(logJson, "picture");
   };
