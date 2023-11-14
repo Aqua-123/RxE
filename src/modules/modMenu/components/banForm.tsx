@@ -58,6 +58,15 @@ export const reasonList = [
     label: "Spreading derogatory words/racism/bigotry in chat"
   },
   {
+    value: "nudity",
+    label:
+      "Please don't start your video with nudity or sexual content, not everyone wants to see that"
+  },
+  {
+    value: "socials",
+    label: "Promotion of external social media"
+  },
+  {
     value: "english",
     label: "Please keep group chat in English"
   },
