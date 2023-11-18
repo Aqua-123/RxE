@@ -5,10 +5,10 @@ import {
   picModFetchHandler,
   setPicModIconCount,
   clearPicModCache,
-  updatePicHashListPref
+  updatePicHashListPref,
+  getPredictions
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
-// import { sendDataToFirestore } from "../firebase";
 import { sendTrialReq } from "../firebase";
 
 interface pictureModerationState {
@@ -57,8 +57,9 @@ class ModifiedPictureModeration extends React.Component<
       this.delete
     );
 
-    this.setState({ picture_moderations: filteredPictureModerations });
-    setPicModIconCount(filteredPictureModerations.length);
+    const picModPred = await getPredictions(filteredPictureModerations);
+    this.setState({ picture_moderations: picModPred });
+    setPicModIconCount(picModPred.length);
   };
 
   fetch = () => {
@@ -240,15 +241,15 @@ class ModifiedPictureModeration extends React.Component<
         {this.actionButtons()}
         <br />
         <div className="meet-cards-container video-moderation">
-          {picture_moderations.map((user) => (
-            <div key={user.id} className="checkmark-button-container">
+          {picture_moderations.map((pic) => (
+            <div key={pic.id} className="checkmark-button-container">
               <CheckmarkButton
-                isSelected={selectedElements.includes(user.id)}
-                onClick={() => toggleElementSelection(user.id)}
+                isSelected={selectedElements.includes(pic.id)}
+                onClick={() => toggleElementSelection(pic.id)}
               />
               <PictureModerationUnit
-                key={`picture_moderation${user.id}`}
-                data={user}
+                key={`picture_moderation${pic.id}`}
+                data={pic}
                 delete={this.delete}
                 approve={this.approve}
               />
@@ -264,9 +265,46 @@ class ModifiedPictureModeration extends React.Component<
 
 export function pictureModerationOverride() {
   PictureModeration = ModifiedPictureModeration;
+  PictureModerationUnit.prototype.feedback = async function fb(
+    agreement: boolean
+  ) {
+    const { data } = this.props;
+    const selectedLabel = this.state
+      ? this.state.selectedLabel
+      : data.prediction; // Assuming you fetch or set this from your state or props
+    const correct_checkbox = agreement; // true for Agree, false for Disagree
+
+    const setFeedbackState = (status: boolean) => {
+      this.setState({ feedbackDone: status });
+    };
+    try {
+      const response = await fetch("https://class2.emeraldchat.com/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          base64Image: data.base64Image, // Make sure this contains the base64 encoded image
+          correctCheckbox: correct_checkbox,
+          label: selectedLabel,
+          prediction: data.prediction
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      setFeedbackState(true);
+      console.log(responseData); // Handle the response data as needed
+    } catch (error) {
+      console.error("There was an error sending the feedback:", error);
+    }
+  };
+
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
-    const open_picture = function () {
+
+    const open_picture = function op() {
       const element = React.createElement(Picture, {
         data: {
           src: data.image_url
@@ -274,10 +312,17 @@ export function pictureModerationOverride() {
       });
       ReactDOM.render(element, document.getElementById("ui-hatch-2"));
     };
+
+    const handleLabelChange = (event: any) => {
+      this.setState({ selectedLabel: event.target.value });
+    };
+
+    const feedbackDone = this.state ? this.state.feedbackDone : false;
+
     return (
       <div
         className="dashboard-button animated"
-        style={{ paddingTop: "30px", height: "400px" }}
+        style={{ paddingTop: "30px", height: "530px" }}
       >
         <div>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
@@ -300,22 +345,78 @@ export function pictureModerationOverride() {
             UserViewGenerator.generate({ event: e, user });
           }}
         >
-          <h2>{`${data.display_name}(${data.username})`}</h2>
+          <h2>{`${data.display_name}`}</h2>
         </div>
-        <button
-          className="ui-button-match-mega gold-button"
-          onClick={this.approve}
-          type="button"
+        <h2>{`Prediction: ${data.prediction}`}</h2>
+        <div>
+          {!feedbackDone ? (
+            <div>
+              {/* Dropdown and buttons */}
+              <div>
+                <select
+                  value={this.state?.selectedLabel}
+                  onChange={handleLabelChange}
+                  defaultValue=""
+                  style={{ backgroundColor: "#100f10", display: "block" }}
+                >
+                  {/* Dropdown options */}
+                  <option value="option1">Not_NSFW</option>
+                  <option value="option2">Suggestive_NSFW</option>
+                  <option value="option3">General_NSFW</option>
+                </select>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center"
+                }}
+              >
+                <button
+                  className="ui-button-match-mega"
+                  onClick={() => this.feedback(true)}
+                  type="button"
+                >
+                  Agree
+                </button>
+                <button
+                  className="ui-button-match-mega"
+                  onClick={() => this.feedback(false)}
+                  type="button"
+                >
+                  Disagree
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Feedback received message */}
+              <h2>Feedback Received</h2>
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center"
+          }}
         >
-          Approve
-        </button>
-        <button
-          className="ui-button-match-mega red-button"
-          onClick={this.delete}
-          type="button"
-        >
-          Reject
-        </button>
+          <button
+            className="ui-button-match-mega gold-button"
+            onClick={this.approve}
+            type="button"
+          >
+            Approve
+          </button>
+          <button
+            className="ui-button-match-mega red-button"
+            onClick={this.delete}
+            type="button"
+          >
+            Reject
+          </button>
+        </div>
       </div>
     );
   };

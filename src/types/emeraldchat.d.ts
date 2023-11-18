@@ -516,6 +516,7 @@ declare type ModPicture = {
   image_url: string;
   imageHash?: string;
   base64Image?: string;
+  prediction?: string;
 };
 
 declare type ModVideo = {
@@ -545,9 +546,12 @@ declare class PictureModerationUnit extends React.Component<
 > {
   state: {
     user: EmeraldUser;
+    selectedLabel: string;
+    feedbackDone: boolean;
   };
   approve(): void;
   delete(): void;
+  feedback(agreement: boolean): void;
 }
 
 declare let DisplayNameModeration: any;

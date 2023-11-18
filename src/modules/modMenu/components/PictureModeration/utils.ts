@@ -143,3 +143,20 @@ export function clearPicModCache() {
   Preferences.set(P.picModHashes, []);
   alert("Image cache for picture moderation has been cleared");
 }
+
+export async function getPredictions(imageDataArray: ModPicture[]) {
+  const apiEndpoint = "https://class2.emeraldchat.com/predict"; // Replace with your actual API endpoint
+
+  const response = await fetch(apiEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(imageDataArray)
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data;
+}
