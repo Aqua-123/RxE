@@ -269,9 +269,11 @@ export function pictureModerationOverride() {
     agreement: boolean
   ) {
     const { data } = this.props;
-    const selectedLabel = this.state
-      ? this.state.selectedLabel
-      : data.prediction; // Assuming you fetch or set this from your state or props
+    const selectedLabel =
+      this.state && this.state.selectedLabel
+        ? this.state.selectedLabel
+        : data.prediction; // Assuming you fetch or set this from your state or props
+    console.log(selectedLabel);
     const correct_checkbox = agreement; // true for Agree, false for Disagree
 
     const setFeedbackState = (status: boolean) => {
