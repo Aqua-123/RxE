@@ -17,18 +17,28 @@ export function videoModerationOverride() {
       UserViewGenerator.generate({ event, user: data });
     };
 
+    const userThumbnail = data.thumbnail_picture || data.display_picture;
+    const currentMod = data.video_moderations[this.state.imageId];
+    const isTagged = currentMod.tag_matched ? "tagged" : "";
+
+    const moderationImageClass = `grid-item ${isTagged}`;
+
+    const isGoldUser = data.gold ? "(G)" : "";
+
     return (
       <div className="dashboard-button animated" style={{ paddingTop: "30px" }}>
         <div className="room-component-message-left">
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
           <img
             onMouseDown={openProfilePopup}
-            src={data.display_picture}
+            src={userThumbnail}
             alt=""
             className="room-component-message-avatar"
           />
         </div>
-        <p>{data.display_name + (data.gold ? "(G)" : "")}</p>
+        <p>
+          {data.display_name} {isGoldUser}
+        </p>
         <div className="images-container">
           <div
             className="grid-item arrow"
@@ -40,12 +50,11 @@ export function videoModerationOverride() {
           </div>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
           <img
-            className="grid-item"
+            className={moderationImageClass}
+            src={currentMod.image}
+            onClick={() => openPicture(currentMod.image)}
             alt=""
-            src={data.images[this.state.imageId]}
-            onMouseDown={() => openPicture(data.images[this.state.imageId])}
           />
-
           <div
             className="grid-item arrow"
             style={{ marginRight: "-20px" }}
@@ -56,12 +65,19 @@ export function videoModerationOverride() {
           </div>
         </div>
         <div>
-          {this.state.imageId + 1} out of {data.images.length}
+          {this.state.imageId + 1} out of {data.video_moderations.length}
         </div>
         <button
-          className="ui-button-match-mega gold-button"
+          className="ui-button-match-mega primary-button tag-button"
           type="button"
+          onClick={() => this.updateTag(currentMod.id, !currentMod.tagged)}
+        >
+          {currentMod.tagged ? "Remove" : "Add"} Tag
+        </button>
+        <button
+          className="ui-button-match-mega gold-button"
           onClick={this.delete}
+          type="button"
         >
           Delete
         </button>

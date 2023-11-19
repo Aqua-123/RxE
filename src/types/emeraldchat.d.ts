@@ -519,20 +519,30 @@ declare type ModPicture = {
   prediction?: string;
 };
 
+declare type ModVideoImage = {
+  created_at: string;
+  id: number;
+  image: string;
+  md5_hash: string;
+  tag_matched: boolean;
+  tagged: boolean;
+  updated_at: string;
+  user_id: number;
+};
+
 declare type ModVideo = {
   created_at: string;
   display_name: string;
-  display_picture: string;
   gold: boolean;
   id: number;
-  images: string[];
   karma: number;
   master: boolean;
   mod: boolean;
   online: boolean;
-  updated_at: string;
-  user_id: number;
   username: string;
+  display_picture: string;
+  video_moderations: ModVideoImage[];
+  thumbnail_picture: string | null;
 };
 
 declare let PictureModeration: any;
@@ -584,6 +594,7 @@ declare class VideoModerationUnit extends React.Component<
   delete(): void;
   next(): void;
   previous(): void;
+  updateTag(id: number, newState: boolean): void;
 }
 declare class Room extends React.Component<// add props
 {
