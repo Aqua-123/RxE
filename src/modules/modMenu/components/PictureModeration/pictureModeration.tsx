@@ -339,7 +339,7 @@ export function pictureModerationOverride() {
         <div
           onMouseDown={async (e) => {
             let user;
-            if (!this.state) {
+            if (!this.state || !this.state.user) {
               const userData = await getUserData(data.user_id);
               user = userData.user;
             } else user = this.state.user;
