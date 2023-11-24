@@ -50,8 +50,8 @@ export async function picModFetchHandler(
 ) {
   // Get recorded hashes from preferences
   const recordedHashes = Preferences.get(P.picModHashes);
-
   // Get hashes for all mod pictures
+
   const pictureHashes = await Promise.allSettled(
     // eslint-disable-next-line camelcase
     modPictures.map(async ({ id, image_url }) => {

@@ -57,7 +57,11 @@ class ModifiedPictureModeration extends React.Component<
       this.delete
     );
 
+    // get time used by this function
+    const start = performance.now();
     const picModPred = await getPredictions(filteredPictureModerations);
+    const end = performance.now();
+    console.log(`Time taken to get predictions: ${end - start}ms`);
     this.setState({ picture_moderations: picModPred });
     setPicModIconCount(picModPred.length);
   };
