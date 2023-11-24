@@ -284,19 +284,16 @@ export function pictureModerationOverride() {
       this.setState({ feedbackDone: status });
     };
     try {
-      const response = await fetch(
-        "https://class2.emeraldchat.com/feedback_url",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            url: data.image_url, // Make sure this contains the base64 encoded image
-            correctCheckbox: correct_checkbox,
-            label: selectedLabel,
-            prediction: data.prediction
-          })
-        }
-      );
+      const response = await fetch("https://class2.emeraldchat.com/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: data.image_url, // Make sure this contains the base64 encoded image
+          correctCheckbox: correct_checkbox,
+          label: selectedLabel,
+          prediction: data.prediction
+        })
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
