@@ -10,6 +10,7 @@ import {
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
 import { sendTrialReq } from "../firebase";
+import { Preferences, P } from "~src/preferences";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];
@@ -51,19 +52,48 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   handleFetch = async (modPictures: ModPicture[]) => {
+    const recordedPredictions = Preferences.get(P.picModPredictions);
+    console.log(recordedPredictions);
     const filteredPictureModerations = await picModFetchHandler(
       modPictures,
       this.approve,
       this.delete
     );
 
-    // get time used by this function
-    const start = performance.now();
-    const picModPred = await getPredictions(filteredPictureModerations);
-    const end = performance.now();
-    console.log(`Time taken to get predictions: ${end - start}ms`);
-    this.setState({ picture_moderations: picModPred });
-    setPicModIconCount(picModPred.length);
+    const unrecordedPictures = filteredPictureModerations.filter(
+      (picture) =>
+        !recordedPredictions.some((record) => record.hash === picture.imageHash)
+    );
+
+    const preRecordedPictures = filteredPictureModerations.filter((picture) =>
+      recordedPredictions.some((record) => record.hash === picture.imageHash)
+    );
+
+    let unrecordedPicturesWithPredictions: ModPicture[] = [];
+
+    if (unrecordedPictures.length) {
+      unrecordedPicturesWithPredictions = (await getPredictions(
+        unrecordedPictures
+      )) as ModPicture[];
+    }
+
+    const finalPredictions = preRecordedPictures.concat(
+      unrecordedPicturesWithPredictions
+    );
+
+    // save the predictions
+    const newRecordedPredictions = finalPredictions.map((picture) => ({
+      hash: picture.imageHash!,
+      prediction: picture.prediction!
+    }));
+    Preferences.set(P.picModPredictions, newRecordedPredictions);
+
+    // const start = performance.now();
+    // const picModPred = await getPredictions(filteredPictureModerations);
+    // const end = performance.now();
+    // console.log(`Time taken to get predictions: ${end - start}ms`);
+    this.setState({ picture_moderations: finalPredictions });
+    setPicModIconCount(finalPredictions.length);
   };
 
   fetch = () => {

@@ -203,6 +203,14 @@ export const P = {
     label: "picModHashes",
     default: []
   }),
+  picModPredictions: new ListPreference<{
+    hash: string;
+    prediction: string;
+  }>({
+    key: "picModPredictions",
+    label: "picModPredictions",
+    default: []
+  }),
   nameModRecords: new ListPreference<{
     name: string;
     approvals: number;

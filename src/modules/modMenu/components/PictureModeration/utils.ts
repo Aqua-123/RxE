@@ -142,7 +142,7 @@ export async function getPredictions(imageDataArray: ModPicture[]) {
   });
 
   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+    return [];
   }
 
   const data = await response.json();

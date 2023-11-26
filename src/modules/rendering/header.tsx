@@ -4,6 +4,7 @@ import U from "~src/userscript";
 import { crel, loadCSS } from "~src/utils";
 import css from "./style.scss";
 import {
+  getPredictions,
   picModFetchHandler,
   setPicModIconCount
 } from "../modMenu/components/PictureModeration/utils";
@@ -11,6 +12,7 @@ import {
   nameModFetchHandler,
   setNameModIconCount
 } from "../modMenu/components/NameModeration/utils";
+import { Preferences, P } from "~src/preferences";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -77,13 +79,43 @@ async function fetchPicModData() {
   if (response.status === 403) {
     return 0;
   }
+  const recordedPredictions = Preferences.get(P.picModPredictions);
+
   const modPictures = (await response.json()) as ModPicture[];
   const filteredPictureModerations = await picModFetchHandler(
     modPictures,
     approvePicMod,
     rejectPicMod
   );
+  // find the ones that are not in the recorded predictions
 
+  const unrecordedPictures = filteredPictureModerations.filter(
+    (picture) =>
+      !recordedPredictions.some((record) => record.hash === picture.imageHash)
+  );
+
+  const preRecordedPictures = filteredPictureModerations.filter((picture) =>
+    recordedPredictions.some((record) => record.hash === picture.imageHash)
+  );
+
+  let unrecordedPicturesWithPredictions: ModPicture[] = [];
+
+  if (unrecordedPictures.length) {
+    unrecordedPicturesWithPredictions = (await getPredictions(
+      unrecordedPictures
+    )) as ModPicture[];
+  }
+  const finalPredictions = preRecordedPictures.concat(
+    unrecordedPicturesWithPredictions
+  );
+
+  // save the predictions
+  const newRecordedPredictions = finalPredictions.map((picture) => ({
+    hash: picture.imageHash!,
+    prediction: picture.prediction!
+  }));
+
+  Preferences.set(P.picModPredictions, newRecordedPredictions);
   return filteredPictureModerations.length
     ? filteredPictureModerations.length
     : 0;
@@ -210,8 +242,8 @@ function headerIcons() {
   }
 
   if (!document.body.classList.contains("watchers_started")) {
-    updatePicModIcon();
-    updateNameModIcon();
+    setTimeout(updatePicModIcon, 1000);
+    setTimeout(updateNameModIcon, 1000);
     document.body.classList.add("watchers_started");
     setInterval(updatePicModIcon, 15000);
     setInterval(updateNameModIcon, 15000);
