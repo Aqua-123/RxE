@@ -80,7 +80,7 @@ async function fetchPicModData() {
     return 0;
   }
   const recordedPredictions = Preferences.get(P.picModPredictions);
-
+  console.log(recordedPredictions);
   const modPictures = (await response.json()) as ModPicture[];
   const filteredPictureModerations = await picModFetchHandler(
     modPictures,
@@ -98,6 +98,14 @@ async function fetchPicModData() {
     recordedPredictions.some((record) => record.hash === picture.imageHash)
   );
 
+  // add predictions to prerecorded pictures from cache
+  preRecordedPictures.forEach((picture) => {
+    const prediction = recordedPredictions.find(
+      (record) => record.hash === picture.imageHash
+    )?.prediction;
+    if (prediction) picture.prediction = prediction;
+  });
+
   let unrecordedPicturesWithPredictions: ModPicture[] = [];
 
   if (unrecordedPictures.length) {
@@ -110,15 +118,18 @@ async function fetchPicModData() {
   );
 
   // save the predictions
-  const newRecordedPredictions = finalPredictions.map((picture) => ({
-    hash: picture.imageHash!,
-    prediction: picture.prediction!
-  }));
+  const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
+    (picture) => ({
+      hash: picture.imageHash!,
+      prediction: picture.prediction!
+    })
+  );
 
-  Preferences.set(P.picModPredictions, newRecordedPredictions);
-  return filteredPictureModerations.length
-    ? filteredPictureModerations.length
-    : 0;
+  Preferences.set(P.picModPredictions, [
+    ...recordedPredictions,
+    ...newRecordedPredictions
+  ]);
+  return finalPredictions.length ? finalPredictions.length : 0;
 }
 
 async function fetchNameModData() {

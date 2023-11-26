@@ -52,6 +52,7 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   handleFetch = async (modPictures: ModPicture[]) => {
+    const start = performance.now();
     const recordedPredictions = Preferences.get(P.picModPredictions);
     console.log(recordedPredictions);
     const filteredPictureModerations = await picModFetchHandler(
@@ -68,6 +69,12 @@ class ModifiedPictureModeration extends React.Component<
     const preRecordedPictures = filteredPictureModerations.filter((picture) =>
       recordedPredictions.some((record) => record.hash === picture.imageHash)
     );
+    preRecordedPictures.forEach((picture) => {
+      const prediction = recordedPredictions.find(
+        (record) => record.hash === picture.imageHash
+      )?.prediction;
+      if (prediction) picture.prediction = prediction;
+    });
 
     let unrecordedPicturesWithPredictions: ModPicture[] = [];
 
@@ -82,16 +89,22 @@ class ModifiedPictureModeration extends React.Component<
     );
 
     // save the predictions
-    const newRecordedPredictions = finalPredictions.map((picture) => ({
-      hash: picture.imageHash!,
-      prediction: picture.prediction!
-    }));
-    Preferences.set(P.picModPredictions, newRecordedPredictions);
+    const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
+      (picture) => ({
+        hash: picture.imageHash!,
+        prediction: picture.prediction!
+      })
+    );
+
+    Preferences.set(P.picModPredictions, [
+      ...recordedPredictions,
+      ...newRecordedPredictions
+    ]);
 
     // const start = performance.now();
     // const picModPred = await getPredictions(filteredPictureModerations);
-    // const end = performance.now();
-    // console.log(`Time taken to get predictions: ${end - start}ms`);
+    const end = performance.now();
+    console.log(`Time taken to get predictions: ${end - start}ms`);
     this.setState({ picture_moderations: finalPredictions });
     setPicModIconCount(finalPredictions.length);
   };
