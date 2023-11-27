@@ -16,12 +16,23 @@ export function reorderMenu() {
     null
   ).singleNodeValue;
 
+  const buyKarma = document.evaluate(
+    "//li[text()='Buy Karma']",
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue;
+
   if (Preferences.get(P.adBlocker)) {
     if (gold instanceof HTMLElement) {
       gold.remove();
     }
     if (premiumBadge instanceof HTMLElement) {
       premiumBadge.remove();
+    }
+    if (buyKarma instanceof HTMLElement) {
+      buyKarma.remove();
     }
   } else {
     if (gold && gold.parentElement?.firstChild === gold) {
@@ -32,6 +43,9 @@ export function reorderMenu() {
       premiumBadge.parentElement?.firstChild === premiumBadge
     ) {
       premiumBadge.parentElement.append(premiumBadge);
+    }
+    if (buyKarma && buyKarma.parentElement?.firstChild === buyKarma) {
+      buyKarma.parentElement.append(buyKarma);
     }
   }
 }
