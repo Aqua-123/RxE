@@ -517,6 +517,7 @@ declare type ModPicture = {
   imageHash?: string;
   base64Image?: string;
   prediction?: string;
+  feedback?: boolean;
 };
 
 declare type ModVideoImage = {

@@ -211,6 +211,14 @@ export const P = {
     label: "picModPredictions",
     default: []
   }),
+  picModFeedback: new ListPreference<{
+    hash: string;
+    feedback: string;
+  }>({
+    key: "picModFeedback",
+    label: "picModFeedback",
+    default: []
+  }),
   nameModRecords: new ListPreference<{
     name: string;
     approvals: number;

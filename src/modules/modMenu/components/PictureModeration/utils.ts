@@ -148,3 +148,60 @@ export async function getPredictions(imageDataArray: ModPicture[]) {
   const data = await response.json();
   return data;
 }
+
+export async function processPredictions(pictureModerationList: ModPicture[]) {
+  const recordedPredictions = Preferences.get(P.picModPredictions);
+
+  const preRecordedPictures = [] as ModPicture[];
+  const unrecordedPictures = [] as ModPicture[];
+  let unrecordedPicturesWithPredictions: ModPicture[] = [];
+
+  pictureModerationList.forEach((picture) => {
+    const recordedPrediction = recordedPredictions.find(
+      (record) => record.hash === picture.imageHash
+    );
+    if (recordedPrediction) {
+      picture.prediction = recordedPrediction.prediction;
+      preRecordedPictures.push(picture);
+    } else {
+      unrecordedPictures.push(picture);
+    }
+  });
+
+  if (unrecordedPictures.length) {
+    unrecordedPicturesWithPredictions = await getPredictions(
+      unrecordedPictures
+    );
+  }
+
+  const finalPredictions =
+    unrecordedPicturesWithPredictions.concat(preRecordedPictures);
+
+  // save the predictions
+  const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
+    (picture) => ({
+      hash: picture.imageHash!,
+      prediction: picture.prediction!
+    })
+  );
+  Preferences.set(P.picModPredictions, [
+    ...recordedPredictions,
+    ...newRecordedPredictions
+  ]);
+  return finalPredictions;
+}
+
+export function getFeedback(hash: string) {
+  const recordedFeedback = Preferences.get(P.picModFeedback);
+  const feedback = recordedFeedback.find((record) => record.hash === hash);
+  return feedback;
+}
+
+export function setFeedback(hash: string, feedback: string) {
+  const recordedFeedback = Preferences.get(P.picModFeedback);
+  const newRecordedFeedback = recordedFeedback.filter(
+    (record) => record.hash !== hash
+  );
+  newRecordedFeedback.push({ hash, feedback });
+  Preferences.set(P.picModFeedback, newRecordedFeedback);
+}

@@ -6,11 +6,12 @@ import {
   setPicModIconCount,
   clearPicModCache,
   updatePicHashListPref,
-  getPredictions
+  processPredictions,
+  getFeedback,
+  setFeedback
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
 import { sendTrialReq } from "../firebase";
-import { Preferences, P } from "~src/preferences";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];
@@ -53,7 +54,6 @@ class ModifiedPictureModeration extends React.Component<
 
   handleFetch = async (modPictures: ModPicture[]) => {
     const start = performance.now();
-    const recordedPredictions = Preferences.get(P.picModPredictions);
 
     const filteredPictureModerations = await picModFetchHandler(
       modPictures,
@@ -61,44 +61,9 @@ class ModifiedPictureModeration extends React.Component<
       this.delete
     );
 
-    const preRecordedPictures = [] as ModPicture[];
-    const unrecordedPictures = [] as ModPicture[];
-    let unrecordedPicturesWithPredictions: ModPicture[] = [];
-
-    filteredPictureModerations.forEach((picture) => {
-      const recordedPrediction = recordedPredictions.find(
-        (record) => record.hash === picture.imageHash
-      );
-      if (recordedPrediction) {
-        picture.prediction = recordedPrediction.prediction;
-        preRecordedPictures.push(picture);
-      } else {
-        unrecordedPictures.push(picture);
-      }
-    });
-
-    if (unrecordedPictures.length) {
-      unrecordedPicturesWithPredictions = await getPredictions(
-        unrecordedPictures
-      );
-    }
-
-    const finalPredictions = preRecordedPictures.concat(
-      unrecordedPicturesWithPredictions
+    const finalPredictions = await processPredictions(
+      filteredPictureModerations
     );
-
-    // save the predictions
-    const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
-      (picture) => ({
-        hash: picture.imageHash!,
-        prediction: picture.prediction!
-      })
-    );
-
-    Preferences.set(P.picModPredictions, [
-      ...recordedPredictions,
-      ...newRecordedPredictions
-    ]);
 
     const end = performance.now();
     console.log(`Time taken to get predictions: ${end - start}ms`);
@@ -309,20 +274,26 @@ class ModifiedPictureModeration extends React.Component<
 
 export function pictureModerationOverride() {
   PictureModeration = ModifiedPictureModeration;
+
   PictureModerationUnit.prototype.feedback = async function fb(
     agreement: boolean
   ) {
     const { data } = this.props;
+
+    const hash = data.imageHash;
+
     const selectedLabel =
       this.state && this.state.selectedLabel
         ? this.state.selectedLabel
         : data.prediction; // Assuming you fetch or set this from your state or props
-    console.log(selectedLabel);
     const correct_checkbox = agreement; // true for Agree, false for Disagree
+    const feedbackString = `${correct_checkbox} ${selectedLabel}`;
 
     const setFeedbackState = (status: boolean) => {
       this.setState({ feedbackDone: status });
     };
+    setFeedback(hash!, feedbackString);
+    setFeedbackState(true);
     try {
       const response = await fetch("https://class2.emeraldchat.com/feedback", {
         method: "POST",
@@ -338,10 +309,6 @@ export function pictureModerationOverride() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-      const responseData = await response.json();
-      setFeedbackState(true);
-      console.log(responseData); // Handle the response data as needed
     } catch (error) {
       console.error("There was an error sending the feedback:", error);
     }
@@ -349,20 +316,16 @@ export function pictureModerationOverride() {
 
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
-
+    const feedbackPrerecorded = getFeedback(data.imageHash!);
     const open_picture = function op() {
       const element = React.createElement(Picture, {
-        data: {
-          src: data.image_url
-        }
+        data: { src: data.image_url }
       });
       ReactDOM.render(element, document.getElementById("ui-hatch-2"));
     };
-
     const handleLabelChange = (event: any) => {
       this.setState({ selectedLabel: event.target.value });
     };
-
     const feedbackDone = this.state ? this.state.feedbackDone : false;
 
     return (
@@ -395,7 +358,7 @@ export function pictureModerationOverride() {
         </div>
         <h2>{`Prediction: ${data.prediction}`}</h2>
         <div>
-          {!feedbackDone ? (
+          {!feedbackDone && !feedbackPrerecorded ? (
             <div>
               {/* Dropdown and buttons */}
               <div>

@@ -12,7 +12,6 @@ import {
   nameModFetchHandler,
   setNameModIconCount
 } from "../modMenu/components/NameModeration/utils";
-import { Preferences, P } from "~src/preferences";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -78,7 +77,6 @@ async function fetchPicModData() {
   const response = await fetch("/picture_moderations");
   if (response.status === 403) return 0;
 
-  const recordedPredictions = Preferences.get(P.picModPredictions);
   const modPictures = (await response.json()) as ModPicture[];
 
   const filteredPictureModerations = await picModFetchHandler(
@@ -87,43 +85,7 @@ async function fetchPicModData() {
     rejectPicMod
   );
 
-  const preRecordedPictures = [] as ModPicture[];
-  const unrecordedPictures = [] as ModPicture[];
-  let unrecordedPicturesWithPredictions: ModPicture[] = [];
-
-  filteredPictureModerations.forEach((picture) => {
-    const recordedPrediction = recordedPredictions.find(
-      (record) => record.hash === picture.imageHash
-    );
-    if (recordedPrediction) {
-      picture.prediction = recordedPrediction.prediction;
-      preRecordedPictures.push(picture);
-    } else {
-      unrecordedPictures.push(picture);
-    }
-  });
-
-  if (unrecordedPictures.length > 0) {
-    unrecordedPicturesWithPredictions = await getPredictions(
-      unrecordedPictures
-    );
-  }
-
-  const finalPredictions = preRecordedPictures.concat(
-    unrecordedPicturesWithPredictions
-  );
-
-  const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
-    (picture) => ({
-      hash: picture.imageHash!,
-      prediction: picture.prediction!
-    })
-  );
-
-  Preferences.set(P.picModPredictions, [
-    ...recordedPredictions,
-    ...newRecordedPredictions
-  ]);
+  const finalPredictions = await getPredictions(filteredPictureModerations);
 
   return finalPredictions.length;
 }
