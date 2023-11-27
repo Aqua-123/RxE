@@ -54,34 +54,33 @@ class ModifiedPictureModeration extends React.Component<
   handleFetch = async (modPictures: ModPicture[]) => {
     const start = performance.now();
     const recordedPredictions = Preferences.get(P.picModPredictions);
-    console.log(recordedPredictions);
+
     const filteredPictureModerations = await picModFetchHandler(
       modPictures,
       this.approve,
       this.delete
     );
 
-    const unrecordedPictures = filteredPictureModerations.filter(
-      (picture) =>
-        !recordedPredictions.some((record) => record.hash === picture.imageHash)
-    );
-
-    const preRecordedPictures = filteredPictureModerations.filter((picture) =>
-      recordedPredictions.some((record) => record.hash === picture.imageHash)
-    );
-    preRecordedPictures.forEach((picture) => {
-      const prediction = recordedPredictions.find(
-        (record) => record.hash === picture.imageHash
-      )?.prediction;
-      if (prediction) picture.prediction = prediction;
-    });
-
+    const preRecordedPictures = [] as ModPicture[];
+    const unrecordedPictures = [] as ModPicture[];
     let unrecordedPicturesWithPredictions: ModPicture[] = [];
 
+    filteredPictureModerations.forEach((picture) => {
+      const recordedPrediction = recordedPredictions.find(
+        (record) => record.hash === picture.imageHash
+      );
+      if (recordedPrediction) {
+        picture.prediction = recordedPrediction.prediction;
+        preRecordedPictures.push(picture);
+      } else {
+        unrecordedPictures.push(picture);
+      }
+    });
+
     if (unrecordedPictures.length) {
-      unrecordedPicturesWithPredictions = (await getPredictions(
+      unrecordedPicturesWithPredictions = await getPredictions(
         unrecordedPictures
-      )) as ModPicture[];
+      );
     }
 
     const finalPredictions = preRecordedPictures.concat(
@@ -101,8 +100,6 @@ class ModifiedPictureModeration extends React.Component<
       ...newRecordedPredictions
     ]);
 
-    // const start = performance.now();
-    // const picModPred = await getPredictions(filteredPictureModerations);
     const end = performance.now();
     console.log(`Time taken to get predictions: ${end - start}ms`);
     this.setState({ picture_moderations: finalPredictions });

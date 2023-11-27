@@ -73,51 +73,46 @@ function rejectNameMod(id: number) {
 }
 
 async function fetchPicModData() {
-  // if (!App.user.mod || !App.user.master) return 0;
   if (!App.user.mod) return 0;
+
   const response = await fetch("/picture_moderations");
-  if (response.status === 403) {
-    return 0;
-  }
+  if (response.status === 403) return 0;
+
   const recordedPredictions = Preferences.get(P.picModPredictions);
-  console.log(recordedPredictions);
   const modPictures = (await response.json()) as ModPicture[];
+
   const filteredPictureModerations = await picModFetchHandler(
     modPictures,
     approvePicMod,
     rejectPicMod
   );
-  // find the ones that are not in the recorded predictions
 
-  const unrecordedPictures = filteredPictureModerations.filter(
-    (picture) =>
-      !recordedPredictions.some((record) => record.hash === picture.imageHash)
-  );
-
-  const preRecordedPictures = filteredPictureModerations.filter((picture) =>
-    recordedPredictions.some((record) => record.hash === picture.imageHash)
-  );
-
-  // add predictions to prerecorded pictures from cache
-  preRecordedPictures.forEach((picture) => {
-    const prediction = recordedPredictions.find(
-      (record) => record.hash === picture.imageHash
-    )?.prediction;
-    if (prediction) picture.prediction = prediction;
-  });
-
+  const preRecordedPictures = [] as ModPicture[];
+  const unrecordedPictures = [] as ModPicture[];
   let unrecordedPicturesWithPredictions: ModPicture[] = [];
 
-  if (unrecordedPictures.length) {
-    unrecordedPicturesWithPredictions = (await getPredictions(
+  filteredPictureModerations.forEach((picture) => {
+    const recordedPrediction = recordedPredictions.find(
+      (record) => record.hash === picture.imageHash
+    );
+    if (recordedPrediction) {
+      picture.prediction = recordedPrediction.prediction;
+      preRecordedPictures.push(picture);
+    } else {
+      unrecordedPictures.push(picture);
+    }
+  });
+
+  if (unrecordedPictures.length > 0) {
+    unrecordedPicturesWithPredictions = await getPredictions(
       unrecordedPictures
-    )) as ModPicture[];
+    );
   }
+
   const finalPredictions = preRecordedPictures.concat(
     unrecordedPicturesWithPredictions
   );
 
-  // save the predictions
   const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
     (picture) => ({
       hash: picture.imageHash!,
@@ -129,7 +124,8 @@ async function fetchPicModData() {
     ...recordedPredictions,
     ...newRecordedPredictions
   ]);
-  return finalPredictions.length ? finalPredictions.length : 0;
+
+  return finalPredictions.length;
 }
 
 async function fetchNameModData() {
