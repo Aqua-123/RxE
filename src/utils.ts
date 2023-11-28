@@ -673,7 +673,7 @@ export function versionComparison(version1: string, version2: string): number {
   return 0;
 }
 
-function hashBlobBase(blob: Blob) {
+export function hashBlob(blob: Blob) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(blob);
@@ -688,8 +688,6 @@ function hashBlobBase(blob: Blob) {
     };
   });
 }
-// @ts-ignore
-export const hashBlob = memoizeAsync(hashBlobBase);
 
 async function getImageBlobFromUrlBase(url: string) {
   const response = await fetch(url);
