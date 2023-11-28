@@ -129,7 +129,6 @@ class ModifiedPictureModeration extends React.Component<
       }
     });
     const logJson = { action: "reject", url: picture?.image_url };
-    // sendDataToFirestore(logJson);
     sendTrialReq(logJson, "picture");
   };
 

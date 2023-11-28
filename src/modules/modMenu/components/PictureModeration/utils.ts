@@ -57,6 +57,7 @@ export async function picModFetchHandler(
     modPictures.map(async ({ id, image_url }) => {
       try {
         const imageData = await getImageBlobFromUrl(image_url);
+        // @ts-ignore
         const imageHash = await hashBlob(imageData); // Directly hash the blob
         return { id, imageHash };
       } catch (error) {

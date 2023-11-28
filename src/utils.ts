@@ -673,7 +673,7 @@ export function versionComparison(version1: string, version2: string): number {
   return 0;
 }
 
-export function hashBlob(blob: Blob) {
+function hashBlobBase(blob: Blob) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.readAsDataURL(blob);
@@ -688,11 +688,15 @@ export function hashBlob(blob: Blob) {
     };
   });
 }
+// @ts-ignore
+export const hashBlob = memoizeAsync(hashBlobBase);
 
-export async function getImageBlobFromUrl(url: string) {
+async function getImageBlobFromUrlBase(url: string) {
   const response = await fetch(url);
   return response.blob();
 }
+
+export const getImageBlobFromUrl = memoizeAsync(getImageBlobFromUrlBase);
 
 export function getTimeAgo(timestamp: string) {
   const currentTime = new Date();
