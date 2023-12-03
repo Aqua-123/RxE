@@ -45,20 +45,20 @@ function updateRoomMembers({ user, user_disconnected: userLeft }: MessageData) {
   RoomChannelMembersClient.add_member(user);
 }
 
-function shadowBan(id: number, display_name: string) {
-  $.ajax({
-    url: `/shadow_ban?id=${id}`,
-    type: "GET",
-    success: () => {
-      printTransientMessage(`Shadowbanned user ${display_name} (${id}).`);
-    },
-    error: () => {
-      printTransientMessage(
-        `Failed to shadowban user ${display_name} (${id}).`
-      );
-    }
-  });
-}
+// function shadowBan(id: number, display_name: string) {
+//   $.ajax({
+//     url: `/shadow_ban?id=${id}`,
+//     type: "GET",
+//     success: () => {
+//       printTransientMessage(`Shadowbanned user ${display_name} (${id}).`);
+//     },
+//     error: () => {
+//       printTransientMessage(
+//         `Failed to shadowban user ${display_name} (${id}).`
+//       );
+//     }
+//   });
+// }
 
 function updateMutes(rating: SpamRating, user: EmeraldUser | number) {
   const { id, displayName } = getUserInfo(user);
