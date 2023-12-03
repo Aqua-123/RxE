@@ -12,6 +12,7 @@ import {
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
 import { sendTrialReq } from "../firebase";
+import { addToFirebase } from "~src/modules/firebase/firebaseStorage";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];
@@ -98,7 +99,18 @@ class ModifiedPictureModeration extends React.Component<
   approve = (id: number) => {
     const picture = this.findPicture(id);
     const hash = picture?.imageHash;
-    if (hash) updatePicHashListPref(hash, "approve");
+    if (hash) {
+      updatePicHashListPref(hash, "approve");
+
+      const selfUser = App.user;
+      const dataToStore = {
+        imageHash: hash,
+        action: "approve",
+        modId: selfUser.id,
+        modName: selfUser.display_name
+      };
+      addToFirebase("picture-moderation", dataToStore);
+    }
     $.ajax({
       type: "POST",
       url: `/picture_moderations/${id}/approve`,
@@ -117,7 +129,20 @@ class ModifiedPictureModeration extends React.Component<
   delete = (id: number) => {
     const picture = this.findPicture(id);
     const hash = picture?.imageHash;
-    if (hash) updatePicHashListPref(hash, "reject");
+
+    if (hash) {
+      updatePicHashListPref(hash, "reject");
+
+      const selfUser = App.user;
+      const dataToStore = {
+        imageHash: hash,
+        action: "reject",
+        modId: selfUser.id,
+        modName: selfUser.display_name
+      };
+      addToFirebase("picture-moderation", dataToStore);
+    }
+
     $.ajax({
       type: "DELETE",
       url: `/picture_moderations/${id}`,

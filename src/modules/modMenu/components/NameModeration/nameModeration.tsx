@@ -10,6 +10,7 @@ import {
 import { CheckmarkButton, getUserData } from "../utils";
 // import { sendDataToFirestore } from "../firebase";
 import { sendTrialReq } from "../firebase";
+import { addToFirebase } from "~src/modules/firebase/firebaseStorage";
 
 interface pictureModerationState {
   display_name_moderations: ModName[];
@@ -83,10 +84,19 @@ class ModifiedNameModeration extends React.Component<
   };
 
   approve = (id: number) => {
-    const picture = this.findNameObj(id);
-    if (!picture) return;
-    const newName = picture.new_display_name;
+    const name = this.findNameObj(id);
+    if (!name) return;
+    const newName = name.new_display_name;
     if (newName) updateNameRecPref(newName, "approve");
+
+    const selfUser = App.user;
+    const dataToStore = {
+      nameModeration: newName,
+      action: "approve",
+      modId: selfUser.id,
+      modName: selfUser.display_name
+    };
+    addToFirebase("name-moderation", dataToStore);
 
     $.ajax({
       type: "POST",
@@ -109,6 +119,16 @@ class ModifiedNameModeration extends React.Component<
     if (!picture) return;
     const newName = picture.new_display_name;
     if (newName) updateNameRecPref(newName, "reject");
+
+    const selfUser = App.user;
+    const dataToStore = {
+      nameModeration: newName,
+      action: "reject",
+      modId: selfUser.id,
+      modName: selfUser.display_name
+    };
+    addToFirebase("name-moderation", dataToStore);
+
     $.ajax({
       type: "DELETE",
       url: `/display_name_moderations/${id}`,

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { P, Preferences } from "~src/preferences";
 import {
   existing,
@@ -7,6 +8,7 @@ import {
   wrapMethod
 } from "~src/utils";
 import { getUserInfo, strategy } from "./strategies";
+import { addToFirebase } from "~src/modules/firebase/firebaseStorage";
 
 export const GREETERS = [
   19364487, // Tessa
@@ -42,16 +44,58 @@ function updateRoomMembers({ user, user_disconnected: userLeft }: MessageData) {
     printTransientMessage(`User ${user.display_name} joined the chat.`);
   RoomChannelMembersClient.add_member(user);
 }
+
+function shadowBan(id: number, display_name: string) {
+  $.ajax({
+    url: `/shadow_ban?id=${id}`,
+    type: "GET",
+    success: () => {
+      printTransientMessage(`Shadowbanned user ${display_name} (${id}).`);
+    },
+    error: () => {
+      printTransientMessage(
+        `Failed to shadowban user ${display_name} (${id}).`
+      );
+    }
+  });
+}
+
 function updateMutes(rating: SpamRating, user: EmeraldUser | number) {
   const { id, displayName } = getUserInfo(user);
   const { room } = App;
+  // log all ratings to console
+  // log experimental ratings to console
+  console.log(`[AntiSpam] ${displayName} (${id})`, rating.scoreExperimental);
 
   const score = rating.scoreStrikes;
+  const experimentalScore = rating.scoreExperimental;
+  // const legacyScore = rating.scoreLegacy;
+
   const isGreeter = GREETERS.includes(id);
   const isMuted = room.muted.includes(id);
+
   const doMute =
     !isGreeter && score >= 3 && !isMuted && Preferences.get(P.antiSpam);
   const doUnmute = score < 1 && isMuted && autoMuted[id];
+
+  if (experimentalScore >= 10) {
+    printTransientMessage(
+      `AutoMute: User ${displayName} would have been muted for experimental reasons.`
+    );
+    console.log("User would be muted here");
+    const selfUser = App.user;
+    const dataToSend = {
+      mod_id: selfUser.id,
+      mod_display_name: selfUser.display_name,
+      target_user_id: id,
+      target_user_display_name: displayName,
+      reason: "AutoSpam",
+      lastText: rating.lastMessage
+    };
+    addToFirebase("experimental-moderation", dataToSend);
+    // shadowBan(id, displayName);
+    // return;
+  }
 
   if (doMute) {
     if (id === App.user.id) {

@@ -89,6 +89,7 @@ export namespace strategy {
       : 1;
     const acAgeFactor =
       0.75 * (timeSince(accountCreated || new Date()) / DAY) ** 0.1;
+
     const value = entropy * caseFactor * lengthFactor * acAgeFactor;
 
     function valueAddedTo(messages: string[] | string) {
@@ -109,12 +110,12 @@ export namespace strategy {
     rating.scoreExperimental = max(0, rating.scoreExperimental);
     if (LOG_EXPERIMENTAL)
       console.log(`${JSON.stringify(newMessage)} \
-has entropy ${entropy.toFixed(5)}, \
-lengthFactor ${lengthFactor.toFixed(5)}, \
-caseFactor ${caseFactor.toFixed(5)}, \
-acAgeFactor ${acAgeFactor.toFixed(5)}, \
-own value ${value.toFixed(5)}, \
-worth ${worth.toFixed(5)},
-score ${rating.scoreExperimental.toFixed(5)}`);
+        has entropy ${entropy.toFixed(5)}, \
+        lengthFactor ${lengthFactor.toFixed(5)}, \
+        caseFactor ${caseFactor.toFixed(5)}, \
+        acAgeFactor ${acAgeFactor.toFixed(5)}, \
+        own value ${value.toFixed(5)}, \
+        worth ${worth.toFixed(5)},
+        score ${rating.scoreExperimental.toFixed(5)}`);
   }
 }
