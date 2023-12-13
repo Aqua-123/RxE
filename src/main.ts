@@ -2,7 +2,7 @@ import U from "~src/userscript";
 import { log } from "~userscripter";
 import browserWindow from "./browserWindow";
 import { migrateSettings } from "./migrateSettings";
-import { initAdBlocker, removeAds } from "./modules/ads";
+import { initAdBlocker, removeAds, removeNewUIAd } from "./modules/ads";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
 import { initAudio } from "./modules/overrides/audio";
@@ -116,6 +116,7 @@ async function init() {
     decorateProfileDialog,
     decorateMessages,
     removeAds,
+    removeNewUIAd,
     renderBrokenImages,
     renderWFAFAndPrivateRooms
   ]);

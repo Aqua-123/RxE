@@ -39,6 +39,9 @@ export default {
     adBlocker: {
       label: "Remove ads and nags"
     },
+    blockNewUIAd: {
+      label: "Remove new UI ad"
+    },
     fancyColors: {
       label: "Choose your own flair color"
     },

@@ -26,3 +26,9 @@ export function removeAds() {
     }
   });
 }
+
+export function removeNewUIAd() {
+  if (!Preferences.get(P.blockNewUIAd)) return;
+  const ad = document.querySelector(".new-ui-ad");
+  if (ad) ad.remove();
+}

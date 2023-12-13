@@ -41,6 +41,11 @@ export const P = {
     label: T.preferences.adBlocker.label,
     default: true
   }),
+  blockNewUIAd: new BooleanPreference({
+    key: "blockNewUIAd",
+    label: T.preferences.blockNewUIAd.label,
+    default: false
+  }),
   fancyColors: new BooleanPreference({
     key: "fancyColors",
     label: T.preferences.fancyColors!.label,

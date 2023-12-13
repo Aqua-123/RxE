@@ -17,6 +17,7 @@ export default function Settings(props: SettingsProps) {
     <div className={styles.settings}>
       {settingsSection(styles.settingsSection, T.generalTitle)}
       {checkboxPreference("adBlocker", props)}
+      {checkboxPreference("blockNewUIAd", props)}
       {checkboxPreference("trackKarma", props)}
       {checkboxPreference("fancyColors", props)}
       {checkboxPreference("notifyUpdates", props)}
