@@ -24,6 +24,14 @@ export function reorderMenu() {
     null
   ).singleNodeValue;
 
+  const platinumBadge = document.evaluate(
+    "//li[text()='Emerald Platinum']",
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null
+  ).singleNodeValue;
+
   if (Preferences.get(P.adBlocker)) {
     if (gold instanceof HTMLElement) {
       gold.remove();
@@ -33,6 +41,9 @@ export function reorderMenu() {
     }
     if (buyKarma instanceof HTMLElement) {
       buyKarma.remove();
+    }
+    if (platinumBadge instanceof HTMLElement) {
+      platinumBadge.remove();
     }
   } else {
     if (gold && gold.parentElement?.firstChild === gold) {
@@ -46,6 +57,12 @@ export function reorderMenu() {
     }
     if (buyKarma && buyKarma.parentElement?.firstChild === buyKarma) {
       buyKarma.parentElement.append(buyKarma);
+    }
+    if (
+      platinumBadge &&
+      platinumBadge.parentElement?.firstChild === platinumBadge
+    ) {
+      platinumBadge.parentElement.append(platinumBadge);
     }
   }
 }
