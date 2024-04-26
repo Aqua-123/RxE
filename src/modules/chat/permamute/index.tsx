@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from "react";
 import { ListPreferenceMap } from "~src/listprefcache";
 import { P, Preferences } from "~src/preferences";
@@ -24,61 +25,63 @@ export function initPermaMute() {
     const permamuted = Preferences.get(P.permaMuteList)
       .map((x) => x[0])
       .includes(id);
-    return React.createElement(
-      "div",
-      { className: "user-profile-micro-bottom" },
-      React.createElement(
-        "div",
-        {
-          onMouseDown: this.view_profile.bind(this),
-          className: "user-profile-micro-button"
-        },
-        "View Profile"
-      ),
-      React.createElement(
-        "div",
-        {
-          onMouseDown: this.message.bind(this),
-          className: "user-profile-micro-button"
-        },
-        "Message"
-      ),
-      this.mod_button(),
-      React.createElement(
-        "div",
-        {
-          onMouseDown: muted ? this.unmute.bind(this) : this.mute.bind(this),
-          className: "user-profile-micro-button",
-          disabled: permamuted
-        },
-        muted ? "Unmute" : "Mute"
-      ),
-      React.createElement(
-        "div",
-        {
-          onMouseDown: permamuted
-            ? this.permaunmute.bind(this)
-            : this.permamute.bind(this),
-          className: "user-profile-micro-button"
-        },
-        permamuted ? "Perma Unmute" : "Perma Mute"
-      ),
-      React.createElement(
-        "div",
-        {
-          onMouseDown: this.report_type.bind(this),
-          className: "user-profile-micro-button"
-        },
-        "Report"
-      ),
-      React.createElement(
-        "div",
-        {
-          onMouseDown: this.close.bind(this),
-          className: "user-profile-micro-button"
-        },
-        "Close"
-      )
+
+    const handleMuteClick = () => {
+      if (permamuted) return undefined; // Do nothing if permanently muted
+      return muted ? this.unmute.bind(this) : this.mute.bind(this);
+    };
+
+    return (
+      <div className="user-profile-micro-bottom">
+        <div
+          onMouseDown={this.view_profile.bind(this)}
+          className="user-profile-micro-button"
+        >
+          View Profile
+        </div>
+        <div
+          onMouseDown={this.message.bind(this, "message")}
+          className="user-profile-micro-button"
+        >
+          Message
+        </div>
+        <div
+          onMouseDown={this.message.bind(this, "video")}
+          className="user-profile-micro-button"
+        >
+          Video Call
+        </div>
+        {this.mod_button()}
+        <div
+          onMouseDown={handleMuteClick}
+          onKeyDown={handleMuteClick}
+          className={`user-profile-micro-button ${
+            permamuted ? "disabled" : ""
+          }`}
+        >
+          {muted ? "Unmute" : "Mute"}
+        </div>
+        <div
+          onMouseDown={
+            permamuted ? this.permaunmute.bind(this) : this.permamute.bind(this)
+          }
+          className="user-profile-micro-button"
+        >
+          {permamuted ? "Perma Unmute" : "Perma Mute"}
+        </div>
+        <div
+          onMouseDown={this.report_type.bind(this)}
+          className="user-profile-micro-button"
+        >
+          Report
+        </div>
+        <div
+          onMouseDown={this.close.bind(this)}
+          className="user-profile-micro-button"
+        >
+          Close
+        </div>
+      </div>
     );
   };
   function updateEverything() {
