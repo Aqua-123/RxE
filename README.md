@@ -21,7 +21,8 @@ It relies on a modified version of `userscripter`, committed in the repo under /
 2. Clone the repository
 3. From the root of the repo, run `nvm i`. This will install a version of Node.js known to work with this project.
 4. run `npm i -g yarn`. This will install the tool `yarn`, used to manage this project's dependencies among other things.
-5. run `yarn`. This will install all the other dependencies needed.
+5. run `npm i -g rimraf `. This will install the tool `rimraf`. It's used to delete directories, and it's used in the build scripts.
+6. run `yarn`. This will install all the other dependencies needed.
 
 ## build
 
