@@ -74,7 +74,7 @@ export const reasonList = [
   {
     value: "warn_perm",
     label:
-      "Your account is under review for potential illegal actions. Please check again or refer to a mod for an update on your account status"
+      "Your account is under review for potential illegal actions. Please refer to a mod for an update on your account status"
   },
   { value: "other", label: "Other" }
 ];
