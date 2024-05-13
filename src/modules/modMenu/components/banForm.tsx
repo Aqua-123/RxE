@@ -26,7 +26,8 @@ const durationList = [
   ["21600", "6 hours"],
   ["43200", "12 hours"],
   ["86400", "1 day"],
-  // ["259200", "3 days"],
+  ["259200", "3 days"],
+  // ["604800", "1 week"],
   ["31556952", "Permanently"]
 ];
 
@@ -41,8 +42,20 @@ export const reasonList = [
     label: "Sexually explicit remarks towards a user or group of users"
   },
   {
+    value: "racism",
+    label: "Spreading derogatory words/racism/bigotry in chat"
+  },
+  {
     value: "csa",
     label: "Distribution/Promotion of illegal content involving CP/CSA"
+  },
+  {
+    value: "english",
+    label: "Please keep group chat in English"
+  },
+  {
+    value: "socials",
+    label: "Promotion of external social media"
   },
   {
     value: "inappropriate_content",
@@ -54,21 +67,14 @@ export const reasonList = [
       "Feel free to join our Group Chat, but you must be 18+ in order to use 1-on-1 Text Chat/Video Chat"
   },
   {
-    value: "racism",
-    label: "Spreading derogatory words/racism/bigotry in chat"
-  },
-  {
     value: "nudity",
     label:
       "Please don't start your video with nudity or sexual content, not everyone wants to see that"
   },
   {
-    value: "socials",
-    label: "Promotion of external social media"
-  },
-  {
-    value: "english",
-    label: "Please keep group chat in English"
+    value: "warn_perm",
+    label:
+      "Your account is under review for potential illegal actions. Please check again or refer to a mod for an update on your account status"
   },
   { value: "other", label: "Other" }
 ];
