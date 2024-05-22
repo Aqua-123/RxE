@@ -85,6 +85,8 @@ async function fetchPicModData() {
     rejectPicMod
   );
 
+  setPicModIconCount(filteredPictureModerations.length);
+
   const finalPredictions = await getPredictions(filteredPictureModerations);
 
   return finalPredictions.length;
