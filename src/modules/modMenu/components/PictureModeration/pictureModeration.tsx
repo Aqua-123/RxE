@@ -61,6 +61,9 @@ class ModifiedPictureModeration extends React.Component<
       this.delete
     );
 
+    this.setState({ picture_moderations: filteredPictureModerations });
+    setPicModIconCount(filteredPictureModerations.length);
+
     const finalPredictions = await processPredictions(
       filteredPictureModerations
     );
@@ -330,7 +333,10 @@ export function pictureModerationOverride() {
     return (
       <div
         className="dashboard-button animated"
-        style={{ paddingTop: "30px", height: "530px" }}
+        style={{
+          paddingTop: "30px",
+          height: data.prediction ? "530px" : "400px"
+        }}
       >
         <div>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
@@ -355,54 +361,58 @@ export function pictureModerationOverride() {
         >
           <h2>{`${data.display_name}`}</h2>
         </div>
-        <h2>{`Prediction: ${data.prediction}`}</h2>
-        <div>
-          {!feedbackDone && !feedbackPrerecorded ? (
+        {data.prediction && (
+          <>
+            <h2>{`Prediction: ${data.prediction}`}</h2>
             <div>
-              {/* Dropdown and buttons */}
-              <div>
-                <select
-                  value={this.state?.selectedLabel}
-                  onChange={handleLabelChange}
-                  defaultValue=""
-                  style={{ backgroundColor: "#100f10", display: "block" }}
-                >
-                  {/* Dropdown options */}
-                  <option value="option1">Not_NSFW</option>
-                  <option value="option2">Suggestive_NSFW</option>
-                  <option value="option3">General_NSFW</option>
-                </select>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center"
-                }}
-              >
-                <button
-                  className="ui-button-match-mega"
-                  onClick={() => this.feedback(true)}
-                  type="button"
-                >
-                  Agree
-                </button>
-                <button
-                  className="ui-button-match-mega"
-                  onClick={() => this.feedback(false)}
-                  type="button"
-                >
-                  Disagree
-                </button>
-              </div>
+              {!feedbackDone && !feedbackPrerecorded ? (
+                <div>
+                  {/* Dropdown and buttons */}
+                  <div>
+                    <select
+                      value={this.state?.selectedLabel}
+                      onChange={handleLabelChange}
+                      defaultValue=""
+                      style={{ backgroundColor: "#100f10", display: "block" }}
+                    >
+                      {/* Dropdown options */}
+                      <option value="option1">Not_NSFW</option>
+                      <option value="option2">Suggestive_NSFW</option>
+                      <option value="option3">General_NSFW</option>
+                    </select>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center"
+                    }}
+                  >
+                    <button
+                      className="ui-button-match-mega"
+                      onClick={() => this.feedback(true)}
+                      type="button"
+                    >
+                      Agree
+                    </button>
+                    <button
+                      className="ui-button-match-mega"
+                      onClick={() => this.feedback(false)}
+                      type="button"
+                    >
+                      Disagree
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {/* Feedback received message */}
+                  <h2>Feedback Received</h2>
+                </div>
+              )}
             </div>
-          ) : (
-            <div>
-              {/* Feedback received message */}
-              <h2>Feedback Received</h2>
-            </div>
-          )}
-        </div>
+          </>
+        )}
         <div
           style={{
             display: "flex",
