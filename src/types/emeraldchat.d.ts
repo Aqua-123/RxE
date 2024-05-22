@@ -58,7 +58,7 @@ declare interface AppInterface {
     };
     join(id: string | number | null): void;
     mute(id: number, name?: string, reason?: string): void;
-    unmute(id: number): void;
+    unmute(id: number, name?: string, reason?: string): void;
     leave(Id: string | null): void;
     muted: number[];
     play_sound(url: string): void;

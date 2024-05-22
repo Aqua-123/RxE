@@ -27,8 +27,9 @@ export function initPermaMute() {
       .includes(id);
 
     const handleMuteClick = () => {
-      if (permamuted) return undefined; // Do nothing if permanently muted
-      return muted ? this.unmute.bind(this) : this.mute.bind(this);
+      if (permamuted) return undefined;
+      if (muted) return this.unmute.bind(this);
+      return this.mute.bind(this);
     };
 
     return (
@@ -53,8 +54,13 @@ export function initPermaMute() {
         </div>
         {this.mod_button()}
         <div
-          onMouseDown={handleMuteClick}
-          onKeyDown={handleMuteClick}
+          onMouseDown={() => {
+            if (permamuted) return undefined;
+            if (muted) return this.unmute.bind(this);
+            return this.mute.bind(this);
+          }}
+          onKeyDown={muted ? this.unmute.bind(this) : this.mute.bind(this)}
+          onClick={muted ? this.unmute.bind(this) : this.mute.bind(this)}
           className={`user-profile-micro-button ${
             permamuted ? "disabled" : ""
           }`}
@@ -63,6 +69,12 @@ export function initPermaMute() {
         </div>
         <div
           onMouseDown={
+            permamuted ? this.permaunmute.bind(this) : this.permamute.bind(this)
+          }
+          onKeyDown={
+            permamuted ? this.permaunmute.bind(this) : this.permamute.bind(this)
+          }
+          onClick={
             permamuted ? this.permaunmute.bind(this) : this.permamute.bind(this)
           }
           className="user-profile-micro-button"
@@ -96,21 +108,27 @@ export function initPermaMute() {
     updateEverything();
   };
   UserView.prototype.permaunmute = function permaunmute() {
-    const { id } = this.state.user;
+    const { id, display_name: name } = this.state.user;
     ListPreferenceMap.removeItem({ key: id }, P.permaMuteList);
-    App.room.unmute(id);
+    App.room.unmute(id, name, "Permamuted by user");
     updateEverything();
     clearRating(id);
   };
   UserView.prototype.mute = function mute() {
-    App.room.mute(this.state.user.id);
+    App.room.mute(
+      this.state.user.id,
+      this.state.user.display_name,
+      "Muted by user"
+    );
+    // UserViewReact?.setState({ muted: true });
     this.setState({ muted: true });
     updateEverything();
   };
   UserView.prototype.unmute = function unmute() {
     const { id } = this.state.user;
-    App.room.unmute(id);
+    App.room.unmute(id, this.state.user.display_name, "Unmuted by user");
     this.setState({ muted: false });
+    // UserViewReact?.setState({ muted: false });
     updateEverything();
     clearRating(id);
   };
