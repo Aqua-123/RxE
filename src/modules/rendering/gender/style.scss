@@ -29,6 +29,9 @@ html.showGender {
     &[data-gender="watermelon"] {
       border-color: #18e281;
     }
+    &[data-gender="darkie"] {
+      border-color: #000;
+    }
   }
   .room-component-message-avatar {
     width: 42px;
