@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React from "react";
 import { fasterAppend } from "~src/modules/chat/messages";
 import window from "~src/browserWindow";
@@ -97,6 +98,53 @@ export function roomclientOverrides() {
     RoomClient!.state.last_message = null;
     RoomClient?.scroll();
   }
+
+  RoomChannelSelect.prototype.joinStartingChannel =
+    function RCSJoinStartingChannel(_channels) {
+      console.log("joinStartingChannel");
+      if (App.user.activated) {
+        const maxMembers = 100;
+
+        // Sort channels: Anonymous at top, others by member count
+        let channels = _channels.sort((a, b) => {
+          if (a.channel.name === "Anonymous") return -1;
+          if (b.channel.name === "Anonymous") return 1;
+          return b.members.length - a.members.length;
+        });
+
+        // Try to join a suitable channel
+        for (let i = 0; i < channels.length; i += 1) {
+          const channel = channels[i];
+          if (
+            channel.channel.name !== "Anonymous" &&
+            channel.members.length > 0 &&
+            channel.members.length < maxMembers
+          ) {
+            this.join(channel);
+            return;
+          }
+        }
+
+        // If no suitable channel found, join a random channel
+        channels = channels.sort(() => Math.random() - 0.5);
+        this.join(channels[0]);
+      } else {
+        // Sort with Anonymous channels at top, then by member count
+        const channels = _channels.sort((a, b) => {
+          if (a.channel.name === "Anonymous") return -1;
+          if (b.channel.name === "Anonymous") return 1;
+          return b.members.length - a.members.length;
+        });
+
+        // Join the first Anonymous channel found
+        const anonymousChannel = channels.find(
+          (channel) => channel.channel.name === "Anonymous"
+        );
+        if (anonymousChannel) {
+          this.join(anonymousChannel);
+        }
+      }
+    };
 
   RoomChannelSelect.prototype.join = function rpJoin(
     this: Room,

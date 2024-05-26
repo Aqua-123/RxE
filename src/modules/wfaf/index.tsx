@@ -53,11 +53,15 @@ function wfafOverrides() {
   RoomChannelSelect.prototype.body = function rssBody() {
     // eslint-disable-next-line camelcase,react/no-this-in-sfc
     const { text_channels } = this.state;
+    //  sort channels by members count
+    const fixedChannels = text_channels.sort(
+      (a, b) => b.members.length - a.members.length
+    );
     return (
       <div className="room-component-module">
         <div className="room-user-label">text channels</div>
         {/* eslint-disable-next-line react/no-this-in-sfc */}
-        {text_channels.map((t) => this.channel_button(t))}
+        {fixedChannels.map((t) => this.channel_button(t))}
         <div className="room-user-label">{T.hiddenChannels}</div>
         <CreateRoom type="wfaf" action={joinWFAF} text={T.WFAF} />
         <CreateRoom

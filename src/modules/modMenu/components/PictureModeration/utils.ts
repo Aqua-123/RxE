@@ -54,7 +54,7 @@ export async function picModFetchHandler(
 
   const pictureHashes = await Promise.allSettled(
     // eslint-disable-next-line camelcase
-    modPictures.map(async ({ id, image_url }) => {
+    modPictures?.map(async ({ id, image_url }) => {
       try {
         const imageData = await getImageBlobFromUrl(image_url);
         // @ts-ignore

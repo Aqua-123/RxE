@@ -60,7 +60,6 @@ async function init() {
   applyOverrides();
   // migrate settings from older userscripts, if any
   migrateSettings();
-
   // extensible plugin framework thingy
   initPluginAPI();
 

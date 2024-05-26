@@ -26,12 +26,6 @@ export function initPermaMute() {
       .map((x) => x[0])
       .includes(id);
 
-    const handleMuteClick = () => {
-      if (permamuted) return undefined;
-      if (muted) return this.unmute.bind(this);
-      return this.mute.bind(this);
-    };
-
     return (
       <div className="user-profile-micro-bottom">
         <div

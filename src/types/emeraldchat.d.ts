@@ -395,6 +395,7 @@ declare type EmeraldUser = {
   proxy?: boolean;
   // NOTE: This is our own field
   delta: number;
+  activated: boolean;
 };
 
 declare type ProfileData = {
@@ -684,6 +685,7 @@ declare class RoomChannelSelect extends React.Component<
   channel_button(e: ChannelJsonResponse): JSX.Element;
   voice_disconnect(): void;
   expand(): void;
+  joinStartingChannel(e: ChannelJsonResponse[]): void;
 }
 declare const RoomChannelSelectClient: RoomChannelSelect;
 
