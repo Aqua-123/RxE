@@ -13,6 +13,7 @@ const commands = {
   all: {
     rxelink: () =>
       RoomClient!.send(`Link to RxE extension for Emerald: ${links.repo}`),
+    out: () => RoomClient!.send("----------------------> 🚪"),
     rules: () =>
       RoomClient!.send(`For the updated ruleset please see: ${links.rules}`)
   } as Record<string, AnyFunction>,
