@@ -42,6 +42,7 @@ import * as introModal from "./modules/settings/intro-dialog";
 import { initversionCheck } from "./modules/versioncheck";
 import { fixChatRoomWidth } from "./modules/rendering/chatroom";
 import { modFunctionInit } from "./modules/modMenu";
+import { handleFuckedImages } from "./modules/rendering/brokenimages/fuckedImages";
 
 async function init() {
   const featureSet = `(${[
@@ -117,7 +118,8 @@ async function init() {
     removeAds,
     removeNewUIAd,
     renderBrokenImages,
-    renderWFAFAndPrivateRooms
+    renderWFAFAndPrivateRooms,
+    handleFuckedImages
   ]);
 }
 
