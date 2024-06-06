@@ -83,3 +83,8 @@ button:active {
 .reason {
   height: auto !important;
 }
+
+// how to mention a element which has both grid-item weight
+.grid-item.weight {
+  height: 270px !important;
+}

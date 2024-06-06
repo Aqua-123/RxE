@@ -1,151 +1,239 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable camelcase */
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-function reportLogUnits(
-  spamModList: spamModData[],
-  reportLogList: reportLogData[]
-) {
-  let spamIds: number[] = [];
-  if (spamModList) spamIds = spamModList.map((item) => item.id);
+function reportLogUnits(reportLogList: reportLogData[]) {
   return reportLogList.map((e) => (
-    <ReportLogModerationUnit
-      key={`spam_moderation_${e.id}`}
-      has_report={spamIds.includes(e.id)}
-      data={e}
-    />
+    <ReportLogModerationUnit key={`report_log_${e.id}`} data={e} />
   ));
 }
-export function reportModOverride() {
-  ReportLogModeration.prototype.fetch_spam = function rlmFR() {
+
+export function reportLogOverride() {
+  ReportLogModeration.prototype.componentDidMount = function rlmCDM() {
+    this.fetchData();
+    this.setState({ sort: "max_count" });
+  };
+
+  ReportLogModeration.prototype.fetchData = function rlmFD(
+    sort: string | null = null,
+    page: number | null = null,
+    read: boolean | null = null,
+    searchQuery: string | null = null
+  ) {
     $.ajax({
       type: "GET",
-      url: "/spam_moderation",
+      url: `/report_logs_moderation?sort=${sort || this.state.sort}&page=${
+        page || this.state.page
+      }&read=${read || this.state.read}&search=${
+        searchQuery || this.state.searchQuery
+      }`,
       dataType: "json",
-      success: function rmSuccess(this: ReportLogModeration, e: spamModData[]) {
-        const state = {
-          spam_moderations: e
-        };
-        this.setState(state);
-      }.bind(this)
+      success: (data: reportLogData[]) => {
+        this.setState({ report_logs: data });
+      }
     });
   };
 
-  ReportLogModeration.prototype.componentDidMount = function rlmCDM() {
-    this.fetch_data();
-    this.fetch_spam();
+  ReportLogModeration.prototype.changeRead = function rlmCR(
+    event: ChangeEvent<HTMLSelectElement>
+  ) {
+    this.setState({ read: event.target.value === "true", page: 1 }, () => {
+      this.fetchData();
+    });
   };
 
-  ReportLogModeration.prototype.render = function rlmFR() {
-    const spamModerationState = this.state.spam_moderations;
-    const reportLogState = this.state.reeport_logs;
+  ReportLogModeration.prototype.change = function rlmC(
+    event: ChangeEvent<HTMLSelectElement>
+  ) {
+    this.setState({ sort: event.target.value, page: 1 }, () => {
+      this.fetchData();
+    });
+  };
 
-    const handleSortClick = function hSC(this: ReportLogModeration) {
+  ReportLogModeration.prototype.handleSearchChange = function rlmHSC(
+    event: ChangeEvent<HTMLInputElement>
+  ) {
+    const query = event.target.value;
+    if (query === "") {
       this.setState({
-        sort: this.state.sort === "max_count" ? "most_recent" : "max_count"
+        searchQuery: query
       });
-      this.fetch_data();
-    }.bind(this);
+      return;
+    }
 
+    this.setState({ searchQuery: query });
+  };
+
+  ReportLogModeration.prototype.next = function rlmN() {
+    const newPage = this.state.page + 1;
+    this.setState({ page: newPage }, () => {
+      this.fetchData();
+    });
+  };
+
+  ReportLogModeration.prototype.previous = function rlmP() {
+    const newPage = this.state.page - 1;
+    this.setState({ page: newPage }, () => {
+      this.fetchData();
+    });
+  };
+
+  ReportLogModeration.prototype.hideAll = function rlmHA() {
+    $.ajax({
+      type: "GET",
+      url: `/hide?ids=[${this.state.report_logs.map((e) => e.id).join(",")}]`,
+      dataType: "json",
+      success: () => {
+        this.fetchData();
+      }
+    });
+  };
+
+  ReportLogModeration.prototype.render = function rlmR() {
+    const reportLogState = this.state.report_logs;
+    const searchQuery = this.state.searchQuery || "";
     return (
       <div className="dashboard-background">
         <div className="dashboard-container">
           <div className="meet-cards-container video-moderation">
             <div className="video-moderation-controls-container">
-              {/* eslint-disable-next-line react/button-has-type */}
-              <button
-                className="ui-button-match-mega primary-button"
-                onClick={handleSortClick}
+              <div
+                className="sort-container"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "20px",
+                  flexWrap: "wrap"
+                }}
               >
-                Sorted By{" "}
-                {this.state.sort === "max_count" ? "Max Count" : "Most Recent"}
-              </button>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column"
+                  }}
+                >
+                  <span
+                    className="m1"
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "10px"
+                    }}
+                  >
+                    Search
+                  </span>
+                  <input
+                    type="text"
+                    style={
+                      // style it modern
+                      {
+                        padding: "5px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        marginRight: "10px",
+                        marginLeft: "10px"
+                      }
+                    }
+                    placeholder="Search users"
+                    value={this.state.searchQuery || ""}
+                    onChange={this.handleSearchChange.bind(this)}
+                  />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span
+                    className="m1"
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "10px"
+                    }}
+                  >
+                    Read Status
+                  </span>
+                  <label className="ui-select" htmlFor="read">
+                    <select
+                      defaultValue="false"
+                      onChange={this.changeRead.bind(this)}
+                      name="read"
+                      id="read"
+                    >
+                      <option value="true">Read</option>
+                      <option value="false">Unread</option>
+                    </select>
+                  </label>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <span
+                    className="m1"
+                    style={{
+                      justifyContent: "center",
+                      display: "flex",
+                      alignItems: "center",
+                      marginTop: "10px"
+                    }}
+                  >
+                    Filter Type
+                  </span>
+
+                  <label className="ui-select" htmlFor="sort">
+                    <select
+                      defaultValue="max_count"
+                      onChange={this.change.bind(this)}
+                      name="sort"
+                      id="sort"
+                    >
+                      <option value="max_count">Max count</option>
+                      <option value="most_recent">Most Recent</option>
+                      <option value="all">All</option>
+                    </select>
+                  </label>
+                </div>
+                {this.state.sort === "all" && (
+                  <button
+                    className="ui-button-match-mega primary-button"
+                    onClick={this.hideAll.bind(this)}
+                    type="button"
+                  >
+                    Hide All Report Logs
+                  </button>
+                )}
+              </div>
+              {this.state.sort === "all" && (
+                <div>
+                  <button
+                    className="ui-button-match-mega primary-button"
+                    onClick={this.previous.bind(this)}
+                    disabled={this.state.page < 2}
+                    type="button"
+                  >
+                    Previous Page
+                  </button>
+                  <span>Page {this.state.page}</span>
+                  <button
+                    className="ui-button-match-mega primary-button"
+                    onClick={this.next.bind(this)}
+                    type="button"
+                  >
+                    Next Page
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="meet-cards-container report-logs-container">
+              {reportLogUnits(
+                reportLogState.filter(
+                  (e) =>
+                    e.display_name
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    e.username.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+              )}
             </div>
           </div>
-          <div className="meet-cards-container report-logs-container">
-            {reportLogUnits(spamModerationState, reportLogState)}
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  ReportLogModerationUnit.prototype.renderContent = function rC(e) {
-    if (e.image) {
-      return <img alt="" src={e.image} />;
-    }
-
-    if (e.message && typeof e.message === "string") {
-      return (
-        <p className="messages">
-          Messages:
-          <br /> {e.message}
-        </p>
-      );
-    }
-
-    return null;
-  };
-
-  ReportLogModerationUnit.prototype.render = function rlmu() {
-    const { data } = this.props;
-    const selectedReportLog = data.report_logs[this.state.selected];
-    const hasReport = this.props.has_report;
-    const reasonElement = () => {
-      const { reason } = selectedReportLog;
-      if (!reason) return null;
-      return <div className="reason">Reason: {selectedReportLog.reason}</div>;
-    };
-
-    return (
-      <div
-        className="dashboard-button animated"
-        style={{ paddingTop: "30px", border: hasReport ? "4px solid red" : "" }}
-      >
-        <div className="room-component-message-left">
-          <img
-            onMouseDown={(t) =>
-              // @ts-ignore
-              UserViewGenerator.generate({ event: t, user: data })
-            }
-            src={data.display_picture}
-            alt=""
-            className="room-component-message-avatar"
-          />
-        </div>
-        <div className="info">
-          <p>
-            {data.display_name}
-            <span style={{ color: "gold" }}>{data.gold ? " (G)" : ""}</span>
-          </p>
-        </div>
-        <div className="report-log-container">
-          <div
-            className="grid-item arrow"
-            style={{ marginLeft: "-15px" }}
-            title="Previous"
-            onClick={this.previous}
-          >
-            <span className="material-icons">arrow_back</span>
-          </div>
-          <div className="grid-item weight">
-            {reasonElement()}
-            <div className="reason">Username: {selectedReportLog.username}</div>
-            {this.renderContent(selectedReportLog)}
-          </div>
-          <div
-            className="grid-item arrow"
-            style={{ marginRight: "-20px" }}
-            title="Next"
-            onClick={this.next}
-          >
-            <span className="material-icons">arrow_forward</span>
-          </div>
-        </div>
-        <div>
-          {this.state.selected + 1} out of {data.report_logs.length}
         </div>
       </div>
     );

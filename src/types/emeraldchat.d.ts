@@ -257,24 +257,38 @@ declare type reportLogData = {
 
 declare class ReportLogModeration extends React.Component<{}> {
   state: {
-    sort: "max_count" | "most_recent";
+    sort: "max_count" | "most_recent" | "all";
+    read: boolean;
+    page: number;
+    searchQuery: string;
     // NOTE: this is our own field
     spam_moderations: spamModData[];
-    reeport_logs: reportLogData[];
+    report_logs: reportLogData[];
   };
   handleSortClick(): void;
+  changeSort(e: { target: { value: "max_count" | "most_recent" } }): void;
+  hideAll(): void;
+  previous(): void;
+  next(): void;
+  change(e: any): void;
+  changeRead(e: any): void;
+
   // NOTE: this is our own field
+  handleSearchChange(e: { target: { value: string } }): void;
   fetch_spam(): void;
-  fetch_data(): void;
+  fetchData(): void;
+  fetch_reports(): void;
 }
 
 declare class SpamModeration extends React.Component<{}> {
   state: {
     spam_moderations: spamModData[];
+    searchQuery: string;
     // NOTE: this is our own field
     report_logs: reportLogData[];
     // NOTE: this is our own field
     sortByMessageCount: boolean;
+    contentSearchQuery: string;
   };
   // NOTE: this is our own field
   fetch_reports(): void;
@@ -287,6 +301,8 @@ declare class SpamModeration extends React.Component<{}> {
   toggleSort(): void;
   // NOTE: this is our own field
   sortMessages(): void;
+  handleSearchChange(e: { target: { value: string } }): void;
+  handleContentSearchChange(e: { target: { value: string } }): void;
 }
 declare class SpamModerationUnit extends React.Component<{
   data: spamModData;

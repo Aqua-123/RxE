@@ -31,6 +31,15 @@ export function spamModOverride() {
       }.bind(this)
     });
   };
+  SpamModeration.prototype.handleSearchChange = function smHSC(e) {
+    const query = e.target.value;
+    this.setState({ searchQuery: query });
+  };
+
+  SpamModeration.prototype.handleContentSearchChange = function smHCSC(e) {
+    const query = e.target.value;
+    this.setState({ contentSearchQuery: query });
+  };
 
   SpamModeration.prototype.componentDidMount = function smCDM() {
     this.fetch_data();
@@ -53,6 +62,35 @@ export function spamModOverride() {
 
   SpamModeration.prototype.render = function smFR() {
     const spamModerationState = this.state.spam_moderations;
+    const searchQuery = this.state.searchQuery || "";
+    const contentSearchQuery = this.state.contentSearchQuery || "";
+
+    const nameCheck = (e: string) =>
+      searchQuery === "" || e.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const contentCheck = (e: string) =>
+      contentSearchQuery === "" ||
+      e.toLowerCase().includes(contentSearchQuery.toLowerCase());
+
+    const spamModToDisplay = spamModerationState.filter((e) => {
+      const nameMatches = nameCheck(e.display_name) || nameCheck(e.username);
+      const contentMatches = contentCheck(e.content);
+
+      if (searchQuery && contentSearchQuery) {
+        // Both queries are not empty
+        return nameMatches && contentMatches;
+      }
+      if (searchQuery) {
+        // Only searchQuery is not empty
+        return nameMatches;
+      }
+      if (contentSearchQuery) {
+        // Only contentSearchQuery is not empty
+        return contentMatches;
+      }
+      // Both queries are empty
+      return true;
+    });
     const reportLogState = this.state.report_logs;
     this.sortMessages = this.sortMessages.bind(this);
     this.toggleSort = this.toggleSort.bind(this);
@@ -60,14 +98,40 @@ export function spamModOverride() {
       <div className="dashboard-background">
         <div className="dashboard-container">
           <div className="meet-cards-container video-moderation">
-            <button type="button" onClick={this.toggleSort}>
-              {this.state.sortByMessageCount
-                ? "Sort by message count"
-                : "Sort by last message"}
-            </button>
+            <div className="video-moderation-controls-container">
+              <input
+                type="text"
+                placeholder="Search by name or username"
+                style={{
+                  padding: "5px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  marginRight: "10px",
+                  marginLeft: "10px"
+                }}
+                onChange={this.handleSearchChange.bind(this)}
+              />
+              <input
+                type="text"
+                placeholder="Search by content"
+                onChange={this.handleContentSearchChange.bind(this)}
+                style={{
+                  padding: "5px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  marginRight: "10px",
+                  marginLeft: "10px"
+                }}
+              />
+              <button type="button" onClick={this.toggleSort}>
+                {this.state.sortByMessageCount
+                  ? "Sort by message count"
+                  : "Sort by last message"}
+              </button>
+            </div>
             <br />
             <br />
-            {spamModUnits(spamModerationState, reportLogState)}
+            {spamModUnits(spamModToDisplay, reportLogState)}
           </div>
         </div>
       </div>
