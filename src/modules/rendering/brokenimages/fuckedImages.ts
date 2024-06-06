@@ -6,14 +6,14 @@ export function handleFuckedImages() {
     }
 
     const newImg = new Image();
-    newImg.onload = function () {
+    newImg.onload = function goodBoi() {
       img.src = newImg.src;
     };
-    newImg.onerror = function () {
+    newImg.onerror = function fuckyouError() {
       console.warn(
         `Retrying to load image: ${img.src}, attempts left: ${retryCount - 1}`
       );
-      setTimeout(() => reloadImage(img, retryCount - 1), 2000); // retry after 2 seconds
+      setTimeout(() => reloadImage(img, retryCount - 1), 200); // retry after 2 seconds
     };
     newImg.src = `${img.src}?${new Date().getTime()}`; // cache-busting
   }
@@ -22,15 +22,15 @@ export function handleFuckedImages() {
   function handleImageError(event: { target: any }) {
     const img = event.target;
     if (!img.hasAttribute("data-retries")) {
-      img.setAttribute("data-retries", "3");
+      img.setAttribute("data-retries", "10");
     }
     const retryCount = parseInt(img.getAttribute("data-retries"), 10);
     reloadImage(img, retryCount);
   }
 
-  // Attach error handler to all images
   const images = document.querySelectorAll("img");
   images.forEach((img) => {
+    console.log("img tagged");
     img.addEventListener("error", handleImageError);
   });
 }
