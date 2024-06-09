@@ -272,6 +272,7 @@ declare class ReportLogModeration extends React.Component<{}> {
   next(): void;
   change(e: any): void;
   changeRead(e: any): void;
+  hideReportLog(): void;
 
   // NOTE: this is our own field
   handleSearchChange(e: { target: { value: string } }): void;
@@ -323,6 +324,7 @@ type ReportLog = {
 declare class ReportLogModerationUnit extends React.Component<{
   data: reportLogData;
   has_report?: Boolean;
+  hideReportLog: Function;
 }> {
   state: {
     selected: number;

@@ -1,9 +1,16 @@
 /* eslint-disable camelcase */
 import React, { ChangeEvent } from "react";
 
-function reportLogUnits(reportLogList: reportLogData[]) {
+function reportLogUnits(
+  reportLogList: reportLogData[],
+  hideReportLog: Function
+) {
   return reportLogList.map((e) => (
-    <ReportLogModerationUnit key={`report_log_${e.id}`} data={e} />
+    <ReportLogModerationUnit
+      key={`report_log_${e.id}`}
+      data={e}
+      hideReportLog={hideReportLog}
+    />
   ));
 }
 
@@ -230,7 +237,8 @@ export function reportLogOverride() {
                       .toLowerCase()
                       .includes(searchQuery.toLowerCase()) ||
                     e.username.toLowerCase().includes(searchQuery.toLowerCase())
-                )
+                ),
+                this.hideReportLog.bind(this)
               )}
             </div>
           </div>
