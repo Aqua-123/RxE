@@ -30,10 +30,11 @@ export function handleFuckedImages() {
     const img = event.target as HTMLImageElement;
 
     if (!img.hasAttribute("data-retries")) {
-      img.setAttribute("data-retries", "3");
+      img.setAttribute("data-retries", "7");
     }
 
     const retryCount = parseInt(img.getAttribute("data-retries")!, 10);
+    img.setAttribute("data-retries", (retryCount - 1).toString());
     reloadImage(img, retryCount);
   }
 
