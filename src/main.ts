@@ -105,6 +105,7 @@ async function init() {
   hideTyping();
   initEmbeds();
   initHeader();
+  // handleFuckedImages();
   render([
     fixChatRoomWidth,
     applyBlurs,
