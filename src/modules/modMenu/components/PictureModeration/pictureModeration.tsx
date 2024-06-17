@@ -12,6 +12,7 @@ import {
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
 import { sendTrialReq } from "../firebase";
+import { Preferences, P } from "~src/preferences";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];

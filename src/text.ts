@@ -122,6 +122,9 @@ export default {
     hideFromGc: {
       label: "Hide yourself from side-list in group chat (mods only)"
     },
+    hideAIControls: {
+      label: "Hide AI controls (mods only)"
+    },
     hideTyping: {
       label: "Hide your typing status in chat"
     }

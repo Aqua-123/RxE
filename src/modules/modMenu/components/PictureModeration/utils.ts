@@ -151,6 +151,7 @@ export async function getPredictions(imageDataArray: ModPicture[]) {
 }
 
 export async function processPredictions(pictureModerationList: ModPicture[]) {
+  if (Preferences.get(P.hideAIControls)) return pictureModerationList;
   const recordedPredictions = Preferences.get(P.picModPredictions);
 
   const preRecordedPictures = [] as ModPicture[];

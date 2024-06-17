@@ -12,6 +12,7 @@ import {
   nameModFetchHandler,
   setNameModIconCount
 } from "../modMenu/components/NameModeration/utils";
+import { Preferences, P } from "~src/preferences";
 
 function setLogo(logo: Element) {
   const displayPicture = App.user.display_picture;
@@ -86,6 +87,8 @@ async function fetchPicModData() {
   );
 
   setPicModIconCount(filteredPictureModerations.length);
+  if (Preferences.get(P.hideAIControls))
+    return filteredPictureModerations.length;
 
   const finalPredictions = await getPredictions(filteredPictureModerations);
 

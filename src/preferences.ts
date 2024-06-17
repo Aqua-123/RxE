@@ -116,6 +116,11 @@ export const P = {
     label: T.preferences.hideFromGc.label,
     default: false
   }),
+  hideAIControls: new BooleanPreference({
+    key: "hideAIControls",
+    label: T.preferences.hideAIControls.label,
+    default: false
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

@@ -23,6 +23,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("notifyUpdates", props)}
       {checkboxPreference("hideTyping", props)}
       {App.user.mod && checkboxPreference("hideFromGc", props)}
+      {App.user.mod && checkboxPreference("hideAIControls", props)}
       {radioPreference("blockReqs", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}
