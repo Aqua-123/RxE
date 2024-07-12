@@ -125,6 +125,10 @@ export default {
     hideAIControls: {
       label: "Hide AI controls (mods only)"
     },
+    disablePfpNagging: {
+      label:
+        "Disable the pfp fix (recommended if experiencing lag or have a slower system)"
+    },
     hideTyping: {
       label: "Hide your typing status in chat"
     }

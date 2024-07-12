@@ -121,6 +121,11 @@ export const P = {
     label: T.preferences.hideAIControls.label,
     default: false
   }),
+  disablePfpNagging: new BooleanPreference({
+    key: "disablePfpNagging",
+    label: T.preferences.disablePfpNagging.label,
+    default: false
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

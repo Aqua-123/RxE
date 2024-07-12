@@ -1,6 +1,8 @@
 import browserWindow from "~src/browserWindow";
+import { Preferences, P } from "~src/preferences";
 
 export function handleFuckedImages() {
+  if (Preferences.get(P.disablePfpNagging)) return;
   const retryMap = new Map<string, number>();
 
   // Function to reload an image with retries

@@ -22,6 +22,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("fancyColors", props)}
       {checkboxPreference("notifyUpdates", props)}
       {checkboxPreference("hideTyping", props)}
+      {checkboxPreference("disablePfpNagging", props)}
       {App.user.mod && checkboxPreference("hideFromGc", props)}
       {App.user.mod && checkboxPreference("hideAIControls", props)}
       {radioPreference("blockReqs", props)}
