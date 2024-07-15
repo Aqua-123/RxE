@@ -4,7 +4,7 @@ export default {
   shortName: "RxE",
   version: "0.13.5.2", // yarn bump to update version
   description: "Custom Emerald Chat themes and fixes.",
-  icon: "https://i.imgur.com/KLtVhho.png",
+  icon: "https://i.imgur.com/14f9VD4.png",
   author: "Atsos/Ritsu, Aqua, Strawberry, Teriyaki",
   hostname: "emeraldchat.com",
   path: "app",
