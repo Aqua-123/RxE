@@ -28,7 +28,8 @@ const durationList = [
   ["86400", "1 day"],
   ["259200", "3 days"],
   // ["604800", "1 week"],
-  ["31556952", "Permanently"]
+  ["31556952", "1 year"],
+  ["3155695200", "Permanently"]
 ];
 
 export const reasonList = [
