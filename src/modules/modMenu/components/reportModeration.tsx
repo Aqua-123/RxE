@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { data } from "jquery";
 import React, { ChangeEvent } from "react";
 
 function reportLogUnits(
@@ -240,6 +241,15 @@ export function reportLogOverride() {
                 ),
                 this.hideReportLog.bind(this)
               )}
+              <div className="dashboard-button animated">
+                <div className="report-log-container">
+                  <div className="grid-item weight">
+                    <div className="reason" />
+                    <div className="reason" />
+                    <div className="reason" style={{ color: "#ff1c1c" }} />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
