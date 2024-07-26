@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable camelcase */
 import React, { ChangeEvent } from "react";
 
@@ -15,6 +18,72 @@ function reportLogUnits(
 }
 
 export function reportLogOverride() {
+  ReportLogModerationUnit.prototype.render = function rlmuRender() {
+    const { data } = this.props;
+    const reportLog = data.report_logs[this.state.selected];
+
+    return (
+      <div className="dashboard-button animated" style={{ paddingTop: "30px" }}>
+        <div className="room-component-message-left">
+          <img
+            onMouseDown={(event) =>
+              // @ts-ignore
+              UserViewGenerator.generate({ event, user: this.props.data })
+            }
+            alt=""
+            src={data.thumbnail_picture || data.display_picture}
+            className="room-component-message-avatar"
+          />
+          <button
+            className="report-log-hide"
+            onClick={this.hide}
+            title="Click to hide"
+            type="button"
+          >
+            <i className="fa fa-eye fa-lg social" />
+          </button>
+        </div>
+        <div className="info">
+          <p>{data.display_name + (data.gold ? "(G)" : "")}</p>
+        </div>
+        <div className="report-log-container">
+          <div
+            className="grid-item arrow"
+            title="Previous"
+            onClick={this.previous}
+            role="button"
+          >
+            {"<"}
+          </div>
+          <div className="grid-item weight">
+            <div className="reason">Reason: {reportLog.reason}</div>
+            <div className="reason">
+              Username: {reportLog.username || "DELETED USER"}
+            </div>
+            <div className="reason">
+              Report Age: {this.calculate_age(reportLog.created_at)}
+            </div>
+            <div className="reason">
+              Reporter Age: {this.calculate_age(reportLog.creator_age)}
+            </div>
+            {this.renderContent(reportLog)}
+          </div>
+          <div
+            className="grid-item arrow"
+            title="Next"
+            onClick={this.next}
+            role="button"
+          >
+            {">"}
+          </div>
+        </div>
+        <div>
+          {this.state.selected + 1} out of {data.report_logs.length}
+        </div>
+      </div>
+    );
+  };
+
   ReportLogModeration.prototype.componentDidMount = function rlmCDM() {
     this.fetchData();
     this.setState({ sort: "max_count" });
@@ -240,15 +309,6 @@ export function reportLogOverride() {
                 ),
                 this.hideReportLog.bind(this)
               )}
-              <div className="dashboard-button animated">
-                <div className="report-log-container">
-                  <div className="grid-item weight">
-                    <div className="reason" />
-                    <div className="reason" />
-                    <div className="reason" style={{ color: "#ff1c1c" }} />
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

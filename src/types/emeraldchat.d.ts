@@ -244,6 +244,7 @@ declare type spamModData = {
 declare type reportLogData = {
   display_name: string;
   display_picture: string;
+  thumbnail_picture: string;
   gold: boolean;
   id: number;
   karma: number;
@@ -319,6 +320,7 @@ type ReportLog = {
   message: string | null;
   username: string;
   image: string | null;
+  creator_age: string;
 };
 
 declare class ReportLogModerationUnit extends React.Component<{
@@ -332,6 +334,8 @@ declare class ReportLogModerationUnit extends React.Component<{
   renderContent(selectedReportLog: ReportLog): JSX.Element | null;
   next(): void;
   previous(): void;
+  calculate_age(date: string): string;
+  hide(): void;
 }
 
 declare type NotificationsStateData = {
