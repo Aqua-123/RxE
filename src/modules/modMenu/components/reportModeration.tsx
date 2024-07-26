@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-import { data } from "jquery";
 import React, { ChangeEvent } from "react";
 
 function reportLogUnits(
