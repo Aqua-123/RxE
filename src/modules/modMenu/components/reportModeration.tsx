@@ -32,7 +32,7 @@ export function reportLogOverride() {
     // Extract minutes and check conditions
     const minutes = extractMinutes(ageString);
     const reportAgeColor =
-      ageString.includes("hour") || ageString.includes("days") || minutes > 60
+      ageString.includes("hour") || ageString.includes("day") || minutes > 60
         ? "#ff0000"
         : "";
 
