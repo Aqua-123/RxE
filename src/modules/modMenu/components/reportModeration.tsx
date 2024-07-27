@@ -63,7 +63,9 @@ export function reportLogOverride() {
             <div
               className="reason"
               style={{
-                color: Number(reportLog.created_at) > 3600 ? "#2f0303" : ""
+                color: this.calculate_age(reportLog.created_at).includes("hour")
+                  ? "#2f0303"
+                  : ""
               }}
             >
               Report Age: {this.calculate_age(reportLog.created_at)}
