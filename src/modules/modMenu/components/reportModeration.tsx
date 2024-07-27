@@ -60,7 +60,12 @@ export function reportLogOverride() {
             <div className="reason">
               Username: {reportLog.username || "DELETED USER"}
             </div>
-            <div className="reason">
+            <div
+              className="reason"
+              style={{
+                color: Number(reportLog.created_at) > 3600 ? "#2f0303" : ""
+              }}
+            >
               Report Age: {this.calculate_age(reportLog.created_at)}
             </div>
             <div className="reason">
