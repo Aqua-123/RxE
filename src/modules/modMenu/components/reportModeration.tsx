@@ -21,6 +21,20 @@ export function reportLogOverride() {
   ReportLogModerationUnit.prototype.render = function rlmuRender() {
     const { data } = this.props;
     const reportLog = data.report_logs[this.state.selected];
+    const ageString = this.calculate_age(reportLog.created_at);
+
+    // Function to extract number of minutes from the string
+    const extractMinutes = (str: string) => {
+      const match = str.match(/(\d+)\s*minutes?/i);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+
+    // Extract minutes and check conditions
+    const minutes = extractMinutes(ageString);
+    const reportAgeColor =
+      ageString.includes("hour") || ageString.includes("days") || minutes > 60
+        ? "#ff0000"
+        : "";
 
     return (
       <div className="dashboard-button animated" style={{ paddingTop: "30px" }}>
@@ -60,16 +74,7 @@ export function reportLogOverride() {
             <div className="reason">
               Username: {reportLog.username || "DELETED USER"}
             </div>
-            <div
-              className="reason"
-              style={{
-                color:
-                  this.calculate_age(reportLog.created_at).includes("hour") ||
-                  this.calculate_age(reportLog.created_at).includes("day")
-                    ? "#ff0000"
-                    : ""
-              }}
-            >
+            <div className="reason" style={{ color: reportAgeColor }}>
               Report Age: {this.calculate_age(reportLog.created_at)}
             </div>
             <div className="reason">
