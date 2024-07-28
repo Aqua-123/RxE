@@ -6,12 +6,12 @@ import {
   ListPreference,
   MultichoicePreference,
   IntegerPreference
-} from "ts-preferences";
+} from "ts-preferences"; // Handles read/write data to localstorage
 import { preferences } from "~userscripter";
 
 import U from "~src/userscript";
-import T from "~src/text";
-import { PX } from "./x/preferences";
+import T from "~src/text"; // Default text labels
+import { PX } from "./x/preferences"; // HACKS text labels
 
 // eslint-disable-next-line no-shadow
 export enum RequestBlockMode {

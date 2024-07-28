@@ -1,7 +1,7 @@
-import U from "~src/userscript";
-import { log } from "~userscripter";
-import browserWindow from "./browserWindow";
-import { migrateSettings } from "./migrateSettings";
+import U from "~src/userscript"; // Import metadata
+import { log } from "~userscripter"; // Import userscripter library
+import browserWindow from "./browserWindow"; // Handles variable fetching on site load
+import { migrateSettings } from "./migrateSettings"; // Migrates saved settings from old GM's values
 import { initAdBlocker, removeAds, removeNewUIAd } from "./modules/ads";
 import { initAntiBan } from "./modules/antiban";
 import { initAntiSpam } from "./modules/chat/antispam";
