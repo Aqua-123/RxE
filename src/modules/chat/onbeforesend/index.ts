@@ -11,6 +11,10 @@ const emotes = {
 
 const commands = {
   all: {
+    rxemlink: () =>
+      RoomClient!.send(
+        `Link to RxE extension for Emerald: ${links.repo_minified}`
+      ),
     rxelink: () =>
       RoomClient!.send(`Link to RxE extension for Emerald: ${links.repo}`),
     out: () => RoomClient!.send("----------------------> 🚪"),
@@ -54,8 +58,7 @@ function addSubstitutions(substitutions: Record<string, string>) {
   );
 }
 
-function addZWSP(message: string | null) {
-  if (!message) return null;
+function addZWSP(message: string) {
   const words = message.split(" ");
   let newMessage = "";
   words.forEach((word: string) => {
@@ -70,9 +73,7 @@ export function init() {
 
   Room.prototype.send = function send(rawMessage: string) {
     const { mode } = this.state;
-    const message = this.process
-      ? this.process(rawMessage)
-      : addZWSP(rawMessage);
+    const message = this.process ? this.process(rawMessage) : rawMessage;
     if (message === null) return;
     this.append({
       messages: [message],
@@ -85,6 +86,8 @@ export function init() {
   Room.prototype.process = function process(message) {
     if (commands.process(message)) return null;
     if (commands.checkMail(message)) return commands.processMail(message);
-    return sanitizeURL(wrapMarkdown(message));
+    const sanitized = sanitizeURL(message);
+    if (sanitized !== message) return sanitized;
+    return wrapMarkdown(addZWSP(message));
   };
 }

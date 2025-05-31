@@ -62,13 +62,7 @@ function UserInfo(props: any) {
     <span className="user-extra">
       <b>({karma})</b>
       {" / "}
-      <span
-        style={{
-          color: colour,
-          textShadow,
-          whiteSpace: "nowrap"
-        }}
-      >
+      <span style={{ color: colour, textShadow, whiteSpace: "nowrap" }}>
         {timeago!}
       </span>
       {specialTag(user)}
