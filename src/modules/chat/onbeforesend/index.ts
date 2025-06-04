@@ -68,6 +68,29 @@ function addZWSP(message: string) {
   return finalMessage;
 }
 
+const RXE_SIGNATURE = {
+  ZWNJ: "\u200C",
+  ZWSP: "\u200B",
+  ZWJ: "\u200D",
+  get pattern() {
+    return `${this.ZWNJ}${this.ZWSP}${this.ZWJ}${this.ZWSP}${this.ZWNJ}`;
+  }
+};
+
+function addRxESignature(message: string): string {
+  return RXE_SIGNATURE.pattern + message;
+}
+
+export function hasRxESignature(message: string): boolean {
+  return message.startsWith(RXE_SIGNATURE.pattern);
+}
+
+function removeRxESignature(message: string): string {
+  return hasRxESignature(message)
+    ? message.slice(RXE_SIGNATURE.pattern.length)
+    : message;
+}
+
 export function init() {
   addSubstitutions(emotes);
 
@@ -87,7 +110,10 @@ export function init() {
     if (commands.process(message)) return null;
     if (commands.checkMail(message)) return commands.processMail(message);
     const sanitized = sanitizeURL(message);
-    if (sanitized !== message) return sanitized;
-    return wrapMarkdown(addZWSP(message));
+    const processedMessage =
+      sanitized !== message ? sanitized : wrapMarkdown(addZWSP(message));
+
+    // Add RxE signature before the message
+    return addRxESignature(processedMessage);
   };
 }

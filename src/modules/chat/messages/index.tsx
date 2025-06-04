@@ -15,6 +15,7 @@ import { willEmbed } from "~src/modules/rendering/richtext/embeds";
 import { desanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 import { decodeImage } from "../chat-image/imgur";
 import { picture as pic } from "~src/modules/chat/chat-image/image-process";
+import { hasRxESignature } from "../onbeforesend";
 
 function getRoomMember(id: number) {
   if (!("state" in RoomChannelMembersClient)) return undefined;
@@ -186,6 +187,7 @@ export function initMessages() {
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
     const blockPic = !safeDisplayPic && (muted || (lowKarma && imgProtect));
+    const rxeSignature = hasRxESignature(this.props.data.messages[0]);
 
     const userInfo = user ? (
       <UserInfo
@@ -251,6 +253,16 @@ export function initMessages() {
         <div className="room-component-message-right">
           {userFlair}
           <Badge badge={user?.badge ?? null} />
+          {rxeSignature && (
+            <span className="user-badge-container">
+              <img
+                alt="RxE User"
+                title="RxE User"
+                className="user-badge-tick user-badge-rxe"
+                src="https://i.imgur.com/DqtXCBz.png"
+              />
+            </span>
+          )}
           {Preferences.get(P.showInfo) && userInfo}
           <div className={contentClasses.join(" ")}>
             {muted ? <i>Blocked message</i> : this.content()}

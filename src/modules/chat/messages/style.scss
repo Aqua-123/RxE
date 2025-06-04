@@ -8,6 +8,14 @@
   align-self: center;
 }
 
+.user-badge-rxe {
+  cursor: pointer;
+  // add some glow
+  filter: drop-shadow(0 0 5px silver) drop-shadow(0 0 8px silver);
+  height: 18px;
+  width: auto;
+  transition: filter 0.3s;
+}
 .user-badge-tick {
   display: flex;
   position: static;
