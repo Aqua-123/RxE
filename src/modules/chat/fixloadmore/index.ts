@@ -39,20 +39,20 @@ export function initLoadMore() {
   // although response is still weirdly reversed to have to
   // take care of it
 
-  // const fixLoadedCount = (count: number) =>
-  //   count + 20 <= RoomClient!.state.messages_count
-  //     ? -count - 20
-  //     : -RoomClient!.state.messages_count;
+  const fixLoadedCount = (count: number) =>
+    count + 20 <= RoomClient!.state.messages_count
+      ? -count - 20
+      : -RoomClient!.state.messages_count;
 
-  // Room.prototype.load_messages = function loadyboi(loaded) {
-  //   const newLoaded = fixLoadedCount(loaded);
-  //   $.ajax({
-  //     type: "GET",
-  //     url: `/room_load_more?loaded=${newLoaded}&id=${this.state.id}`,
-  //     dataType: "json",
-  //     success: (resp: []) => prepend.call(this, resp.reverse())
-  //   });
-  // };
+  Room.prototype.load_messages = function loadyboi(loaded) {
+    const newLoaded = fixLoadedCount(loaded);
+    $.ajax({
+      type: "GET",
+      url: `/room_load_more?loaded=${newLoaded}&id=${this.state.id}`,
+      dataType: "json",
+      success: (resp: []) => prepend.call(this, resp.reverse())
+    });
+  };
   Room.prototype.switch = function fixmessageCount(this: any, roomObj: any) {
     this.clear_print();
     const { id } = roomObj;
