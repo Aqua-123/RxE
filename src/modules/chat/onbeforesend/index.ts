@@ -61,8 +61,9 @@ function addSubstitutions(substitutions: Record<string, string>) {
 function addZWSP(message: string) {
   const words = message.split(" ");
   let newMessage = "";
-  words.forEach((word: string) => {
-    newMessage += ` ${[word.slice(0, 1), "‎", word.slice(1)].join("")}`;
+  words.forEach((word: string, index: number) => {
+    if (index > 0) newMessage += " "; // Add space between words only
+    newMessage += [word.slice(0, 1), "\u200B", word.slice(1)].join("");
   });
   const finalMessage = newMessage;
   return finalMessage;
