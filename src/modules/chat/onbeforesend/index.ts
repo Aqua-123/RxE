@@ -85,12 +85,6 @@ export function hasRxESignature(message: string): boolean {
   return message.startsWith(RXE_SIGNATURE.pattern);
 }
 
-function removeRxESignature(message: string): string {
-  return hasRxESignature(message)
-    ? message.slice(RXE_SIGNATURE.pattern.length)
-    : message;
-}
-
 export function init() {
   addSubstitutions(emotes);
 

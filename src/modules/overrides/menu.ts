@@ -68,7 +68,9 @@ export function menuOverrides() {
         friendsList: EmeraldUser[]
       ) {
         if (friendsList.length === 0) return;
-        const skippedFriends = friendsList.filter((x) => x === null);
+        const skippedFriends = friendsList.filter(
+          (x) => x === null
+        ) as EmeraldUser[];
         const list = friendsList.filter((x) => !skippedFriends.includes(x));
         const state = {
           skippedMissing: skippedMissing + skippedFriends.length,
