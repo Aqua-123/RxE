@@ -189,7 +189,7 @@ export function initMessages() {
     const blockPic = !safeDisplayPic && (muted || (lowKarma && imgProtect));
     const rxeSignature =
       hasRxESignature(this.props.data.messages[0]) ||
-      this.props.data.picture?.includes("imgur.com");
+      this.props.data.picture?.includes("imgur");
 
     const userInfo = user ? (
       <UserInfo
