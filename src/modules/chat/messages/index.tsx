@@ -187,7 +187,9 @@ export function initMessages() {
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
     const blockPic = !safeDisplayPic && (muted || (lowKarma && imgProtect));
-    const rxeSignature = hasRxESignature(this.props.data.messages[0]);
+    const rxeSignature =
+      hasRxESignature(this.props.data.messages[0]) ||
+      this.props.data.picture?.includes("imgur.com");
 
     const userInfo = user ? (
       <UserInfo

@@ -23,6 +23,7 @@ function interceptAjax(url: string, settings: AjaxOpts): DoSendRequest {
   ) {
     alterResponse<ProfileData>(settings, {
       async success(user) {
+        console.log(user);
         user.actualFriend = user.friend;
         user.friend = true;
         return user;
@@ -54,7 +55,7 @@ export function initNetwork() {
     arg2: AjaxOpts | undefined
   ) {
     const settings = typeof arg1 === "string" ? { ...arg2, url: arg1 } : arg1;
-    if (settings?.url === undefined) return $ajax(settings);
+    if (!settings || settings.url === undefined) return $ajax(settings);
     if (interceptAjax(settings.url, settings) !== DoSendRequest.SendRequest)
       return undefined;
     addNetworkMonitor(settings);

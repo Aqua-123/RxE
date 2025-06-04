@@ -32,7 +32,7 @@ function alteredSuccess<T>(
         const newData = await success(data, ...reqctx);
         successCallbacks.forEach((callback) => callback(newData, ...reqctx));
       } catch (err) {
-        const xhr = reqctx[1];
+        const xhr = reqctx[1] || null;
         const message = err instanceof Error ? err.message : "";
         failureCallbacks.forEach((callback) => callback(xhr, "error", message));
       }
@@ -51,9 +51,14 @@ function alteredFailure<T>(
     (async () => {
       try {
         const data = await error(xhr, ...errctx);
-        successCallbacks.forEach((callback) => callback(data, "success", xhr));
+        const safeXhr = xhr || null;
+        successCallbacks.forEach((callback) =>
+          callback(data, "success", safeXhr)
+        );
       } catch (err) {
-        if (err instanceof Error) errctx[1] = err.message;
+        if (err instanceof Error && errctx.length > 1) {
+          errctx[1] = err.message;
+        }
         failureCallbacks.forEach((callback) => callback(xhr, ...errctx));
       }
     })();
