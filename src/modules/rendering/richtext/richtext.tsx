@@ -1,3 +1,4 @@
+/* eslint-disable no-misleading-character-class */
 import React from "react";
 import { stringGroups, wrapPartitions } from "~src/utils";
 import {
@@ -140,7 +141,10 @@ function makeMarkdown(text: string): string {
 
   const delimLast = delim.slice(-1)[0];
   if (contents.split("").every((char) => char === delimLast)) return text;
-  return decorateText(markdownStyles[delim], contents.replace(/[\u200B\u200C\u200D\ufffd\u200b\ufffd]/g, ""));
+  return decorateText(
+    markdownStyles[delim],
+    contents.replace(/[\u200B\u200C\u200D\ufffd\u200b\ufffd]/g, "")
+  );
 }
 
 export function wrapMarkdown(
@@ -149,6 +153,7 @@ export function wrapMarkdown(
 ): string {
   return wrapPartitions<string, string>(
     text,
+    // eslint-disable-next-line no-useless-escape
     /(?<=\s|^|\.,;!\?)(\*{1,3}|_{1,2}|~{1,2}|<{1,2}|`|\^\^|,,|\[{2}|\({2}|\{{2})(?:[\u200B\u200C\u200D\ufffd\U0001f178]*\S)(?:[\u200B\u200C\u200D\ufffd\U0001f178]*(?:.*?[\u200B\u200C\u200D\ufffd\U0001f178]*\S)?)(?:[\u200B\u200C\u200D\ufffd\U0001f178]*(?:\1|\]{2}|\){2}|\}{2}|>{1,2}))(?=\s|$|\.,;!\?)/g,
     makeMarkdown,
     restWrapper

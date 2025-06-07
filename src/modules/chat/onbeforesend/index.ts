@@ -79,7 +79,8 @@ const RXE_SIGNATURE = {
 };
 
 function addRxESignature(message: string): string {
-  const markdownStart = /^(\*{1,3}|_{1,2}|~{1,2}|<{1,2}|`|\^\^|,,|\[{2}|\({2}|\{{2})/;
+  const markdownStart =
+    /^(\*{1,3}|_{1,2}|~{1,2}|<{1,2}|`|\^\^|,,|\[{2}|\({2}|\{{2})/;
   const needsSpace = markdownStart.test(message);
   return RXE_SIGNATURE.pattern + (needsSpace ? " " : "") + message;
 }
