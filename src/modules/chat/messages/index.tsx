@@ -187,6 +187,8 @@ export function initMessages() {
     const displayPicClasses = ["room-component-message-avatar"];
     if (!safeDisplayPic) displayPicClasses.push("ritsu-would-blur");
     const blockPic = !safeDisplayPic && (muted || (lowKarma && imgProtect));
+    const hideRxEBadge = Preferences.get(P.hideRxEBadge);
+
     const rxeSignature =
       hasRxESignature(this.props.data.messages[0]) ||
       this.props.data.picture?.includes("imgur");
@@ -255,7 +257,7 @@ export function initMessages() {
         <div className="room-component-message-right">
           {userFlair}
           <Badge badge={user?.badge ?? null} />
-          {rxeSignature && (
+          {rxeSignature && !hideRxEBadge && (
             <span className="user-badge-container">
               <img
                 alt="RxE User"

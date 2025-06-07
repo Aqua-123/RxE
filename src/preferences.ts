@@ -126,6 +126,11 @@ export const P = {
     label: T.preferences.disablePfpNagging.label,
     default: false
   }),
+  hideRxEBadge: new BooleanPreference({
+    key: "hideRxEBadge",
+    label: T.preferences.hideRxEBadge.label,
+    default: false
+  }), 
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

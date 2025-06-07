@@ -132,6 +132,9 @@ export default {
       label:
         "Disable the pfp fix (recommended if experiencing lag or have a slower system)"
     },
+    hideRxEBadge: {
+      label: "Hide RxE badge in chat"
+    },
     hideTyping: {
       label: "Hide your typing status in chat"
     }
