@@ -402,6 +402,8 @@ declare type EmeraldUser = {
   };
   gender: string;
   gold: boolean;
+  platinum: boolean;
+
   id: number;
   interests: string[];
   karma: number;
@@ -418,6 +420,16 @@ declare type EmeraldUser = {
   // NOTE: This is our own field
   delta: number;
   activated: boolean;
+
+  // WTF is this shit
+  hide_csat_button: boolean | null;
+  hide_nps_button: boolean | null;
+
+  has_premium_badge: boolean;
+  is_mod_admin: boolean;
+  is_gold_popup: boolean;
+  chat_blocked: boolean;
+
 };
 
 declare type ProfileData = {

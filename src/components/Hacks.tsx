@@ -15,6 +15,7 @@ export default function Hacks(props: HacksProps) {
     checkboxPreference("superTemp", props),
     checkboxPreference("enableModUI", props),
     checkboxPreference("spoofGold", props),
+    checkboxPreference("spoofPlatinum", props),
     checkboxPreference("universalFriend", props),
     checkboxPreference("antiBan", props)
   );

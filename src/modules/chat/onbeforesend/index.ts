@@ -63,7 +63,7 @@ function addZWSP(message: string) {
   let newMessage = "";
   words.forEach((word: string, index: number) => {
     if (index > 0) newMessage += " "; // Add space between words only
-    newMessage += [word.slice(0, 1), "\u200B", word.slice(1)].join("");
+    newMessage += [word.slice(0, 2), "\u200B", word.slice(2)].join("");
   });
   const finalMessage = newMessage;
   return finalMessage;
@@ -79,7 +79,9 @@ const RXE_SIGNATURE = {
 };
 
 function addRxESignature(message: string): string {
-  return RXE_SIGNATURE.pattern + message;
+  const markdownStart = /^(\*{1,3}|_{1,2}|~{1,2}|<{1,2}|`|\^\^|,,|\[{2}|\({2}|\{{2})/;
+  const needsSpace = markdownStart.test(message);
+  return RXE_SIGNATURE.pattern + (needsSpace ? " " : "") + message;
 }
 
 export function hasRxESignature(message: string): boolean {

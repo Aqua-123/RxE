@@ -18,8 +18,16 @@ export function hackOverrides() {
       if (Preferences.get(PX?.enableModUI!)) {
         if (prop === "master") return true;
         if (prop === "mod") return true;
+        if (prop === "is_mod_admin") return true;
       }
-      if (Preferences.get(PX?.spoofGold!)) if (prop === "gold") return true;
+      if (Preferences.get(PX?.spoofGold!)) {
+        if (prop === "gold") return true;
+        if (prop === "is_gold_popup") return true;
+      }
+      if (Preferences.get(PX?.spoofPlatinum!)) {
+        if (prop === "platinum") return true;
+        if (prop === "has_premium_badge") return true;
+      }
       if (prop === "proxy") return true;
       return user[prop];
     }

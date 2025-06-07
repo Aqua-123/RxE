@@ -13,6 +13,11 @@ export const PX = FEATURES.HACKS
         label: T.preferences.spoofGold!.label,
         default: false
       }),
+      spoofPlatinum: new BooleanPreference({
+        key: "spoofPlatinum",
+        label: T.preferences.spoofPlatinum!.label,
+        default: false
+      }),
       enableModUI: new BooleanPreference({
         key: "enableModUI",
         label: T.preferences.enableModUI!.label,
