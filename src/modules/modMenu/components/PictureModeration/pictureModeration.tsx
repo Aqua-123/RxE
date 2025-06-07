@@ -295,7 +295,7 @@ export function pictureModerationOverride() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          url: data.image_url, 
+          url: data.image_url,
           correctCheckbox: correct_checkbox,
           label: selectedLabel,
           prediction: data.prediction

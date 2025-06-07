@@ -29,7 +29,7 @@ export default {
       spoofPlatinum: {
         label: "Spoof emerald platinum status locally"
       },
-        enableModUI: {
+      enableModUI: {
         label: "Spoof mod status locally"
       },
       universalFriend: {
