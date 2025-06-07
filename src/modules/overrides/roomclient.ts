@@ -59,6 +59,10 @@ export function roomclientOverrides() {
     else if (mode === "private") mountPrivate.call(this);
   };
 
+  // Fuck ads
+  Room.prototype.ads = function ads() {};
+  Room.prototype.amazon_ads = function amazonAds() {};
+
   Room.prototype.trim_messages = function trimMessages() {
     const max = this.state.mode === "channel" ? 100 : 5000;
     const { messages } = this.state;

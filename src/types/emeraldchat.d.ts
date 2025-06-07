@@ -666,6 +666,8 @@ declare class Room extends React.Component<// add props
   stop_typing(): void;
   send(message: string): void;
   process?: (message: string) => string | null;
+  ads(): void;
+  amazon_ads(): void;
   updated(e: ChannelJsonResponse): void;
   clear_print(): void;
   voice_connect(e: ChannelJsonResponse): void;
