@@ -86,10 +86,8 @@
     "ts-preferences": "^2.0.0"
   },
   "dependencies": {
-    "@types/firebase": "^3.2.1",
     "actioncable": "^5.2.8-1",
     "async-memo": "^0.0.1",
-    "firebase": "^10.6.0",
     "md5": "^2.3.0",
     "memoize-one": "^6.0.0"
   }

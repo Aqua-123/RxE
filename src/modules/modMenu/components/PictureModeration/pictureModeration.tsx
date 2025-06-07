@@ -11,8 +11,6 @@ import {
   setFeedback
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
-import { sendTrialReq } from "../firebase";
-// import { Preferences, P } from "~src/preferences";
 
 interface pictureModerationState {
   picture_moderations: ModPicture[];
@@ -113,9 +111,6 @@ class ModifiedPictureModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
-    const logJson = { action: "approve", url: picture?.image_url };
-    // sendDataToFirestore(logJson);
-    sendTrialReq(logJson, "picture");
   };
 
   delete = (id: number) => {
@@ -132,8 +127,6 @@ class ModifiedPictureModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
-    const logJson = { action: "reject", url: picture?.image_url };
-    sendTrialReq(logJson, "picture");
   };
 
   approveSelectedElements = () => {
@@ -302,7 +295,7 @@ export function pictureModerationOverride() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          url: data.image_url, // Make sure this contains the base64 encoded image
+          url: data.image_url, 
           correctCheckbox: correct_checkbox,
           label: selectedLabel,
           prediction: data.prediction
