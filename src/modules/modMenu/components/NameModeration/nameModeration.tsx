@@ -97,7 +97,6 @@ class ModifiedNameModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
-
   };
 
   delete = (id: number) => {
@@ -115,8 +114,6 @@ class ModifiedNameModeration extends React.Component<
           this.stateUpdate.bind(this, id);
       }
     });
-
-    const logJson = { nameModeration: newName, action: "reject" };
   };
 
   approveSelectedElements = () => {

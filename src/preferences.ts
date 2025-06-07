@@ -130,7 +130,7 @@ export const P = {
     key: "hideRxEBadge",
     label: T.preferences.hideRxEBadge.label,
     default: false
-  }), 
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",
