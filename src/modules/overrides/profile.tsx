@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Spinner } from "~src/components/Spinner";
-import { stripBiDi } from "~src/utils";
+import { stripBiDi, getTimeAgo } from "~src/utils";
 /**
  * Apply overrides to the profile and related objects.
  * */
@@ -37,6 +37,48 @@ export function profileOverrides() {
     );
   };
 
+  UserProfile.prototype.top = function top() {
+    return (
+      <div className="user-profile-top">
+        {this.profile_settings()}
+        <div className="user-profile-top-left">
+          <div className="user-profile-picture-wrapper">
+            {this.profile_picture()}
+            {this.online_icon()}
+          </div>
+        </div>
+        <div className="user-profile-top-right">
+          <div className="user-profile-header">
+            <Flair
+              data={{
+                string: this.state.data.user.display_name,
+                flair: this.state.data.user.flair
+              }}
+            />
+          </div>
+          <div className="user-profile-sub">
+            #{this.state.data.user.username}
+          </div>
+          {this.profile_buttons()}
+          {/* last seen */}
+          <div
+            className="user-profile-last-seen"
+            style={{
+              fontSize: "12px",
+              color: "#888",
+              marginTop: "8px",
+              marginBottom: "8px",
+              fontStyle: "italic",
+              opacity: 0.8
+            }}
+          >
+            Last seen {getTimeAgo(this.state.data.user.last_logged_in_at)}
+          </div>
+          <div className="user-profile-tabs">{this.tabs()}</div>
+        </div>
+      </div>
+    );
+  };
   UserProfile.prototype.render = function render() {
     const content = this.state.data
       ? [this.top(), this.bottom()]

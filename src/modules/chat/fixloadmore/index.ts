@@ -54,6 +54,7 @@ export function initLoadMore() {
     });
   };
   Room.prototype.switch = function fixmessageCount(this: any, roomObj: any) {
+    const { pvtUserId } = roomObj;
     this.clear_print();
     const { id } = roomObj;
     App.room.join(id);
@@ -66,15 +67,31 @@ export function initLoadMore() {
       mode: roomObj.mode || "default"
     });
     if (roomObj.mode !== "private") return;
-    $.ajax({
-      type: "GET",
-      url: `/default_private_messages?id=${id}`,
-      dataType: "json",
-      success: (resp: PrivateMessage) => {
-        fasterAppend.call(this, resp.messages);
-        this.setState({ messages_count: resp.messages_count });
+
+    // Fetch messages and user profile in parallel
+    Promise.all([
+      $.ajax({
+        type: "GET",
+        url: `/default_private_messages?id=${id}`,
+        dataType: "json"
+      }),
+      $.ajax({
+        type: "GET",
+        url: `/profile_json?id=${pvtUserId}`,
+        dataType: "json"
+      })
+    ])
+      .then(([messagesResp, userResp]) => {
+        fasterAppend.call(this, messagesResp.messages);
+        this.setState({
+          messages_count: messagesResp.messages_count,
+          messages: messagesResp.messages,
+          privateUser: userResp.user
+        });
         this.scroll();
-      }
-    });
+      })
+      .catch(() => {
+        this.setState({ privateUser: null });
+      });
   };
 }

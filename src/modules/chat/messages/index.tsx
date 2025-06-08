@@ -1,12 +1,15 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React from "react";
+import ReactDOM from "react-dom";
+
 import { P, Preferences } from "~src/preferences";
 import {
   accountAgeScaled as userExperience,
   formatSignedAmount,
   loadCSS,
   notNum,
-  getUserId
+  getUserId,
+  getTimeAgo
 } from "~src/utils";
 import { maybeEmbed } from "~src/modules/rendering/richtext/embeds/utils";
 // import { wrapLinks } from "~src/modules/rendering/richtext/messagelinks";
@@ -416,6 +419,135 @@ export function betterMessageRendering() {
   };
   Room.prototype.append = function append(e) {
     fasterAppend.call(this, [e]);
+  };
+
+  Room.prototype.showOptionsMenu = function showOptionsMenu() {
+    this.setState({
+      showOptionsMenu: !this.state.showOptionsMenu
+    });
+
+    // Add click outside to close
+    if (!this.state.showOptionsMenu) {
+      const closeMenu = (event: MouseEvent) => {
+        const target = event.target as HTMLElement;
+        if (!target.closest(".private-chat-options")) {
+          this.setState({ showOptionsMenu: false });
+          document.removeEventListener("click", closeMenu);
+        }
+      };
+      setTimeout(() => document.addEventListener("click", closeMenu), 0);
+    }
+  };
+  function createUserProfile(id: number) {
+    const userProfile = React.createElement(UserProfile, { id });
+    ReactDOM.render(userProfile, document.getElementById("ui-hatch"));
+  }
+
+  Room.prototype.room_center = function roomCenter() {
+    let messages = this.room_messages();
+    let input = this.room_input();
+    let typing = this.room_typing();
+
+    const { privateUser } = this.state;
+    if (this.state.mode === "match") {
+      input = this.room_input_match();
+    }
+
+    if (
+      this.state.mode === "match_video" ||
+      this.state.mode === "private_video"
+    ) {
+      messages = this.room_messages("video");
+      input = this.room_input_video();
+      typing = this.room_typing("video");
+    }
+
+    if (this.state.mode === "match_voice") {
+      input = this.room_input_match();
+    }
+
+    return (
+      <div className="room-component-center">
+        {/* header */}
+        {privateUser && (
+          <div className="private-chat-header">
+            <div className="private-user-info">
+              <img
+                className="private-user-avatar"
+                src={privateUser.display_picture}
+                alt=""
+                onClick={() => {
+                  createUserProfile(privateUser.id);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    createUserProfile(privateUser.id);
+                  }
+                }}
+              />
+              <div className="private-user-info-container">
+                <span
+                  className="private-user-name"
+                  style={{ color: privateUser.flair?.color }}
+                >
+                  {privateUser.display_name}
+                </span>
+                {/* username */}
+                <span className="private-user-last-seen">
+                  Last seen {getTimeAgo(privateUser.last_logged_in_at)}
+                </span>
+              </div>
+            </div>
+            <div className="private-chat-options">
+              <div
+                className="options-menu"
+                role="button"
+                tabIndex={0}
+                onClick={() => {
+                  this.showOptionsMenu();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    this.showOptionsMenu();
+                  }
+                }}
+              >
+                <i className="fa fa-ellipsis-v" />
+              </div>
+              {this.state.showOptionsMenu && (
+                <div className="private-chat-context-menu">
+                  <div
+                    className="menu-item remove-friend"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      // Handle remove friend action
+                      console.log("Remove friend clicked");
+                      this.setState({ showOptionsMenu: false });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        console.log("Remove friend clicked");
+                        this.setState({ showOptionsMenu: false });
+                      }
+                    }}
+                  >
+                    Remove friend
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {messages}
+        {input}
+        {typing}
+      </div>
+    );
   };
 }
 

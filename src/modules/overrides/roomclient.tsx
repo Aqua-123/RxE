@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React from "react";
+import ReactDOM from "react-dom";
 import { fasterAppend } from "~src/modules/chat/messages";
 import window from "~src/browserWindow";
 import { stripBiDi } from "~src/utils";
@@ -27,13 +28,56 @@ function joinPrivateRoom(this: Room, e: any) {
 
 function mountPrivate(this: Room) {
   mountChannel.call(this);
+
+  const pvtUserId = this.props.data.sender;
+
+  // Fetch messages and user profile in parallel
+  Promise.all([
+    $.ajax({
+      type: "GET",
+      url: `/default_private_messages?id=${this.props.data.id}`,
+      dataType: "json"
+    }),
+    $.ajax({
+      type: "GET",
+      url: `/profile_json?id=${pvtUserId}`,
+      dataType: "json"
+    })
+  ])
+    .then(([messagesResp, userResp]) => {
+      this.setState({ privateUser: userResp.user });
+      joinPrivateRoom.call(this, messagesResp);
+    })
+    .catch(() => {
+      this.setState({ privateUser: null });
+    });
+}
+RoomUserUnit.prototype.message = function message() {
   $.ajax({
     type: "GET",
-    url: `/default_private_messages?id=${this.props.data.id}`,
+    url: `/message_user?id=${this.props.data.id}`,
     dataType: "json",
-    success: joinPrivateRoom.bind(this)
+    success: (response) => {
+      if (!response) return;
+
+      // Close all open menus
+      MenuReactMicro?.close();
+      MenuReact?.close();
+      UserProfileReact?.close();
+
+      RoomClient?.setState({
+        privateRoomState: response
+      });
+
+      // Generate new private room
+      RoomGenerator.generate({
+        id: response.room_id,
+        mode: "private",
+        sender: response.friend_id
+      });
+    }
   });
-}
+};
 
 function mountMatchMenu(this: Room, action: string) {
   this.setState({
@@ -46,8 +90,133 @@ export function roomclientOverrides() {
     match: "text",
     match_video: "video",
     match_voice: "voice",
+    private_video: "video",
     channel: "",
     private: ""
+  };
+
+  RoomGenerator.generate = function generate(params): void {
+    if (RoomClient) {
+      RoomClient.switch({
+        id: params.id,
+        // @ts-ignore
+        mode: params.mode,
+        pvtUserId: params.sender
+      });
+    } else {
+      ReactDOM.render(
+        React.createElement(Room, {
+          data: {
+            id: params.id,
+            // @ts-ignore
+            mode: params.mode,
+            partner: params.partner,
+            sender: params.sender
+          }
+        }),
+        document.getElementById("container")
+      );
+    }
+  };
+  UserView.prototype.message = function message(type: "message" | "video") {
+    $.ajax({
+      type: "GET",
+      url: `/message_user?id=${this.state.user.id}`,
+      dataType: "json",
+      success: (response: { confirmed?: boolean; room_id?: string }) => {
+        this.close();
+        MenuReactMicro?.close();
+        MenuReact?.close();
+        UserProfileReact?.close();
+
+        if (response?.confirmed) {
+          RoomGenerator.generate({
+            id: Number(response.room_id),
+            mode: type === "message" ? "private" : "private_video",
+            partner: this.state.user,
+            sender: this.state.user.id
+          });
+        } else {
+          const component = (
+            <MenuMicro>
+              {type === "message" ? "MESSAGE" : "VIDEO CALL"}
+              <br />
+              <br />
+              <div className="m1">
+                <span>
+                  you need to be friends to{" "}
+                  {type === "message" ? "send a message to" : "call"} this
+                  person
+                </span>
+                {response ? (
+                  <div>
+                    <div className="ui-button-micro">
+                      <span className="ui-button-mega-icon material-icons">
+                        check
+                      </span>{" "}
+                      Friend Request Sent
+                    </div>
+                    <div
+                      onMouseDown={this.cancel_friend_request.bind(this)}
+                      className="ui-button-micro"
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <span className="ui-button-mega-icon material-icons">
+                        close
+                      </span>
+                      Cancel
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onMouseDown={this.send_friend_request.bind(this)}
+                    style={{ marginTop: "20px" }}
+                    role="button"
+                    tabIndex={0}
+                    className="ui-button-micro"
+                  >
+                    {" "}
+                    <span className="ui-button-mega-icon material-icons">
+                      add
+                    </span>{" "}
+                    Send Friend Request
+                  </div>
+                )}
+              </div>
+              <div className="ui-menu-buttons">
+                <div
+                  onMouseDown={() => {
+                    MenuReactMicro?.close();
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  className="ui-button-text"
+                >
+                  Close
+                </div>
+              </div>
+            </MenuMicro>
+          );
+
+          ReactDOM.render(component, document.getElementById("ui-hatch-2"));
+        }
+      }
+    });
+  };
+
+  MessageNotificationUnit.prototype.open_room = function openRoom() {
+    // Close all open menus
+    MenuReactMicro?.close();
+    MenuReact?.close();
+    UserProfileReact?.close();
+    // Generate new room
+    RoomGenerator.generate({
+      id: this.props.data.data.room_id,
+      mode: this.props.data.data.mode,
+      partner: this.props.data.data.user,
+      sender: this.props.data.sender_id
+    });
   };
 
   Room.prototype.componentDidMount = function componentDidMount() {

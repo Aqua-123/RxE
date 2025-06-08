@@ -126,6 +126,8 @@ declare type MessageData = {
 declare type MessageNotificationProps = {
   created_at: string;
   data: {
+    room_id: number;
+    mode: "private" | "private_video";
     user: EmeraldUser;
     sender: null | EmeraldUser;
     message: {
@@ -145,6 +147,7 @@ declare class MessageNotificationUnit extends React.Component<{
   data: MessageNotificationProps;
 }> {
   image(): JSX.Element;
+  open_room(): void;
 }
 declare class MessageNotifications extends React.Component<
   any,
@@ -430,6 +433,10 @@ declare type EmeraldUser = {
   is_gold_popup: boolean;
   chat_blocked: boolean;
 
+  // New fields from example
+  video_chats_verified: boolean;
+  thumbnail_picture: string;
+  last_logged_in_at: string;
 };
 
 declare type ProfileData = {
@@ -632,22 +639,49 @@ declare class VideoModerationUnit extends React.Component<
   previous(): void;
   updateTag(id: number, newState: boolean): void;
 }
-declare class Room extends React.Component<// add props
-{
-  data: { id: number };
+
+declare type PrivateRoomState = {
+  id: number;
+  user_id: number;
+  friend_id: number;
+  confirmed: boolean;
+  recipient: boolean;
+  created_at: string;
+  updated_at: string;
+};
+declare class Room extends React.Component<{
+  data: {
+    id: number;
+    mode: "private" | "channel" | "private_video" | "private_voice";
+    partner?: EmeraldUser;
+    sender?: number;
+  };
 }> {
   state: {
     messages_count: number;
+    showOptionsMenu: boolean;
+    privateRoomState: PrivateRoomState;
     messages: MessageData[];
     id: null | number | string;
-    mode: "private" | "channel" | "match" | "match_video" | "match_voice";
+    mode:
+      | "private"
+      | "channel"
+      | "match"
+      | "match_video"
+      | "match_voice"
+      | "private_video";
     print: JSX.Element | null;
     print_append: JSX.Element | null;
     typing: string | null;
     last_message: string | null;
+    privateUser?: EmeraldUser;
   };
   componentDidMount(): void;
-  switch(e: { id: null | number | string; mode: "private" | "channel" }): void;
+  switch(e: {
+    id: null | number | string;
+    mode: "private" | "channel";
+    pvtUserId?: number;
+  }): void;
   send_picture(picture: EmeraldPicture): void;
   sendRitsuPicture?(id: RitsuChatImage): void; // custom
   print(elt?: JSX.Element): void;
@@ -660,13 +694,18 @@ declare class Room extends React.Component<// add props
   input(e: React.KeyboardEvent<HTMLTextAreaElement>): void;
   upload_picture(): void;
   received(e: MessageData): void;
-  room_messages(className: string): JSX.Element;
+  room_messages(className?: string): JSX.Element;
+  room_input_match(): JSX.Element;
+  room_input_video(): JSX.Element;
+  room_typing(className?: string): JSX.Element;
   load_messages(r: number): void;
+  deleteChat(roomId: number): void; // custom
   start_typing(e: EmeraldUser): void;
   stop_typing(): void;
   send(message: string): void;
   process?: (message: string) => string | null;
   ads(): void;
+  showOptionsMenu(): void; // custom
   amazon_ads(): void;
   updated(e: ChannelJsonResponse): void;
   clear_print(): void;
@@ -675,6 +714,7 @@ declare class Room extends React.Component<// add props
   expand(e: boolean): void;
   disconnected(e: AppInterface): void;
   clear_messages(): void;
+  room_center(): JSX.Element;
   room_reconnected(): void;
 }
 
@@ -739,8 +779,18 @@ declare class RoomChannelMembers extends React.Component<
 
 declare const RoomChannelMembersClient: RoomChannelMembers;
 
+declare const RoomGenerator: {
+  generate(e: {
+    id: number;
+    mode: "private" | "channel" | "private_video" | "private_voice";
+    partner?: EmeraldUser;
+    sender?: number;
+  }): void;
+};
+
 declare class RoomUserUnit extends React.Component<{ data: EmeraldUser }> {
   body(): JSX.Element;
+  message(): void;
 }
 
 declare class RoomPrivate extends React.Component<
@@ -813,6 +863,8 @@ declare class UserView extends React.Component<
   view_profile: Function;
   exit_click: (e: MouseEvent) => void;
   bottom: () => JSX.Element;
+  cancel_friend_request: Function;
+  send_friend_request: Function;
   top: () => JSX.Element;
   unmute: Function;
   mute: Function;
