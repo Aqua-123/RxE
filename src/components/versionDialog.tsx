@@ -22,11 +22,11 @@ export function VersionDialog(props: { version: string; changes: string }) {
         <br />
         <br />
         Visit the{" "}
-        <a href="https://github.com/Ritsu-Projects/RxE-Public-Releases/raw/main/ritsu-emerald.user.js">
+        <a href="https://github.com/Teriyaki812/RxE-Public-Releases/raw/main/ritsu-emerald.user.js">
           Github repositry
         </a>{" "}
         or click{" "}
-        <a href="https://github.com/Ritsu-Projects/RxE-Public-Releases/raw/main/ritsu-emerald.user.js">
+        <a href="https://github.com/Teriyaki812/RxE-Public-Releases/raw/main/ritsu-emerald.user.js">
           here
         </a>{" "}
         to update to the latest version!
