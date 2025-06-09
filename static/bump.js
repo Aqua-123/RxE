@@ -1,4 +1,4 @@
-const RELEASES_REPO_NAME = "Public-Releases";
+const RELEASES_REPO_NAME = "RxE-Public-Releases";
 const RELEASES_LOCATION = `../${RELEASES_REPO_NAME}`;
 const RELEASES_OLD = `${RELEASES_LOCATION}/Previous Versions`;
 const RELEASE_BUILT = `dist`;
