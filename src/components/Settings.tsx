@@ -27,6 +27,7 @@ export default function Settings(props: SettingsProps) {
       {App.user.mod && checkboxPreference("hideFromGc", props)}
       {App.user.mod && checkboxPreference("hideAIControls", props)}
       {radioPreference("blockReqs", props)}
+      {checkboxPreference("approveAllReqs", props)}
       {settingsSection(styles.settingsSection, T.imagesTitle)}
       {checkboxPreference("imgBlur", props)}
       {checkboxPreference("imgProtect", props)}

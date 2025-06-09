@@ -1,23 +1,51 @@
 import { P, Preferences, RequestBlockMode } from "~src/preferences";
 import { DAY, timeSince } from "~src/utils";
 
+function processRequest(request: FriendRequest, action: "accept" | "decline") {
+  const endpoint = action === "accept" ? "friends_accept" : "friends_decline";
+  $.ajax({
+    type: "GET",
+    url: `/${endpoint}?friend_id=${request.sender_id}&notification_id=${request.id}`,
+    dataType: "json"
+  });
+}
+
+function shouldKeepRequest(
+  request: FriendRequest,
+  blockMode: RequestBlockMode
+): boolean {
+  const joinDate = new Date(request.data.sender.created_at);
+  const isNewUser =
+    blockMode !== RequestBlockMode.None && timeSince(joinDate) < DAY;
+  const isHidden = App
+    ? App.room.muted.includes(request.sender_id)
+    : request.seen;
+
+  return !isNewUser && !isHidden;
+}
+
 function filterNotifications(data: NotificationsStateData) {
   const blockMode = Preferences.get(P.blockReqs);
+  const approveAll = Preferences.get(P.approveAllReqs);
+
   data.friend_requests = data.friend_requests.filter(
     (request: FriendRequest) => {
-      const joinDate = new Date(request.data.sender.created_at);
-      const blockNew =
-        blockMode !== RequestBlockMode.None && timeSince(joinDate) < DAY;
-      const hide = App
-        ? App.room.muted.includes(request.sender_id)
-        : request.seen;
-      if (!blockNew && !hide) return true;
-      if (blockMode !== RequestBlockMode.Reject) return false;
-      $.ajax({
-        type: "GET",
-        url: `/friends_decline?friend_id=${request.sender_id}&notification_id=${request.id}`,
-        dataType: "json"
-      });
+      // Keep requests that aren't blocked or hidden
+      if (shouldKeepRequest(request, blockMode)) {
+        return true;
+      }
+
+      // approveAllReqs overrides any blockmode
+      if (approveAll) {
+        processRequest(request, "accept");
+        return false;
+      }
+
+      // Only decline if block mode is set to reject
+      if (blockMode === RequestBlockMode.Reject) {
+        processRequest(request, "decline");
+      }
+
       return false;
     }
   );
