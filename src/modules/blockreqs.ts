@@ -28,17 +28,17 @@ function filterNotifications(data: NotificationsStateData) {
   const blockMode = Preferences.get(P.blockReqs);
   const approveAll = Preferences.get(P.approveAllReqs);
 
+  console.log(blockMode, approveAll);
+
   data.friend_requests = data.friend_requests.filter(
     (request: FriendRequest) => {
-      // Keep requests that aren't blocked or hidden
-      if (shouldKeepRequest(request, blockMode)) {
-        return true;
-      }
-
-      // approveAllReqs overrides any blockmode
       if (approveAll) {
         processRequest(request, "accept");
         return false;
+      }
+      // Keep requests that aren't blocked or hidden
+      if (shouldKeepRequest(request, blockMode)) {
+        return true;
       }
 
       // Only decline if block mode is set to reject
