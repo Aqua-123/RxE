@@ -168,6 +168,11 @@ export const P = {
       }
     ]
   }),
+  approveAllReqs: new BooleanPreference({
+    key: "approveAllReqs",
+    label: "Approve all friend requests",
+    default: false
+  }),
   highlightMentions: new BooleanPreference({
     key: "highlightMentions",
     label: T.preferences.highlightMentions.label,

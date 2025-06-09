@@ -88,6 +88,9 @@ export default {
     blockReqs: {
       label: "Block friend requests from new accounts"
     },
+    approveAllReqs: {
+      label: "Approve all friend requests (overrides blockReqs)"
+    },
     highlightMentions: {
       label: "Highlight your name when you're mentioned"
     },
