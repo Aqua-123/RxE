@@ -85,7 +85,6 @@ export function initLoadMore() {
         fasterAppend.call(this, messagesResp.messages);
         this.setState({
           messages_count: messagesResp.messages_count,
-          messages: messagesResp.messages,
           privateUser: userResp.user
         });
         this.scroll();
