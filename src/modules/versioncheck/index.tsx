@@ -6,10 +6,10 @@ import { versionComparison } from "~src/utils";
 import { P, Preferences } from "~src/preferences";
 
 const META =
-  "https://raw.githubusercontent.com/Ritsu-Projects/RxE-Public-Releases/main/meta/VERSION";
+  "https://raw.githubusercontent.com/Teriyaki812/RxE-Public-Releases/main/meta/VERSION";
 
 const CHANGE_LOG =
-  "https://raw.githubusercontent.com/Ritsu-Projects/RxE-Public-Releases/main/meta/CHANGE_LOG";
+  "https://raw.githubusercontent.com/Teriyaki812/RxE-Public-Releases/main/meta/CHANGE_LOG";
 
 export async function initversionCheck() {
   if (!Preferences.get(P.notifyUpdates)) return;
