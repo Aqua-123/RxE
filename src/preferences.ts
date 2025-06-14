@@ -131,6 +131,11 @@ export const P = {
     label: T.preferences.hideRxEBadge.label,
     default: false
   }),
+  theVioletteSpecial: new BooleanPreference({
+    key: "theVioletteSpecial",
+    label: T.preferences.theVioletteSpecial.label,
+    default: false
+  }),
   // known images
   blockedHashes: new ListPreference<string>({
     key: "blockedHashes",

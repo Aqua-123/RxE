@@ -1,6 +1,7 @@
 import { links } from "~src/meta";
 import { sanitizeURL } from "~src/modules/rendering/richtext/linkutils";
 import { wrapMarkdown } from "~src/modules/rendering/richtext/richtext";
+import { P, Preferences } from "~src/preferences";
 
 const emotes = {
   shrug: "¯\\_(ツ)_/¯",
@@ -112,6 +113,10 @@ export function init() {
       sanitized !== message ? sanitized : wrapMarkdown(addZWSP(message));
 
     // Add RxE signature before the message
-    return addRxESignature(processedMessage);
+    const theVioletteSpecial = Preferences.get(P.theVioletteSpecial);
+    if (!theVioletteSpecial) {
+      return addRxESignature(processedMessage);
+    }
+    return processedMessage;
   };
 }

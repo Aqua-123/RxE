@@ -138,6 +138,9 @@ export default {
     hideRxEBadge: {
       label: "Hide RxE badge in chat"
     },
+    theVioletteSpecial: {
+      label: "The Violette Special"
+    },
     hideTyping: {
       label: "Hide your typing status in chat"
     }

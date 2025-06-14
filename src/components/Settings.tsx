@@ -24,6 +24,7 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("hideTyping", props)}
       {checkboxPreference("disablePfpNagging", props)}
       {checkboxPreference("hideRxEBadge", props)}
+      {checkboxPreference("theVioletteSpecial", props)}
       {App.user.mod && checkboxPreference("hideFromGc", props)}
       {App.user.mod && checkboxPreference("hideAIControls", props)}
       {radioPreference("blockReqs", props)}
