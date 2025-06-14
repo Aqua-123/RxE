@@ -11,6 +11,8 @@ import {
 } from "./SettingsComponents";
 import RegExpSetting from "./RegExpSetting";
 
+const PEOPLE_WITH_VIOLETTE_SPECIAL = [45727225];
+
 export default function Settings(props: SettingsProps) {
   const { muteRegexes, applySettings } = props;
   return (
@@ -24,7 +26,8 @@ export default function Settings(props: SettingsProps) {
       {checkboxPreference("hideTyping", props)}
       {checkboxPreference("disablePfpNagging", props)}
       {checkboxPreference("hideRxEBadge", props)}
-      {checkboxPreference("theVioletteSpecial", props)}
+      {(PEOPLE_WITH_VIOLETTE_SPECIAL.includes(App.user.id) || App.user.mod) &&
+        checkboxPreference("theVioletteSpecial", props)}
       {App.user.mod && checkboxPreference("hideFromGc", props)}
       {App.user.mod && checkboxPreference("hideAIControls", props)}
       {radioPreference("blockReqs", props)}
