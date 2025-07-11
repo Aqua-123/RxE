@@ -28,6 +28,7 @@ const durationList = [
   ["86400", "1 day"],
   ["259200", "3 days"],
   // ["604800", "1 week"],
+  ["1209600", "2 weeks"],
   ["31556952", "1 year"],
   ["315569520", "Permanently"]
 ];
@@ -64,8 +65,7 @@ export const reasonList = [
   },
   {
     value: "underage",
-    label:
-      "Feel free to join our Group Chat, but you must be 18+ in order to use 1-on-1 Text Chat/Video Chat"
+    label: "You must be 18+ in order to use EmeraldChat."
   },
   {
     value: "nudity",
