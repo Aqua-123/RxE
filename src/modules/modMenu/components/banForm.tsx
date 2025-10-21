@@ -26,6 +26,7 @@ const durationList = [
   ["21600", "6 hours"],
   ["43200", "12 hours"],
   ["86400", "1 day"],
+  ["172800", "2 days"],
   ["259200", "3 days"],
   // ["604800", "1 week"],
   ["1209600", "2 weeks"],
@@ -75,7 +76,7 @@ export const reasonList = [
   {
     value: "warn_perm",
     label:
-      "Your account is under review for potential illegal actions. Please refer to a mod for an update on your account status"
+      "You may have violated the Terms of Service. If you have questions, please email mod.admin@emeraldchat.com. Note that it may take time to review and respond."
   },
   { value: "other", label: "Other" }
 ];
