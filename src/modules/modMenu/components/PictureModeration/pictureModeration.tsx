@@ -7,7 +7,7 @@ import {
   clearPicModCache,
   updatePicHashListPref,
   processPredictions,
-  getFeedback,
+  /* getFeedback, */
   setFeedback
 } from "./utils";
 import { CheckmarkButton, getUserData } from "../utils";
@@ -52,7 +52,7 @@ class ModifiedPictureModeration extends React.Component<
   };
 
   handleFetch = async (modPictures: ModPicture[]) => {
-    const start = performance.now();
+    // const start = performance.now();
 
     const filteredPictureModerations = await picModFetchHandler(
       modPictures,
@@ -67,8 +67,8 @@ class ModifiedPictureModeration extends React.Component<
       filteredPictureModerations
     );
 
-    const end = performance.now();
-    console.log(`Time taken to get predictions: ${end - start}ms`);
+    // const end = performance.now();
+    // console.log(`Time taken to get predictions: ${end - start}ms`);
     this.setState({ picture_moderations: finalPredictions });
     setPicModIconCount(finalPredictions.length);
   };
@@ -290,39 +290,39 @@ export function pictureModerationOverride() {
     };
     setFeedback(hash!, feedbackString);
     setFeedbackState(true);
-    try {
-      const response = await fetch("https://class2.emeraldchat.com/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: data.image_url,
-          correctCheckbox: correct_checkbox,
-          label: selectedLabel,
-          prediction: data.prediction
-        })
-      });
+    // try {
+    //   const response = await fetch("https://class2.emeraldchat.com/feedback", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({
+    //       url: data.image_url,
+    //       correctCheckbox: correct_checkbox,
+    //       label: selectedLabel,
+    //       prediction: data.prediction
+    //     })
+    //   });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("There was an error sending the feedback:", error);
-    }
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}`);
+    //   }
+    // } catch (error) {
+    //   console.error("There was an error sending the feedback:", error);
+    // }
   };
 
   PictureModerationUnit.prototype.render = function pmuRender() {
     const { data } = this.props;
-    const feedbackPrerecorded = getFeedback(data.imageHash!);
+    // const feedbackPrerecorded = getFeedback(data.imageHash!);
     const open_picture = function op() {
       const element = React.createElement(Picture, {
         data: { src: data.image_url }
       });
       ReactDOM.render(element, document.getElementById("ui-hatch-2"));
     };
-    const handleLabelChange = (event: any) => {
-      this.setState({ selectedLabel: event.target.value });
-    };
-    const feedbackDone = this.state ? this.state.feedbackDone : false;
+    // const handleLabelChange = (event: any) => {
+    //   this.setState({ selectedLabel: event.target.value });
+    // };
+    // const feedbackDone = this.state ? this.state.feedbackDone : false;
 
     return (
       <div
@@ -355,13 +355,13 @@ export function pictureModerationOverride() {
         >
           <h2>{`${data.display_name}`}</h2>
         </div>
+        {/*
         {data.prediction && (
           <>
             <h2>{`Prediction: ${data.prediction}`}</h2>
             <div>
               {!feedbackDone && !feedbackPrerecorded ? (
                 <div>
-                  {/* Dropdown and buttons */}
                   <div>
                     <select
                       value={this.state?.selectedLabel}
@@ -369,7 +369,6 @@ export function pictureModerationOverride() {
                       defaultValue=""
                       style={{ backgroundColor: "#100f10", display: "block" }}
                     >
-                      {/* Dropdown options */}
                       <option value="option1">Not_NSFW</option>
                       <option value="option2">Suggestive_NSFW</option>
                       <option value="option3">General_NSFW</option>
@@ -400,13 +399,13 @@ export function pictureModerationOverride() {
                 </div>
               ) : (
                 <div>
-                  {/* Feedback received message */}
                   <h2>Feedback Received</h2>
                 </div>
               )}
             </div>
           </>
         )}
+        */}
         <div
           style={{
             display: "flex",

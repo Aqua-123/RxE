@@ -1,5 +1,5 @@
 import { Preferences, P } from "~src/preferences";
-import { getImageBlobFromUrl, hashBlob } from "~src/utils";
+// import { getImageBlobFromUrl, hashBlob } from "~src/utils";
 import { getAction } from "../utils";
 
 export function setPicModIconCount(count: number) {
@@ -50,32 +50,9 @@ export async function picModFetchHandler(
 ) {
   // Get recorded hashes from preferences
   const recordedHashes = Preferences.get(P.picModHashes);
-  // Get hashes for all mod pictures
-
-  const pictureHashes = await Promise.allSettled(
-    // eslint-disable-next-line camelcase
-    modPictures?.map(async ({ id, image_url }) => {
-      try {
-        const imageData = await getImageBlobFromUrl(image_url);
-        // @ts-ignore
-        const imageHash = await hashBlob(imageData); // Directly hash the blob
-        return { id, imageHash };
-      } catch (error) {
-        console.error(`Error hashing image ${id}: ${error}`);
-        return { id, error };
-      }
-    })
-  ).then((results) =>
-    results
-      .filter(({ status }) => status === "fulfilled")
-      // @ts-ignore
-      .map(({ value }) => value)
-  );
-
-  // Update image hashes for matching mod pictures
-  pictureHashes.forEach(({ id, imageHash }) => {
-    const modPicture = modPictures.find(({ id: modId }) => modId === id);
-    if (modPicture) modPicture.imageHash = imageHash;
+  // Skip hashing entirely - just assign a placeholder hash based on ID
+  modPictures.forEach((picture) => {
+    picture.imageHash = `pic_${picture.id}`;
   });
 
   // Filter mod pictures without a matching recorded hash
@@ -134,63 +111,57 @@ export function clearPicModCache() {
 }
 
 export async function getPredictions(imageDataArray: ModPicture[]) {
-  const apiEndpoint = "https://class2.emeraldchat.com/predict"; // Replace with your actual API endpoint
-
-  const response = await fetch(apiEndpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(imageDataArray)
-  });
-
-  if (!response.ok) {
-    return [];
-  }
-
-  const data = await response.json();
-  return data;
+  // const apiEndpoint = "https://class2.emeraldchat.com/predict"; // Replace with your actual API endpoint
+  // const response = await fetch(apiEndpoint, {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify(imageDataArray)
+  // });
+  // if (!response.ok) {
+  //   return [];
+  // }
+  // const data = await response.json();
+  // return data;
+  return imageDataArray;
 }
 
 export async function processPredictions(pictureModerationList: ModPicture[]) {
-  if (Preferences.get(P.hideAIControls)) return pictureModerationList;
-  const recordedPredictions = Preferences.get(P.picModPredictions);
-
-  const preRecordedPictures = [] as ModPicture[];
-  const unrecordedPictures = [] as ModPicture[];
-  let unrecordedPicturesWithPredictions: ModPicture[] = [];
-
-  pictureModerationList.forEach((picture) => {
-    const recordedPrediction = recordedPredictions.find(
-      (record) => record.hash === picture.imageHash
-    );
-    if (recordedPrediction) {
-      picture.prediction = recordedPrediction.prediction;
-      preRecordedPictures.push(picture);
-    } else {
-      unrecordedPictures.push(picture);
-    }
-  });
-
-  if (unrecordedPictures.length) {
-    unrecordedPicturesWithPredictions = await getPredictions(
-      unrecordedPictures
-    );
-  }
-
-  const finalPredictions =
-    unrecordedPicturesWithPredictions.concat(preRecordedPictures);
-
-  // save the predictions
-  const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
-    (picture) => ({
-      hash: picture.imageHash!,
-      prediction: picture.prediction!
-    })
-  );
-  Preferences.set(P.picModPredictions, [
-    ...recordedPredictions,
-    ...newRecordedPredictions
-  ]);
-  return finalPredictions;
+  // if (Preferences.get(P.hideAIControls)) return pictureModerationList;
+  // const recordedPredictions = Preferences.get(P.picModPredictions);
+  // const preRecordedPictures = [] as ModPicture[];
+  // const unrecordedPictures = [] as ModPicture[];
+  // let unrecordedPicturesWithPredictions: ModPicture[] = [];
+  // pictureModerationList.forEach((picture) => {
+  //   const recordedPrediction = recordedPredictions.find(
+  //     (record) => record.hash === picture.imageHash
+  //   );
+  //   if (recordedPrediction) {
+  //     picture.prediction = recordedPrediction.prediction;
+  //     preRecordedPictures.push(picture);
+  //   } else {
+  //     unrecordedPictures.push(picture);
+  //   }
+  // });
+  // if (unrecordedPictures.length) {
+  //   unrecordedPicturesWithPredictions = await getPredictions(
+  //     unrecordedPictures
+  //   );
+  // }
+  // const finalPredictions =
+  //   unrecordedPicturesWithPredictions.concat(preRecordedPictures);
+  // // save the predictions
+  // const newRecordedPredictions = unrecordedPicturesWithPredictions.map(
+  //   (picture) => ({
+  //     hash: picture.imageHash!,
+  //     prediction: picture.prediction!
+  //   })
+  // );
+  // Preferences.set(P.picModPredictions, [
+  //   ...recordedPredictions,
+  //   ...newRecordedPredictions
+  // ]);
+  // return finalPredictions;
+  return pictureModerationList;
 }
 
 export function getFeedback(hash: string) {
