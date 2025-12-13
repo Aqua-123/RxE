@@ -82,6 +82,8 @@ export const reasonList = [
 ];
 
 export class BanForm extends Component<BanFormProps, BanFormState> {
+  private reasonInputRef: React.RefObject<HTMLInputElement>;
+
   constructor(props: BanFormProps) {
     super(props);
     this.state = {
@@ -89,6 +91,7 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
       reason: props.reasons[0].label,
       showCustomReason: false
     };
+    this.reasonInputRef = React.createRef();
   }
 
   handleDurationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -110,9 +113,18 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
   };
 
   handleEditReasonToggle = () => {
-    this.setState((prevState) => ({
-      showCustomReason: !prevState.showCustomReason
-    }));
+    this.setState((prevState) => {
+      const newShowCustomReason = !prevState.showCustomReason;
+      setTimeout(() => {
+        if (newShowCustomReason && this.reasonInputRef.current) {
+          this.reasonInputRef.current.focus();
+          this.reasonInputRef.current.select();
+        }
+      }, 0);
+      return {
+        showCustomReason: newShowCustomReason
+      };
+    });
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -154,6 +166,7 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
         <div className="m1">reason</div>
         {showCustomReason ? (
           <input
+            ref={this.reasonInputRef}
             type="text"
             id="reason"
             className="ui-input"

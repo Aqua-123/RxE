@@ -33,8 +33,104 @@ html.showGender {
       border-color: #000;
     }
   }
+
   .room-component-message-avatar {
     width: 42px;
     height: 42px;
+  }
+
+  /* User profile avatar - only has border in TeriBlast V2 */
+  .user-profile-avatar[data-gender] {
+    --gender-color: #fff;
+
+    &[data-gender="m"] {
+      --gender-color: #0070ff;
+    }
+    &[data-gender="f"] {
+      --gender-color: #ff80ea;
+    }
+    &[data-gender="pizza"] {
+      --gender-color: #00f0dc;
+    }
+    &[data-gender="vortex"] {
+      --gender-color: #bf0390;
+    }
+    &[data-gender="sunflower"] {
+      --gender-color: #ffc107;
+    }
+    &[data-gender="rose"] {
+      --gender-color: #800000;
+    }
+    &[data-gender="watermelon"] {
+      --gender-color: #18e281;
+    }
+    &[data-gender="darkie"] {
+      --gender-color: #000;
+    }
+
+    // Apply to border if theme has borders
+    border-color: var(--gender-color);
+
+    // Add box-shadow that will show as fallback if no border exists
+    // The box-shadow sits outside the element and doesn't affect layout
+    box-shadow: 0 0 0 3px var(--gender-color);
+  }
+
+  /* User micro profile avatar (popup) - always has borders */
+  .user-profile-micro-avatar[data-gender] {
+    &[data-gender="m"] {
+      border-color: #0070ff !important;
+    }
+    &[data-gender="f"] {
+      border-color: #ff80ea !important;
+    }
+    &[data-gender="pizza"] {
+      border-color: #00f0dc !important;
+    }
+    &[data-gender="vortex"] {
+      border-color: #bf0390 !important;
+    }
+    &[data-gender="sunflower"] {
+      border-color: #ffc107 !important;
+    }
+    &[data-gender="rose"] {
+      border-color: #800000 !important;
+    }
+    &[data-gender="watermelon"] {
+      border-color: #18e281 !important;
+    }
+    &[data-gender="darkie"] {
+      border-color: #000 !important;
+    }
+  }
+
+  /* Micropost and comment pictures - use box-shadow since they usually don't have borders */
+  /* Currently not working */
+  .user-micropost-picture[data-gender],
+  .user-comment-picture[data-gender] {
+    &[data-gender="m"] {
+      box-shadow: 0 0 0 2px #0070ff;
+    }
+    &[data-gender="f"] {
+      box-shadow: 0 0 0 2px #ff80ea;
+    }
+    &[data-gender="pizza"] {
+      box-shadow: 0 0 0 2px #00f0dc;
+    }
+    &[data-gender="vortex"] {
+      box-shadow: 0 0 0 2px #bf0390;
+    }
+    &[data-gender="sunflower"] {
+      box-shadow: 0 0 0 2px #ffc107;
+    }
+    &[data-gender="rose"] {
+      box-shadow: 0 0 0 2px #800000;
+    }
+    &[data-gender="watermelon"] {
+      box-shadow: 0 0 0 2px #18e281;
+    }
+    &[data-gender="darkie"] {
+      box-shadow: 0 0 0 2px #000;
+    }
   }
 }
