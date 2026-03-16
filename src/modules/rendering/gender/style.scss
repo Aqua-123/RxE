@@ -30,7 +30,7 @@ html.showGender {
       border-color: #18e281;
     }
     &[data-gender="darkie"] {
-      border-color: #000;
+      border-color: #070000;
     }
   }
 
@@ -65,7 +65,7 @@ html.showGender {
       --gender-color: #18e281;
     }
     &[data-gender="darkie"] {
-      --gender-color: #000;
+      --gender-color: #070000;
     }
 
     // Apply to border if theme has borders
@@ -100,7 +100,7 @@ html.showGender {
       border-color: #18e281 !important;
     }
     &[data-gender="darkie"] {
-      border-color: #000 !important;
+      border-color: #070000 !important;
     }
   }
 

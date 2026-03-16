@@ -51,12 +51,12 @@ export function fasterAppend(this: Room, messageArr: MessageData[]) {
   this.setState({ messages });
 }
 
-const tag = (tagName: string) => <b style={{ color: "#f00" }}> {tagName} </b>;
+// const tag = (tagName: string) => <b style={{ color: "#f00" }}> {tagName} </b>;
 
 function specialTag(user: any) {
   if (user.proxy) return undefined;
-  if (user.master) return tag("MASTER");
-  if (user.mod) return tag("MOD");
+  // if (user.master) return tag("MASTER");
+  // if (user.mod) return tag("MOD");
   return undefined;
 }
 
