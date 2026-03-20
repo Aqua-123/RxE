@@ -66,7 +66,7 @@ export const reasonList = [
   },
   {
     value: "underage",
-    label: "You must be 18+ in order to use EmeraldChat."
+    label: "You must be 18+ in order to use Emerald Chat."
   },
   {
     value: "nudity",
