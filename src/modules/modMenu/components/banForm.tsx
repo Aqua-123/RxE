@@ -15,7 +15,7 @@ interface BanFormState {
 }
 
 const durationList = [
-  ["7", "7 seconds (warning)"],
+  // ["7", "7 seconds (warning)"],
   ["120", "2 minutes"],
   ["300", "5 minutes"],
   ["600", "10 minutes"],
@@ -45,20 +45,8 @@ export const reasonList = [
     label: "Sexually explicit remarks towards a user or group of users"
   },
   {
-    value: "racism",
-    label: "Spreading derogatory words/racism/bigotry in chat"
-  },
-  {
     value: "csa",
     label: "Distribution/Promotion of illegal content involving CP/CSA"
-  },
-  {
-    value: "english",
-    label: "Please keep group chat in English"
-  },
-  {
-    value: "socials",
-    label: "Promotion of external social media"
   },
   {
     value: "inappropriate_content",
@@ -66,20 +54,78 @@ export const reasonList = [
   },
   {
     value: "underage",
-    label: "You must be 18+ in order to use Emerald Chat."
+    label: "You must be 18+ in order to use 1-on-1 chat"
   },
   {
-    value: "nudity",
-    label:
-      "Please don't start your video with nudity or sexual content, not everyone wants to see that"
+    value: "racism",
+    label: "Spreading derogatory words/racism/bigotry in chat"
   },
   {
-    value: "warn_perm",
-    label:
-      "You may have violated the Terms of Service. If you have questions, please email mod.admin@emeraldchat.com. Note that it may take time to review and respond."
+    value: "impersonation",
+    label: "Impersonation of users or moderators"
   },
-  { value: "other", label: "Other" }
+  {
+    value: "doxxing",
+    label: "Doxxing (sharing personal/private information of others)"
+  },
+  {
+    value: "self_harm_threats",
+    label: "Threats of self-harm or encouragement of self-harm"
+  },
+  {
+    value: "phishing_scamming",
+    label: "Phishing attempts or scamming other users"
+  },
+  {
+    value: "bots_automation_abuse",
+    label: "Use of automated bots or scripts to spam or manipulate chat"
+  },
+  {
+    value: "illegal_activity",
+    label: "Encouraging or facilitating illegal activity"
+  },
+  {
+    value: "trolling_disruption",
+    label: "Excessive trolling or disruptive behavior"
+  },
+  {
+    value: "exploiting_vulnerabilities",
+    label:
+      "Exploitation of platform vulnerabilities (e.g., bypassing bans, exploiting bugs)"
+  },
+  {
+    value: "soliciting_services",
+    label:
+      "Advertising, promotion, or selling services/content (e.g., external platforms) is not allowed on Emerald Chat"
+  },
+  {
+    value: "non_english_group_chats",
+    label:
+      "Group chats should be in English to ensure inclusivity and moderation effectiveness"
+  },
+  { value: "other", label: "other" }
 ];
+
+const prettyMap: Record<string, string> = {
+  spam: "Spam",
+  harassment: "Harassment",
+  sexual_harassment: "Sexual Harassment",
+  csa: "CSA",
+  inappropriate_content: "Inappropriate Content",
+  underage: "Underage",
+  racism: "Racism",
+  impersonation: "Impersonation",
+  doxxing: "Doxxing",
+  self_harm_threats: "Self-Harm Threats",
+  phishing_scamming: "Phishing/Scamming",
+  bots_automation_abuse: "Bots/Automation Abuse",
+  illegal_activity: "Illegal Activity",
+  trolling_disruption: "Trolling/Disruption",
+  exploiting_vulnerabilities: "Exploiting Vulnerabilities",
+  soliciting_services: "Soliciting or Exchanging Services",
+  non_english_group_chats: "Non-English in Group Chats",
+  other: "Other"
+};
 
 export class BanForm extends Component<BanFormProps, BanFormState> {
   private reasonInputRef: React.RefObject<HTMLInputElement>;
@@ -101,7 +147,8 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
   handleReasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedReason = e.target.value;
     this.setState({ reason: selectedReason });
-    if (selectedReason === "Other") {
+    const otherOption = reasonList.find((r) => r.value === "other");
+    if (selectedReason === otherOption?.label) {
       this.setState({ showCustomReason: true, reason: "" });
     } else {
       this.setState({ showCustomReason: false });
@@ -134,9 +181,10 @@ export class BanForm extends Component<BanFormProps, BanFormState> {
 
   // eslint-disable-next-line class-methods-use-this
   renderReasonOption(reasonObj: { value: string; label: string }) {
+    const displayText = prettyMap[reasonObj.value] || reasonObj.value;
     return (
       <option key={reasonObj.value} value={reasonObj.label}>
-        {reasonObj.label}
+        {displayText}
       </option>
     );
   }
