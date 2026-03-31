@@ -697,8 +697,13 @@ async function getImageBlobFromUrlBase(url: string) {
 export const getImageBlobFromUrl = memoizeAsync(getImageBlobFromUrlBase);
 
 export function getTimeAgo(timestamp: string) {
+  if (timestamp === null || timestamp === undefined || timestamp === "") {
+    return "a long time ago...";
+  }
+
   const currentTime = new Date();
   const pastTime = new Date(timestamp);
+
   const diffInSeconds = Math.floor(
     (currentTime.getTime() - pastTime.getTime()) / 1000
   );
