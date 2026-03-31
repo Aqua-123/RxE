@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Spinner } from "~src/components/Spinner";
-import { stripBiDi, getTimeAgo } from "~src/utils";
+import { stripBiDi /* getTimeAgo */ } from "~src/utils";
 /**
  * Apply overrides to the profile and related objects.
  * */
@@ -60,7 +60,7 @@ export function profileOverrides() {
             #{this.state.data.user.username}
           </div>
           {this.profile_buttons()}
-          {/* last seen */}
+          {/* last seen
           <div
             className="user-profile-last-seen"
             style={{
@@ -73,7 +73,7 @@ export function profileOverrides() {
             }}
           >
             Last seen {getTimeAgo(this.state.data.user.last_logged_in_at)}
-          </div>
+          </div> */}
           <div className="user-profile-tabs">{this.tabs()}</div>
         </div>
       </div>

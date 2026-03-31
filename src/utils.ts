@@ -342,11 +342,11 @@ export function wrapAlternating<S, T>(
   wrapper2: StringWrapper<T>
 ): (T | S)[] {
   let wrapFirst = false;
-  return strings.flatMap((string) => {
+  return strings.flatMap((string): (S | T)[] => {
     wrapFirst = !wrapFirst;
     const wrapped = wrapFirst ? wrapper1(string) : wrapper2(string);
     if (wrapped === null) return [];
-    return wrapped instanceof Array ? wrapped : [wrapped];
+    return Array.isArray(wrapped) ? wrapped : [wrapped];
   });
 }
 
@@ -699,25 +699,37 @@ export const getImageBlobFromUrl = memoizeAsync(getImageBlobFromUrlBase);
 export function getTimeAgo(timestamp: string) {
   const currentTime = new Date();
   const pastTime = new Date(timestamp);
-  const timeDifference = currentTime.getTime() - pastTime.getTime();
-  const seconds = Math.floor(timeDifference / 1000);
+  const diffInSeconds = Math.floor(
+    (currentTime.getTime() - pastTime.getTime()) / 1000
+  );
 
-  if (seconds < 60) {
-    return `${seconds} seconds ago`;
+  const format = (value: number, unit: string) =>
+    `${value} ${unit}${value !== 1 ? "s" : ""} ago`;
+
+  if (diffInSeconds < 60) {
+    return format(diffInSeconds, "second");
   }
 
-  const minutes = Math.floor(timeDifference / 1000 / 60);
-
-  if (minutes < 60) {
-    return `${minutes} minutes ago`;
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  if (diffInMinutes < 60) {
+    return format(diffInMinutes, "minute");
   }
 
-  const hours = Math.floor(timeDifference / 1000 / 60 / 60);
-
-  if (hours < 24) {
-    return `${hours} hours ago`;
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  if (diffInHours < 24) {
+    return format(diffInHours, "hour");
   }
 
-  const days = Math.floor(timeDifference / 1000 / 60 / 60 / 24);
-  return `${days} days ago`;
+  const diffInDays = Math.floor(diffInHours / 24);
+  if (diffInDays < 30) {
+    return format(diffInDays, "day");
+  }
+
+  const diffInMonths = Math.floor(diffInDays / 30);
+  if (diffInMonths < 12) {
+    return format(diffInMonths, "month");
+  }
+
+  const diffInYears = Math.floor(diffInDays / 365);
+  return format(diffInYears, "year");
 }
