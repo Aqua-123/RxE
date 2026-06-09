@@ -52,6 +52,7 @@ function mountPrivate(this: Room) {
       this.setState({ privateUser: null });
     });
 }
+
 RoomUserUnit.prototype.message = function message() {
   $.ajax({
     type: "GET",
@@ -118,6 +119,7 @@ export function roomclientOverrides() {
       );
     }
   };
+
   UserView.prototype.message = function message(type: "message" | "video") {
     $.ajax({
       type: "GET",
@@ -206,14 +208,19 @@ export function roomclientOverrides() {
   };
 
   MessageNotificationUnit.prototype.open_room = function openRoom() {
+    // Force mode to private for DM notifications
+    // @ts-ignore
+    this.props.data.data.mode = "private";
+
     // Close all open menus
     MenuReactMicro?.close();
     MenuReact?.close();
     UserProfileReact?.close();
+
     // Generate new room
     RoomGenerator.generate({
       id: this.props.data.data.room_id,
-      mode: this.props.data.data.mode,
+      mode: "private",
       partner: this.props.data.data.user,
       sender: this.props.data.sender_id
     });
@@ -221,6 +228,20 @@ export function roomclientOverrides() {
 
   Room.prototype.componentDidMount = function componentDidMount() {
     this.clear_print();
+    // Fix: If mode is "default" or invalid and we have a sender, treat as private
+    const currentMode = this.state.mode as string;
+    // eslint-disable-next-line prettier/prettier
+    if (
+      (!currentMode || currentMode === "default") &&
+      this.props?.data?.sender
+    ) {
+      // @ts-ignore - bypass type check
+      this.state.mode = "private";
+      if (this.props.data) {
+        // @ts-ignore - bypass type check
+        this.props.data.mode = "private";
+      }
+    }
     const { mode } = this.state;
     const action = stateObj[mode];
     if (action) mountMatchMenu.call(this, action);
@@ -238,6 +259,7 @@ export function roomclientOverrides() {
     if (messages.length > max) messages.shift();
     this.setState({ messages });
   };
+
   Room.prototype.start_typing = function startTyping(inputUser) {
     if (inputUser.id === App.user.id) return;
     // get name from RoomChannelMembers persistent state
@@ -251,6 +273,7 @@ export function roomclientOverrides() {
       this.stop_typing();
     }, 1e4);
   };
+
   function rpUpdated(this: Room, resp: ChannelJsonResponse) {
     const { channel } = resp;
     this.setState({ current_channel: channel });
