@@ -76,9 +76,18 @@ function wfafOverrides() {
 
 function setupHooks() {
   const subReject = ActionCable.Subscriptions.prototype.reject;
+
   ActionCable.Subscriptions.prototype.reject = function reject(id) {
-    if (id === App.room.client.identifier && App.room.id === specialRoom) {
-      printMessage(`ERROR: You could not join room ${specialRoom || "WFAF"}`);
+    const rejectedRoomId = JSON.parse(id).room_id;
+    const roomName = specialRoom || rejectedRoomId;
+
+    // eslint-disable-next-line prettier/prettier
+    if (id === App.room.client.identifier && rejectedRoomId === App.room.id && rejectedRoomId) {
+      printMessage(`ERROR: You could not join room ${roomName}`);
+      // eslint-disable-next-line prettier/prettier
+    } else if (id === App.room.client.identifier && !rejectedRoomId && !App.room.id) {
+      // eslint-disable-next-line prettier/prettier
+      printMessage("You were once the place where our dreams came true. Thank you for everything. 🧇🍨");
     }
     subReject.call(this, id);
   };
