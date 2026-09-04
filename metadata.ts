@@ -11,8 +11,8 @@ export default function metadata(_: BuildConfig): Metadata {
     author: U.author,
     icon: U.icon,
     match: [
-      `*://${U.hostname}/${U.path ?? "*"}`,
-      `*://www.${U.hostname}/${U.path ?? "*"}`
+      `*://${U.hostname}/${U.newpath}/${U.path}/*`,
+      `*://www.${U.hostname}/${U.newpath}/${U.path}/*`
     ],
     namespace: U.namespace,
     run_at: U.runAt,

@@ -19,8 +19,8 @@ export default function manifest(_: BuildConfig): Manifest {
     content_scripts: [
       {
         matches: [
-          `*://${U.hostname}/${U.path ?? "*"}`,
-          `*://www.${U.hostname}/${U.path ?? "*"}`
+          `*://${U.hostname}/${U.newpath}/${U.path}/*`,
+          `*://www.${U.hostname}/${U.newpath}/${U.path}/*`
         ],
         js: ["inject-web.js"],
         run_at: runMap[U.runAt] ?? "document_start"
