@@ -87,7 +87,7 @@ function setupHooks() {
       // eslint-disable-next-line prettier/prettier
     } else if (id === App.room.client.identifier && !rejectedRoomId && !App.room.id) {
       // eslint-disable-next-line prettier/prettier
-      printMessage("You were once the place where our dreams came true. Thank you watching our dream. 🧇🍨");
+      printMessage("You were once the place where our dreams came true. Thank you for watching our dream. 🧇🍨");
     }
     subReject.call(this, id);
   };
