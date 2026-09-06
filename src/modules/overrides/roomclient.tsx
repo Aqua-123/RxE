@@ -274,14 +274,18 @@ export function roomclientOverrides() {
     }, 1e4);
   };
 
+  // This is ugly, but we don't really have other choice
   function rpUpdated(this: Room, resp: ChannelJsonResponse) {
     const { channel } = resp;
     this.setState({ current_channel: channel });
     if (channel.channel_type === "voice") this.voice_connect(resp);
     RoomClient?.clear_messages();
+
+    // Use absolute URL instead of relative
+    const customBaseUrl = "https://emeraldchat.com/old";
     $.ajax({
       type: "GET",
-      url: `channel_json?id=${channel.id}`,
+      url: `${customBaseUrl}/channel_json?id=${channel.id}`,
       dataType: "json",
       success(channelresp) {
         const { messages } = channelresp;
